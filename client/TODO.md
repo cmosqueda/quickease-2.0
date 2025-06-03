@@ -1,9 +1,32 @@
 # Not yet done
 
-# Completed
+- METADATA / Document Tags
+- Library all tabs (responsive)
+- Library Flashcards tabs (large screens)
+- Library Quizzes tabs (large screens)
+- Library Notes tabs (responsive)
+- Library Flashcards tabs (responsive)
+- Library Quizzes tabs (responsive)
+- Notes page (responsive)
+- Notes markdown
+- Theme controller (for light/dark mode switching)
 
-- Landing page (Large screens)
+# Completed Screens
+
+- Landing page (large screens)
 - Landing page (responsive)
-- Auth pages (Large screens)
+- Auth pages (large screens)
 - Auth pages (responsive)
+- Forum page (large screens)
+- Forum page (responsive)
+- Library Notes tabs (large screens)
+- Notes page (large screens)
+
+# Completed components
+
 - Terms of use & Privacy policy modal
+- Forum post card
+- Notifications dropdown
+- Profile dropdown
+- Sidebar (large screens)
+- Sidebar (mobile screens)

@@ -6,8 +6,8 @@ export default function LandingPage() {
     {
       icon: (
         <NotebookPen
-          size={24}
-          className="p-1 shrink-0 rounded-3xl bg-gray-100"
+          size={36}
+          className="p-1 shrink-0 rounded-lg bg-gray-100"
         />
       ),
       title: "Summarize with AI",
@@ -16,8 +16,8 @@ export default function LandingPage() {
     {
       icon: (
         <SquareStack
-          size={24}
-          className="p-1 shrink-0 rounded-3xl bg-gray-100"
+          size={36}
+          className="p-1 shrink-0 rounded-lg bg-gray-100"
         />
       ),
       title: "Review with AI flashcards",
@@ -25,7 +25,7 @@ export default function LandingPage() {
     },
     {
       icon: (
-        <BookCheck size={24} className="p-1 shrink-0 rounded-3xl bg-gray-100" />
+        <BookCheck size={36} className="p-1 shrink-0 rounded-lg bg-gray-100" />
       ),
       title: "Test with AI quizzes",
       description: "Challenge your knowledge with tailored questions.",
@@ -34,7 +34,7 @@ export default function LandingPage() {
 
   return (
     <>
-      <header className="flex flex-row xl:max-w-7xl justify-between py-4 xl:px-0 px-4 xl:mx-auto items-center">
+      <header className="flex flex-row xl:max-w-7xl justify-between py-4 xl:px-0 px-4 xl:mx-auto items-center ">
         <h1 className="font-bold text-2xl">QuickEase</h1>
         <div className="hidden flex-row gap-4 items-center lg:flex">
           <NavLink to="/auth/login" viewTransition>
@@ -156,7 +156,7 @@ export default function LandingPage() {
           </ul>
         </details>
       </header>
-      <main className="min-h-screen bg-gray-100 flex flex-col py-4 gap-8">
+      <main className="min-h-screen bg-gray-100 flex flex-col py-4 gap-8 border-t border-gray-300 border-b">
         <div className="max-w-7xl mx-auto lg:px-0 px-2">
           <video controls={false} autoPlay muted className="w-full rounded-3xl">
             <source src="assets/videos/landing.mp4" type="video/mp4" />

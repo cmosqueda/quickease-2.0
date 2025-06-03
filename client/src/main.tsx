@@ -8,6 +8,9 @@ import AuthRegisterPage from "./routes/(auth)/AuthRegister";
 
 // learner pages
 import LearnerForumPage from "./routes/(learner)/(dashboard)/LearnerForum";
+import LearnerLayout from "./routes/(learner)/(dashboard)/LearnerLayout";
+import LearnerLibraryPage from "./routes/(learner)/(dashboard)/LearnerLibrary";
+import LearnerNotePage from "./routes/(learner)/(note)/LearnerNote";
 
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
@@ -35,8 +38,22 @@ const router = createBrowserRouter([
   },
   {
     path: "learner",
-    Component: LearnerForumPage,
-    children: [],
+    Component: LearnerLayout,
+    children: [
+      {
+        Component: LearnerForumPage,
+        index: true,
+      },
+      {
+        Component: LearnerLibraryPage,
+        path: "library",
+      },
+      {
+        path: "note/:id",
+        loader: async () => {},
+        Component: LearnerNotePage,
+      },
+    ],
   },
 ]);
 
