@@ -7,9 +7,7 @@
 - Library Notes tabs (responsive)
 - Library Flashcards tabs (responsive)
 - Library Quizzes tabs (responsive)
-- Notes page (responsive)
 - Notes markdown
-- Theme controller (for light/dark mode switching)
 
 # Completed Screens
 
@@ -30,3 +28,5 @@
 - Profile dropdown
 - Sidebar (large screens)
 - Sidebar (mobile screens)
+- Theme controller (for light/dark mode switching but still needs fixing)
+- Notes page (responsive)

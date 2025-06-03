@@ -1,4 +1,6 @@
 import Sidebar from "@/components/(learner)/Sidebar";
+import useTheme from "@/hooks/useTheme";
+
 import { useEffect } from "react";
 import { Outlet, useLoaderData, useLocation } from "react-router";
 import { Toaster } from "sonner";
@@ -6,15 +8,16 @@ import { Toaster } from "sonner";
 export default function LearnerLayout() {
   const data = useLoaderData();
   const { pathname } = useLocation();
+  const { getTheme } = useTheme();
 
   useEffect(() => {
-    console.log(pathname);
-  }, [pathname]);
+    getTheme();
+  }, [getTheme]);
 
   return (
     <>
       <Toaster />
-      <main className="flex flex-col lg:flex-row min-h-screen bg-gray-100">
+      <main className="flex flex-col lg:flex-row min-h-screen bg-base-200">
         <Sidebar tab={pathname} />
         <Outlet />
       </main>

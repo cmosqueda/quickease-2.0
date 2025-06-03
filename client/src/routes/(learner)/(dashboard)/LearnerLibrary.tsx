@@ -1,4 +1,6 @@
 import NoteCard from "@/components/(learner)/NoteCard";
+import NotificationsDropdown from "@/components/(learner)/NotificationsDropdown";
+import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
 import clsx from "clsx";
 
 import { Search } from "lucide-react";
@@ -39,7 +41,13 @@ export default function LearnerLibraryPage() {
 
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto min-h-screen">
-      <h1 className="font-bold lg:text-4xl">Library</h1>
+      <div className="flex flex-row items-center justify-between">
+        <h1 className="font-bold lg:text-4xl text-3xl">Library</h1>
+        <div className="lg:flex flex-row items-center gap-2 hidden">
+          <NotificationsDropdown />
+          <ProfileDropdown />
+        </div>
+      </div>
       <div role="tablist" className="tabs tabs-border">
         <a
           role="tab"

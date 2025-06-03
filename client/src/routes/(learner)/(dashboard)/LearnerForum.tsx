@@ -10,7 +10,7 @@ export default function LearnerForumPage() {
   const [isPosting, setIsPosting] = useState(false);
 
   return (
-    <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-4xl mx-auto">
+    <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto">
       <div className="flex flex-row items-center justify-between gap-8">
         <label className="input w-full lg:w-fit">
           <Search size={24} />
@@ -28,7 +28,7 @@ export default function LearnerForumPage() {
         />
         <div className="flex flex-row gap-4 bottom-10 right-4 absolute">
           <button
-            className="btn btn-soft btn-neutral self-end"
+            className="btn btn-neutral self-end"
             disabled={isPosting}
             onClick={() => {
               setIsPosting(true);

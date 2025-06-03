@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { NavLink } from "react-router";
 import TermsAndPrivacyPolicyModal from "../../components/TermsAndPrivacyPolicyModal";
+import useTheme from "@/hooks/useTheme";
 
 export default function AuthLoginPage() {
+  const { getTheme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  useLayoutEffect(() => {
+    getTheme();
+  }, [getTheme]);
+
   return (
     <main className="lg:grid lg:grid-cols-[1fr_1fr] flex flex-col items-center gap-8 min-h-screen">
-      <div className="hidden lg:flex flex-col h-screen items-center justify-center bg-gray-100 border-r border-gray-200">
+      <div className="hidden lg:flex flex-col h-screen items-center justify-center bg-base-100 border-r border-base-200">
         <h1 className="font-bold text-[7rem]">QuickEase</h1>
       </div>
       <h1 className="font-bold text-3xl my-8 block lg:hidden">QuickEase</h1>

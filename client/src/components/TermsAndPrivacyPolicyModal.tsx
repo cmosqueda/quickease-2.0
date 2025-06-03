@@ -2,23 +2,23 @@ export default function TermsAndPrivacyPolicyModal() {
   return (
     <dialog
       id="terms-of-use-modal"
-      className="modal modal-bottom sm:modal-middle overflow-scroll"
+      className="modal modal-bottom sm:modal-middle overflow-scroll bg-base-300"
     >
       <div className="modal-box flex flex-col gap-2">
-        <h3 className="font-bold text-3xl text-blue-500">
+        <h3 className="font-bold text-3xl text-base-content">
           Terms and Conditions
         </h3>
-        <p className="text-gray-500">
+        <p className="text-base-content">
           Welcome to QuickEase! These Terms and Conditions govern your use of
           our web and mobile application. By accessing or using our platform,
           you agree to comply with and be bound by these terms. If you disagree
           with any part of the terms, please do not use our services.
         </p>
         <div>
-          <h1 className="font-bold text-gray-800 text-xl">
+          <h1 className="font-bold text-base-content text-xl">
             1. GENERAL INFORMATION
           </h1>
-          <p className="text-gray-500">
+          <p className="text-base-content">
             QuickEase is a web and mobile application designed to assist
             students and general users in enhancing their study habits through
             automated text summarization, flashcard, and quiz generation. The
