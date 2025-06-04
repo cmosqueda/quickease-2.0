@@ -45,9 +45,9 @@ export default function Sidebar({ tab }: { tab: string }) {
       link: "/learner/flashcards",
     },
     {
-      title: "Quiz",
+      title: "Quizzes",
       icon: <FileQuestion />,
-      link: "/learner/quiz",
+      link: "/learner/quizzes",
     },
     {
       title: "Pomodoro",

@@ -1,21 +1,21 @@
-# Not yet done
+# To-dos
+
+This is for the client-side TO-DOS.
+
+## Not yet done
 
 - METADATA / Document Tags
-- Library all tabs (responsive)
-- Library Flashcards tabs (large screens)
-- Library Quizzes tabs (large screens)
-- Library Notes tabs (responsive)
-- Library Flashcards tabs (responsive)
-- Library Quizzes tabs (responsive)
 - Notes markdown
-- Post page (every IDs & large screens)
-- Post page (every IDs & responsive)
-- Settings page (large screens)
-- Settings page (responsive)
-- Settings state management (persistent & must be on hooks)
-- Settings / Themes state management (persistent & stored in localStorage)
+- Flashcards page (large screens)
+- Flashcards page (responsive)
+- Flashcard page (dynamic ID & from generated prompt/summary notes) (large screens)
+- Flashcard page (dynamic ID & from generated prompt/summary notes) (responsive)
+- Quizzes page (large screens)
+- Quizzes page (responsive)
+- Quiz page (dynamic ID & from generated prompt/summary notes) (large screens)
+- Quiz page (dynamic ID & from generated prompt/summary notes) (responsive)
 
-# Completed Screens
+## Completed Screens
 
 - Landing page (large screens)
 - Landing page (responsive)
@@ -31,8 +31,19 @@
 - Summarize notes page (tabs)
 - Pomodoro timer page (large screens)
 - Pomodoro timer page (responsive)
+- Settings page (large screens)
+- Settings page (responsive)
+- Settings state management (persistent & must be on hooks)
+- Post page (every IDs & large screens)
+- Post page (every IDs & responsive)
+- Library all tabs (responsive)
+- Library Flashcards tabs (large screens)
+- Library Quizzes tabs (large screens)
+- Library Notes tabs (responsive)
+- Library Flashcards tabs (responsive)
+- Library Quizzes tabs (responsive)
 
-# Completed components
+## Completed components
 
 - Terms of use & Privacy policy modal
 - Theme controller (for light/dark mode switching but still needs fixing)

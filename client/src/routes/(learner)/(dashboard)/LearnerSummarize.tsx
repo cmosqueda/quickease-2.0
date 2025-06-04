@@ -45,7 +45,12 @@ export default function LearnerSummarizePage() {
               DOCX, DOC, PDF, ODF (max 5MB)
             </p>
           </div>
-          <input id="dropzone-file" type="file" className="hidden" />
+          <input
+            id="dropzone-file"
+            type="file"
+            className="hidden"
+            accept="application/pdf,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          />
         </label>
       </div>
       <button className="btn btn-soft btn-success w-fit self-end">
@@ -83,7 +88,12 @@ export default function LearnerSummarizePage() {
               PNG, JPG, JPEG (max 5MB)
             </p>
           </div>
-          <input id="dropzone-file" type="file" className="hidden" />
+          <input
+            id="dropzone-file"
+            type="file"
+            className="hidden"
+            accept="image/png, image/jpg, image/jpeg"
+          />
         </label>
       </div>
       <button className="btn btn-soft btn-success w-fit self-end">

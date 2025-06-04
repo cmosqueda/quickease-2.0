@@ -2,6 +2,7 @@ import clsx from "clsx";
 import useTheme from "@/hooks/useTheme";
 
 import { useState } from "react";
+import { Eye, Lock, Mail, UserCircle } from "lucide-react";
 
 const AppearanceSettings = () => {
   const { setTheme, theme } = useTheme();
@@ -153,9 +154,44 @@ const AppearanceSettings = () => {
   );
 };
 
+const AccountSettings = () => {
+  return (
+    <div className="flex flex-col gap-2">
+      <h1 className="text-xl">General</h1>
+      <div className="divider my-1" />
+      <div className="flex flex-row gap-4 p-8 rounded-3xl hover:bg-neutral bg-neutral/40 cursor-pointer delay-0 duration-300 transition-all">
+        <Mail />
+        <p>Change email address</p>
+      </div>
+      <div className="flex flex-row gap-4 p-8 rounded-3xl hover:bg-neutral bg-neutral/40 cursor-pointer delay-0 duration-300 transition-all">
+        <UserCircle />
+        <p>Change name</p>
+      </div>
+      <div className="flex flex-row gap-4 p-8 rounded-3xl hover:bg-neutral bg-neutral/40 cursor-pointer delay-0 duration-300 transition-all">
+        <Lock />
+        <p>Request to change password</p>
+      </div>
+      <h1 className="text-xl mt-4">Privacy</h1>
+      <div className="divider my-1" />
+      <div className="flex flex-row gap-4 p-8 rounded-3xl bg-neutral/40 cursor-pointer delay-0 duration-300 transition-all items-center justify-between">
+        <div className="flex flex-row gap-4 items-center">
+          <Eye />
+          <div>
+            <h1>Public profile</h1>
+            <p className="text-sm text-base-content/30">
+              Allow others to see your profile.
+            </p>
+          </div>
+        </div>
+        <input type="checkbox" defaultChecked className="toggle" />
+      </div>
+    </div>
+  );
+};
+
 export default function LearnerSettingsPage() {
   const [tabIndex, setTabIndex] = useState(0);
-  const tabs = [<AppearanceSettings />];
+  const tabs = [<AppearanceSettings />, <AccountSettings />];
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
@@ -178,13 +214,6 @@ export default function LearnerSettingsPage() {
           role="tab"
           className={clsx("tab", tabIndex == 1 ? "tab-active" : null)}
           onClick={() => setTabIndex(1)}
-        >
-          Security
-        </a>
-        <a
-          role="tab"
-          className={clsx("tab", tabIndex == 2 ? "tab-active" : null)}
-          onClick={() => setTabIndex(2)}
         >
           Account
         </a>

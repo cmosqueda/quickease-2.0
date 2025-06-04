@@ -14,19 +14,24 @@ import LearnerNotePage from "./routes/(learner)/(note)/LearnerNote";
 import LearnerSummarizePage from "./routes/(learner)/(dashboard)/LearnerSummarize";
 import LearnerProfilePage from "./routes/(learner)/(profile)/LearnerProfile";
 import LearnerSettingsPage from "./routes/(learner)/(settings)/LearnerSettings";
-import LearnerTimerPage from "./routes/(learner)/(pomodoro)/LearnerTimer";
+import LearnerTimerPage from "./routes/(learner)/(dashboard)/LearnerTimer";
 import LearnerPostPage from "./routes/(learner)/(post)/LearnerPost";
 
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
 
 import "../global.css";
+import LearnerFlashcards from "./routes/(learner)/(dashboard)/LearnerFlashcards";
+import LearnerFlashcard from "./routes/(learner)/(flashcard)/LearnerFlashcard";
+import LearnerQuizzes from "./routes/(learner)/(dashboard)/LearnerQuizzes";
+import LearnerQuiz from "./routes/(learner)/(quiz)/LearnerQuiz";
 
 const router = createBrowserRouter([
   {
     path: "/",
     Component: LandingPage,
   },
+  // Auth
   {
     path: "auth",
     Component: AuthLayout,
@@ -41,6 +46,9 @@ const router = createBrowserRouter([
       },
     ],
   },
+  // Auth
+
+  // Learner
   {
     path: "learner",
     Component: LearnerLayout,
@@ -72,6 +80,28 @@ const router = createBrowserRouter([
         path: "post/:id",
       },
       {
+        path: "flashcards",
+        children: [
+          {
+            Component: LearnerFlashcards,
+            loader: async () => {},
+            index: true,
+          },
+          {
+            Component: LearnerFlashcard,
+            loader: async () => {},
+            path: ":id",
+          },
+        ],
+      },
+      {
+        path: "quizzes",
+        children: [
+          { Component: LearnerQuizzes, index: true, loader: async () => {} },
+          { Component: LearnerQuiz, path: ":id", loader: async () => {} },
+        ],
+      },
+      {
         Component: LearnerSettingsPage,
         path: "settings",
       },
@@ -86,6 +116,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+  // Learner
 ]);
 
 createRoot(document.getElementById("root")!).render(
