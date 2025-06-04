@@ -1,4 +1,5 @@
 import { UserCircle } from "lucide-react";
+import { NavLink } from "react-router";
 
 export default function ProfileDropdown() {
   return (
@@ -11,10 +12,10 @@ export default function ProfileDropdown() {
       </summary>
       <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 my-2 shadow-sm border border-base-300">
         <li>
-          <a>USERNAME</a>
+          <NavLink to="/learner/profile">USERNAME</NavLink>
         </li>
         <li>
-          <a>Settings</a>
+          <NavLink to="/learner/settings">Settings</NavLink>
         </li>
       </ul>
     </details>

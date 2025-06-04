@@ -31,9 +31,9 @@ export default function Sidebar({ tab }: { tab: string }) {
       link: "/learner/library",
     },
     {
-      title: "Summary Notes",
+      title: "Summarize Notes",
       icon: <NotebookTabs />,
-      link: "/learner/notes",
+      link: "/learner/summarize",
     },
     {
       title: "Flashcards",
@@ -60,13 +60,13 @@ export default function Sidebar({ tab }: { tab: string }) {
     <div
       className={clsx(
         "w-full p-3",
-        "relative bg-base-100 border-r border-base-200 transition-all delay-0 duration-300 ease-in-out lg:px-4 lg:py-8",
+        "relative bg-base-100 border-r border-base-200 transition-all delay-0 duration-300 ease-in-out lg:px-4 lg:py-8 ",
         isOpen ? "lg:w-[18rem] " : "lg:w-[8rem]"
       )}
     >
       {/* desktop sidebar heading */}
       {isOpen ? (
-        <div className="hidden lg:flex flex-row gap-4 items-center">
+        <div className="hidden lg:flex flex-row gap-4 items-center justify-center">
           <img
             src="/assets/images/icon.png"
             className="w-[52px] h-[52px] aspect-square"

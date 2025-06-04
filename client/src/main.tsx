@@ -8,9 +8,11 @@ import AuthRegisterPage from "./routes/(auth)/AuthRegister";
 
 // learner pages
 import LearnerForumPage from "./routes/(learner)/(dashboard)/LearnerForum";
-import LearnerLayout from "./routes/(learner)/(dashboard)/LearnerLayout";
+import LearnerLayout from "./routes/(learner)/LearnerLayout";
 import LearnerLibraryPage from "./routes/(learner)/(dashboard)/LearnerLibrary";
 import LearnerNotePage from "./routes/(learner)/(note)/LearnerNote";
+import LearnerSummarizePage from "./routes/(learner)/(dashboard)/LearnerSummarize";
+import LearnerProfilePage from "./routes/(learner)/(profile)/LearnerProfile";
 
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
@@ -47,6 +49,14 @@ const router = createBrowserRouter([
       {
         Component: LearnerLibraryPage,
         path: "library",
+      },
+      {
+        Component: LearnerSummarizePage,
+        path: "summarize",
+      },
+      {
+        Component: LearnerProfilePage,
+        path: "profile",
       },
       {
         path: "note/:id",

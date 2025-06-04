@@ -14,7 +14,7 @@ export default function NoteCard({
     <NavLink
       to={link}
       className={clsx(
-        "flex flex-col justify-between w-[24rem] h-[16rem] p-4 rounded-3xl bg-base-100 ",
+        "flex flex-col justify-between w-[24rem] min-h-[16rem] p-4 rounded-3xl bg-base-100 ",
         "transition-all delay-0 duration-300 hover:shadow cursor-pointer"
       )}
     >

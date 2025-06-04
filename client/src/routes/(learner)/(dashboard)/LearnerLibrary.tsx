@@ -1,43 +1,15 @@
-import NoteCard from "@/components/(learner)/NoteCard";
+import FlashcardTab from "@/components/(learner)/FlashcardTab";
+import NotesTab from "@/components/(learner)/NotesTab";
 import NotificationsDropdown from "@/components/(learner)/NotificationsDropdown";
 import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
 import clsx from "clsx";
 
-import { Search } from "lucide-react";
 import { useState } from "react";
 
 export default function LearnerLibraryPage() {
   const [tabIndex, setTabIndex] = useState(0);
 
-  const tabs = [
-    <>
-      <div className="flex flex-col gap-4">
-        <label className="input w-full lg:w-fit">
-          <Search size={24} />
-          <input type="search" className="lg:w-md" placeholder="Search" />
-        </label>
-      </div>
-      <div className="flex flex-row gap-4 flex-wrap">
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-      </div>
-    </>,
-  ];
+  const tabs = [<NotesTab notes={[]} />, <FlashcardTab flashcards={[]} />]; // 0 - notes | 1 - flashcard | 2 - quiz
 
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto min-h-screen">

@@ -1,5 +1,7 @@
 import Sidebar from "@/components/(learner)/Sidebar";
+import TimerPopup from "@/components/(learner)/TimerPopup";
 import useTheme from "@/hooks/useTheme";
+import { Clock } from "lucide-react";
 
 import { useEffect } from "react";
 import { Outlet, useLoaderData, useLocation } from "react-router";
@@ -21,6 +23,7 @@ export default function LearnerLayout() {
         <Sidebar tab={pathname} />
         <Outlet />
       </main>
+      <TimerPopup />
     </>
   );
 }

@@ -8,6 +8,9 @@
 - Library Flashcards tabs (responsive)
 - Library Quizzes tabs (responsive)
 - Notes markdown
+- Post page (every IDs & large screens)
+- Post page (every IDs & responsive)
+
 
 # Completed Screens
 
@@ -23,10 +26,16 @@
 # Completed components
 
 - Terms of use & Privacy policy modal
+- Theme controller (for light/dark mode switching but still needs fixing)
 - Forum post card
 - Notifications dropdown
 - Profile dropdown
 - Sidebar (large screens)
 - Sidebar (mobile screens)
-- Theme controller (for light/dark mode switching but still needs fixing)
 - Notes page (responsive)
+- Summarize notes page (large screens)
+- Summarize notes page (responsive)
+- Summarize notes page (tabs)
+- Timer state management (global & persists, not sure if e-store paba nis database)
+- Timer options in the popup component (will still refactor this or add features)
+- Timer popup
