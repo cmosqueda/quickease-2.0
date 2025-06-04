@@ -2,7 +2,11 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
-  themes: emerald --default, dim;
+  themes: emerald --default, dim, forest, black, coffee, night, sunset, abyss,
+    light, dark, cupcake, bumblebee, corporate, synthwave, retro, cyberpunk,
+    valentine, halloween, garden, aqua, lofi, pastel, fantasy, wireframe, luxury,
+    dracula, cmyk, autumn, business, acid, lemonade, winter, nord, caramellattee,
+    silk;
   logs: false;
 }
 

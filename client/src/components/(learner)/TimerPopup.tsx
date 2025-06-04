@@ -25,6 +25,7 @@ export default function TimerPopup() {
     startStudy,
     startShortBreak,
     startLongBreak,
+    isPopupEnabled,
   } = useTimer();
   const [isAlwaysOnTop, setAlwaysOnTop] = useState(false);
 
@@ -44,8 +45,8 @@ export default function TimerPopup() {
   return (
     <div
       className={clsx(
-        "lg:block hidden border border-base-300 rounded-3xl",
         isAlwaysOnTop ? "dropdown-open" : null,
+        "lg:block hidden border border-base-300 rounded-3xl",
         "dropdown dropdown-top dropdown-end lg:fixed lg:right-12 lg:bottom-12"
       )}
     >
@@ -86,7 +87,7 @@ export default function TimerPopup() {
           <div className="flex gap-4">
             <button
               onClick={isRunning ? pause : start}
-              className="btn btn-primary btn-sm flex items-center gap-2"
+              className="btn btn-primary btn-soft btn-sm flex items-center gap-2"
             >
               {isRunning ? (
                 <>
@@ -103,7 +104,7 @@ export default function TimerPopup() {
 
             <button
               onClick={reset}
-              className="btn btn-secondary btn-sm flex items-center gap-2"
+              className="btn btn-secondary btn-soft btn-sm flex items-center gap-2"
             >
               <RotateCcw size={18} />
               Reset

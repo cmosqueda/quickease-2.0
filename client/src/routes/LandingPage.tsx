@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { NavLink } from "react-router";
 
 export default function LandingPage() {
-  const { setTheme, theme, getTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
 
   const cardContents = [
     {
@@ -36,10 +36,6 @@ export default function LandingPage() {
       description: "Challenge your knowledge with tailored questions.",
     },
   ];
-
-  useEffect(() => {
-    getTheme();
-  }, []);
 
   return (
     <>

@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -8,11 +9,13 @@ type TimerSettings = {
   study: number;
   shortBreak: number;
   longBreak: number;
+  isPopupEnabled: boolean;
 };
 
 type TimerStore = {
   time: number;
   isRunning: boolean;
+  isPopupEnabled: boolean;
   mode: Mode;
   settings: TimerSettings;
   start: () => void;
@@ -23,6 +26,8 @@ type TimerStore = {
   startShortBreak: () => void;
   startLongBreak: () => void;
   setDurations: (newSettings: TimerSettings) => void;
+  togglePopup: () => void;
+  setSettings: (study: number, short_break: number) => void;
 };
 
 const getInitialSettings = (): TimerSettings => {
@@ -38,6 +43,7 @@ const getInitialSettings = (): TimerSettings => {
     study: 25 * 60,
     shortBreak: 5 * 60,
     longBreak: 15 * 60,
+    isPopupEnabled: true,
   };
 };
 
@@ -47,6 +53,7 @@ const useTimer = create<TimerStore>()(
       settings: getInitialSettings(),
       time: getInitialSettings().study,
       isRunning: false,
+      isPopupEnabled: getInitialSettings().isPopupEnabled,
       mode: "study",
       start: () => {
         set((state) => {
@@ -133,6 +140,24 @@ const useTimer = create<TimerStore>()(
                 : newSettings.longBreak;
           }
         });
+      },
+      togglePopup: () => {
+        set((state) => {
+          state.isPopupEnabled = !get().isPopupEnabled;
+        });
+      },
+      setSettings: async (study, short_break) => {
+        set((state) => {
+
+          state.settings = {
+            study: study * 60,
+            shortBreak: short_break * 60,
+            longBreak: 15 * 60,
+            isPopupEnabled: get().isPopupEnabled,
+          };
+        });
+
+        toast.success("Settings saved!");
       },
     })),
     {

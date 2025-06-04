@@ -18,6 +18,8 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
 
 import "../global.css";
+import LearnerSettingsPage from "./routes/(learner)/(settings)/LearnerSettings";
+import LearnerTimerPage from "./routes/(learner)/(pomodoro)/LearnerTimer";
 
 const router = createBrowserRouter([
   {
@@ -57,6 +59,18 @@ const router = createBrowserRouter([
       {
         Component: LearnerProfilePage,
         path: "profile",
+      },
+      {
+        Component: LearnerProfilePage,
+        path: "profile/:id",
+      },
+      {
+        Component: LearnerSettingsPage,
+        path: "settings",
+      },
+      {
+        Component: LearnerTimerPage,
+        path: "timer",
       },
       {
         path: "note/:id",

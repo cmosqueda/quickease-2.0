@@ -15,7 +15,7 @@ export default function AuthRegisterPage() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
-    <main className="lg:grid lg:grid-cols-2 flex flex-col gap-8">
+    <main className="lg:grid lg:grid-cols-2 flex flex-col gap-8 bg-base">
       <img
         className="w-full h-full lg:block hidden"
         style={{ animation: "floatAnimation 4s ease-in-out infinite" }}
@@ -90,7 +90,7 @@ export default function AuthRegisterPage() {
           />
           I accept the{" "}
           <button
-            className="text-blue-500 cursor-pointer"
+            className="text--500 cursor-pointer"
             onClick={() =>
               document.getElementById("terms-of-use-modal").showModal()
             }
@@ -103,7 +103,7 @@ export default function AuthRegisterPage() {
         </button>
         <p>
           Already have an account?{" "}
-          <NavLink className={"text-blue-500"} to="/auth/login" viewTransition>
+          <NavLink className={"text-accent"} to="/auth/login" viewTransition>
             Sign in
           </NavLink>
         </p>

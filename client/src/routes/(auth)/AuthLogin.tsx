@@ -4,13 +4,8 @@ import TermsAndPrivacyPolicyModal from "../../components/TermsAndPrivacyPolicyMo
 import useTheme from "@/hooks/useTheme";
 
 export default function AuthLoginPage() {
-  const { getTheme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  useLayoutEffect(() => {
-    getTheme();
-  }, [getTheme]);
 
   return (
     <main className="lg:grid lg:grid-cols-[1fr_1fr] flex flex-col items-center gap-8 min-h-screen">
@@ -62,13 +57,13 @@ export default function AuthLoginPage() {
           <NavLink
             to="/auth/register"
             viewTransition
-            className="text-blue-500 mx-1"
+            className="text-accent mx-1"
           >
             Register now
           </NavLink>
         </p>
         <button
-          className="transition-all delay-0 duration-300 hover:text-blue-500 fixed bottom-8 cursor-pointer"
+          className="transition-all delay-0 duration-300 hover:text-accent fixed bottom-8 cursor-pointer"
           onClick={() =>
             document.getElementById("terms-of-use-modal").showModal()
           }

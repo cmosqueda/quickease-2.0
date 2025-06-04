@@ -10,7 +10,10 @@
 - Notes markdown
 - Post page (every IDs & large screens)
 - Post page (every IDs & responsive)
-
+- Settings page (large screens)
+- Settings page (responsive)
+- Settings state management (persistent & must be on hooks)
+- Settings / Themes state management (persistent & stored in localStorage)
 
 # Completed Screens
 

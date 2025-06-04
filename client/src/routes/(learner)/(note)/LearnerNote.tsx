@@ -24,14 +24,14 @@ export default function LearnerNotePage() {
           onClick={() => navigate("/learner/library")}
           className="cursor-pointer lg:ml-6"
         />
-        <div className="flex flex-row gap-4 w-full">
-          <button className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1">
+        <div className="flex flex-row gap-4 w-full lg:w-fit">
+          <button className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1 lg:flex-initial">
             <Save />
             <p>Save changes</p>
           </button>
           <button
             onClick={() => navigate("/learner/library")}
-            className="btn btn-ghost btn-neutral flex flex-row gap-4 items-center flex-1"
+            className="btn btn-ghost btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
           >
             <X />
             <p>Cancel</p>

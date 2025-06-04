@@ -131,7 +131,7 @@ export default function Sidebar({ tab }: { tab: string }) {
                   className={clsx(
                     "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
                     currentTab == link.link
-                      ? "bg-blue-500 text-white"
+                      ? "bg-neutral text-white"
                       : "hover:bg-base-200",
                     isOpen ? "justify-start" : "justify-center"
                   )}
@@ -153,7 +153,7 @@ export default function Sidebar({ tab }: { tab: string }) {
                   className={clsx(
                     "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
                     currentTab == link.link
-                      ? "bg-blue-500 text-white"
+                      ? "bg-neutral text-white"
                       : "hover:bg-base-200",
                     isOpen ? "justify-start" : "justify-center"
                   )}
@@ -178,7 +178,7 @@ export default function Sidebar({ tab }: { tab: string }) {
             className={clsx(
               "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
               currentTab == link.link
-                ? "bg-blue-500 text-white"
+                ? "bg-neutral text-white"
                 : "hover:bg-base-200",
               isOpen ? "justify-start" : "justify-center"
             )}
@@ -198,7 +198,7 @@ export default function Sidebar({ tab }: { tab: string }) {
             className={clsx(
               "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
               currentTab == link.link
-                ? "bg-blue-500 text-white"
+                ? "bg-neutral text-white"
                 : "hover:bg-base-200",
               isOpen ? "justify-start" : "justify-center"
             )}

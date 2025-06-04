@@ -1,6 +1,7 @@
 import Sidebar from "@/components/(learner)/Sidebar";
 import TimerPopup from "@/components/(learner)/TimerPopup";
 import useTheme from "@/hooks/useTheme";
+import useTimer from "@/hooks/useTimer";
 import { Clock } from "lucide-react";
 
 import { useEffect } from "react";
@@ -10,11 +11,7 @@ import { Toaster } from "sonner";
 export default function LearnerLayout() {
   const data = useLoaderData();
   const { pathname } = useLocation();
-  const { getTheme } = useTheme();
-
-  useEffect(() => {
-    getTheme();
-  }, [getTheme]);
+  const { isPopupEnabled } = useTimer();
 
   return (
     <>
@@ -23,7 +20,7 @@ export default function LearnerLayout() {
         <Sidebar tab={pathname} />
         <Outlet />
       </main>
-      <TimerPopup />
+      {isPopupEnabled ? <TimerPopup /> : <></>}
     </>
   );
 }
