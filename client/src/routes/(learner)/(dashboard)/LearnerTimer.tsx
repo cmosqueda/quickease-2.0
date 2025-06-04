@@ -71,7 +71,8 @@ export default function LearnerTimerPage() {
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4">
+        <h1 className="text-xl lg:hidden block">Settings</h1>
         <div className="flex flex-col gap-2 p-4 bg-base-100 rounded-3xl">
           <div className="flex flex-row gap-2">
             <Clock />

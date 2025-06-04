@@ -23,21 +23,21 @@ export default function LearnerLibraryPage() {
       <div role="tablist" className="tabs tabs-border">
         <a
           role="tab"
-          className={clsx("tab", tabIndex == 0 ? "tab-active" : null)}
+          className={clsx("tab flex-1", tabIndex == 0 ? "tab-active" : null)}
           onClick={() => setTabIndex(0)}
         >
           Summary notes
         </a>
         <a
           role="tab"
-          className={clsx("tab", tabIndex == 1 ? "tab-active" : null)}
+          className={clsx("tab flex-1", tabIndex == 1 ? "tab-active" : null)}
           onClick={() => setTabIndex(1)}
         >
           Flashcards
         </a>
         <a
           role="tab"
-          className={clsx("tab", tabIndex == 2 ? "tab-active" : null)}
+          className={clsx("tab flex-1", tabIndex == 2 ? "tab-active" : null)}
           onClick={() => setTabIndex(2)}
         >
           Quizzes

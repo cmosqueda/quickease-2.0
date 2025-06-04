@@ -42,21 +42,30 @@ export default function LearnerQuizzes() {
       <div role="tablist" className="tabs tabs-border">
         <a
           role="tab"
-          className={clsx("tab flex-1", tabIndex == 0 ? "tab-active" : null)}
+          className={clsx(
+            "tab lg:flex-1 grow",
+            tabIndex == 0 ? "tab-active" : null
+          )}
           onClick={() => setTabIndex(0)}
         >
           From summary notes
         </a>
         <a
           role="tab"
-          className={clsx("tab flex-1", tabIndex == 1 ? "tab-active" : null)}
+          className={clsx(
+            "tab lg:flex-1 grow",
+            tabIndex == 1 ? "tab-active" : null
+          )}
           onClick={() => setTabIndex(1)}
         >
           Generate prompt
         </a>
         <a
           role="tab"
-          className={clsx("tab flex-1", tabIndex == 2 ? "tab-active" : null)}
+          className={clsx(
+            "tab lg:flex-1 grow",
+            tabIndex == 2 ? "tab-active" : null
+          )}
           onClick={() => setTabIndex(2)}
         >
           Saved quizzes

@@ -6,12 +6,8 @@ This is for the client-side TO-DOS.
 
 - METADATA / Document Tags
 - Notes markdown
-- Flashcards page (large screens)
-- Flashcards page (responsive)
 - Flashcard page (dynamic ID & from generated prompt/summary notes) (large screens)
 - Flashcard page (dynamic ID & from generated prompt/summary notes) (responsive)
-- Quizzes page (large screens)
-- Quizzes page (responsive)
 - Quiz page (dynamic ID & from generated prompt/summary notes) (large screens)
 - Quiz page (dynamic ID & from generated prompt/summary notes) (responsive)
 
@@ -42,6 +38,10 @@ This is for the client-side TO-DOS.
 - Library Notes tabs (responsive)
 - Library Flashcards tabs (responsive)
 - Library Quizzes tabs (responsive)
+- Flashcards page (large screens)
+- Flashcards page (responsive)
+- Quizzes page (large screens)
+- Quizzes page (responsive)
 
 ## Completed components
 
@@ -55,3 +55,4 @@ This is for the client-side TO-DOS.
 - Timer state management (global & persists, not sure if e-store paba nis database)
 - Timer options in the popup component (will still refactor this or add features)
 - Timer popup
+- Timer popup (responsive)

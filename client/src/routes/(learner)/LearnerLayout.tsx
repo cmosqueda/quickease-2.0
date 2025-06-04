@@ -1,10 +1,7 @@
 import Sidebar from "@/components/(learner)/Sidebar";
 import TimerPopup from "@/components/(learner)/TimerPopup";
-import useTheme from "@/hooks/useTheme";
 import useTimer from "@/hooks/useTimer";
-import { Clock } from "lucide-react";
 
-import { useEffect } from "react";
 import { Outlet, useLoaderData, useLocation } from "react-router";
 import { Toaster } from "sonner";
 

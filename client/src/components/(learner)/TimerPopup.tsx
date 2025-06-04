@@ -46,8 +46,9 @@ export default function TimerPopup() {
     <div
       className={clsx(
         isAlwaysOnTop ? "dropdown-open" : null,
-        "lg:block hidden border border-base-300 rounded-3xl",
-        "dropdown dropdown-top dropdown-end lg:fixed lg:right-12 lg:bottom-12"
+        "lg:block border border-base-300 rounded-3xl",
+        "dropdown dropdown-top dropdown-end lg:fixed lg:right-12 lg:bottom-12",
+        "fixed right-4 bottom-4"
       )}
     >
       <div
@@ -57,7 +58,7 @@ export default function TimerPopup() {
         className="flex flex-row gap-4 items-center bg-base-100 p-4 rounded-3xl cursor-pointer"
       >
         <Clock size={32} />
-        <h1>
+        <h1 className="lg:block hidden">
           {isRunning
             ? `${formatTime(time)} / ${modeLabelMap[mode]}`
             : "Start study session"}
@@ -65,18 +66,20 @@ export default function TimerPopup() {
       </div>
 
       <ul tabIndex={0} className="dropdown-content">
-        <fieldset className="fieldset bg-base-100 border-base-300 rounded-box w-[16rem] border p-4">
-          <legend className="fieldset-legend">Study options</legend>
-          <label className="label">
-            <input
-              type="checkbox"
-              checked={isAlwaysOnTop}
-              onChange={() => setAlwaysOnTop(!isAlwaysOnTop)}
-              className="checkbox"
-            />
-            Always on top
-          </label>
-        </fieldset>
+        {window.screen.width > 480 && (
+          <fieldset className="fieldset bg-base-100 border-base-300 rounded-box w-[16rem] border p-4">
+            <legend className="fieldset-legend">Study options</legend>
+            <label className="label">
+              <input
+                type="checkbox"
+                checked={isAlwaysOnTop}
+                onChange={() => setAlwaysOnTop(!isAlwaysOnTop)}
+                className="checkbox"
+              />
+              Always on top
+            </label>
+          </fieldset>
+        )}
         <div className="bg-base-100 rounded-box z-10 w-[24rem] border border-base-300 items-center my-4 p-4 shadow-sm flex flex-col gap-4">
           <h1 className="text-base-content/70 font-bold text-2xl capitalize">
             {modeLabelMap[mode]} Session

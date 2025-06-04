@@ -111,7 +111,7 @@ export default function LearnerSummarizePage() {
           <a
             role="tab"
             className={clsx(
-              "flex flex-row gap-4 tab",
+              "flex flex-row gap-4 tab grow",
               tabIndex == 0 ? "tab-active" : null
             )}
             onClick={() => setTabIndex(0)}
@@ -122,7 +122,7 @@ export default function LearnerSummarizePage() {
           <a
             role="tab"
             className={clsx(
-              "flex flex-row gap-4 tab",
+              "flex flex-row gap-4 tab grow",
               tabIndex == 1 ? "tab-active" : null
             )}
             onClick={() => setTabIndex(1)}
