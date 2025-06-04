@@ -13,13 +13,14 @@ import LearnerLibraryPage from "./routes/(learner)/(dashboard)/LearnerLibrary";
 import LearnerNotePage from "./routes/(learner)/(note)/LearnerNote";
 import LearnerSummarizePage from "./routes/(learner)/(dashboard)/LearnerSummarize";
 import LearnerProfilePage from "./routes/(learner)/(profile)/LearnerProfile";
+import LearnerSettingsPage from "./routes/(learner)/(settings)/LearnerSettings";
+import LearnerTimerPage from "./routes/(learner)/(pomodoro)/LearnerTimer";
+import LearnerPostPage from "./routes/(learner)/(post)/LearnerPost";
 
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
 
 import "../global.css";
-import LearnerSettingsPage from "./routes/(learner)/(settings)/LearnerSettings";
-import LearnerTimerPage from "./routes/(learner)/(pomodoro)/LearnerTimer";
 
 const router = createBrowserRouter([
   {
@@ -62,7 +63,13 @@ const router = createBrowserRouter([
       },
       {
         Component: LearnerProfilePage,
+        loader: async () => {},
         path: "profile/:id",
+      },
+      {
+        Component: LearnerPostPage,
+        loader: async () => {},
+        path: "post/:id",
       },
       {
         Component: LearnerSettingsPage,

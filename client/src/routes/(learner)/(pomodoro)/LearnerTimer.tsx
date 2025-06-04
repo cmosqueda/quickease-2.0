@@ -115,7 +115,7 @@ export default function LearnerTimerPage() {
       </div>
       <div className="flex flex-row gap-4 items-center justify-end">
         <button
-          className="flex flex-row gap-4 items-center btn btn-primary"
+          className="flex flex-row gap-4 items-center btn btn-primary lg:w-fit w-full"
           onClick={() => {
             setSettings(studyMinutes, shortBreakMinutes);
           }}

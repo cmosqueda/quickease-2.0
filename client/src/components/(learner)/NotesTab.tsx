@@ -12,7 +12,7 @@ export default function NotesTab({ notes }: { notes: any[] }) {
         </label>
       </div>
       <div className="flex flex-row gap-4 flex-wrap">
-        <NoteCard />
+        <NoteCard link="1"/>
         <NoteCard />
         <NoteCard />
         <NoteCard />

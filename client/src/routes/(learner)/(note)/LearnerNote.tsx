@@ -18,7 +18,7 @@ export default function LearnerNotePage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col w-full min-h-screen">
+    <div className="flex flex-col min-h-screen">
       <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 lg:items-center border-b border-base-300 p-4 bg-base-100">
         <ArrowLeft
           onClick={() => navigate("/learner/library")}

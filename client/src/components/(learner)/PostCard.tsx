@@ -4,6 +4,7 @@ import {
   ChevronDown,
   MessageCircle,
 } from "lucide-react";
+import { NavLink } from "react-router";
 
 export default function PostCard({ post, user, date, description, title }) {
   return (
@@ -28,7 +29,10 @@ export default function PostCard({ post, user, date, description, title }) {
           </ul>
         </details>
       </div>
-      <div className="cursor-pointer transition-all delay-0 duration-300 p-4 rounded-3xl bg-base-100 hover:bg-base-200 border border-base-200 hover:shadow">
+      <NavLink
+        to="/learner/post/1"
+        className="cursor-pointer transition-all delay-0 duration-300 p-4 rounded-3xl bg-base-100 hover:bg-base-200 border border-base-200 hover:shadow"
+      >
         <p className="">
           Lorem Ipsum is simply dummy text of the printing and typesetting
           industry. Lorem Ipsum has been the industry's standard dummy text ever
@@ -37,7 +41,7 @@ export default function PostCard({ post, user, date, description, title }) {
           five centuries, but also the leap into electronic typesetting,
           remaining essentially unchanged.
         </p>
-      </div>
+      </NavLink>
       <div className="flex flex-row gap-2">
         <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-200">
           <ChevronUp className="cursor-pointer delay-0 duration-300 transition-all hover:text-green-500" />

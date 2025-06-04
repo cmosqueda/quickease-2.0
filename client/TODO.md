@@ -25,6 +25,12 @@
 - Forum page (responsive)
 - Library Notes tabs (large screens)
 - Notes page (large screens)
+- Notes page (responsive)
+- Summarize notes page (large screens)
+- Summarize notes page (responsive)
+- Summarize notes page (tabs)
+- Pomodoro timer page (large screens)
+- Pomodoro timer page (responsive)
 
 # Completed components
 
@@ -35,10 +41,6 @@
 - Profile dropdown
 - Sidebar (large screens)
 - Sidebar (mobile screens)
-- Notes page (responsive)
-- Summarize notes page (large screens)
-- Summarize notes page (responsive)
-- Summarize notes page (tabs)
 - Timer state management (global & persists, not sure if e-store paba nis database)
 - Timer options in the popup component (will still refactor this or add features)
 - Timer popup
