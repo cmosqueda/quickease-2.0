@@ -16,15 +16,16 @@ import LearnerProfilePage from "./routes/(learner)/(profile)/LearnerProfile";
 import LearnerSettingsPage from "./routes/(learner)/(settings)/LearnerSettings";
 import LearnerTimerPage from "./routes/(learner)/(dashboard)/LearnerTimer";
 import LearnerPostPage from "./routes/(learner)/(post)/LearnerPost";
+import LearnerQuizzes from "./routes/(learner)/(dashboard)/LearnerQuizzes";
+import LearnerQuiz from "./routes/(learner)/(quiz)/LearnerQuiz";
+import LearnerCreateFlashcardPage from "./routes/(learner)/(flashcard)/LearnerCreateFlashcard";
+import LearnerFlashcardPage from "./routes/(learner)/(flashcard)/LearnerFlashcard";
+import LearnerFlashcardsPage from "./routes/(learner)/(dashboard)/LearnerFlashcards";
 
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
 
 import "../global.css";
-import LearnerFlashcards from "./routes/(learner)/(dashboard)/LearnerFlashcards";
-import LearnerFlashcard from "./routes/(learner)/(flashcard)/LearnerFlashcard";
-import LearnerQuizzes from "./routes/(learner)/(dashboard)/LearnerQuizzes";
-import LearnerQuiz from "./routes/(learner)/(quiz)/LearnerQuiz";
 
 const router = createBrowserRouter([
   {
@@ -83,14 +84,18 @@ const router = createBrowserRouter([
         path: "flashcards",
         children: [
           {
-            Component: LearnerFlashcards,
+            Component: LearnerFlashcardsPage,
             loader: async () => {},
             index: true,
           },
           {
-            Component: LearnerFlashcard,
+            Component: LearnerFlashcardPage,
             loader: async () => {},
             path: ":id",
+          },
+          {
+            Component: LearnerCreateFlashcardPage,
+            path: "create",
           },
         ],
       },

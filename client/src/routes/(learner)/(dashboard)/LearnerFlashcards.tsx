@@ -4,7 +4,7 @@ import { SendHorizonal } from "lucide-react";
 import { useState } from "react";
 import { useLoaderData } from "react-router";
 
-export default function LearnerFlashcards() {
+export default function LearnerFlashcardsPage() {
   const data = useLoaderData();
   const [tabIndex, setTabIndex] = useState(0);
 

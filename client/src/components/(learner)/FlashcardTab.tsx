@@ -1,3 +1,4 @@
+import { NavLink } from "react-router";
 import FlashcardCard from "./FlashcardCard";
 
 import { Plus, Search } from "lucide-react";
@@ -10,13 +11,13 @@ export default function FlashcardTab({ flashcards }: { flashcards: any[] }) {
           <Search size={24} />
           <input type="search" className="lg:w-md" placeholder="Search" />
         </label>
-        <button className="btn btn-soft btn-success">
+        <NavLink to='/learner/flashcards/create' className="btn btn-soft btn-success">
           <Plus />
           <h1>Manually create</h1>
-        </button>
+        </NavLink>
       </div>
       <div className="flex flex-row gap-4 flex-wrap">
-        <FlashcardCard />
+        <FlashcardCard link="1"/>
         <FlashcardCard />
         <FlashcardCard />
         <FlashcardCard />

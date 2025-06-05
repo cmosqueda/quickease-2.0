@@ -16,6 +16,20 @@
     sans-serif;
 }
 
+/* For Flippable Card Component */
+.perspective {
+  perspective: 1000px;
+}
+
+.transform-style {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+/* For Flippable Card Component */
+
 @keyframes floatAnimation {
   0% {
     transform: translateY(0);
