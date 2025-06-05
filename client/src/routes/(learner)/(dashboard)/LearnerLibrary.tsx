@@ -2,6 +2,7 @@ import FlashcardTab from "@/components/(learner)/FlashcardTab";
 import NotesTab from "@/components/(learner)/NotesTab";
 import NotificationsDropdown from "@/components/(learner)/NotificationsDropdown";
 import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
+import QuizTab from "@/components/(learner)/QuizTab";
 import clsx from "clsx";
 
 import { useState } from "react";
@@ -9,7 +10,11 @@ import { useState } from "react";
 export default function LearnerLibraryPage() {
   const [tabIndex, setTabIndex] = useState(0);
 
-  const tabs = [<NotesTab notes={[]} />, <FlashcardTab flashcards={[]} />]; // 0 - notes | 1 - flashcard | 2 - quiz
+  const tabs = [
+    <NotesTab notes={[]} />,
+    <FlashcardTab flashcards={[]} />,
+    <QuizTab quizzes={[]} />,
+  ]; // 0 - notes | 1 - flashcard | 2 - quiz
 
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto min-h-screen">

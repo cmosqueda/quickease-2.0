@@ -40,6 +40,8 @@ This is for the client-side TO-DOS.
 - Library Quizzes tabs (responsive)
 - Flashcards page (large screens)
 - Flashcards page (responsive)
+- Flashcards manually create page (large screens)
+- Flashcards manually create page (responsive)
 - Quizzes page (large screens)
 - Quizzes page (responsive)
 
