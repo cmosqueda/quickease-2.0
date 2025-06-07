@@ -5,7 +5,7 @@ This directory serves the client-side of our study named `QuickEase 2.0`, rewrit
 ## Libraries Used
 
 ```
-React, Vite, CLSX, daisyUI, tailwindCSS, sonner, tailwind-merge, zod, react-router
+  React, Vite, CLSX, daisyUI, tailwindCSS, sonner, tailwind-merge, zod, react-router
 ```
 
 ## Creating custom themes
@@ -44,7 +44,6 @@ To create and integrate a new custom theme:
    Please contact your main developer `(Jhon Lloyd Viernes)` and let him handle it instead to avoid any conflicts on configurations to ensure anything's working fine.
 
 ```
-
     Files to be avoided
     - @/vite.config.ts
     - @/tsconfig.json
@@ -53,23 +52,21 @@ To create and integrate a new custom theme:
     - @/global.css (If you're adding a custom theme, simply follow the steps above on Creating a custom theme section.)
     - @/index.html
     - @/eslint.config.js
-
 ```
 
 4. Please use Prettier or any other document-formatting extension to properly format the code.
    To ensure proper formatting on the client-side code, please install & use Prettier/ESLint plugin on VS Code.
 
 ```
+  Plugins/extensions to install & use
 
-Plugins/extensions to install & use
-
-- Prettier
-- ESLint
-- Trailing Spaces
-- Indent Rainbow
-- Color Highlight
-- Auto Rename Tag
-- Auto Close Tag
-- Tailwind CSS IntelliSense
-- Path IntelliSense
+  - Prettier
+  - ESLint
+  - Trailing Spaces
+  - Indent Rainbow
+  - Color Highlight
+  - Auto Rename Tag
+  - Auto Close Tag
+  - Tailwind CSS IntelliSense
+  - Path IntelliSense
 ```
