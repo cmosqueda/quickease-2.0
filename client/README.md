@@ -72,9 +72,4 @@ Plugins/extensions to install & use
 - Auto Close Tag
 - Tailwind CSS IntelliSense
 - Path IntelliSense
-
-```
-
-```
-
 ```
