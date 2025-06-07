@@ -10,6 +10,7 @@ This is for the client-side TO-DOS.
 - Flashcard page (dynamic ID & from generated prompt/summary notes) (responsive)
 - Quiz page (dynamic ID & from generated prompt/summary notes) (large screens)
 - Quiz page (dynamic ID & from generated prompt/summary notes) (responsive)
+- Quizzes manually create page (responsive)
 
 ## Completed Screens
 
@@ -44,6 +45,7 @@ This is for the client-side TO-DOS.
 - Flashcards manually create page (responsive)
 - Quizzes page (large screens)
 - Quizzes page (responsive)
+- Quizzes manually create page (large screens)
 
 ## Completed components
 
@@ -54,7 +56,11 @@ This is for the client-side TO-DOS.
 - Profile dropdown
 - Sidebar (large screens)
 - Sidebar (mobile screens)
+- Sidebar floating icons for quick access (large screens)
 - Timer state management (global & persists, not sure if e-store paba nis database)
 - Timer options in the popup component (will still refactor this or add features)
 - Timer popup
 - Timer popup (responsive)
+- Theme box (non-floating)
+- Theme box (floating)
+- Flippable card (for flashcard page)
