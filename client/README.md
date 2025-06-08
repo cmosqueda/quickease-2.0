@@ -44,14 +44,14 @@ To create and integrate a new custom theme:
    Please contact your main developer `(Jhon Lloyd Viernes)` and let him handle it instead to avoid any conflicts on configurations to ensure anything's working fine.
 
 ```
-    Files to be avoided
-    - @/vite.config.ts
-    - @/tsconfig.json
-    - @/tsconfig.app.json
-    - @/package.json
-    - @/global.css (If you're adding a custom theme, simply follow the steps above on Creating a custom theme section.)
-    - @/index.html
-    - @/eslint.config.js
+   Files to be avoided
+   - @/vite.config.ts
+   - @/tsconfig.json
+   - @/tsconfig.app.json
+   - @/package.json
+   - @/global.css (If you're adding a custom theme, simply follow the steps above on Creating a custom theme section.)
+   - @/index.html
+   - @/eslint.config.js
 ```
 
 4. Please use Prettier or any other document-formatting extension to properly format the code.

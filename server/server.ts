@@ -1,58 +1,20 @@
-import Fastify from 'fastify';
+import Fastify from "fastify";
+import { userRoutes } from "./modules/user/user.routes";
 
-import { fastifyEnv } from '@fastify/env'
-import { fastifyJwt } from '@fastify/jwt'
+const server = Fastify();
 
-const serverApp = Fastify({ logger: true, },);
+server.register(userRoutes, { prefix: 'api/users' })
 
-// configs
-
-/*
-@ Configuration for dotenv / loading .ENV files
-*/
-serverApp.register(fastifyEnv, {
-    confKey: 'config',
-    schema: {
-        type: 'object',
-        required: ['PORT'],
-        properties: {
-            PORT: {
-                type: 'string',
-                default: 3002
-            }
-        }
-    }
-})
-
-/*
-@ Configuration for JWT
-*/
-serverApp.register(fastifyJwt, {
-    secret: 'dok'
-})
-// configs
-
-// routes
-serverApp.get('/', async (request, reply) => {
-    return { status: 200, message: "Server running succesfully." }
-})
-serverApp.get('/auth/login', async (request, reply) => {
+async function main() {
     try {
-    } catch (err) {
-        return { status: 400, message: 'Error logging in.' }
+        await server.listen({ port: 3000, host: "0.0.0.0" });
+
+        console.log("Server listening at http://localhost:3000");
+
+    } catch (error) {
+        console.error(error);
+        process.exit(1);    // exit as failure
     }
-})
+}
 
-const start = async () => {
-    try {
-        await serverApp.listen({ port: 3002 });
-        console.log('Server listening on http://localhost:3002');
-    } catch (err) {
-        serverApp.log.error(err);
-        process.exit(1);
-    }
-};
-
-start();
-
-export default serverApp
+main();
