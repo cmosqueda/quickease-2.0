@@ -1,5 +1,6 @@
 import Fastify from "fastify";
 import { userRoutes } from "./modules/user/user.routes";
+import db_client from "./utils/client";
 
 const server = Fastify();
 
@@ -7,6 +8,7 @@ server.register(userRoutes, { prefix: 'api/users' })
 
 async function main() {
     try {
+        await db_client.$connect();
         await server.listen({ port: 3000, host: "0.0.0.0" });
 
         console.log("Server listening at http://localhost:3000");

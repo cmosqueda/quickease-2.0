@@ -1,18 +1,32 @@
-import { prismaClient } from "../../server";
+import db_client from "../../utils/client"
 
 export async function getUser(user_id: string) {
-    const user = await prismaClient.user.findOne({
-        where: { user_id },
+    const user = await db_client.user.findFirst({
+        where: { id: user_id }
     })
 
     return user
 }
 
-export async function changeUserName(first_name: string, last_name: string) {
-    return prismaClient.user.update({
+export async function changeUserName(first_name: string, last_name: string, user_id: string) {
+    return db_client.user.update({
         data: {
             first_name: first_name,
             last_name: last_name
+        },
+        where: {
+            id: user_id
+        }
+    })
+}
+
+export async function toggleProfileVisibility(visibility: boolean, user_id: string) {
+    return db_client.user.update({
+        data: {
+            is_public: visibility
+        },
+        where: {
+            id: user_id
         }
     })
 }
