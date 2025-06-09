@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { commentOnPost, createPost, deletePost, getComments, getPost, getUserPosts, replyOnComment } from "./post.service";
+import { commentOnPost, createPost, deletePost, getComments, getPost, getUserPosts, replyOnComment, voteOnComment } from "./post.service";
 
 export async function get_user_posts(request: FastifyRequest, reply: FastifyReply) {
     const { user_id } = request.body as { user_id: string }
@@ -68,6 +68,29 @@ export async function comment_on_post(request: FastifyRequest, reply: FastifyRep
     }
 }
 
+export async function vote_on_post(request: FastifyRequest, reply: FastifyReply) {
+    const { } = request.body as {}
+    try { } catch (err) {
+        reply.code(500).send({
+            message: "Error voting on post."
+        })
+    }
+}
+
+export async function vote_on_comment(request: FastifyRequest, reply: FastifyReply) {
+    const { vote_type, comment_id, user_id } = request.body as {
+        vote_type: number, comment_id: string, user_id: string
+    }
+    try {
+        const vote = voteOnComment(vote_type, comment_id, user_id)
+
+        reply.code(200).send(vote)
+    } catch (err) {
+        reply.code(500).send({
+            message: "Error voting on comment."
+        })
+    }
+}
 
 export async function reply_on_comment(request: FastifyRequest, reply: FastifyReply) {
     const { body, comment_id, user_id, post_id } = request.body as { body: string, comment_id: string, user_id: string, post_id: string }
