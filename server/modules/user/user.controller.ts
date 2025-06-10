@@ -1,59 +1,53 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { changeUserName, getUser, toggleProfileVisibility } from "./user.service";
 
-export async function get_user(request: FastifyRequest, reply: FastifyReply) {
-    const { user_id } = request.body as {
-        user_id: string
-    }
 
+export async function get_user(request: FastifyRequest, reply: FastifyReply) {
     try {
-        const user = await getUser(user_id);
-        reply.code(201).send(user)
+        const user = await getUser(request.user.id);
+
+        if (!user) {
+            return reply.code(404).send({ message: "User not found." });
+        }
+
+        reply.code(200).send(user);
     } catch (err) {
-        reply.code(500).send({
-            message: "Error getting user's details.",
-        })
+        reply.code(500).send({ message: "Error getting user's details." });
     }
 }
 
-export async function request_email_change(request: FastifyRequest, reply: FastifyReply) { }
-
-export async function request_change_password(request: FastifyRequest, reply: FastifyReply) { }
-
-export async function change_email(request: FastifyRequest, reply: FastifyReply) { }
-
-export async function edit_user_name(request: FastifyRequest, reply: FastifyReply) {
-    const { firstName, lastName, user_id } = request.body as {
+export async function edit_user_name(request: AuthenticatedRequest, reply: FastifyReply) {
+    const { firstName, lastName } = request.body as {
         firstName: string;
         lastName: string;
-        user_id: string;
-    }
+    };
 
     try {
-        const update = changeUserName(firstName, lastName, user_id)
+        const update = await changeUserName(firstName, lastName, request.user.id);
         reply.code(200).send({
             message: "Name updated successfully.",
-            update
-        })
+            user: update,
+        });
     } catch (err) {
-        reply.code(500).send({
-            message: "Error updating name."
-        })
+        reply.code(500).send({ message: "Error updating name." });
     }
 }
 
-export async function toggle_user_visibility(request: FastifyRequest, reply: FastifyReply) {
-    const { visibility, user_id } = request.body as {
-        visibility: boolean;
-        user_id: string;
-    }
+export async function toggle_user_visibility(request: AuthenticatedRequest, reply: FastifyReply) {
+    const { visibility } = request.body as { visibility: boolean };
 
     try {
-        const update = toggleProfileVisibility(visibility, user_id)
-        reply.send(200).send(update)
+        const update = await toggleProfileVisibility(visibility, request.user.id);
+        reply.code(200).send({
+            message: "Profile visibility updated.",
+            user: update,
+        });
     } catch (err) {
-        reply.send(500).send({
-            message: "Error updating profile visibility."
-        })
+        reply.code(500).send({ message: "Error updating profile visibility." });
     }
 }
+
+// Reserved for future implementation
+export async function request_email_change(request: AuthenticatedRequest, reply: FastifyReply) { }
+export async function request_change_password(request: AuthenticatedRequest, reply: FastifyReply) { }
+export async function change_email(request: AuthenticatedRequest, reply: FastifyReply) { }
