@@ -1,10 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { addTagOnPost, commentOnPost, createPost, deletePost, getComments, getPost, getUserPosts, replyOnComment, voteOnComment } from "./post.service";
+import { addTagOnPost, commentOnPost, createPost, deletePost, getComments, getPost, getUserPosts, replyOnComment, togglePostVisibility, voteOnComment, voteOnPost } from "./post.service";
 
 export async function get_user_posts(request: FastifyRequest, reply: FastifyReply) {
-    const { user_id } = request.body as { user_id: string }
     try {
-        const posts = getUserPosts(user_id)
+        const posts = getUserPosts(request.user.id)
 
         reply.code(200).send(posts)
     } catch (err) {
@@ -42,9 +41,9 @@ export async function get_comments(request: FastifyRequest, reply: FastifyReply)
 
 
 export async function create_post(request: FastifyRequest, reply: FastifyReply) {
-    const { body, user_id } = request.body as { body: string, user_id: string }
+    const { body, } = request.body as { body: string }
     try {
-        const post = createPost(body, user_id)
+        const post = createPost(body, request.user.id)
 
         reply.code(200).send(post)
     } catch (err) {
@@ -56,9 +55,9 @@ export async function create_post(request: FastifyRequest, reply: FastifyReply) 
 
 
 export async function comment_on_post(request: FastifyRequest, reply: FastifyReply) {
-    const { body, post_id, user_id } = request.body as { body: string, post_id: string, user_id: string }
+    const { body, post_id, } = request.body as { body: string, post_id: string }
     try {
-        const comment = commentOnPost(body, post_id, user_id)
+        const comment = commentOnPost(body, post_id, request.user.id)
 
         reply.code(200).send(comment)
     } catch (err) {
@@ -69,18 +68,22 @@ export async function comment_on_post(request: FastifyRequest, reply: FastifyRep
 }
 
 export async function vote_on_post(request: FastifyRequest, reply: FastifyReply) {
-    const { } = request.body as {}
-    try { } catch (err) {
+    const { vote_type, post_id, } = request.body as { vote_type: number, post_id: string }
+    try {
+        const vote = await voteOnPost(vote_type, post_id, request.user.id)
+
+        reply.code(200).send(vote)
+    } catch (err) {
         reply.code(500).send({
-            message: "Error voting on post."
+            message: "Error voting on comment."
         })
     }
 }
 
 export async function reply_on_comment(request: FastifyRequest, reply: FastifyReply) {
-    const { body, comment_id, user_id, post_id } = request.body as { body: string, comment_id: string, user_id: string, post_id: string }
+    const { body, comment_id, post_id } = request.body as { body: string, comment_id: string, post_id: string }
     try {
-        const reply = replyOnComment(body, comment_id, user_id, post_id)
+        const reply = await replyOnComment(body, comment_id, request.user.id, post_id)
 
         return reply
     } catch (err) {
@@ -91,11 +94,11 @@ export async function reply_on_comment(request: FastifyRequest, reply: FastifyRe
 }
 
 export async function vote_on_comment(request: FastifyRequest, reply: FastifyReply) {
-    const { vote_type, comment_id, user_id } = request.body as {
-        vote_type: number, comment_id: string, user_id: string
+    const { vote_type, comment_id } = request.body as {
+        vote_type: number, comment_id: string,
     }
     try {
-        const vote = voteOnComment(vote_type, comment_id, user_id)
+        const vote = await voteOnComment(vote_type, comment_id, request.user.id)
 
         reply.code(200).send(vote)
     } catch (err) {
@@ -110,7 +113,7 @@ export async function add_tag_on_post(request: FastifyRequest, reply: FastifyRep
     }
 
     try {
-        const _tags = addTagOnPost(post_id, tags)
+        const _tags = await addTagOnPost(post_id, tags)
         reply.code(200).send(_tags)
     } catch (err) {
         reply.code(500).send({
@@ -122,12 +125,30 @@ export async function add_tag_on_post(request: FastifyRequest, reply: FastifyRep
 export async function delete_post(request: FastifyRequest, reply: FastifyReply) {
     const { post_id } = request.body as { post_id: string }
     try {
-        const deleted = deletePost(post_id)
+        await deletePost(post_id)
 
-        return deleted
+        reply.code(200).send({
+            message: "Deleted post."
+        })
     } catch (err) {
         reply.code(500).send({
-            message: "Error"
+            message: "Error deleting post."
+        })
+    }
+}
+
+export async function toggle_post_visibility(request: FastifyRequest, reply: FastifyReply) {
+    const { visibility, post_id } = request.body as { visibility: boolean; post_id: string }
+
+    try {
+        await togglePostVisibility(visibility, post_id)
+
+        reply.code(200).send({
+            message: "Updated post visibility."
+        })
+    } catch (err) {
+        reply.code(500).send({
+            message: "Error updating post visibility."
         })
     }
 }

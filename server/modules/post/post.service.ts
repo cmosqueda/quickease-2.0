@@ -119,3 +119,16 @@ export async function deletePost(post_id: string) {
 
     return { deleted: true }
 }
+
+export async function togglePostVisibility(visibility: boolean, post_id: string) {
+    await db_client.post.update({
+        data: {
+            is_public: visibility
+        },
+        where: {
+            id: post_id
+        }
+    })
+
+    return true
+}

@@ -162,7 +162,7 @@ model PostAttachment {
   updated_at    DateTime   @default(now())
 }
 
-model SharedQuizAttempt {
+model QuizAttempt {
   id           String    @id @default(uuid())
   quiz         Quiz      @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
   quiz_id      String
@@ -172,6 +172,7 @@ model SharedQuizAttempt {
   completed_at DateTime?
   time_taken   String? // store as ISO string or raw interval string
   answer_data  Json
+  is_public    Boolean   @default(false)
 }
 
 model Report {
