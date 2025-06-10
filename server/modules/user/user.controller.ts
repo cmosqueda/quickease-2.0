@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { changeUserName, getUser, toggleProfileVisibility } from "./user.service";
+import { z } from "zod";
 
 
 export async function get_user(request: FastifyRequest, reply: FastifyReply) {
@@ -16,11 +17,21 @@ export async function get_user(request: FastifyRequest, reply: FastifyReply) {
     }
 }
 
-export async function edit_user_name(request: AuthenticatedRequest, reply: FastifyReply) {
+export async function edit_user_name(request: FastifyRequest, reply: FastifyReply) {
     const { firstName, lastName } = request.body as {
         firstName: string;
         lastName: string;
     };
+
+    const schema = z.object({
+        firstName: z.string().min(6),
+        lastName: z.string().min(6)
+    })
+
+    const result = schema.safeParse(request.body)
+    if (!result.success) {
+        return reply.code(400).send({ message: 'Invalid input', errors: result.error.errors })
+    }
 
     try {
         const update = await changeUserName(firstName, lastName, request.user.id);
@@ -33,8 +44,18 @@ export async function edit_user_name(request: AuthenticatedRequest, reply: Fasti
     }
 }
 
-export async function toggle_user_visibility(request: AuthenticatedRequest, reply: FastifyReply) {
+export async function toggle_user_visibility(request: FastifyRequest, reply: FastifyReply) {
     const { visibility } = request.body as { visibility: boolean };
+
+    const schema = z.boolean()
+    const result = schema.safeParse(visibility)
+
+    if (!result.success) {
+        return reply.code(400).send({
+            message: "Invalid input",
+            errors: result.error.errors
+        })
+    }
 
     try {
         const update = await toggleProfileVisibility(visibility, request.user.id);
@@ -48,6 +69,6 @@ export async function toggle_user_visibility(request: AuthenticatedRequest, repl
 }
 
 // Reserved for future implementation
-export async function request_email_change(request: AuthenticatedRequest, reply: FastifyReply) { }
-export async function request_change_password(request: AuthenticatedRequest, reply: FastifyReply) { }
-export async function change_email(request: AuthenticatedRequest, reply: FastifyReply) { }
+export async function request_email_change(request: FastifyRequest, reply: FastifyReply) { }
+export async function request_change_password(request: FastifyRequest, reply: FastifyReply) { }
+export async function change_email(request: FastifyRequest, reply: FastifyReply) { }

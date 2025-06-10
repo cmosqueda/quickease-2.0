@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "./client/"
+  output   = "./client/"
 }
 
 datasource db {
@@ -92,6 +92,7 @@ model Post {
   post_body  String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+  is_public  Boolean  @default(true)
 
   tags        PostTag[]
   comments    Comment[]

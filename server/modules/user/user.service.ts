@@ -1,6 +1,9 @@
 import db_client from "../../utils/client"
 
+import { z } from 'zod'
+
 export async function getUser(user_id: string) {
+
     const user = await db_client.user.findUnique({
         where: { id: user_id }
     })
