@@ -20,13 +20,20 @@ import LearnerQuizzes from "./routes/(learner)/(dashboard)/LearnerQuizzes";
 import LearnerCreateFlashcardPage from "./routes/(learner)/(flashcard)/LearnerCreateFlashcard";
 import LearnerFlashcardPage from "./routes/(learner)/(flashcard)/LearnerFlashcard";
 import LearnerFlashcardsPage from "./routes/(learner)/(dashboard)/LearnerFlashcards";
+import LearnerQuizPage from "./routes/(learner)/(quiz)/LearnerQuiz";
+import LearnerCreateQuizPage from "./routes/(learner)/(quiz)/LearnerCreateQuiz";
+
+// admin pages
+import AdminLayout from "./routes/(admin)/AdminLayout";
+import AdminManageUsers from "./routes/(admin)/(dashboard)/AdminManageUsers";
+import AdminManageReports from "./routes/(admin)/(dashboard)/AdminManageReports";
+
+
 
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
 
 import "../global.css";
-import LearnerQuizPage from "./routes/(learner)/(quiz)/LearnerQuiz";
-import LearnerCreateQuizPage from "./routes/(learner)/(quiz)/LearnerCreateQuiz";
 
 const router = createBrowserRouter([
   {
@@ -131,6 +138,23 @@ const router = createBrowserRouter([
     ],
   },
   // Learner
+
+  // Admin
+  {
+    Component: AdminLayout,
+    path: "admin",
+    children: [
+      {
+        index: true,
+        Component: AdminManageUsers,
+      },
+      {
+        path: 'reports',
+        Component: AdminManageReports
+      }
+    ],
+  },
+  // Admin
 ]);
 
 createRoot(document.getElementById("root")!).render(

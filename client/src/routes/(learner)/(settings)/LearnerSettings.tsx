@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import useTheme from "@/hooks/useTheme";
-import ThemeBox from "@/components/(learner)/ThemeBox";
+import ThemeBox from "@/components/ThemeBox";
 
 import { useState } from "react";
 import { Eye, Lock, Mail, UserCircle } from "lucide-react";

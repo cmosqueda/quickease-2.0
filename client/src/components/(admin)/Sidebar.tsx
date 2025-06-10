@@ -1,16 +1,12 @@
 import clsx from "clsx";
 
 import {
-  BookUser,
+  BookOpen,
   ChevronLeft,
-  FileQuestion,
-  GalleryVertical,
   LogOut,
   Menu,
-  MessageCircle,
-  NotebookTabs,
   Settings,
-  Timer,
+  Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
@@ -23,34 +19,14 @@ export default function Sidebar({ tab }: { tab: string }) {
 
   const links = [
     {
-      title: "Forum",
-      icon: <MessageCircle />,
-      link: "/learner",
+      title: "Manage Users",
+      icon: <Users />,
+      link: "/admin",
     },
     {
-      title: "Library",
-      icon: <BookUser />,
-      link: "/learner/library",
-    },
-    {
-      title: "Summarize Notes",
-      icon: <NotebookTabs />,
-      link: "/learner/summarize",
-    },
-    {
-      title: "Flashcards",
-      icon: <GalleryVertical />,
-      link: "/learner/flashcards",
-    },
-    {
-      title: "Quizzes",
-      icon: <FileQuestion />,
-      link: "/learner/quizzes",
-    },
-    {
-      title: "Pomodoro",
-      icon: <Timer />,
-      link: "/learner/timer",
+      title: "Report Management",
+      icon: <BookOpen />,
+      link: "/admin/reports",
     },
   ];
 
@@ -145,28 +121,6 @@ export default function Sidebar({ tab }: { tab: string }) {
                 </NavLink>
               ))}
             </div>
-            <div className="divider">
-              <h1 className="">Quick Study Tools</h1>
-            </div>
-            <div className="flex flex-col gap-2">
-              {links.slice(2, 6).map((link) => (
-                <NavLink
-                  to={link.link}
-                  className={clsx(
-                    "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
-                    currentTab == link.link
-                      ? "bg-neutral text-white"
-                      : "hover:bg-base-200",
-                    isOpen ? "justify-start" : "justify-center"
-                  )}
-                >
-                  {link.icon}
-                  <h1 className={clsx(isOpen ? "block" : "hidden")}>
-                    {link.title}
-                  </h1>
-                </NavLink>
-              ))}
-            </div>
           </ul>
         </div>
       </div>
@@ -175,26 +129,6 @@ export default function Sidebar({ tab }: { tab: string }) {
       {/* desktop sidebar */}
       <div className="hidden relative lg:sticky lg:top-0 lg:flex flex-col gap-2 p-4">
         {links.slice(0, 2).map((link) => (
-          <NavLink
-            to={link.link}
-            className={clsx(
-              "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
-              currentTab == link.link
-                ? "bg-neutral text-white"
-                : "hover:bg-base-200",
-              isOpen ? "justify-start" : "justify-center"
-            )}
-          >
-            {link.icon}
-            <h1 className={clsx(isOpen ? "block" : "hidden")}>{link.title}</h1>
-          </NavLink>
-        ))}
-        <div className="divider">
-          <h1 className={clsx("text-gray-400", isOpen ? "block" : "hidden")}>
-            Quick Study Tools
-          </h1>
-        </div>
-        {links.slice(2, 6).map((link) => (
           <NavLink
             to={link.link}
             className={clsx(
@@ -232,7 +166,7 @@ export default function Sidebar({ tab }: { tab: string }) {
                 "p-2 rounded-full shrink-0 border border-base-300 bg-base-100 transition-all delay-0 duration-300 cursor-pointer hover:shadow",
                 isOpen ? "rotate-180" : "rotate-0"
               )}
-              onClick={() => navigate("/learner/settings")}
+              onClick={() => navigate("/admin/settings")}
             />
           </div>
           <div className="tooltip absolute -right-4 top-46" data-tip="Log-out">
