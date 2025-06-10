@@ -40,17 +40,34 @@ This directory serves the server-side of our project named QuickEase 2.0, rewrit
 
 2. Push the migration using the `npx prisma db push` command.
 
-3. Generate the client using the `npx prisma generate` command.
+3. Generate the prisma client using the `npx prisma generate` command.
 
-## Database Schema Model
+## Configuring local PostgreSQL database
+
+1. Create a `.env` file in the root directory.
+2. Create a new variable named `DATABASE_URL`.
+3. Input your PostgreSQL host and make sure to put it in double quote.
+
+```
+Example:
+DATABASE_URL="postgresql://postgres:dlord213@localhost:5432/postgres?schema=public"
+```
+
+4. Make sure your selected schema tables is empty, Prisma will automatically handle it.
+5. Push the latest migration changes using `npx prisma db push` command.
+6. Generate the prisma client using the `npx prisma generate` command.
+
+## Database Schema Model (June 10, 2025)
+
 Below is the schema model for each tables in Prisma (in case of losing schemas in Prisma)
+
 ```
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
-  output = "./client/"
+  output   = "./client/"
 }
 
 datasource db {
@@ -60,7 +77,6 @@ datasource db {
 
 model User {
   id           String   @id @default(uuid())
-  username     String   @unique
   password     String
   first_name   String
   last_name    String
@@ -79,10 +95,10 @@ model User {
   comments             Comment[]
   postVotes            PostVote[]
   commentVotes         CommentVote[]
-  sharedAttempts       SharedQuizAttempt[]
-  activityLogsReceived UserActivityLog[]   @relation("ReceivedLogs")
-  activityLogsSent     UserActivityLog[]   @relation("SentLogs")
-  forumReports         Report[]            @relation("ReportsByUser")
+  quizAttempts         QuizAttempt[]
+  activityLogsReceived UserActivityLog[] @relation("ReceivedLogs")
+  activityLogsSent     UserActivityLog[] @relation("SentLogs")
+  forumReports         Report[]          @relation("ReportsByUser")
 }
 
 model Flashcard {
@@ -122,7 +138,7 @@ model Quiz {
   updated_at   DateTime @default(now())
 
   attachments PostAttachment[]
-  attempts    SharedQuizAttempt[]
+  attempts    QuizAttempt[]
 }
 
 model Tag {
@@ -140,6 +156,7 @@ model Post {
   post_body  String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+  is_public  Boolean  @default(true)
 
   tags        PostTag[]
   comments    Comment[]
@@ -209,7 +226,7 @@ model PostAttachment {
   updated_at    DateTime   @default(now())
 }
 
-model SharedQuizAttempt {
+model QuizAttempt {
   id           String    @id @default(uuid())
   quiz         Quiz      @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
   quiz_id      String
@@ -219,6 +236,7 @@ model SharedQuizAttempt {
   completed_at DateTime?
   time_taken   String? // store as ISO string or raw interval string
   answer_data  Json
+  is_public    Boolean   @default(false)
 }
 
 model Report {
@@ -245,7 +263,7 @@ model UserActivityLog {
 }
 ```
 
-## Database Create Table SQL Query
+## Database Create Table SQL Query (June 8, 2025)
 
 Below is the query text for creating tables in PostgreSQL (in case of losing schemas in Prisma)
 
@@ -253,7 +271,7 @@ Below is the query text for creating tables in PostgreSQL (in case of losing sch
 CREATE TABLE users (
     id UUID PRIMARY KEY,
     username VARCHAR(30) NOT NULL UNIQUE,
-	password TEXT NOT NULL,
+ password TEXT NOT NULL,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
@@ -271,7 +289,7 @@ CREATE TABLE flashcards (
     title TEXT NOT NULL,
     description TEXT,
     flashcards JSONB NOT NULL,
-	is_public BOOLEAN,
+ is_public BOOLEAN,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -281,7 +299,7 @@ CREATE TABLE note (
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     notes_content TEXT NOT NULL,
-	is_public BOOLEAN,
+ is_public BOOLEAN,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -292,7 +310,7 @@ CREATE TABLE quizzes (
     quiz_content JSONB NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
-	is_public BOOLEAN,
+ is_public BOOLEAN,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -328,27 +346,27 @@ CREATE TABLE comments (
 );
 
 CREATE TABLE post_votes(
-	user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-	post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
-	vote_type INT NOT NULL CHECK (vote_type IN (1, -1)),
-	PRIMARY KEY (user_id, post_id)
+ user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+ vote_type INT NOT NULL CHECK (vote_type IN (1, -1)),
+ PRIMARY KEY (user_id, post_id)
 );
 
 CREATE TABLE comment_votes(
-	user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-	comment_id UUID NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
-	vote_type INT NOT NULL CHECK (vote_type IN (1, -1)),
-	PRIMARY KEY (user_id, comment_id)
+ user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ comment_id UUID NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
+ vote_type INT NOT NULL CHECK (vote_type IN (1, -1)),
+ PRIMARY KEY (user_id, comment_id)
 );
 
 CREATE TABLE post_attachments (
     id UUID PRIMARY KEY,
     post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
     resource_type VARCHAR(20) NOT NULL CHECK (resource_type IN ('notes', 'flashcards')),
-	flashcard_id UUID REFERENCES flashcards(id) ON DELETE CASCADE,
-	quizzes_id UUID REFERENCES quizzes(id) ON DELETE CASCADE,
+ flashcard_id UUID REFERENCES flashcards(id) ON DELETE CASCADE,
+ quizzes_id UUID REFERENCES quizzes(id) ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-	updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+ updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE shared_quiz_attempts (
