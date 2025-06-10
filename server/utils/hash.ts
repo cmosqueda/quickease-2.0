@@ -1,27 +1,25 @@
-import crypto from 'crypto';
+import bcrypt from 'bcrypt'
+import db_client from './client'
 
-export function hashPassword(password: string) {
-    const salt = crypto.randomBytes(16).toString('hex');
+const SALT_ROUNDS = 10
 
-    const hash = crypto
-        .pbkdf2Sync(password, salt, 1000, 64, "sha512")     // (password: crypto.BinaryLike, salt: crypto.BinaryLike, iterations: number, keylen: number, digest: string)
-        .toString('hex');
+export async function hashPassword(password: string) {
+    const hash = await bcrypt.hash(password, SALT_ROUNDS)
 
-    return { hash, salt };
+    return hash
 }
 
-export function verifyPassword({
-    candidatePassword,
-    salt,
-    hash
-}: {
-    candidatePassword: string;
-    salt: string;
-    hash: string;
-}) {
-    const candidateHash = crypto
-        .pbkdf2Sync(candidatePassword, salt, 1000, 64, "sha512")
-        .toString('hex');
+export async function verifyPassword(email: string, password: string) {
+    const user = await db_client.user.findUnique({
+        where: {
+            email: email
+        }
+    })
 
-    return candidateHash === hash;
+    const isMatch = user && (await bcrypt.compare(password, user.password))
+    if (!user || !isMatch) {
+        return false
+    }
+
+    return true
 }

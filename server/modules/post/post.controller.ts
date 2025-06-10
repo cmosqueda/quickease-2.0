@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { commentOnPost, createPost, deletePost, getComments, getPost, getUserPosts, replyOnComment, voteOnComment } from "./post.service";
+import { addTagOnPost, commentOnPost, createPost, deletePost, getComments, getPost, getUserPosts, replyOnComment, voteOnComment } from "./post.service";
 
 export async function get_user_posts(request: FastifyRequest, reply: FastifyReply) {
     const { user_id } = request.body as { user_id: string }
@@ -77,6 +77,19 @@ export async function vote_on_post(request: FastifyRequest, reply: FastifyReply)
     }
 }
 
+export async function reply_on_comment(request: FastifyRequest, reply: FastifyReply) {
+    const { body, comment_id, user_id, post_id } = request.body as { body: string, comment_id: string, user_id: string, post_id: string }
+    try {
+        const reply = replyOnComment(body, comment_id, user_id, post_id)
+
+        return reply
+    } catch (err) {
+        reply.code(500).send({
+            message: "Error replying on comment."
+        })
+    }
+}
+
 export async function vote_on_comment(request: FastifyRequest, reply: FastifyReply) {
     const { vote_type, comment_id, user_id } = request.body as {
         vote_type: number, comment_id: string, user_id: string
@@ -91,20 +104,20 @@ export async function vote_on_comment(request: FastifyRequest, reply: FastifyRep
         })
     }
 }
+export async function add_tag_on_post(request: FastifyRequest, reply: FastifyReply) {
+    const { tags, post_id } = request.body as {
+        tags: string[], post_id: string
+    }
 
-export async function reply_on_comment(request: FastifyRequest, reply: FastifyReply) {
-    const { body, comment_id, user_id, post_id } = request.body as { body: string, comment_id: string, user_id: string, post_id: string }
     try {
-        const reply = replyOnComment(body, comment_id, user_id, post_id)
-
-        return reply
+        const _tags = addTagOnPost(post_id, tags)
+        reply.code(200).send(_tags)
     } catch (err) {
         reply.code(500).send({
-            message: "Error"
+            message: "Error adding tags."
         })
     }
 }
-
 
 export async function delete_post(request: FastifyRequest, reply: FastifyReply) {
     const { post_id } = request.body as { post_id: string }

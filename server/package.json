@@ -11,9 +11,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
     "@fastify/jwt": "^9.1.0",
     "@fastify/postgres": "^6.0.2",
     "@prisma/client": "^6.9.0",
+    "bcrypt": "^6.0.0",
     "fastify": "^4.29.1",
     "fastify-zod": "^1.4.0",
     "pg": "^8.16.0",
@@ -21,6 +23,7 @@
     "zod-to-json-schema": "^3.24.5"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.15.30",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
