@@ -1,6 +1,6 @@
 import { Clock, Search } from "lucide-react";
 
-export default function AdminManageUsers() {
+export default function AdminManageUsersPage() {
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto min-h-screen">
       <h1 className="font-bold lg:text-4xl text-3xl">Manage users</h1>
@@ -34,7 +34,7 @@ export default function AdminManageUsers() {
       </div>
 
       <div className="grid lg:grid-cols-2 2xl:grid-cols-3 gap-4">
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 cursor-pointer">
+        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
           <div>
             <h1 className="font-bold text-xl">Name</h1>
             <div className="flex flex-row gap-2 items-center">
@@ -46,7 +46,7 @@ export default function AdminManageUsers() {
             <h1>Unverified</h1>
           </div>
         </div>
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 cursor-pointer">
+        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
           <div>
             <h1 className="font-bold text-xl">Name</h1>
             <div className="flex flex-row gap-2 items-center">
@@ -58,7 +58,7 @@ export default function AdminManageUsers() {
             <h1>Unverified</h1>
           </div>
         </div>
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 cursor-pointer">
+        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
           <div>
             <h1 className="font-bold text-xl">Name</h1>
             <div className="flex flex-row gap-2 items-center">
@@ -70,7 +70,7 @@ export default function AdminManageUsers() {
             <h1>Unverified</h1>
           </div>
         </div>
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 cursor-pointer">
+        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
           <div>
             <h1 className="font-bold text-xl">Name</h1>
             <div className="flex flex-row gap-2 items-center">
@@ -82,7 +82,7 @@ export default function AdminManageUsers() {
             <h1>Unverified</h1>
           </div>
         </div>
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 cursor-pointer">
+        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
           <div>
             <h1 className="font-bold text-xl">Name</h1>
             <div className="flex flex-row gap-2 items-center">
@@ -94,7 +94,7 @@ export default function AdminManageUsers() {
             <h1>Unverified</h1>
           </div>
         </div>
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 cursor-pointer">
+        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
           <div>
             <h1 className="font-bold text-xl">Name</h1>
             <div className="flex flex-row gap-2 items-center">

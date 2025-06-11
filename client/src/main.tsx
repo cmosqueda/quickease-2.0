@@ -25,10 +25,10 @@ import LearnerCreateQuizPage from "./routes/(learner)/(quiz)/LearnerCreateQuiz";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
-import AdminManageUsers from "./routes/(admin)/(dashboard)/AdminManageUsers";
-import AdminManageReports from "./routes/(admin)/(dashboard)/AdminManageReports";
-
-
+import AdminManageUserPage from "./routes/(admin)/(user)/AdminManageUser";
+import AdminManageUsersPage from "./routes/(admin)/(dashboard)/AdminManageUsers";
+import AdminManageReportsPage from "./routes/(admin)/(dashboard)/AdminManageReports";
+import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
 
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
@@ -146,12 +146,22 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        Component: AdminManageUsers,
+        Component: AdminManageUsersPage,
       },
       {
-        path: 'reports',
-        Component: AdminManageReports
-      }
+        path: "reports",
+        Component: AdminManageReportsPage,
+      },
+      {
+        path: "user/:userId",
+        Component: AdminManageUserPage,
+        loader: async () => {},
+      },
+      {
+        path: "report/:reportId",
+        Component: AdminManagePostPage,
+        loader: async () => {},
+      },
     ],
   },
   // Admin
