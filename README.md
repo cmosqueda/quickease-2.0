@@ -25,3 +25,18 @@ Open the source code directory in your preferred IDE and open a new terminal ins
 - TailwindCSS
 - Tanstack Query
 ```
+
+**Backend**
+
+```
+- Node.js
+- Fastify
+- Prisma
+- Zod
+- bcrypt (for hashing passwords)
+- pg (for PostgreSQL)
+- @google/genai (for AI)
+- @fastify/cookie (fastify plugin for cookies)
+- @fastify/jwt (fastify plugin for JWT)
+- @fastify/postgres (fastify plugin for PostgreSQL)
+```
