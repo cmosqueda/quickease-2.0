@@ -6,6 +6,9 @@ import { FastifyRequest, FastifyReply } from "fastify"
 import { userRoutes } from "./modules/user/user.routes"
 import { server } from "./server"
 import authRoutes from "./modules/auth/auth.routes"
+import flashcardRoutes from "./modules/flashcard/flashcard.route"
+import quizRoutes from "./modules/quiz/quiz.routes"
+import postRoutes from "./modules/post/post.routes"
 
 export default async function initializeFastifyConfig() {
 
@@ -77,6 +80,25 @@ export default async function initializeFastifyConfig() {
     /*
     - Registering routes for each modules
     */
-    await server.register(userRoutes, { prefix: 'api/users' })
-    await server.register(authRoutes, { prefix: 'api/auth' })
+    await server.register(userRoutes, { prefix: 'v1/api/users' })
+    await server.register(authRoutes, { prefix: 'v1/api/auth' })
+    await server.register(flashcardRoutes, { prefix: 'v1/api/flashcard' })
+    await server.register(quizRoutes, { prefix: 'v1/api/quiz' })
+    await server.register(postRoutes, { prefix: 'v1/api/post' })
+
+
+    /*
+    - API testing routes
+    */
+    server.get('/api/test', (req, res) => {
+        try {
+            res.code(200).send({
+                message: "API working."
+            })
+        } catch (err) {
+            res.code(500).send({
+                message: "API not working."
+            })
+        }
+    })
 }
