@@ -4,7 +4,13 @@ declare module 'fastify' {
   interface FastifyRequest {
     jwt: JWT
   }
-  export interface FastifyInstance {
+
+  interface FastifyInstance {
     authenticate: any
+    config: {
+      JWT_SECRET_KEY: string
+      COOKIE_SECRET_KEY: string
+      DATABASE_URL: string
+    }
   }
 }

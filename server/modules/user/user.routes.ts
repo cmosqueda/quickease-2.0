@@ -1,10 +1,20 @@
 import { FastifyInstance } from "fastify";
-import { get_user } from "./user.controller";
+import { edit_user_name, get_user, toggle_user_visibility } from "./user.controller";
 
 
 export async function userRoutes(fastify: FastifyInstance) {
-    // Route for getting user
-    fastify.get('/user/:user_id', { preHandler: [fastify.authenticate] }, get_user)
+    fastify.get('/', {
+        preHandler: [fastify.authenticate],
+        handler: get_user
+    });
 
-    // Route for changing user's name
+    fastify.put('edit-name', {
+        preHandler: [fastify.authenticate],
+        handler: edit_user_name
+    });
+
+    fastify.put('visibility', {
+        preHandler: [fastify.authenticate],
+        handler: toggle_user_visibility
+    });
 }
