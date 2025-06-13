@@ -57,7 +57,14 @@ DATABASE_URL="postgresql://postgres:dlord213@localhost:5432/postgres?schema=publ
 5. Push the latest migration changes using `npx prisma db push` command.
 6. Generate the prisma client using the `npx prisma generate` command.
 
-## Database Schema Model (June 10, 2025)
+## Environment Variables
+
+- `JWT_SECRET_KEY` is for the secret key used in JWT. (self-explanatory tbh lol)
+- `COOKIE_SECRET_KEY` is for the secret key used in cookies. (self-explanatory gyapon lol)
+- `DATABASE_URL` is for the database configuration mainly used in Prisma/PostgreSQL.
+- `GOOGLE_GEN_AI_API_KEY` is for `@google/gen-ai` API key used to generate AI-generated contents.
+
+## Database Schema Model (June 12, 2025)
 
 Below is the schema model for each tables in Prisma (in case of losing schemas in Prisma)
 
@@ -102,40 +109,43 @@ model User {
 }
 
 model Flashcard {
-  id          String   @id @default(uuid())
-  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id     String
-  title       String
-  description String?
-  flashcards  Json
-  is_public   Boolean?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
+  id              String   @id @default(uuid())
+  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id         String
+  title           String
+  description     String?
+  flashcards      Json
+  is_public       Boolean?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now())
+  is_ai_generated Boolean? @default(false)
 
   attachments PostAttachment[]
 }
 
 model Note {
-  id            String   @id @default(uuid())
-  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id       String
-  title         String
-  notes_content String
-  is_public     Boolean?
-  created_at    DateTime @default(now())
-  updated_at    DateTime @default(now())
+  id              String   @id @default(uuid())
+  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id         String
+  title           String
+  notes_content   String
+  is_public       Boolean?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now())
+  is_ai_generated Boolean? @default(false)
 }
 
 model Quiz {
-  id           String   @id @default(uuid())
-  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id      String
-  quiz_content Json
-  title        String
-  description  String?
-  is_public    Boolean?
-  created_at   DateTime @default(now())
-  updated_at   DateTime @default(now())
+  id              String   @id @default(uuid())
+  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id         String
+  quiz_content    Json
+  title           String
+  description     String?
+  is_public       Boolean?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now())
+  is_ai_generated Boolean? @default(false)
 
   attachments PostAttachment[]
   attempts    QuizAttempt[]
