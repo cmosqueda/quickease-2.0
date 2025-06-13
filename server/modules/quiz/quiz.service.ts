@@ -23,7 +23,7 @@ export async function createUserQuiz(title: string, description: string, quiz_co
     return quiz
 }
 
-export async function updateUserQuiz(title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number }, quiz_id: string) {
+export async function updateUserQuiz(title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number }[], quiz_id: string) {
     const quiz = await db_client.quiz.update({
         data: {
             title, description, quiz_content

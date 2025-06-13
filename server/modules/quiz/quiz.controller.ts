@@ -27,7 +27,7 @@ export async function create_user_quiz(request: FastifyRequest, reply: FastifyRe
 }
 
 export async function update_user_quiz(request: FastifyRequest, reply: FastifyReply) {
-    const { title, description, quiz_content, quiz_id } = request.body as { title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number }, quiz_id: string }
+    const { title, description, quiz_content, quiz_id } = request.body as { title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number }[], quiz_id: string }
     try {
         await updateUserQuiz(title, description, quiz_content, quiz_id)
 
