@@ -1,6 +1,7 @@
 import fastifyCookie from "@fastify/cookie"
 import fastifyEnv from "@fastify/env"
 import fastifyJwt from "@fastify/jwt"
+import fastifyMultipart from "@fastify/multipart"
 
 // routes modules
 import authRoutes from "./modules/auth/auth.routes"
@@ -9,7 +10,6 @@ import quizRoutes from "./modules/quiz/quiz.routes"
 import postRoutes from "./modules/post/post.routes"
 import aiRoutes from "./modules/ai/ai.routes"
 import userRoutes from "./modules/user/user.routes"
-
 
 import { FastifyRequest, FastifyReply } from "fastify"
 import { server } from "./server"
@@ -55,6 +55,20 @@ export default async function initializeFastifyConfig() {
     })
 
     /*
+    - Configuration for Multipart (handling files)
+    
+    Max MB size = 15MB
+    Max files length = 5
+
+    */
+    await server.register(fastifyMultipart, {
+        limits: {
+            fileSize: 15728640,
+            files: 5,
+        }
+    })
+
+    /*
     - Handler configuration for JWT
     */
     server.addHook('preHandler', (req, res, next) => {
@@ -63,7 +77,7 @@ export default async function initializeFastifyConfig() {
     })
 
     /*
-    - 'onRequest' hook that verifies JWT tokens for every route that requires JWT token 
+    - 'onRequest' hook that verifies JWT tokens for every route that requires JWT token
     The token/cookie is stored on a key named 'QUICKEASE_TOKEN'.
     */
     server.decorate('authenticate', async (request: FastifyRequest, reply: FastifyReply) => {
