@@ -439,3 +439,42 @@ CREATE TABLE user_activity_logs (
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 ```
+
+## Changes/suggestions made by Mosqueda
+
+1. In server/modules/auth/auth.routes.ts/authRoutes, added forward slash for each route:
+
+"login" => "/login"
+"register" => "/register"
+"logout" => "/logout"
+
+2. In server/modules/auth/auth.service.ts/loginUser, modified arguments at
+
+const isValid = await verifyPassword(password, user.password) to => verifyPassword(email, password)
+
+It should accept email for first argument and password for second argument
+
+3. In server/modules/user/user.routes.ts/userRoutes, added forward slash for each route:
+
+"edit-name" => "/edit-name"
+"visibility" => "/visibility"
+
+4. (Question) Kani sa quiz services ug controller dok => create_user_quiz function, pag mag create ug quizzes kay one object ra dawaton para sa quiz_content?
+
+diri na part:
+
+const { title, description, quiz_content } = request.body as {
+title: string;
+description: string;
+quiz_content: { answers: string[]; question: string; correct_answer_index: number };
+};
+
+(Update) ay akoa ra gi butngan [] sa every quiz_content argument sa services ug controller dok
+
+5. Sa ai.routes.ts, gi dugangan gyapun nako forward slash ang every routes.
+
+6. Sa mga controllers dok kay nabutngan nakog await statement sa uban functions para ma test sa postman.
+
+7. Sa ai content generation services, pwede maka suggest ani na functions dok?
+
+- generate summary notes from text input (or prompt)
