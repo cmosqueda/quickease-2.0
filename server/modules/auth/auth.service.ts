@@ -10,7 +10,7 @@ export async function loginUser(email: string, password: string) {
 
     if (!user) return false;
 
-    const isValid = await verifyPassword(password, user.password);
+    const isValid = await verifyPassword(email, password);
     if (!isValid) return false;
 
     return user

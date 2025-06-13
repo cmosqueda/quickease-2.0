@@ -14,7 +14,7 @@ export async function get_user_quizzes(request: FastifyRequest, reply: FastifyRe
 }
 
 export async function create_user_quiz(request: FastifyRequest, reply: FastifyReply) {
-    const { title, description, quiz_content } = request.body as { title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number } }
+    const { title, description, quiz_content } = request.body as { title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number }[] }
     try {
         const quiz = createUserQuiz(title, description, quiz_content, request.user.id)
 

@@ -101,6 +101,21 @@ export async function generateFlashcardsFromPrompt(prompt: string) {
     } catch (err) { return false }
 }
 
+export async function generateNotesFromPrompt(prompt: string) {
+    try {
+        const response = await _AI.models.generateContent({
+            model: 'gemini-2.0-flash',
+            contents: `
+                Generate a summary note from this prompt: "${prompt}"
+
+                Only output the string.
+                `.trim()
+        })s
+
+        return response.text
+    } catch (err) { return false }
+}
+
 // TO:DO
 export async function generateQuizFromPDF() { }
 export async function generateFlashcardsFromPDF() { }

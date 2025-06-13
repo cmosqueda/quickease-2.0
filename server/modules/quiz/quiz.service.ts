@@ -10,7 +10,7 @@ export async function getUserQuizzes(user_id: string) {
     return quizzes
 }
 
-export async function createUserQuiz(title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number }, user_id: string,) {
+export async function createUserQuiz(title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number }[], user_id: string,) {
     const quiz = await db_client.quiz.create({
         data: {
             title,

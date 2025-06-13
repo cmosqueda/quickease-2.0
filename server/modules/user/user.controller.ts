@@ -25,7 +25,7 @@ export async function edit_user_name(request: FastifyRequest, reply: FastifyRepl
 
     const schema = z.object({
         firstName: z.string().min(6),
-        lastName: z.string().min(6)
+        lastName: z.string().min(2)
     })
 
     const result = schema.safeParse(request.body)
