@@ -86,8 +86,16 @@ export default async function initializeFastifyConfig() {
       return reply.status(401).send({ message: "Authentication required" });
     }
 
-<<<<<<< HEAD
-    const decoded = request.jwt.verify(token);
+    const decoded = request.jwt.verify<{
+      id: string;
+      first_name: string;
+      last_name: string;
+      email: string;
+      phone_number: string;
+      is_public: boolean;
+      [key: string]: any;
+    }>(token);
+
     request.user = decoded;
   });
 
@@ -98,32 +106,8 @@ export default async function initializeFastifyConfig() {
   await server.register(authRoutes, { prefix: "api/auth" });
   await server.register(flashcardRoutes, { prefix: "api/flashcard" });
   await server.register(quizRoutes, { prefix: "api/quiz" });
-  await server.register(postRoutes, { prefix: "api/post" });
+  await server.register(postRoutes, { prefix: "api/forum" });
   await server.register(aiRoutes, { prefix: "api/ai" });
-=======
-        const decoded = request.jwt.verify<{
-            id: string;
-            first_name: string;
-            last_name: string;
-            email: string;
-            phone_number: string;
-            is_public: boolean
-            [key: string]: any;
-        }>(token)
-
-        request.user = decoded
-    })
-
-    /*
-    - Registering routes for each modules
-    */
-    await server.register(userRoutes, { prefix: 'api/users' })
-    await server.register(authRoutes, { prefix: 'api/auth' })
-    await server.register(flashcardRoutes, { prefix: 'api/flashcard' })
-    await server.register(quizRoutes, { prefix: 'api/quiz' })
-    await server.register(postRoutes, { prefix: 'api/forum' })
-    await server.register(aiRoutes, { prefix: 'api/ai' })
->>>>>>> idok/main
 
   /*
     - API testing routes

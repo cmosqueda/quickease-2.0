@@ -22,17 +22,10 @@ export async function edit_user_name(request: FastifyRequest, reply: FastifyRepl
     lastName: string;
   };
 
-<<<<<<< HEAD
   const schema = z.object({
     firstName: z.string().min(6),
-    lastName: z.string().min(6),
+    lastName: z.string().min(2),
   });
-=======
-    const schema = z.object({
-        firstName: z.string().min(6),
-        lastName: z.string().min(2)
-    })
->>>>>>> idok/main
 
   const result = schema.safeParse(request.body);
   if (!result.success) {

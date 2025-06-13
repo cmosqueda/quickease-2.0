@@ -20,19 +20,13 @@ export async function get_user_quizzes(request: FastifyRequest, reply: FastifyRe
 }
 
 export async function create_user_quiz(request: FastifyRequest, reply: FastifyReply) {
-<<<<<<< HEAD
   const { title, description, quiz_content } = request.body as {
     title: string;
     description: string;
     quiz_content: { answers: string[]; question: string; correct_answer_index: number }[];
   };
   try {
-    const quiz = await createUserQuiz(title, description, quiz_content, request.user.id);
-=======
-    const { title, description, quiz_content } = request.body as { title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number }[] }
-    try {
-        const quiz = createUserQuiz(title, description, quiz_content, request.user.id)
->>>>>>> idok/main
+    const quiz = createUserQuiz(title, description, quiz_content, request.user.id);
 
     reply.code(200).send(quiz);
   } catch (err) {
@@ -43,7 +37,6 @@ export async function create_user_quiz(request: FastifyRequest, reply: FastifyRe
 }
 
 export async function update_user_quiz(request: FastifyRequest, reply: FastifyReply) {
-<<<<<<< HEAD
   const { title, description, quiz_content, quiz_id } = request.body as {
     title: string;
     description: string;
@@ -52,11 +45,6 @@ export async function update_user_quiz(request: FastifyRequest, reply: FastifyRe
   };
   try {
     await updateUserQuiz(title, description, quiz_content, quiz_id);
-=======
-    const { title, description, quiz_content, quiz_id } = request.body as { title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number }[], quiz_id: string }
-    try {
-        await updateUserQuiz(title, description, quiz_content, quiz_id)
->>>>>>> idok/main
 
     reply.code(200).send({
       message: "Updated quiz.",

@@ -10,7 +10,6 @@ export async function getUserQuizzes(user_id: string) {
   return quizzes;
 }
 
-<<<<<<< HEAD
 export async function createUserQuiz(
   title: string,
   description: string,
@@ -25,22 +24,10 @@ export async function createUserQuiz(
       user_id,
     },
   });
-=======
-export async function createUserQuiz(title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number }[], user_id: string,) {
-    const quiz = await db_client.quiz.create({
-        data: {
-            title,
-            description,
-            quiz_content,
-            user_id
-        }
-    })
->>>>>>> idok/main
 
   return quiz;
 }
 
-<<<<<<< HEAD
 export async function updateUserQuiz(
   title: string,
   description: string,
@@ -55,15 +42,6 @@ export async function updateUserQuiz(
     },
     where: { id: quiz_id },
   });
-=======
-export async function updateUserQuiz(title: string, description: string, quiz_content: { answers: string[], question: string, correct_answer_index: number }[], quiz_id: string) {
-    const quiz = await db_client.quiz.update({
-        data: {
-            title, description, quiz_content
-        },
-        where: { id: quiz_id }
-    })
->>>>>>> idok/main
 
   return quiz;
 }
