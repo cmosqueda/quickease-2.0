@@ -11,6 +11,7 @@ declare module 'fastify' {
       JWT_SECRET_KEY: string
       COOKIE_SECRET_KEY: string
       DATABASE_URL: string
+      GOOGLE_GEN_AI_API_KEY: string
     }
   }
 }

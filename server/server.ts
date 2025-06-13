@@ -11,6 +11,7 @@ async function main() {
         await server.listen({ port: 3000, host: "0.0.0.0" });
 
         console.log("Server listening at http://localhost:3000");
+        console.log(server.getEnvs())
 
     } catch (error) {
         console.error(error);

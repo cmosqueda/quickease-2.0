@@ -21,13 +21,22 @@ export default async function initializeFastifyConfig() {
         confKey: 'config',
         schema: {
             type: 'object',
-            required: ['JWT_SECRET_KEY', 'COOKIE_SECRET_KEY', 'DATABASE_URL',],
+            required: ['JWT_SECRET_KEY', 'COOKIE_SECRET_KEY', 'DATABASE_URL', 'GOOGLE_GEN_AI_API_KEY'],
             properties: {
                 JWT_SECRET_KEY: { type: 'string' },
                 COOKIE_SECRET_KEY: { type: 'string' },
                 DATABASE_URL: { type: 'string' },
+                GOOGLE_GEN_AI_API_KEY: { type: 'string' }
             }
         }
+    })
+
+    /*
+    - Configuration for cookies
+    */
+    await server.register(fastifyCookie, {
+        secret: server.config.COOKIE_SECRET_KEY,
+        hook: 'preHandler'
     })
 
     /*
@@ -41,17 +50,6 @@ export default async function initializeFastifyConfig() {
         }
     })
 
-
-    /*
-    - Configuration for cookies
-    */
-    await server.register(fastifyCookie, {
-        secret: server.config.COOKIE_SECRET_KEY,
-        hook: 'preHandler'
-    })
-
-
-
     /*
     - Handler configuration for JWT
     */
@@ -64,7 +62,6 @@ export default async function initializeFastifyConfig() {
     - 'onRequest' hook that verifies JWT tokens for every route that requires JWT token 
     The token/cookie is stored on a key named 'QUICKEASE_TOKEN'.
     */
-    server.addHook('onRequest', (request) => request.jwtVerify())
     server.decorate('authenticate', async (request: FastifyRequest, reply: FastifyReply) => {
         const token = request.cookies.QUICKEASE_TOKEN
 
