@@ -4,6 +4,8 @@ This contains all the API routes tests executed on Postman.
 
 ---
 
+# AUTH ROUTES
+
 ## POST /api/auth/register
 
 Registers a new user.
@@ -26,8 +28,6 @@ Registers a new user.
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJkOTU0ZTUwLWEyZTYtNGU3MC1iZWU4LWNmZDIwNjI1NjgyZCIsInBhc3N3b3JkIjoiJDJiJDEwJG9hMFN1Mk5lM1dCMFRTYjNJNWloUk9GcXI2S3VjMVJGOFBZblo5MDhNZHpqRUU2d28uM1V5IiwiZmlyc3RfbmFtZSI6IlNhbnlhIiwibGFzdF9uYW1lIjoiTG9wZXoiLCJlbWFpbCI6InRpbmVzYXJraXZAZ21haWwuY29tIiwiZ2VuZGVyIjpudWxsLCJwaG9uZV9udW1iZXIiOm51bGwsImJhZGdlcyI6bnVsbCwiaXNfcHVibGljIjp0cnVlLCJjcmVhdGVkX2F0IjoiMjAyNS0wNi0xM1QxMDoyODoyMC42OTJaIiwidXBkYXRlZF9hdCI6IjIwMjUtMDYtMTNUMTA6Mjg6MjAuNjkyWiIsImlhdCI6MTc0OTgxMDUwMH0.fucPfgYRXXe66GkUbQ184BLtf3LV1q7p6bwPRttZxKE"
 }
 ```
-
----
 
 ## POST /api/auth/login
 
@@ -60,8 +60,6 @@ Logs in an existing user.
 }
 ```
 
----
-
 ## POST /api/auth/logout
 
 Logs out an authenticated user.
@@ -79,6 +77,8 @@ Logout successfully.
 ```
 
 ---
+
+# USERS ROUTES
 
 ## PUT /api/users/edit-name
 
@@ -114,7 +114,27 @@ Updates the user's first and last name.
 }
 ```
 
----
+## GET /api/users/
+
+Retrieves the currently authenticated user's profile information.
+
+### Response
+
+```json
+{
+  "id": "2d954e50-a2e6-4e70-bee8-cfd20625682d",
+  "password": "$2b$10$oa0Su2Ne3WB0TSb3I5ihROFqr6Kuc1RF8PYnZ908MdzjEE6wo.3Uy",
+  "first_name": "Hot Maria",
+  "last_name": "Clarra",
+  "email": "tinesarkiv@gmail.com",
+  "gender": null,
+  "phone_number": null,
+  "badges": null,
+  "is_public": true,
+  "created_at": "2025-06-13T10:28:20.692Z",
+  "updated_at": "2025-06-13T10:28:20.692Z"
+}
+```
 
 ## PUT /api/users/visibility
 
@@ -150,6 +170,8 @@ Updates the user's profile visibility status.
 ```
 
 ---
+
+# FLASHCARD ROUTES
 
 ## POST /api/flashcard/flashcards
 
@@ -193,8 +215,6 @@ Creates a new set of flashcards for the authenticated user.
 }
 ```
 
----
-
 ## GET /api/flashcard/flashcards/user
 
 Retrieves all flashcards created by the currently authenticated user.
@@ -225,8 +245,6 @@ Retrieves all flashcards created by the currently authenticated user.
   }
 ]
 ```
-
----
 
 ## PUT /api/flashcard/flashcards
 
@@ -277,8 +295,6 @@ Updates an existing flashcard set.
 }
 ```
 
----
-
 ## DELETE /api/flashcard/flashcards
 
 Delete an existing flashcard.
@@ -301,29 +317,7 @@ Delete an existing flashcard.
 
 ---
 
-## GET /api/users/
-
-Retrieves the currently authenticated user's profile information.
-
-### Response
-
-```json
-{
-  "id": "2d954e50-a2e6-4e70-bee8-cfd20625682d",
-  "password": "$2b$10$oa0Su2Ne3WB0TSb3I5ihROFqr6Kuc1RF8PYnZ908MdzjEE6wo.3Uy",
-  "first_name": "Hot Maria",
-  "last_name": "Clarra",
-  "email": "tinesarkiv@gmail.com",
-  "gender": null,
-  "phone_number": null,
-  "badges": null,
-  "is_public": true,
-  "created_at": "2025-06-13T10:28:20.692Z",
-  "updated_at": "2025-06-13T10:28:20.692Z"
-}
-```
-
----
+# QUIZ ROUTES
 
 ## POST /api/quiz/quiz
 
@@ -377,8 +371,6 @@ Creates a new quiz with multiple questions and answers.
 }
 ```
 
----
-
 ## GET /api/quiz/quiz/user
 
 Retrieves all quizzes created by the logged-in user.
@@ -429,6 +421,8 @@ Retrieves all quizzes created by the logged-in user.
 
 ---
 
+# POST ROUTES
+
 ## GET /api/post/posts/user
 
 Retrieves all user posts.
@@ -456,8 +450,6 @@ Retrieves all user posts.
 ]
 ```
 
----
-
 ## POST /api/post/posts
 
 Create a post on forum.
@@ -484,6 +476,8 @@ Create a post on forum.
 ```
 
 ---
+
+# AI ROUTES
 
 ## POST /api/ai/generate-flashcards-from-prompt
 
