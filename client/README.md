@@ -2,6 +2,14 @@
 
 This directory serves the client-side of our study named `QuickEase 2.0`, rewritten from scratch using React + Vite and other libraries.
 
+## FAQs
+
+1. Why did you rewrite the entire web front-end?
+   Kay kapoy mu-basa og laing source code nga walay halos documentations and di ko ganahan sa design atong front-end sa 1.0 version. **And I despise Redux to the core.**
+
+2. When trying to run the `npm i` or `npm install` command, it throws an error that says something about package dependencies conflict on their versions.
+   Solution is to install the modules by adding the `--force-legacy-deps` parameter, if it still won't install then contact the developer `(Jhon Lloyd Viernes)`
+
 ## Libraries Used
 
 ```
@@ -22,15 +30,19 @@ To create and integrate a new custom theme:
 1. Creating function/arrow functions
    Always define types for function arguments to ensure proper data typing and use snake_case.
 
-```
+   ```
    Example:
    type A = {
-    user: string;
-    created_at: string | Date;
+   user: string;
+   created_at: string | Date;
    }
 
-  function createA({user} : A) {} or function createA({user, created_at} : {user: string, created_at: string | Date}) {}
-```
+   function createA({user} : A) {}
+   function createA({user, created_at} : {user: string, created_at: string | Date}) {}
+
+   const createB = ({user} : A) => {}
+   const createB = ({user, created_at} : {user: string, created_at: string | Date}) => {}
+   ```
 
 2. Avoid modifying CSS `(@/global.css)` unless necessary
    Avoid directly modifying `@/global.css` unless absolutely necessary. The combination of Tailwind CSS and daisyUI is intended to eliminate most needs for custom CSS. Only modify this file for:
@@ -70,3 +82,12 @@ To create and integrate a new custom theme:
   - Tailwind CSS IntelliSense
   - Path IntelliSense
 ```
+
+5. When creating components, make sure that you move it to a role directory in which it's used or belongs to.
+   For easy editing and less hassle.
+
+   ```
+   Example:
+   There are two sidebar, one is for the (admin) and (user).
+   If you're creating a component for the Users, then make sure the said component is at the @/components/(user) folder.
+   ```

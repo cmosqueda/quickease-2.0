@@ -1,18 +1,13 @@
 # To-dos
 
-This is for the client-side TO-DOS.
+This is for the client-side TO-DOs.
 
 ## Not yet done
 
 - METADATA / Document Tags
 - Notes markdown
-- Flashcard page (dynamic ID & from generated prompt/summary notes) (large screens)
-- Flashcard page (dynamic ID & from generated prompt/summary notes) (responsive)
-- Quiz page (dynamic ID & from generated prompt/summary notes) (large screens)
-- Quiz page (dynamic ID & from generated prompt/summary notes) (responsive)
-- Quizzes manually create page (responsive)
 
-## Completed Screens
+## Completed Screens (Initial from June 4 / 8)
 
 - Landing page (large screens)
 - Landing page (responsive)
@@ -46,8 +41,12 @@ This is for the client-side TO-DOS.
 - Quizzes page (large screens)
 - Quizzes page (responsive)
 - Quizzes manually create page (large screens)
+- Flashcard page (dynamic ID & from generated prompt/summary notes) (large screens)
+- Flashcard page (dynamic ID & from generated prompt/summary notes) (responsive)
+- Quiz page (dynamic ID & from generated prompt/summary notes) (large screens)
+- Quiz page (dynamic ID & from generated prompt/summary notes) (responsive)
 
-## Completed components
+## Completed components (Initial from June 4 / 8)
 
 - Terms of use & Privacy policy modal
 - Theme controller (for light/dark mode switching but still needs fixing)

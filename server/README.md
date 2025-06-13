@@ -2,6 +2,34 @@
 
 This directory serves the server-side of our project named QuickEase 2.0, rewritten from scratch using Fastify + Postgres + Prisma
 
+## FAQs
+
+1. When trying to run the `npm run dev` command, it throws an error which says `Error: Cannot find module '@modelcontextprotocol/sdk/types.js'`.
+   Solution is to install the missing module by running the `npm install @modelcontextprotocol/sdk` command.
+
+2. When trying to run the `npm i` or `npm install` command, it throws an error that says something about package dependencies conflict on their versions.
+   Solution is to install the modules by adding the `--force-legacy-deps` parameter, if it still won't install then contact the developer `(Jhon Lloyd Viernes)`
+
+3. Why did you rewrite the entire back-end?
+   Kay kapoy mu-basa og laing source code nga walay halos documentations.
+
+## Initializing @/server
+
+**Requirements**
+
+- PostgreSQL installed
+- Postman installed (if testing)
+- Make sure that the tables on your database schema is empty as Prisma will automatically generate it for you.
+
+```
+In chronological order
+1. Install the modules by running the npm i command.
+2. Push the migrations on your database by running the npx prisma db push command
+3. Check if the tables are created on your PostgreSQL (by opening pgAdmin? or anything similar that'll let you check the database schema)
+4. Run the npm run dev command.
+5. Server initialized, check its port. (3000 = default port)
+```
+
 ## Libraries used
 
 `Fastify and its extensions/plugins (@fastify-jwt/fastify-env), PostgreSQL, Prisma`

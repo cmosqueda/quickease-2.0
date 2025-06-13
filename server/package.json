@@ -17,6 +17,7 @@
     "@fastify/multipart": "^9.0.3",
     "@fastify/postgres": "^6.0.2",
     "@google/genai": "^1.5.0",
+    "@modelcontextprotocol/sdk": "^1.12.1",
     "@prisma/client": "^6.9.0",
     "bcrypt": "^6.0.0",
     "fastify": "^5",
