@@ -3,27 +3,27 @@ import { get_user_quizzes, create_user_quiz, update_user_quiz, update_user_quiz_
 
 
 export default async function quizRoutes(fastify: FastifyInstance) {
-    fastify.get('/quiz/user', {
+    fastify.get('/', {
         preHandler: [fastify.authenticate],
         handler: get_user_quizzes,
     });
 
-    fastify.post('/quiz', {
+    fastify.post('/create-quiz', {
         preHandler: [fastify.authenticate],
         handler: create_user_quiz,
     });
 
-    fastify.put('/quiz', {
+    fastify.put('/update-quiz', {
         preHandler: [fastify.authenticate],
         handler: update_user_quiz,
     });
 
-    fastify.put('/quiz/visibility', {
+    fastify.put('/toggle-visibility', {
         preHandler: [fastify.authenticate],
         handler: update_user_quiz_visibility,
     });
 
-    fastify.delete('/quiz', {
+    fastify.delete('/delete-quiz', {
         preHandler: [fastify.authenticate],
         handler: delete_user_quiz,
     });

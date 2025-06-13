@@ -56,6 +56,20 @@ In chronological order
 2. Please avoid using migrating commands or anything similar to migration on Prisma
    Contact your main developer `Jhon Lloyd Viernes` and let him handle it.
 
+3. Avoid modifying configuration files.
+   To ensure that the server-side is working properly, please avoid modifying configuration files or contact the main developer. `(Jhon Lloyd Viernes)`
+
+   ```
+    Files to avoid.
+    @/prisma/schema.prisma
+    @/utils/ai.ts
+    @/utils/client.ts
+    @/types/types.ts (unless you know what you're doing)
+    @/auth/*.ts (unless you know what you're doing)
+    @/fastify.config.ts
+    @/server.ts
+   ```
+
 ## Generating client for database using Prisma
 
 1. Make sure that the `@/prisma/` directory/folder has migrations.

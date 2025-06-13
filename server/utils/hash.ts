@@ -16,10 +16,17 @@ export async function verifyPassword(email: string, password: string) {
     },
   });
 
+<<<<<<< HEAD
   const isMatch = user && (await bcrypt.compare(password, user.password));
   if (!user || !isMatch) {
     return false;
   }
+=======
+    const isMatch = user && (await bcrypt.compare(password, password))
+    if (!user || !isMatch) {
+        return false
+    }
+>>>>>>> idok/main
 
   return true;
 }

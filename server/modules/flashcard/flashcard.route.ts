@@ -7,27 +7,27 @@ import {
 
 
 export default async function flashcardRoutes(fastify: FastifyInstance) {
-    fastify.get('/flashcards/user', {
+    fastify.get('/', {
         preHandler: [fastify.authenticate],
         handler: get_user_flashcards
     });
 
-    fastify.post('/flashcards', {
+    fastify.post('/create-flashcard', {
         preHandler: [fastify.authenticate],
         handler: create_user_flashcard
     });
 
-    fastify.put('/flashcards', {
+    fastify.put('/update-flashcard', {
         preHandler: [fastify.authenticate],
         handler: update_user_flashcard
     });
 
-    fastify.delete('/flashcards', {
+    fastify.delete('/delete-flashcard', {
         preHandler: [fastify.authenticate],
         handler: delete_user_flashcard
     });
 
-    fastify.put('/flashcards/visibility', {
+    fastify.put('/toggle-visibility', {
         preHandler: [fastify.authenticate],
         handler: toggle_flashcard_visibility
     });

@@ -8,32 +8,32 @@ import {
 
 
 export default async function postRoutes(fastify: FastifyInstance) {
-    fastify.get('/posts/user', {
+    fastify.get('/', {
         preHandler: [fastify.authenticate],
         handler: get_user_posts
     });
 
-    fastify.post('/posts/view', {
+    fastify.post('/post/view', {
         preHandler: [fastify.authenticate],
         handler: get_post
     });
 
-    fastify.post('/posts/comments', {
+    fastify.post('/comments/view', {
         preHandler: [fastify.authenticate],
         handler: get_comments
     });
 
-    fastify.post('/posts', {
+    fastify.post('/post/create', {
         preHandler: [fastify.authenticate],
         handler: create_post
     });
 
-    fastify.post('/posts/comment', {
+    fastify.post('/comments/comment', {
         preHandler: [fastify.authenticate],
         handler: comment_on_post
     });
 
-    fastify.post('/posts/vote', {
+    fastify.post('/post/vote', {
         preHandler: [fastify.authenticate],
         handler: vote_on_post
     });
@@ -48,17 +48,17 @@ export default async function postRoutes(fastify: FastifyInstance) {
         handler: vote_on_comment
     });
 
-    fastify.post('/posts/tag', {
+    fastify.post('/post/tag', {
         preHandler: [fastify.authenticate],
         handler: add_tag_on_post
     });
 
-    fastify.delete('/posts', {
+    fastify.delete('/post/delete', {
         preHandler: [fastify.authenticate],
         handler: delete_post
     });
 
-    fastify.put('/posts/visibility', {
+    fastify.put('/post/toggle-visibility', {
         preHandler: [fastify.authenticate],
         handler: toggle_post_visibility
     });

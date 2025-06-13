@@ -10,8 +10,13 @@ export async function loginUser(email: string, password: string) {
 
   if (!user) return false;
 
+<<<<<<< HEAD
   const isValid = await verifyPassword(email, password);
   if (!isValid) return false;
+=======
+    const isValid = await verifyPassword(email, password);
+    if (!isValid) return false;
+>>>>>>> idok/main
 
   return user;
 }
