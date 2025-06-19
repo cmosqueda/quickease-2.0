@@ -34,6 +34,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
 
 import "../global.css";
+import LearnerCreateNotePage from "./routes/(learner)/(note)/LearnerCreateNote";
 
 const router = createBrowserRouter([
   {
@@ -134,6 +135,11 @@ const router = createBrowserRouter([
         path: "note/:id",
         loader: async () => {},
         Component: LearnerNotePage,
+      },
+      {
+        path: "note/create",
+        loader: async () => {},
+        Component: LearnerCreateNotePage,
       },
     ],
   },
