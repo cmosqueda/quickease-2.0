@@ -16,10 +16,14 @@ import {
 import { useLoaderData, useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
 import { useState } from "react";
+import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
+import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 
 export default function LearnerNotePage() {
   const data = useLoaderData();
   const navigate = useNavigate();
+
+  // States for editors //
   const [html, setHTML] = useState("");
   const [text, setText] = useState("");
   const [json, setJSON] = useState({});
@@ -66,6 +70,7 @@ export default function LearnerNotePage() {
       console.log(editor.getHTML());
     },
   });
+  // States for editors //
 
   if (!editor) return;
 
@@ -100,11 +105,21 @@ export default function LearnerNotePage() {
         </div>
         <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
           <h1 className="font-bold text-xl">Study options</h1>
-          <button className="rounded-3xl btn btn-soft gap-2 join-item">
+          <button
+            className="rounded-3xl btn btn-soft gap-2 join-item"
+            onClick={() =>
+              document.getElementById("generate-summary-modal").showModal()
+            }
+          >
             <BookDown />
             <h1>Generate summary</h1>
           </button>
-          <button className="rounded-3xl btn btn-soft gap-2 join-item">
+          <button
+            className="rounded-3xl btn btn-soft gap-2 join-item"
+            onClick={() =>
+              document.getElementById("generate-flashcard-modal").showModal()
+            }
+          >
             <CalendarRange />
             <h1>Generate flashcards</h1>
           </button>
@@ -114,6 +129,8 @@ export default function LearnerNotePage() {
           </button>
         </div>
       </div>
+      <GenerateSummaryModal html={html} text={text} json={json} />
+      <GenerateFlashcardModal html={html} text={text} json={json} />
     </div>
   );
 }
