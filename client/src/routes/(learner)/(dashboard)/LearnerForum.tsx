@@ -3,11 +3,17 @@ import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
 import PostCard from "@/components/(learner)/PostCard";
 
 import { LoaderPinwheel, Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import useAuth from "@/hooks/useAuth";
 
 export default function LearnerForumPage() {
+  const { user } = useAuth();
   const [isPosting, setIsPosting] = useState(false);
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto">

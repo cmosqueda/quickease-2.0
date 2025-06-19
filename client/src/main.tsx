@@ -69,12 +69,10 @@ const router = createBrowserRouter([
         const { status, data } = await _API_INSTANCE.get("/users", {
           withCredentials: true,
         });
-        if (status === 200) {
-          const { user, token } = data;
-
+        console.log(data);
+        if (status == 200) {
           const auth = useAuth.getState();
-          auth.setUser(user);
-          auth.setToken(token);
+          auth.setUser(data);
         }
       } catch (err) {
         return redirect("/");

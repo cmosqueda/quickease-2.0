@@ -16,7 +16,7 @@ export async function verifyPassword(email: string, password: string) {
         }
     })
 
-    const isMatch = user && (await bcrypt.compare(password, password))
+    const isMatch = user && (await bcrypt.compare(user.password, password))
     if (!user || !isMatch) {
         return false
     }

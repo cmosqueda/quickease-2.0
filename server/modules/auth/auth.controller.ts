@@ -1,6 +1,7 @@
+import db_client from "../../utils/client";
+
 import { FastifyReply, FastifyRequest } from "fastify";
 import { loginUser, registerUser } from "./auth.service";
-import db_client from "../../utils/client";
 
 export async function login_user(request: FastifyRequest, reply: FastifyReply) {
     const { email, password } = request.body as {
@@ -25,7 +26,7 @@ export async function login_user(request: FastifyRequest, reply: FastifyReply) {
             secure: true,
             httpOnly: true,
         }).code(200).send({
-            role: user.is_admin
+            is_admin: user.is_admin
         })
 
     } catch (err) {

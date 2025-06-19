@@ -11,7 +11,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
     });
 
     fastify.post('/logout', {
-        preHandler: [fastify.authenticate], // optional: protect logout if needed
+        preHandler: [fastify.authenticate],
         handler: logout
     });
 }
