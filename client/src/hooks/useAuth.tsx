@@ -21,7 +21,8 @@ type AuthUserRecord = {
 
 type AuthStore = {
   user?: AuthUserRecord;
-  token?: string;
+  setUser: (user: AuthUserRecord) => void;
+  setToken: (token: string) => void;
   requestChangePassword: (id: string) => void;
   requestChangeEmail: (id: string) => void;
   changeName: (first_name: string, last_name: string) => void;
@@ -31,7 +32,16 @@ type AuthStore = {
 const useAuth = create<AuthStore>()(
   immer((set, get) => ({
     user: undefined,
-    token: undefined,
+    setUser: (user) => {
+      set((state) => {
+        state.user = user;
+      });
+    },
+    setToken: (token) => {
+      set((state) => {
+        state.token = token;
+      });
+    },
     requestChangePassword: (id) => {},
     requestChangeEmail: (id) => {},
     changeName: (first_name, last_name) => {},

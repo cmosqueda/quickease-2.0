@@ -52,9 +52,11 @@ const links = [
 const Mobile = ({
   currentTab,
   isOpen,
+  navigate,
 }: {
   currentTab: string;
   isOpen: boolean;
+  navigate: NavigateFunction;
 }) => {
   return (
     <div className="drawer lg:hidden">
@@ -132,6 +134,15 @@ const Mobile = ({
             </NavLink>
           </div>
         </ul>
+        <button
+          className="btn btn-soft btn-accent self-end m-4"
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          <LogOut />
+          <p>Logout</p>
+        </button>
       </div>
     </div>
   );
@@ -315,7 +326,7 @@ export default function Sidebar({ tab }: { tab: string }) {
           </label>
         </div>
       </div>
-      <Mobile currentTab={currentTab} isOpen={isOpen} />
+      <Mobile currentTab={currentTab} isOpen={isOpen} navigate={navigate} />
       <Desktop currentTab={currentTab} isOpen={isOpen} />
       <Floating isOpen={isOpen} navigate={navigate} setIsOpen={setIsOpen} />
     </div>

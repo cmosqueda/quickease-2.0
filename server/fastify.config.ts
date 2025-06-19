@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 import fastifyCookie from "@fastify/cookie";
 import fastifyEnv from "@fastify/env";
 import fastifyJwt from "@fastify/jwt";
 import fastifyMultipart from "@fastify/multipart";
+=======
+import fastifyCookie from "@fastify/cookie"
+import fastifyEnv from "@fastify/env"
+import fastifyJwt from "@fastify/jwt"
+import fastifyMultipart from "@fastify/multipart"
+import cors from "@fastify/cors"
+>>>>>>> upstream/main
 
 // routes modules
 import authRoutes from "./modules/auth/auth.routes";
@@ -53,7 +61,19 @@ export default async function initializeFastifyConfig() {
     },
   });
 
+<<<<<<< HEAD
   /*
+=======
+    /*
+   - Configuration for CORS
+   */
+    await server.register(cors, {
+        origin: process.env.CORS_FRONTEND_HOST,
+        credentials: true
+    })
+
+    /*
+>>>>>>> upstream/main
     - Configuration for Multipart (handling files)
     
     Max MB size = 15MB

@@ -30,11 +30,13 @@ import AdminManageUsersPage from "./routes/(admin)/(dashboard)/AdminManageUsers"
 import AdminManageReportsPage from "./routes/(admin)/(dashboard)/AdminManageReports";
 import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
 
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
 
 import "../global.css";
 import LearnerCreateNotePage from "./routes/(learner)/(note)/LearnerCreateNote";
+import _API_INSTANCE from "./utils/axios";
+import useAuth from "./hooks/useAuth";
 
 const router = createBrowserRouter([
   {
@@ -62,6 +64,20 @@ const router = createBrowserRouter([
   {
     path: "learner",
     Component: LearnerLayout,
+    loader: async () => {
+      try {
+        const { status, data } = await _API_INSTANCE.get("/users", {
+          withCredentials: true,
+        });
+        console.log(data);
+        if (status == 200) {
+          const auth = useAuth.getState();
+          auth.setUser(data);
+        }
+      } catch (err) {
+        return redirect("/");
+      }
+    },
     children: [
       {
         Component: LearnerForumPage,

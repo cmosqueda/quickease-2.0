@@ -17,12 +17,16 @@ export async function verifyPassword(email: string, password: string) {
   });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   const isMatch = user && (await bcrypt.compare(password, user.password));
   if (!user || !isMatch) {
     return false;
   }
 =======
     const isMatch = user && (await bcrypt.compare(password, password))
+=======
+    const isMatch = user && (await bcrypt.compare(user.password, password))
+>>>>>>> upstream/main
     if (!user || !isMatch) {
         return false
     }

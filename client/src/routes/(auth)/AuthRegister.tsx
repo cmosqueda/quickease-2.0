@@ -1,13 +1,17 @@
 import TermsAndPrivacyPolicyModal from "../../components/TermsAndPrivacyPolicyModal";
+import _API_INSTANCE from "@/utils/axios";
 import useTheme from "@/hooks/useTheme";
 import clsx from "clsx";
 
 import { useState } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { darkThemes, lightThemes } from "@/types/themes";
 import { Paintbrush } from "lucide-react";
+import { z } from "zod";
+import { toast } from "sonner";
 
 export default function AuthRegisterPage() {
+  const navigate = useNavigate();
   const { setTheme } = useTheme();
 
   // forms
@@ -16,7 +20,61 @@ export default function AuthRegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isTermsAccepted, setIsTermsAccepted] = useState("");
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+
+  const [isRegistering, setIsRegistering] = useState(false);
+
+  const schema = z.object({
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string().email(),
+    password: z.string(),
+    confirmPassword: z.string(),
+    isTermsAccepted: z.boolean(),
+  });
+
+  const handleRegister = async () => {
+    setIsRegistering(true);
+    const result = schema.safeParse({
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      isTermsAccepted,
+    });
+
+    if (!result.success) {
+      result.error.errors.map((m) => {
+        toast.error(`Error: ${m.message.toString()}`);
+      });
+      console.log(result.error.errors);
+      setIsRegistering(false);
+      return;
+    }
+
+    try {
+      const response = await _API_INSTANCE.post(
+        "/auth/register",
+        {
+          firstName,
+          lastName,
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.status == 200) {
+        navigate("/learner");
+      }
+    } catch (err) {
+      toast.error(`Error: ${err}`);
+      throw err;
+    } finally {
+      setIsRegistering(false);
+    }
+  };
 
   return (
     <main className="lg:grid lg:grid-cols-2 flex flex-col gap-8 bg-base">
@@ -68,7 +126,7 @@ export default function AuthRegisterPage() {
         <label className="floating-label">
           <span>Password</span>
           <input
-            type="text"
+            type="password"
             placeholder="Password"
             className="input input-md w-full"
             value={password}
@@ -78,7 +136,7 @@ export default function AuthRegisterPage() {
         <label className="floating-label">
           <span>Confirm Password</span>
           <input
-            type="text"
+            type="password"
             placeholder="Confirm Password"
             className="input input-md w-full"
             value={confirmPassword}
@@ -89,7 +147,7 @@ export default function AuthRegisterPage() {
           <input
             type="checkbox"
             value={isTermsAccepted}
-            onChange={(e) => setIsTermsAccepted(e.target.value)}
+            onChange={() => setIsTermsAccepted((prev) => !prev)}
             className="checkbox"
           />
           I accept the{" "}
@@ -102,7 +160,11 @@ export default function AuthRegisterPage() {
             terms of use and privacy policy
           </button>
         </label>
-        <button className="btn btn-soft btn-success btn-lg">
+        <button
+          className="btn btn-soft btn-success btn-lg"
+          disabled={isRegistering}
+          onClick={handleRegister}
+        >
           Create account
         </button>
         <p>
