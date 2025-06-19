@@ -110,7 +110,7 @@ export async function generateNotesFromPrompt(prompt: string) {
 
                 Only output the string.
                 `.trim()
-        })s
+        })
 
         return response.text
     } catch (err) { return false }

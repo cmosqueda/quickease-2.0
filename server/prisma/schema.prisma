@@ -23,6 +23,7 @@ model User {
   is_public    Boolean  @default(true)
   created_at   DateTime @default(now())
   updated_at   DateTime @default(now())
+  is_admin     Boolean  @default(false)
 
   flashcards           Flashcard[]
   notes                Note[]

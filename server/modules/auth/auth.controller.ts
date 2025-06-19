@@ -24,7 +24,9 @@ export async function login_user(request: FastifyRequest, reply: FastifyReply) {
             path: '/',
             secure: true,
             httpOnly: true,
-        }).code(200).send(user)
+        }).code(200).send({
+            role: user.is_admin
+        })
 
     } catch (err) {
         reply.code(400).send({
@@ -57,7 +59,7 @@ export async function register_user(request: FastifyRequest, reply: FastifyReply
         httpOnly: true,
         secure: true
     }).send({
-        token: token
+        role: 'user'
     })
 }
 

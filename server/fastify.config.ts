@@ -2,6 +2,7 @@ import fastifyCookie from "@fastify/cookie"
 import fastifyEnv from "@fastify/env"
 import fastifyJwt from "@fastify/jwt"
 import fastifyMultipart from "@fastify/multipart"
+import cors from "@fastify/cors"
 
 // routes modules
 import authRoutes from "./modules/auth/auth.routes"
@@ -52,6 +53,14 @@ export default async function initializeFastifyConfig() {
             cookieName: "QUICKEASE_TOKEN",
             signed: false
         }
+    })
+
+    /*
+   - Configuration for CORS
+   */
+    await server.register(cors, {
+        origin: process.env.CORS_FRONTEND_HOST,
+        credentials: true
     })
 
     /*
