@@ -1,5 +1,5 @@
 import db_client from "../../utils/client";
-import bcrypt from 'bcrypt'
+import bcrypt from "bcrypt";
 import { hashPassword, verifyPassword } from "../../utils/hash";
 
 export async function loginUser(email: string, password: string) {
@@ -9,24 +9,15 @@ export async function loginUser(email: string, password: string) {
     },
   });
 
-<<<<<<< HEAD
   if (!user) return false;
+  console.log(user.password, password);
 
-  const isValid = await verifyPassword(email, password);
-  if (!isValid) return false;
+  const isMatch = user && (await bcrypt.compare(password, user.password));
+  if (!user || !isMatch) {
+    return false;
+  }
 
-  return user;
-=======
-    if (!user) return false;
-    console.log(user.password, password)
-
-    const isMatch = user && (await bcrypt.compare(password, user.password))
-    if (!user || !isMatch) {
-        return false
-    }
-
-    return isMatch ? user : false;
->>>>>>> upstream/main
+  return isMatch ? user : false;
 }
 
 export async function registerUser(firstName: string, lastName: string, email: string, password: string) {

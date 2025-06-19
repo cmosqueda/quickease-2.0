@@ -113,13 +113,8 @@ export async function generateNotesFromPrompt(prompt: string) {
                 Generate a summary note from this prompt: "${prompt}"
 
                 Only output the string.
-<<<<<<< HEAD
                 `.trim(),
     });
-=======
-                `.trim()
-        })
->>>>>>> upstream/main
 
     return response.text;
   } catch (err) {

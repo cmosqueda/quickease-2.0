@@ -10,15 +10,8 @@ export default async function authRoutes(fastify: FastifyInstance) {
     handler: register_user,
   });
 
-<<<<<<< HEAD
   fastify.post("/logout", {
-    preHandler: [fastify.authenticate], // optional: protect logout if needed
+    preHandler: [fastify.authenticate],
     handler: logout,
   });
-=======
-    fastify.post('/logout', {
-        preHandler: [fastify.authenticate],
-        handler: logout
-    });
->>>>>>> upstream/main
 }
