@@ -6,17 +6,20 @@ export default function NoteCard({
   date,
   link,
   onClick,
+  style,
 }: {
   title: string;
   date: string;
   link?: string;
   onClick: () => void;
+  style?: string;
 }) {
   if (link)
     return (
       <NavLink
         to={`/learner/note/${link}`}
         className={clsx(
+          style,
           "flex flex-col justify-between w-[24rem] min-h-[16rem] p-4 rounded-3xl bg-base-100 ",
           "transition-all delay-0 duration-300 hover:shadow cursor-pointer"
         )}
@@ -30,6 +33,7 @@ export default function NoteCard({
     <div
       onClick={onClick}
       className={clsx(
+        style,
         "flex flex-col justify-between w-[24rem] min-h-[16rem] p-4 rounded-3xl bg-base-100 ",
         "transition-all delay-0 duration-300 hover:shadow cursor-pointer"
       )}
