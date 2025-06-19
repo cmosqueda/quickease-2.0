@@ -109,7 +109,7 @@ export default function GenerateSummaryModal() {
   return (
     <dialog id="generate-summary-modal-global" className="modal">
       <div className="modal-box max-w-5xl flex flex-col gap-4">
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4">
           <div className="flex flex-row gap-4 items-center">
             <X
               onClick={() => {
