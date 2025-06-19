@@ -69,7 +69,6 @@ export default function LearnerNotePage() {
       setHTML(editor.getHTML());
       setText(editor.getText());
       setJSON(editor.getJSON());
-      console.log(editor.getHTML());
     },
   });
   // States for editors //

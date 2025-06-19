@@ -22,6 +22,7 @@ import LearnerFlashcardPage from "./routes/(learner)/(flashcard)/LearnerFlashcar
 import LearnerFlashcardsPage from "./routes/(learner)/(dashboard)/LearnerFlashcards";
 import LearnerQuizPage from "./routes/(learner)/(quiz)/LearnerQuiz";
 import LearnerCreateQuizPage from "./routes/(learner)/(quiz)/LearnerCreateQuiz";
+import LearnerCreateNotePage from "./routes/(learner)/(note)/LearnerCreateNote";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -30,13 +31,13 @@ import AdminManageUsersPage from "./routes/(admin)/(dashboard)/AdminManageUsers"
 import AdminManageReportsPage from "./routes/(admin)/(dashboard)/AdminManageReports";
 import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
 
+import _API_INSTANCE from "./utils/axios";
+import useAuth from "./hooks/useAuth";
+
 import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
 
 import "../global.css";
-import LearnerCreateNotePage from "./routes/(learner)/(note)/LearnerCreateNote";
-import _API_INSTANCE from "./utils/axios";
-import useAuth from "./hooks/useAuth";
 
 const router = createBrowserRouter([
   {
@@ -69,7 +70,6 @@ const router = createBrowserRouter([
         const { status, data } = await _API_INSTANCE.get("/users", {
           withCredentials: true,
         });
-        console.log(data);
         if (status == 200) {
           const auth = useAuth.getState();
           auth.setUser(data);

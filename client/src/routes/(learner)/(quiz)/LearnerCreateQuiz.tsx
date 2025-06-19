@@ -75,7 +75,6 @@ export default function LearnerCreateQuizPage() {
   };
 
   const handleSubmit = () => {
-    console.log({ title: quizTitle, description: quizDescription, questions });
   };
 
   return (
