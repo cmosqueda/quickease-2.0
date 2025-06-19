@@ -4,6 +4,9 @@ import OrderedList from "@tiptap/extension-ordered-list";
 import CodeBlock from "@tiptap/extension-code-block";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import CustomEditor from "@/components/Editor";
+import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
+import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
+import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
 
 import {
   ArrowLeft,
@@ -16,8 +19,6 @@ import {
 import { useLoaderData, useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
 import { useState } from "react";
-import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
-import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 
 export default function LearnerNotePage() {
   const data = useLoaderData();
@@ -27,6 +28,7 @@ export default function LearnerNotePage() {
   const [html, setHTML] = useState("");
   const [text, setText] = useState("");
   const [json, setJSON] = useState({});
+  const [title, setTitle] = useState("");
 
   const editor = useEditor({
     editable: true,
@@ -75,7 +77,7 @@ export default function LearnerNotePage() {
   if (!editor) return;
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen w-full">
       <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 lg:items-center border-b border-base-300 p-4 bg-base-100">
         <ArrowLeft
           onClick={() => navigate("/learner/library")}
@@ -95,12 +97,14 @@ export default function LearnerNotePage() {
           </button>
         </div>
       </div>
-      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_0.3fr] h-full">
+      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_0.2fr] h-full">
         <div className="flex flex-col gap-2 p-4 lg:p-8">
-          <h1 className="font-bold text-3xl">
-            Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,
-            consectetur, adipisci velit...
-          </h1>
+          <input
+            placeholder="Title..."
+            value={title}
+            className="font-bold text-3xl input input-ghost w-full"
+            onChange={(e) => setTitle(e.target.value)}
+          />
           <CustomEditor editor={editor} />
         </div>
         <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
@@ -123,7 +127,12 @@ export default function LearnerNotePage() {
             <CalendarRange />
             <h1>Generate flashcards</h1>
           </button>
-          <button className="rounded-3xl btn btn-soft gap-2 join-item">
+          <button
+            className="rounded-3xl btn btn-soft gap-2 join-item"
+            onClick={() =>
+              document.getElementById("generate-quiz-modal").showModal()
+            }
+          >
             <ClipboardList />
             <h1>Generate quiz</h1>
           </button>
@@ -131,6 +140,7 @@ export default function LearnerNotePage() {
       </div>
       <GenerateSummaryModal html={html} text={text} json={json} />
       <GenerateFlashcardModal html={html} text={text} json={json} />
+      <GenerateQuizModal html={html} text={text} json={json} />
     </div>
   );
 }
