@@ -1,17 +1,19 @@
 import useTimer from "@/hooks/useTimer";
 import formatTime from "@/utils/format_time";
+import clsx from "clsx";
+import startSound from "/assets/audio/start.wav";
+import endSound from "/assets/audio/end.wav";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  Bed,
+  BookOpen,
   Clock,
+  Coffee,
   PauseCircle,
   PlayCircle,
   RotateCcw,
-  BookOpen,
-  Coffee,
-  Bed,
 } from "lucide-react";
-import clsx from "clsx";
 
 export default function TimerPopup() {
   const {
@@ -25,9 +27,10 @@ export default function TimerPopup() {
     startStudy,
     startShortBreak,
     startLongBreak,
-    isPopupEnabled,
   } = useTimer();
   const [isAlwaysOnTop, setAlwaysOnTop] = useState(false);
+  const startAudioRef = useRef(null);
+  const endAudioRef = useRef(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -42,6 +45,14 @@ export default function TimerPopup() {
     longBreak: "Long Break",
   };
 
+  useEffect(() => {
+    if (time == 0) {
+      if (endAudioRef.current) {
+        endAudioRef.current.play();
+      }
+    }
+  }, [time]);
+
   return (
     <div
       className={clsx(
@@ -51,10 +62,11 @@ export default function TimerPopup() {
         "fixed right-4 bottom-4"
       )}
     >
+      <audio ref={startAudioRef} src={startSound} preload="auto" />
+      <audio ref={endAudioRef} src={endSound} preload="auto" />
       <div
         tabIndex={0}
         role="button"
-        onClick={startStudy}
         className="flex flex-row gap-4 items-center bg-base-100 p-4 rounded-3xl cursor-pointer"
       >
         <Clock size={32} />
@@ -89,7 +101,16 @@ export default function TimerPopup() {
 
           <div className="flex gap-4">
             <button
-              onClick={isRunning ? pause : start}
+              onClick={
+                isRunning
+                  ? pause
+                  : () => {
+                      start();
+                      if (startAudioRef.current) {
+                        startAudioRef.current.play();
+                      }
+                    }
+              }
               className="btn btn-primary btn-soft btn-sm flex items-center gap-2"
             >
               {isRunning ? (
@@ -113,34 +134,30 @@ export default function TimerPopup() {
               Reset
             </button>
           </div>
+          <div className="flex gap-2 items-center justify-center">
+            <button
+              onClick={startStudy}
+              className="btn btn-sm btn-soft flex gap-2 items-center"
+            >
+              <BookOpen size={16} />
+              Study
+            </button>
+            <button
+              onClick={startShortBreak}
+              className="btn btn-sm btn-soft flex gap-2 items-center"
+            >
+              <Coffee size={16} />
+              Short Break
+            </button>
+            <button
+              onClick={startLongBreak}
+              className="btn btn-sm btn-soft flex gap-2 items-center"
+            >
+              <Bed size={16} />
+              Long Break
+            </button>
+          </div>
         </div>
-
-        {/*
-        // These buttons are for manual changing mode
-        <div className="flex gap-2 items-center justify-center">
-          <button
-            onClick={startStudy}
-            className="btn btn-sm btn-soft flex gap-2 items-center"
-          >
-            <BookOpen size={16} />
-            Study
-          </button>
-          <button
-            onClick={startShortBreak}
-            className="btn btn-sm btn-soft flex gap-2 items-center"
-          >
-            <Coffee size={16} />
-            Short Break
-          </button>
-          <button
-            onClick={startLongBreak}
-            className="btn btn-sm btn-soft flex gap-2 items-center"
-          >
-            <Bed size={16} />
-            Long Break
-          </button>
-        </div>
-        */}
       </ul>
     </div>
   );
