@@ -4,14 +4,14 @@ This directory serves the server-side of our project named QuickEase 2.0, rewrit
 
 ## FAQs
 
-1. When trying to run the `npm run dev` command, it throws an error which says `Error: Cannot find module '@modelcontextprotocol/sdk/types.js'`.
+1. Why did you rewrite the entire back-end?
+   Kay kapoy mu-basa og laing source code nga walay halos documentations.
+
+2. When trying to run the `npm run dev` command, it throws an error which says `Error: Cannot find module '@modelcontextprotocol/sdk/types.js'`.
    Solution is to install the missing module by running the `npm install @modelcontextprotocol/sdk` command.
 
-2. When trying to run the `npm i` or `npm install` command, it throws an error that says something about package dependencies conflict on their versions.
+3. When trying to run the `npm i` or `npm install` command, it throws an error that says something about package dependencies conflict on their versions.
    Solution is to install the modules by adding the `--force-legacy-deps` parameter, if it still won't install then contact the developer `(Jhon Lloyd Viernes)`
-
-3. Why did you rewrite the entire back-end?
-   Kay kapoy mu-basa og laing source code nga walay halos documentations.
 
 ## Initializing @/server
 
@@ -20,6 +20,15 @@ This directory serves the server-side of our project named QuickEase 2.0, rewrit
 - PostgreSQL installed
 - Postman installed (if testing)
 - Make sure that the tables on your database schema is empty as Prisma will automatically generate it for you.
+- Initialize the environment variables
+
+```
+JWT_SECRET_KEY: string
+COOKIE_SECRET_KEY: string
+DATABASE_URL : string -> example = "postgresql://postgres:dlord213@localhost:5432/postgres?schema=public"
+GOOGLE_GEN_AI_API_KEY: string
+CORS_FRONTEND_HOST: string -> (default) = "http://localhost:5173"
+```
 
 ```
 In chronological order

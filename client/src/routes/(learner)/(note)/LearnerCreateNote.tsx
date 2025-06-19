@@ -19,10 +19,13 @@ import {
 import { useLoaderData, useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
 import { useState } from "react";
+import { toast } from "sonner";
+import _API_INSTANCE from "@/utils/axios";
 
 export default function LearnerCreateNotePage() {
   const data = useLoaderData();
   const navigate = useNavigate();
+  const [isSaving, setIsSaving] = useState(false);
 
   // States for editors //
   const [html, setHTML] = useState("");
@@ -69,12 +72,24 @@ export default function LearnerCreateNotePage() {
       setHTML(editor.getHTML());
       setText(editor.getText());
       setJSON(editor.getJSON());
-      console.log(editor.getHTML());
     },
   });
   // States for editors //
 
   if (!editor) return;
+
+  const handleSave = async () => {
+    setIsSaving(true);
+
+    try {
+      const res = await _API_INSTANCE.post("/");
+    } catch (err) {
+      toast.error(err.message);
+      throw err;
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen w-full">
@@ -87,7 +102,10 @@ export default function LearnerCreateNotePage() {
           <h1 className="text-2xl font-bold">Create note</h1>
         </div>
         <div className="flex flex-row gap-4 w-full lg:w-fit">
-          <button className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1 lg:flex-initial">
+          <button
+            className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1 lg:flex-initial"
+            disabled={isSaving}
+          >
             <Save />
             <p>Save changes</p>
           </button>

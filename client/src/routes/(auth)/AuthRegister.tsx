@@ -48,7 +48,6 @@ export default function AuthRegisterPage() {
       result.error.errors.map((m) => {
         toast.error(`Error: ${m.message.toString()}`);
       });
-      console.log(result.error.errors);
       setIsRegistering(false);
       return;
     }
