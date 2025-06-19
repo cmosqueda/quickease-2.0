@@ -19,6 +19,26 @@ export default function QuizTab({ quizzes }: { quizzes: any[] }) {
           <h1>Manually create</h1>
         </NavLink>
       </div>
+      <div className="filter">
+        <input
+          className="btn filter-reset"
+          type="radio"
+          name="metaframeworks"
+          aria-label="All"
+        />
+        <input
+          className="btn"
+          type="radio"
+          name="metaframeworks"
+          aria-label="From user"
+        />
+        <input
+          className="btn"
+          type="radio"
+          name="metaframeworks"
+          aria-label="AI-Generated"
+        />
+      </div>
       <div className="flex flex-row gap-4 flex-wrap">
         <QuizCard link="1" />
       </div>

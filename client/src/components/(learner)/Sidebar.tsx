@@ -35,17 +35,17 @@ export default function Sidebar({ tab }: { tab: string }) {
     {
       title: "Summarize Notes",
       icon: <NotebookTabs />,
-      link: "/learner/summarize",
+      element: "generate-summary-modal-global",
     },
     {
       title: "Flashcards",
       icon: <GalleryVertical />,
-      link: "/learner/flashcards",
+      element: "generate-flashcard-modal-global",
     },
     {
       title: "Quizzes",
       icon: <FileQuestion />,
-      link: "/learner/quizzes",
+      element: "generate-quiz-modal-global",
     },
     {
       title: "Pomodoro",
@@ -194,9 +194,11 @@ export default function Sidebar({ tab }: { tab: string }) {
             Quick Study Tools
           </h1>
         </div>
-        {links.slice(2, 6).map((link) => (
-          <NavLink
-            to={link.link}
+        {links.slice(2, 5).map((link) => (
+          <button
+            onClick={() => {
+              document.getElementById(link.element).showModal();
+            }}
             className={clsx(
               "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
               currentTab == link.link
@@ -207,8 +209,23 @@ export default function Sidebar({ tab }: { tab: string }) {
           >
             {link.icon}
             <h1 className={clsx(isOpen ? "block" : "hidden")}>{link.title}</h1>
-          </NavLink>
+          </button>
         ))}
+        <NavLink
+          to={links[5].link}
+          className={clsx(
+            "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
+            currentTab == links[5].link
+              ? "bg-neutral text-white"
+              : "hover:bg-base-200",
+            isOpen ? "justify-start" : "justify-center"
+          )}
+        >
+          {links[5].icon}
+          <h1 className={clsx(isOpen ? "block" : "hidden")}>
+            {links[5].title}
+          </h1>
+        </NavLink>
       </div>
       {/* desktop sidebar */}
 
