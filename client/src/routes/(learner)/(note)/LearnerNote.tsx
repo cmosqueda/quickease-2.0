@@ -1,21 +1,78 @@
+import StarterKit from "@tiptap/starter-kit";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
+import CodeBlock from "@tiptap/extension-code-block";
+import HorizontalRule from "@tiptap/extension-horizontal-rule";
+import CustomEditor from "@/components/Editor";
+
 import {
   ArrowLeft,
   BookDown,
   CalendarRange,
   ClipboardList,
-  Heading,
-  Heading1,
-  Heading2,
-  Heading3,
-  LucideBold,
   Save,
   X,
 } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router";
+import { useEditor } from "@tiptap/react";
+import { useState } from "react";
+import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
+import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 
 export default function LearnerNotePage() {
   const data = useLoaderData();
   const navigate = useNavigate();
+
+  // States for editors //
+  const [html, setHTML] = useState("");
+  const [text, setText] = useState("");
+  const [json, setJSON] = useState({});
+
+  const editor = useEditor({
+    editable: true,
+    autofocus: false,
+
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1],
+          HTMLAttributes: {
+            class: "text-4xl",
+          },
+        },
+      }),
+      BulletList.configure({
+        HTMLAttributes: {
+          class: "list-disc pl-8 list-outside",
+        },
+      }),
+      OrderedList.configure({
+        HTMLAttributes: {
+          class: "list-decimal pl-8 list-outside",
+        },
+      }),
+      CodeBlock.configure({
+        HTMLAttributes: {
+          class: "bg-base-200",
+        },
+      }),
+      HorizontalRule.configure({
+        HTMLAttributes: {
+          class: "border-t border-base-content/25",
+        },
+      }),
+    ],
+    content: "",
+    onUpdate: ({ editor }) => {
+      setHTML(editor.getHTML());
+      setText(editor.getText());
+      setJSON(editor.getJSON());
+      console.log(editor.getHTML());
+    },
+  });
+  // States for editors //
+
+  if (!editor) return;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -44,36 +101,25 @@ export default function LearnerNotePage() {
             Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,
             consectetur, adipisci velit...
           </h1>
-          <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-300">
-            <LucideBold
-              className="shrink-0 p-2 transition-all delay-0 duration-300 hover:bg-base-200 rounded-xl cursor-pointer"
-              size={36}
-            />
-            <Heading
-              className="shrink-0 p-2 transition-all delay-0 duration-300 hover:bg-base-200 rounded-xl cursor-pointer"
-              size={36}
-            />
-            <Heading1
-              className="shrink-0 p-2 transition-all delay-0 duration-300 hover:bg-base-200 rounded-xl cursor-pointer"
-              size={36}
-            />
-            <Heading2
-              className="shrink-0 p-2 transition-all delay-0 duration-300 hover:bg-base-200 rounded-xl cursor-pointer"
-              size={36}
-            />
-            <Heading3
-              className="shrink-0 p-2 transition-all delay-0 duration-300 hover:bg-base-200 rounded-xl cursor-pointer"
-              size={36}
-            />
-          </div>
+          <CustomEditor editor={editor} />
         </div>
         <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
           <h1 className="font-bold text-xl">Study options</h1>
-          <button className="rounded-3xl btn btn-soft gap-2 join-item">
+          <button
+            className="rounded-3xl btn btn-soft gap-2 join-item"
+            onClick={() =>
+              document.getElementById("generate-summary-modal").showModal()
+            }
+          >
             <BookDown />
             <h1>Generate summary</h1>
           </button>
-          <button className="rounded-3xl btn btn-soft gap-2 join-item">
+          <button
+            className="rounded-3xl btn btn-soft gap-2 join-item"
+            onClick={() =>
+              document.getElementById("generate-flashcard-modal").showModal()
+            }
+          >
             <CalendarRange />
             <h1>Generate flashcards</h1>
           </button>
@@ -83,6 +129,8 @@ export default function LearnerNotePage() {
           </button>
         </div>
       </div>
+      <GenerateSummaryModal html={html} text={text} json={json} />
+      <GenerateFlashcardModal html={html} text={text} json={json} />
     </div>
   );
 }
