@@ -1,13 +1,9 @@
-import StarterKit from "@tiptap/starter-kit";
-import BulletList from "@tiptap/extension-bullet-list";
-import OrderedList from "@tiptap/extension-ordered-list";
-import CodeBlock from "@tiptap/extension-code-block";
-import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import CustomEditor from "@/components/Editor";
 import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
 import _API_INSTANCE from "@/utils/axios";
+import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import useAuth from "@/hooks/useAuth";
 
 import {
@@ -42,37 +38,7 @@ export default function LearnerNotePage() {
   const editor = useEditor({
     editable: true,
     autofocus: false,
-
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1],
-          HTMLAttributes: {
-            class: "text-4xl",
-          },
-        },
-      }),
-      BulletList.configure({
-        HTMLAttributes: {
-          class: "list-disc pl-8 list-outside",
-        },
-      }),
-      OrderedList.configure({
-        HTMLAttributes: {
-          class: "list-decimal pl-8 list-outside",
-        },
-      }),
-      CodeBlock.configure({
-        HTMLAttributes: {
-          class: "bg-base-200",
-        },
-      }),
-      HorizontalRule.configure({
-        HTMLAttributes: {
-          class: "border-t border-base-content/25",
-        },
-      }),
-    ],
+    extensions: _TIPTAP_EXTENSIONS,
     content: data.notes_content,
     onUpdate: ({ editor }) => {
       setHTML(editor.getHTML());

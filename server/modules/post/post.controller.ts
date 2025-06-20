@@ -1,5 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { addTagOnPost, commentOnPost, createPost, deletePost, getComments, getPost, getUserPosts, replyOnComment, togglePostVisibility, voteOnComment, voteOnPost } from "./post.service";
+import {
+    addTagOnPost, commentOnPost, createPost, deletePost, getComments,
+    getPost, getRecentPosts, getUserPosts, replyOnComment, togglePostVisibility,
+    voteOnComment, voteOnPost
+} from "./post.service";
 
 export async function get_user_posts(request: FastifyRequest, reply: FastifyReply) {
     try {
@@ -13,15 +17,27 @@ export async function get_user_posts(request: FastifyRequest, reply: FastifyRepl
     }
 }
 
-export async function get_post(request: FastifyRequest, reply: FastifyReply) {
-    const { post_id } = request.body as { post_id: string }
+export async function get_recent_posts(request: FastifyRequest, reply: FastifyReply) {
     try {
-        const post = getPost(post_id)
+        const { cursor, limit } = request.query as { cursor?: string; limit?: string };
+
+        const data = await getRecentPosts(cursor, parseInt(limit ?? '10'));
+        reply.code(200).send(data);
+    } catch (err) {
+        reply.code(500).send({ message: "Error fetching posts.", err });
+    }
+}
+
+export async function get_post(request: FastifyRequest, reply: FastifyReply) {
+    const { post_id } = request.params as { post_id: string }
+    try {
+        const post = await getPost(post_id)
 
         reply.code(200).send(post)
     } catch (err) {
         reply.code(500).send({
-            message: "Error getting post."
+            message: "Error getting post.",
+            err
         })
     }
 }
@@ -29,7 +45,7 @@ export async function get_post(request: FastifyRequest, reply: FastifyReply) {
 export async function get_comments(request: FastifyRequest, reply: FastifyReply) {
     const { post_id } = request.body as { post_id: string }
     try {
-        const comments = getComments(post_id)
+        const comments = await getComments(post_id)
 
         reply.code(200).send(comments)
     } catch (err) {
@@ -41,9 +57,9 @@ export async function get_comments(request: FastifyRequest, reply: FastifyReply)
 
 
 export async function create_post(request: FastifyRequest, reply: FastifyReply) {
-    const { body, } = request.body as { body: string }
+    const { body, title } = request.body as { body: string, title: string }
     try {
-        const post = createPost(body, request.user.id)
+        const post = await createPost(body, title, request.user.id)
 
         reply.code(200).send(post)
     } catch (err) {
@@ -57,7 +73,7 @@ export async function create_post(request: FastifyRequest, reply: FastifyReply) 
 export async function comment_on_post(request: FastifyRequest, reply: FastifyReply) {
     const { body, post_id, } = request.body as { body: string, post_id: string }
     try {
-        const comment = commentOnPost(body, post_id, request.user.id)
+        const comment = await commentOnPost(body, post_id, request.user.id)
 
         reply.code(200).send(comment)
     } catch (err) {

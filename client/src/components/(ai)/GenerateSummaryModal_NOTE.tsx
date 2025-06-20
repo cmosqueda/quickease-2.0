@@ -7,6 +7,7 @@ import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import { EditorProvider } from "@tiptap/react";
 import { AlertCircle, LoaderPinwheel, Save, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
 export default function GenerateSummaryModal({
   html,
@@ -52,44 +53,7 @@ export default function GenerateSummaryModal({
           />
           <h1 className="font-bold text-xl">Summary</h1>
         </div>
-        <EditorProvider
-          extensions={[
-            StarterKit.configure({
-              heading: {
-                levels: [1],
-                HTMLAttributes: {
-                  class: "text-4xl",
-                },
-              },
-            }),
-            BulletList.configure({
-              HTMLAttributes: {
-                class: "list-disc pl-8 list-outside",
-              },
-            }),
-            OrderedList.configure({
-              HTMLAttributes: {
-                class: "list-decimal pl-8 list-outside",
-              },
-            }),
-            CodeBlock.configure({
-              HTMLAttributes: {
-                class: "bg-base-200",
-              },
-            }),
-            HorizontalRule.configure({
-              HTMLAttributes: {
-                class: "border-t border-base-content/25",
-              },
-            }),
-          ]}
-          content={generatedContent}
-          editable={false}
-          editorContainerProps={{
-            className:
-              "h-full bg-base-200 rounded-xl border border-base-100 p-4",
-          }}
-        ></EditorProvider>
+        <EditorProvider extensions={_TIPTAP_EXTENSIONS}></EditorProvider>
         <div className="flex flex-row gap-4 self-end items-center">
           <button className="btn btn-success">
             <Save />

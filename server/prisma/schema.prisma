@@ -93,6 +93,7 @@ model Post {
   id         String   @id @default(uuid())
   user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id    String
+  title      String
   post_body  String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())

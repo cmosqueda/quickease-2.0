@@ -34,15 +34,13 @@ import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
 import _API_INSTANCE from "./utils/axios";
 import useAuth from "./hooks/useAuth";
 
-import {
-  createBrowserRouter,
-  redirect,
-  RouterProvider,
-  useParams,
-} from "react-router";
+import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "../global.css";
+
+const client = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -50,22 +48,31 @@ const router = createBrowserRouter([
     Component: LandingPage,
     loader: async () => {
       try {
-        const { status, data } = await _API_INSTANCE.get("/users", {
+        const response = await _API_INSTANCE.get("/users", {
           withCredentials: true,
         });
-        if (status == 200 && data.is_admin == false) {
-          const auth = useAuth.getState();
-          auth.setUser(data);
-          return redirect("/learner");
-        }
 
-        if (status == 200 && data.is_admin == true) {
+        const { status, data } = response;
+
+        if (status === 200 && data && typeof data.is_admin === "boolean") {
           const auth = useAuth.getState();
           auth.setUser(data);
-          return redirect("/learner");
+
+          if (data.is_admin) {
+            return redirect("/admin");
+          } else {
+            return redirect("/learner");
+          }
+        } else {
+          console.warn("Unexpected response format or status", response);
+          return null;
         }
       } catch (err) {
-        return redirect("/");
+        if (err?.response?.status === 401) {
+          return null;
+        }
+
+        return null;
       }
     },
   },
@@ -77,10 +84,68 @@ const router = createBrowserRouter([
       {
         path: "login",
         Component: AuthLoginPage,
+        loader: async () => {
+          try {
+            const response = await _API_INSTANCE.get("/users", {
+              withCredentials: true,
+            });
+
+            const { status, data } = response;
+
+            if (status === 200 && data && typeof data.is_admin === "boolean") {
+              const auth = useAuth.getState();
+              auth.setUser(data);
+
+              if (data.is_admin) {
+                return redirect("/admin");
+              } else {
+                return redirect("/learner");
+              }
+            } else {
+              console.warn("Unexpected response format or status", response);
+              return null;
+            }
+          } catch (err) {
+            if (err?.response?.status === 401) {
+              return null;
+            }
+
+            return null;
+          }
+        },
       },
       {
         path: "register",
         Component: AuthRegisterPage,
+        loader: async () => {
+          try {
+            const response = await _API_INSTANCE.get("/users", {
+              withCredentials: true,
+            });
+
+            const { status, data } = response;
+
+            if (status === 200 && data && typeof data.is_admin === "boolean") {
+              const auth = useAuth.getState();
+              auth.setUser(data);
+
+              if (data.is_admin) {
+                return redirect("/admin");
+              } else {
+                return redirect("/learner");
+              }
+            } else {
+              console.warn("Unexpected response format or status", response);
+              return null;
+            }
+          } catch (err) {
+            if (err?.response?.status === 401) {
+              return null;
+            }
+
+            return null;
+          }
+        },
       },
     ],
   },
@@ -98,6 +163,16 @@ const router = createBrowserRouter([
         if (status == 200) {
           const auth = useAuth.getState();
           auth.setUser(data);
+
+          const notes = await _API_INSTANCE.get("/notes");
+          const flashcard = await _API_INSTANCE.get("/flashcard");
+          const quiz = await _API_INSTANCE.get("/quiz");
+
+          return {
+            notes: notes.data,
+            flashcards: flashcard.data,
+            quizzes: quiz.data,
+          };
         }
       } catch (err) {
         return redirect("/");
@@ -138,7 +213,15 @@ const router = createBrowserRouter([
       },
       {
         Component: LearnerPostPage,
-        loader: async () => {},
+        loader: async ({ params }) => {
+          try {
+            const { data } = await _API_INSTANCE.get(`/forum/post/${params.id}`);
+
+            return data;
+          } catch (err) {
+            return redirect("/learner");
+          }
+        },
         path: "post/:id",
       },
       {
@@ -244,5 +327,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")!).render(
-  <RouterProvider router={router} />
+  <QueryClientProvider client={client}>
+    <RouterProvider router={router} />
+  </QueryClientProvider>
 );

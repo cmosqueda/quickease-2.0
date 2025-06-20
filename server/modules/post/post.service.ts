@@ -1,4 +1,6 @@
 import db_client from "../../utils/client"
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc';
 
 export async function getUserPosts(user_id: string) {
     const posts = await db_client.post.findMany({
@@ -8,14 +10,108 @@ export async function getUserPosts(user_id: string) {
     return posts
 }
 
+export async function getRecentPosts(cursor?: string | null, limit = 10) {
+    const cutoffDate = dayjs.extend(utc).utc().subtract(7, "day").toDate();
+
+    const posts = await db_client.post.findMany({
+        where: {
+            created_at: {
+                gte: cutoffDate,
+            },
+            is_public: true,
+        },
+        orderBy: {
+            created_at: 'desc',
+        },
+        include: {
+            user: {
+                select: {
+                    first_name: true,
+                    last_name: true,
+                    email: true,
+                },
+            },
+            votes: {
+                select: {
+                    vote_type: true,
+                }
+            },
+            comments: {
+                select: {
+                    parent_comment: true,
+                    comment_body: true,
+                    replies: true,
+                    votes: true,
+                    _count: {
+                        select: {
+                            replies: true,
+                        }
+                    }
+                }
+            }
+        },
+        take: limit + 1,
+        ...(cursor
+            ? {
+                skip: 1,
+                cursor: {
+                    id: cursor,
+                },
+            }
+            : {}),
+    });
+
+    const hasMore = posts.length > limit;
+    const items = hasMore ? posts.slice(0, -1) : posts;
+
+    return {
+        posts: items,
+        nextCursor: hasMore ? items[items.length - 1].id : null,
+    };
+}
+
+
 export async function getPost(post_id: string) {
     const post = await db_client.post.findFirst({
         where: { id: post_id },
-        include: { comments: { where: { post_id: post_id } } }
-    })
+        include: {
+            comments: true,
+            user: {
+                select: {
+                    first_name: true,
+                    last_name: true,
+                    email: true,
+                },
+            },
+        },
+    });
 
-    return post
+    if (!post) return null;
+
+    const [upvotes, downvotes] = await Promise.all([
+        db_client.postVote.count({
+            where: {
+                post_id,
+                vote_type: 1,
+            },
+        }),
+        db_client.postVote.count({
+            where: {
+                post_id,
+                vote_type: -1,
+            },
+        }),
+    ]);
+
+    return {
+        ...post,
+        vote_summary: {
+            upvotes,
+            downvotes,
+        },
+    };
 }
+
 
 export async function getComments(post_id: string) {
     const comments = await db_client.comment.findMany({
@@ -25,9 +121,10 @@ export async function getComments(post_id: string) {
     return comments
 }
 
-export async function createPost(body: string, user_id: string) {
+export async function createPost(body: string, title: string, user_id: string) {
     const post = await db_client.post.create({
         data: {
+            title: title,
             post_body: body,
             user_id: user_id
         }

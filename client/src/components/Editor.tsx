@@ -80,31 +80,47 @@ const toolbarItems = [
   },
 ];
 
-const CustomEditor = ({ editor }: { editor: Editor }) => {
+const CustomEditor = ({
+  editor,
+  style,
+  placeholder,
+}: {
+  editor: Editor | null;
+  style?: string;
+  placeholder?: string;
+}) => {
   if (!editor) return null;
 
   return (
     <>
-      <div className="flex flex-wrap gap-2 p-4 rounded-3xl bg-base-100 border border-base-300 w-fit">
-        {toolbarItems.map(({ Icon, action, canExecute, isActive }, idx) => {
-          const disabled = canExecute ? !canExecute(editor) : false;
-          const active = isActive ? isActive(editor) : false;
+      <div className="flex flex-row gap-4 items-center">
+        <div className="flex flex-wrap gap-2 p-4 rounded-3xl bg-base-100 border border-base-300 w-fit">
+          {toolbarItems.map(({ Icon, action, canExecute, isActive }, idx) => {
+            const disabled = canExecute ? !canExecute(editor) : false;
+            const active = isActive ? isActive(editor) : false;
 
-          return (
-            <Icon
-              key={idx}
-              onClick={() => action(editor)}
-              disabled={disabled}
-              className={clsx(iconClass, active && "is-active")}
-              size={32}
-            />
-          );
-        })}
+            return (
+              <Icon
+                key={idx}
+                onClick={() => action(editor)}
+                disabled={disabled}
+                className={clsx(iconClass, active && "is-active")}
+                size={32}
+              />
+            );
+          })}
+        </div>
       </div>
 
       <EditorContent
         editor={editor}
-        className="prose bg-base-100 rounded-xl p-4 outline-hidden border border-base-300"
+        autoFocus
+        rows={3}
+        placeholder={placeholder}
+        className={clsx(
+          style,
+          "prose bg-base-100 rounded-xl p-4 outline-hidden border border-base-300"
+        )}
       />
     </>
   );
