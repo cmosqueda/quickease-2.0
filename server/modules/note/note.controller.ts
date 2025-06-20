@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { createUserNote, deleteUserNote, getUserNotes, toggleNoteVisibility, updateNoteVisibility, updateUserNote } from "./note.service";
+import { createUserNote, deleteUserNote, getUserNote, getUserNotes, toggleNoteVisibility, updateUserNote } from "./note.service";
 
 export async function get_user_notes(request: FastifyRequest, reply: FastifyReply) {
     try {
@@ -11,6 +11,20 @@ export async function get_user_notes(request: FastifyRequest, reply: FastifyRepl
             message: "Error getting user's flashcards."
         })
     }
+}
+
+export async function get_user_note(request: FastifyRequest, reply: FastifyReply) {
+    const { note_id } = request.params as { note_id: string }
+
+    try {
+        const note = await getUserNote(note_id)
+        reply.code(200).send(note)
+    } catch (err) {
+        reply.code(500).send({
+            message: "Error creating note."
+        })
+    }
+
 }
 
 export async function create_user_note(request: FastifyRequest, reply: FastifyReply) {
@@ -42,16 +56,15 @@ export async function create_user_note(request: FastifyRequest, reply: FastifyRe
 }
 
 export async function update_user_note(request: FastifyRequest, reply: FastifyReply) {
-    const { title, content, note_id, user_id } = request.body as { title: string, content: string, note_id: string, user_id: string }
+    const { title, content, note_id, } = request.body as { title: string, content: string, note_id: string }
 
     const schema = z.object({
         title: z.string().min(3),
         content: z.string().nullable(),
         note_id: z.string(),
-        user_id: z.string()
     })
 
-    const result = schema.safeParse({ title, content, note_id, user_id })
+    const result = schema.safeParse({ title, content, note_id })
 
     if (!result.success) {
         return reply.code(400).send({
@@ -61,7 +74,7 @@ export async function update_user_note(request: FastifyRequest, reply: FastifyRe
     }
 
     try {
-        const note = await updateUserNote(title, content, note_id, user_id)
+        const note = await updateUserNote(title, content, note_id)
         reply.code(200).send(note)
     } catch (err) {
         reply.code(500).send({

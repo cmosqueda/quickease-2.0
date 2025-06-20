@@ -7,6 +7,8 @@ import CustomEditor from "@/components/Editor";
 import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
+import _API_INSTANCE from "@/utils/axios";
+import useAuth from "@/hooks/useAuth";
 
 import {
   ArrowLeft,
@@ -18,9 +20,11 @@ import {
 } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function LearnerNotePage() {
+  const { user } = useAuth();
   const data = useLoaderData();
   const navigate = useNavigate();
 
@@ -29,6 +33,11 @@ export default function LearnerNotePage() {
   const [text, setText] = useState("");
   const [json, setJSON] = useState({});
   const [title, setTitle] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setTitle(data.title);
+  }, [data]);
 
   const editor = useEditor({
     editable: true,
@@ -64,7 +73,7 @@ export default function LearnerNotePage() {
         },
       }),
     ],
-    content: "",
+    content: data.notes_content,
     onUpdate: ({ editor }) => {
       setHTML(editor.getHTML());
       setText(editor.getText());
@@ -75,6 +84,29 @@ export default function LearnerNotePage() {
 
   if (!editor) return;
 
+  const handleSave = async () => {
+    setIsSaving(true);
+
+    try {
+      const res = await _API_INSTANCE.put("/notes/update", {
+        title: title,
+        content: html,
+        note_id: data.id,
+        user_id: user?.id,
+      });
+
+      if (res.status == 200) {
+        toast.success("Note updated.");
+        navigate("/learner/library");
+      }
+    } catch (err) {
+      toast.error(err.message);
+      throw err;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen w-full">
       <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 lg:items-center border-b border-base-300 p-4 bg-base-100">
@@ -83,7 +115,11 @@ export default function LearnerNotePage() {
           className="cursor-pointer lg:ml-6"
         />
         <div className="flex flex-row gap-4 w-full lg:w-fit">
-          <button className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1 lg:flex-initial">
+          <button
+            disabled={isSaving}
+            onClick={handleSave}
+            className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1 lg:flex-initial"
+          >
             <Save />
             <p>Save changes</p>
           </button>

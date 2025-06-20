@@ -4,7 +4,8 @@ import {
     create_user_note,
     update_user_note,
     delete_user_note,
-    toggle_user_note_visibility
+    toggle_user_note_visibility,
+    get_user_note
 } from "./note.controller";
 
 export async function noteRoutes(fastify: FastifyInstance) {
@@ -12,6 +13,11 @@ export async function noteRoutes(fastify: FastifyInstance) {
         preHandler: [fastify.authenticate],
         handler: get_user_notes
     });
+
+    fastify.get("/:id", {
+        preHandler: [fastify.authenticate],
+        handler: get_user_note
+    })
 
     fastify.post("/create", {
         preHandler: [fastify.authenticate],

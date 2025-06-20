@@ -34,7 +34,12 @@ import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
 import _API_INSTANCE from "./utils/axios";
 import useAuth from "./hooks/useAuth";
 
-import { createBrowserRouter, redirect, RouterProvider } from "react-router";
+import {
+  createBrowserRouter,
+  redirect,
+  RouterProvider,
+  useParams,
+} from "react-router";
 import { createRoot } from "react-dom/client";
 
 import "../global.css";
@@ -106,6 +111,17 @@ const router = createBrowserRouter([
       {
         Component: LearnerLibraryPage,
         path: "library",
+        loader: async () => {
+          const notes = await _API_INSTANCE.get("/notes");
+          const flashcard = await _API_INSTANCE.get("/flashcard");
+          const quiz = await _API_INSTANCE.get("/quiz");
+
+          return {
+            notes: notes.data,
+            flashcards: flashcard.data,
+            quizzes: quiz.data,
+          };
+        },
       },
       {
         Component: LearnerSummarizePage,
@@ -169,7 +185,15 @@ const router = createBrowserRouter([
       },
       {
         path: "note/:id",
-        loader: async () => {},
+        loader: async ({ params }) => {
+          try {
+            const { data } = await _API_INSTANCE.get(`/notes/${params.id}`);
+
+            return data;
+          } catch (err) {
+            return redirect("/learner/library");
+          }
+        },
         Component: LearnerNotePage,
       },
       {

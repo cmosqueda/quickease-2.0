@@ -5,13 +5,19 @@ import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
 import QuizTab from "@/components/(learner)/QuizTab";
 import clsx from "clsx";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLoaderData } from "react-router";
 
 export default function LearnerLibraryPage() {
+  const data = useLoaderData();
   const [tabIndex, setTabIndex] = useState(0);
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   const tabs = [
-    <NotesTab notes={[]} />,
+    <NotesTab notes={data.notes} />,
     <FlashcardTab flashcards={[]} />,
     <QuizTab quizzes={[]} />,
   ]; // 0 - notes | 1 - flashcard | 2 - quiz

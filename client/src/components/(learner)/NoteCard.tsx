@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import dayjs from "dayjs";
 import { NavLink } from "react-router";
 
 export default function NoteCard({
@@ -11,7 +12,7 @@ export default function NoteCard({
   title: string;
   date: string;
   link?: string;
-  onClick: () => void;
+  onClick?: () => void;
   style?: string;
 }) {
   if (link)
@@ -24,8 +25,10 @@ export default function NoteCard({
           "transition-all delay-0 duration-300 hover:shadow cursor-pointer"
         )}
       >
-        <h1 className="font-bold text-2xl">Lorem ipsum.</h1>
-        <p className="text-sm text-gray-400">January 5, 2025</p>
+        <h1 className="font-bold text-2xl">{title}</h1>
+        <p className="text-sm text-gray-400">
+          {dayjs(date).format("MMMM DD, YYYY").toString()}
+        </p>
       </NavLink>
     );
 
