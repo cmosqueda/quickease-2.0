@@ -14,6 +14,7 @@ import userRoutes from "./modules/user/user.routes"
 
 import { FastifyRequest, FastifyReply } from "fastify"
 import { server } from "./server"
+import { noteRoutes } from "./modules/note/note.route"
 
 export default async function initializeFastifyConfig() {
 
@@ -114,6 +115,7 @@ export default async function initializeFastifyConfig() {
     */
     await server.register(userRoutes, { prefix: 'api/users' })
     await server.register(authRoutes, { prefix: 'api/auth' })
+    await server.register(noteRoutes, { prefix: 'api/notes' })
     await server.register(flashcardRoutes, { prefix: 'api/flashcard' })
     await server.register(quizRoutes, { prefix: 'api/quiz' })
     await server.register(postRoutes, { prefix: 'api/forum' })

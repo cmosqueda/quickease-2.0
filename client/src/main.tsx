@@ -43,6 +43,26 @@ const router = createBrowserRouter([
   {
     path: "/",
     Component: LandingPage,
+    loader: async () => {
+      try {
+        const { status, data } = await _API_INSTANCE.get("/users", {
+          withCredentials: true,
+        });
+        if (status == 200 && data.is_admin == false) {
+          const auth = useAuth.getState();
+          auth.setUser(data);
+          return redirect("/learner");
+        }
+
+        if (status == 200 && data.is_admin == true) {
+          const auth = useAuth.getState();
+          auth.setUser(data);
+          return redirect("/learner");
+        }
+      } catch (err) {
+        return redirect("/");
+      }
+    },
   },
   // Auth
   {
