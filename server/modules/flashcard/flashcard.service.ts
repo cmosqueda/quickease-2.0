@@ -10,6 +10,16 @@ export async function getUserFlashcards(user_id: string) {
     return flashcards
 }
 
+export async function getUserFlashcard(flashcard_id: string) {
+    const flashcards = await db_client.flashcard.findFirst({
+        where: {
+            id: flashcard_id
+        }
+    })
+
+    return flashcards
+}
+
 export async function createUserFlashcard(title: string, description: string, flashcards: { front: string; back: string; }[], user_id: string) {
     const flashcard = await db_client.flashcard.create({
         data: {

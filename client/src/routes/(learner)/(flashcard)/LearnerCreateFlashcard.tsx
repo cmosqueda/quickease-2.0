@@ -1,4 +1,6 @@
 import FlippableCard from "@/components/(learner)/FlippableCard";
+import useAuth from "@/hooks/useAuth";
+import _API_INSTANCE from "@/utils/axios";
 
 import { ArrowLeft, EllipsisVertical, Save } from "lucide-react";
 import { useState } from "react";
@@ -6,12 +8,21 @@ import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
 export default function LearnerCreateFlashcardPage() {
+  const { user } = useAuth();
   const navigate = useNavigate();
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  // cards
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
   const [cards, setCards] = useState<{ front: string; back: string }[]>([]);
+  // cards
 
-  const handleSave = () => {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleAddCard = () => {
     if (!front && !back) {
       toast.error("Invalid input values.");
       return;
@@ -24,6 +35,30 @@ export default function LearnerCreateFlashcardPage() {
     setBack("");
   };
 
+  const handleSave = async () => {
+    if (cards.length < 2) {
+      toast.info("The flashcards must contain atleast 2.");
+      return;
+    }
+
+    try {
+      const { status } = await _API_INSTANCE.post("flashcard/create", {
+        title: title,
+        description: description,
+        flashcards: cards,
+        user_id: user?.id,
+      });
+
+      if (status == 200) {
+        toast.success("Flashcard created.");
+        navigate("/learner/library");
+      }
+    } catch (err) {
+      toast.error(`Error creating flashcard: ${err.message}`);
+      return;
+    }
+  };
+
   return (
     <div className="flex flex-col w-full lg:min-h-screen max-w-4xl mx-auto p-8 gap-6">
       <div className="flex flex-row justify-between items-center">
@@ -32,7 +67,13 @@ export default function LearnerCreateFlashcardPage() {
           className="cursor-pointer"
         />
         <div className="flex flex-row gap-4 items-center">
-          <Save className="cursor-pointer" />
+          <button
+            className="cursor-pointer"
+            disabled={isSaving}
+            onClick={handleSave}
+          >
+            <Save />
+          </button>
           <details className="dropdown dropdown-end cursor-pointer">
             <summary className="list-none">
               <EllipsisVertical />
@@ -47,6 +88,22 @@ export default function LearnerCreateFlashcardPage() {
             </ul>
           </details>
         </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          type="text"
+          className="input input-ghost text-2xl w-full"
+          placeholder="Title..."
+        />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="textarea textarea-ghost text-lg resize-none w-full"
+          placeholder="Short description..."
+        />
       </div>
 
       <div className="flex flex-col gap-4 bg-base-100 p-8 rounded-3xl border border-base-300 shadow-md">
@@ -70,7 +127,10 @@ export default function LearnerCreateFlashcardPage() {
             onChange={(e) => setBack(e.target.value)}
           />
         </fieldset>
-        <button onClick={handleSave} className="btn btn-primary w-fit self-end">
+        <button
+          onClick={handleAddCard}
+          className="btn btn-primary w-fit self-end"
+        >
           Add Flashcard
         </button>
       </div>

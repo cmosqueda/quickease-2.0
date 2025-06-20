@@ -14,7 +14,7 @@ export async function noteRoutes(fastify: FastifyInstance) {
         handler: get_user_notes
     });
 
-    fastify.get("/:id", {
+    fastify.get("/:note_id", {
         preHandler: [fastify.authenticate],
         handler: get_user_note
     })

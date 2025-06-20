@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { EllipsisVertical } from "lucide-react";
 import { NavLink } from "react-router";
 
@@ -12,7 +13,7 @@ export default function FlashcardCard({
   term: number;
   date: string;
   link?: string;
-  onClick: () => void;
+  onClick?: () => void;
 }) {
   if (link) {
     return (
@@ -21,7 +22,7 @@ export default function FlashcardCard({
         className="flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 "
       >
         <div className="flex flex-row justify-between items-center">
-          <h1 className="font-bold text-xl">Lorem ipsum</h1>
+          <h1 className="font-bold text-xl">{title}</h1>
           <details className="dropdown dropdown-end">
             <summary className="list-none cursor-pointer">
               <EllipsisVertical />
@@ -33,7 +34,10 @@ export default function FlashcardCard({
             </ul>
           </details>
         </div>
-        <p>69 Terms / January 1, 1970</p>
+        <p>
+          {term.toString()} Terms /{" "}
+          {dayjs(date).format("MMMM DD, YYYY").toString()}
+        </p>
       </NavLink>
     );
   }

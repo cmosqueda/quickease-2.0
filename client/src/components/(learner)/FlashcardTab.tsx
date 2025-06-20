@@ -2,8 +2,23 @@ import { NavLink } from "react-router";
 import FlashcardCard from "./FlashcardCard";
 
 import { Plus, Search } from "lucide-react";
+import { useEffect } from "react";
 
-export default function FlashcardTab({ flashcards }: { flashcards: any[] }) {
+export default function FlashcardTab({
+  flashcards,
+}: {
+  flashcards: {
+    id: string;
+    title: string;
+    description: string;
+    flashcards: {
+      front: string;
+      back: string;
+    }[];
+    is_ai_generated: boolean;
+    created_at: string;
+  }[];
+}) {
   return (
     <>
       <div className="flex flex-row justify-between items-center gap-4">
@@ -40,7 +55,14 @@ export default function FlashcardTab({ flashcards }: { flashcards: any[] }) {
         />
       </div>
       <div className="flex flex-row gap-4 flex-wrap">
-        <FlashcardCard link="1" />
+        {flashcards.map((flashcard) => (
+          <FlashcardCard
+            link={flashcard.id}
+            term={flashcard.flashcards.length}
+            date={flashcard.created_at}
+            title={flashcard.title}
+          />
+        ))}
       </div>
     </>
   );

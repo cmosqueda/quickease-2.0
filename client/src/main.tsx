@@ -151,7 +151,17 @@ const router = createBrowserRouter([
           },
           {
             Component: LearnerFlashcardPage,
-            loader: async () => {},
+            loader: async ({ params }) => {
+              try {
+                const { data } = await _API_INSTANCE.get(
+                  `/flashcard/${params.id}`
+                );
+
+                return data;
+              } catch (err) {
+                return redirect("/learner/library");
+              }
+            },
             path: ":id",
           },
           {

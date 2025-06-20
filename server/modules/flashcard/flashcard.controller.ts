@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUserFlashcard, deleteUserFlashcard, getUserFlashcards, toggleFlashcardVisibility, updateUserFlashcard } from "./flashcard.service";
+import { createUserFlashcard, deleteUserFlashcard, getUserFlashcard, getUserFlashcards, toggleFlashcardVisibility, updateUserFlashcard } from "./flashcard.service";
 import { z } from "zod";
 
 export async function get_user_flashcards(request: FastifyRequest, reply: FastifyReply) {
@@ -13,12 +13,27 @@ export async function get_user_flashcards(request: FastifyRequest, reply: Fastif
     }
 }
 
+export async function get_user_flashcard(request: FastifyRequest, reply: FastifyReply) {
+    const { flashcard_id } = request.params as {
+        flashcard_id: string
+    }
+
+    try {
+        const flashcards = await getUserFlashcard(flashcard_id)
+        reply.code(200).send(flashcards)
+    } catch (err) {
+        reply.code(500).send({
+            message: "Error getting user's flashcards."
+        })
+    }
+}
+
 export async function create_user_flashcard(request: FastifyRequest, reply: FastifyReply) {
     const { title, description, flashcards } = request.body as { title: string, description: string, flashcards: { front: string; back: string; }[] }
 
     const schema = z.object({
-        title: z.string().min(6),
-        description: z.string().min(12),
+        title: z.string().min(3),
+        description: z.string().nullable(),
         flashcards: z.object({ front: z.string(), back: z.string() }).array().min(1)
     })
     const result = schema.safeParse({ title, description, flashcards })
