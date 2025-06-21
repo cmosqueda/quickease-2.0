@@ -118,17 +118,17 @@ Feedback by Mosqueda:
 
 Criterias:
 
-- LF001: User can create flashcards manually
-- LF002: User can preview front content and back content of flashcards.
-- LF003: Front and back contents must display accurately.
-- LF004: User can review flashcards. When a user clicks on the card component, the UI must respond with a flip in no more than 0.8s.
+- LFC001: User can create flashcards manually
+- LFC002: User can preview front content and back content of flashcards.
+- LFC003: Front and back contents must display accurately.
+- LFC004: User can review flashcards. When a user clicks on the card component, the UI must respond with a flip in no more than 0.8s.
 
 Success Rate:
 
-- LF001: 100%
-- LF002: 100%
-- LF003: 100%
-- LF004: 100%
+- LFC001: 100%
+- LFC002: 100%
+- LFC003: 100%
+- LFC004: 100%
 
 Status: **PASSED**
 
