@@ -4,10 +4,10 @@ This documents all app test reports
 
 # June 21, 2025
 
-## TLDR:
+## TL;DR:
 
 <details>
-<summary><strong>Summary of Test Results (Click to Expand)</strong></summary>
+<summary><strong>Summary of Test Results</strong></summary>
 
 - ⚠️ **Register**
 
