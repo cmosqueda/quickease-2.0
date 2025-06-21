@@ -1,5 +1,7 @@
 **This documents all app test reports.**
 
+For test case code and description references, access [this link](https://docs.google.com/spreadsheets/d/1JOolp5MGG8KnSi7auB_1pmLtYCR8nEPIwKX8CYza8HY/edit?usp=sharing) and go to the `Test Case Repository` sheet.
+
 ---
 
 # June 21, 2025
@@ -38,21 +40,21 @@
 
 Criterias:
 
-- C1: The input fields must respond no more than 0.8s when clicked.
-- C2: The user can only register with a valid, NEW email. Used emails are not allowed for re-registration.
-- C3: Require user to enter ALL input fields (first name, last name, email, password, confirm password).
-- C4: Account creation MUST ONLY proceed if user SUCCESSFULLY fills in ALL required input fields (first name, last name, email, password, confirm password).
-- C5: Error-handling pop-ups/toasts understandable for users are implemented.
-- C6: The user must be directed to `Log in` screen when the highlighted `Sign in` text is clicked.
+- R001: The input fields must respond no more than 0.8s when clicked.
+- R002: The user can only register with a valid, NEW email. Used emails are not allowed for re-registration.
+- R003: Require user to enter ALL input fields (first name, last name, email, password, confirm password).
+- R004: Account creation MUST ONLY proceed if user SUCCESSFULLY fills in ALL required input fields (first name, last name, email, password, confirm password).
+- R005: Error-handling pop-ups/toasts understandable for users are implemented.
+- R006: The user must be directed to `Log in` screen when the highlighted `Sign in` text is clicked.
 
 Success Rate:
 
-- C1: 100%
-- C2: 100%
-- C3: 0%
-- C4: 0%
-- C5: 70%
-- C6: 100%
+- R001: 100%
+- R002: 100%
+- R003: 0%
+- R004: 0%
+- R005: 70%
+- R006: 100%
 
 Status: **PARTIAL PASSED**
 
@@ -67,19 +69,19 @@ Feedback by Mosqueda:
 
 Criterias:
 
-- C1: The input fields must respond no more than 0.8s when clicked.
-- C2: The user can only log in with a registered account (used email).
-- C3: Error-handling pop-ups/toasts understandable for users are implemented.
-- C4: Account log in MUST ONLY proceed if valid and existing user account credentials in the database are entered.
-- C5: The user must be directed to `Register` screen when the highlighted `Register Now` text is clicked.
+- L001: The input fields must respond no more than 0.8s when clicked.
+- L002: The user can only log in with a registered account (used email).
+- L003: Error-handling pop-ups/toasts understandable for users are implemented.
+- L004: Account log in MUST ONLY proceed if valid and existing user account credentials in the database are entered.
+- L005: The user must be directed to `Register` screen when the highlighted `Register Now` text is clicked.
 
 Success Rate:
 
-- C1: 100%
-- C2: 100%
-- C3: 70%
-- C4: 100%
-- C5: 100%
+- L001: 100%
+- L002: 100%
+- L003: 70%
+- L004: 100%
+- L005: 100%
 
 Status: **PASSED**
 
@@ -92,17 +94,17 @@ Feedback by Mosqueda:
 
 Criterias:
 
-- C1: User can create notes manually.
-- C2: All implemented markdown functions work properly
-- C3: User can edit the existing note and save it properly.
-- C4: User can view saved notes
+- LN001: User can create notes manually.
+- LN002: All implemented markdown functions work properly
+- LN003: User can edit the existing note and save it properly.
+- LN004: User can view saved notes
 
 Success Rate:
 
-- C1: 100%
-- C2: 90%
-- C3: 100%
-- C4: 100%
+- LN001: 100%
+- LN002: 90%
+- LN003: 100%
+- LN004: 100%
 
 Status: **PARTIAL PASSED**
 
@@ -116,17 +118,17 @@ Feedback by Mosqueda:
 
 Criterias:
 
-- C1: User can create flashcards manually
-- C2: User can preview front content and back content of flashcards.
-- C3: Front and back contents must display accurately.
-- C4: User can review flashcards. When a user clicks on the card component, the UI must respond with a flip in no more than 0.8s.
+- LF001: User can create flashcards manually
+- LF002: User can preview front content and back content of flashcards.
+- LF003: Front and back contents must display accurately.
+- LF004: User can review flashcards. When a user clicks on the card component, the UI must respond with a flip in no more than 0.8s.
 
 Success Rate:
 
-- C1: 100%
-- C2: 100%
-- C3: 100%
-- C4: 100%
+- LF001: 100%
+- LF002: 100%
+- LF003: 100%
+- LF004: 100%
 
 Status: **PASSED**
 
