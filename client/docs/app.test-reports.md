@@ -130,7 +130,7 @@ Success Rate:
 
 Status: **PASSED**
 
-Feedbacks by Mosqueda:
+Feedback by Mosqueda:
 
 - Flashcards work well as expected.
 - RECOMMENDATION: There should be distinction if the card is facing front or back. Maybe, differentiate the color of the cards background.
