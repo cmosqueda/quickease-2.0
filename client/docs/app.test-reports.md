@@ -1,4 +1,4 @@
-This documents all app test reports
+**This documents all app test reports.**
 
 ---
 
