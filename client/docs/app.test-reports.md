@@ -1,6 +1,6 @@
 **This documents all app test reports.**
 
-For test case code and description references, access [this link](https://docs.google.com/spreadsheets/d/1JOolp5MGG8KnSi7auB_1pmLtYCR8nEPIwKX8CYza8HY/edit?usp=sharing) and go to the `Test Case Repository` sheet.
+For test case codes and description references, access [this link](https://docs.google.com/spreadsheets/d/1JOolp5MGG8KnSi7auB_1pmLtYCR8nEPIwKX8CYza8HY/edit?usp=sharing) and go to the `Test Case Repository` sheet.
 
 ---
 
