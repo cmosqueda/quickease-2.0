@@ -3,7 +3,16 @@ import NoteCard from "./NoteCard";
 import { Plus, Search } from "lucide-react";
 import { NavLink } from "react-router";
 
-export default function NotesTab({ notes }: { notes: any[] }) {
+export default function NotesTab({
+  notes,
+}: {
+  notes: {
+    id: string;
+    title: string;
+    notes_content: string;
+    created_at: string;
+  }[];
+}) {
   return (
     <>
       <div className="flex flex-row justify-between items-center gap-4">
@@ -37,7 +46,9 @@ export default function NotesTab({ notes }: { notes: any[] }) {
         />
       </div>
       <div className="flex flex-row gap-4 flex-wrap">
-        <NoteCard link="1" />
+        {notes.map((note) => (
+          <NoteCard title={note.title} date={note.created_at} link={note.id}  />
+        ))}
       </div>
     </>
   );

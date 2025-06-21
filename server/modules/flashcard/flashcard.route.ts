@@ -2,7 +2,8 @@ import { FastifyInstance } from 'fastify';
 import {
     get_user_flashcards, create_user_flashcard,
     update_user_flashcard, delete_user_flashcard,
-    toggle_flashcard_visibility
+    toggle_flashcard_visibility,
+    get_user_flashcard
 } from './flashcard.controller';
 
 
@@ -12,17 +13,22 @@ export default async function flashcardRoutes(fastify: FastifyInstance) {
         handler: get_user_flashcards
     });
 
-    fastify.post('/create-flashcard', {
+    fastify.get('/:flashcard_id', {
+        preHandler: [fastify.authenticate],
+        handler: get_user_flashcard
+    });
+
+    fastify.post('/create', {
         preHandler: [fastify.authenticate],
         handler: create_user_flashcard
     });
 
-    fastify.put('/update-flashcard', {
+    fastify.put('/update', {
         preHandler: [fastify.authenticate],
         handler: update_user_flashcard
     });
 
-    fastify.delete('/delete-flashcard', {
+    fastify.delete('/delete', {
         preHandler: [fastify.authenticate],
         handler: delete_user_flashcard
     });

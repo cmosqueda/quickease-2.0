@@ -6,6 +6,7 @@ import {
   deletePost,
   getComments,
   getPost,
+  getRecentPosts,
   getUserPosts,
   replyOnComment,
   togglePostVisibility,
@@ -25,8 +26,19 @@ export async function get_user_posts(request: FastifyRequest, reply: FastifyRepl
   }
 }
 
+export async function get_recent_posts(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const { cursor, limit } = request.query as { cursor?: string; limit?: string };
+
+    const data = await getRecentPosts(cursor, parseInt(limit ?? "10"));
+    reply.code(200).send(data);
+  } catch (err) {
+    reply.code(500).send({ message: "Error fetching posts.", err });
+  }
+}
+
 export async function get_post(request: FastifyRequest, reply: FastifyReply) {
-  const { post_id } = request.body as { post_id: string };
+  const { post_id } = request.params as { post_id: string };
   try {
     const post = await getPost(post_id);
 
@@ -34,6 +46,7 @@ export async function get_post(request: FastifyRequest, reply: FastifyReply) {
   } catch (err) {
     reply.code(500).send({
       message: "Error getting post.",
+      err,
     });
   }
 }
@@ -52,9 +65,9 @@ export async function get_comments(request: FastifyRequest, reply: FastifyReply)
 }
 
 export async function create_post(request: FastifyRequest, reply: FastifyReply) {
-  const { body } = request.body as { body: string };
+  const { body, title } = request.body as { body: string; title: string };
   try {
-    const post = await createPost(body, request.user.id);
+    const post = await createPost(body, title, request.user.id);
 
     reply.code(200).send(post);
   } catch (err) {

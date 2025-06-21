@@ -8,12 +8,12 @@ export default async function quizRoutes(fastify: FastifyInstance) {
         handler: get_user_quizzes,
     });
 
-    fastify.post('/create-quiz', {
+    fastify.post('/create', {
         preHandler: [fastify.authenticate],
         handler: create_user_quiz,
     });
 
-    fastify.put('/update-quiz', {
+    fastify.put('/update', {
         preHandler: [fastify.authenticate],
         handler: update_user_quiz,
     });
@@ -23,7 +23,7 @@ export default async function quizRoutes(fastify: FastifyInstance) {
         handler: update_user_quiz_visibility,
     });
 
-    fastify.delete('/delete-quiz', {
+    fastify.delete('/delete', {
         preHandler: [fastify.authenticate],
         handler: delete_user_quiz,
     });

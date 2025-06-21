@@ -1,19 +1,50 @@
 import NotificationsDropdown from "@/components/(learner)/NotificationsDropdown";
 import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
 import PostCard from "@/components/(learner)/PostCard";
+import PostModal from "@/components/(learner)/PostModal";
+import _API_INSTANCE from "@/utils/axios";
+import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
-import { LoaderPinwheel, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import useAuth from "@/hooks/useAuth";
+import { useEditor } from "@tiptap/react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 export default function LearnerForumPage() {
-  const { user } = useAuth();
-  const [isPosting, setIsPosting] = useState(false);
+  const [title, setTitle] = useState("");
+  const [html, setHTML] = useState("");
+
+  const editor = useEditor({
+    editable: true,
+    autofocus: true,
+    extensions: _TIPTAP_EXTENSIONS,
+    content: "",
+    onUpdate: ({ editor }) => {
+      setHTML(editor.getHTML());
+    },
+  });
+
+  const { data } = useInfiniteQuery({
+    queryKey: ["recent-posts"],
+    queryFn: async ({ pageParam = null }) => {
+      const { data: posts } = await _API_INSTANCE.get("/forum/posts/recent", {
+        params: { cursor: pageParam, limit: 10 },
+      });
+
+      console.log(posts);
+
+      return posts;
+    },
+    initialPageParam: null,
+    getNextPageParam: (lastPage) => {
+      return lastPage?.nextCursor ?? null;
+    },
+    retry: false,
+  });
 
   useEffect(() => {
-    console.log(user);
-  }, [user]);
+    return () => editor?.destroy();
+  }, []);
 
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto">
@@ -23,35 +54,30 @@ export default function LearnerForumPage() {
           <input type="search" className="lg:w-md" placeholder="Search" />
         </label>
         <div className="hidden lg:flex flex-row gap-2">
+          <button
+            className="btn btn-neutral"
+            onClick={() => {
+              document.getElementById("create-post-modal").showModal();
+            }}
+          >
+            <Plus />
+            <p>Create</p>
+          </button>
           <NotificationsDropdown />
           <ProfileDropdown />
         </div>
       </div>
-      <fieldset className="fieldset relative">
-        <textarea
-          className="textarea h-[12rem] resize-none w-full"
-          placeholder="Wanna ask something?"
-        />
-        <div className="flex flex-row gap-4 bottom-10 right-4 absolute">
-          <button
-            className="btn btn-neutral self-end"
-            disabled={isPosting}
-            onClick={() => {
-              setIsPosting(true);
-              setTimeout(() => {
-                toast.success("Posted");
-                setIsPosting(false);
-              }, 1000);
-            }}
-          >
-            {isPosting ? <LoaderPinwheel className="animate-spin" /> : "Post"}
-          </button>
-        </div>
-        <div className="label cursor-pointer delay-0 duration-300 transition-all hover:text-blue-400">
-          Please follow the rules & regulations before posting.
-        </div>
-      </fieldset>
-      <PostCard />
+      <div className="flex flex-col gap-4">
+        {data?.pages.flatMap((page) =>
+          page.posts.map((post) => <PostCard key={post.id} post={post} />)
+        )}
+      </div>
+      <PostModal
+        editor={editor}
+        html={html}
+        setTitle={setTitle}
+        title={title}
+      />
     </div>
   );
 }

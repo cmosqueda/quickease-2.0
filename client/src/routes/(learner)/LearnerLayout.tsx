@@ -22,8 +22,8 @@ export default function LearnerLayout() {
       </main>
       {isPopupEnabled ? <TimerPopup /> : <></>}
       <GenerateSummaryModal />
-      <GenerateFlashcardModal />
-      <GenerateQuizModal />
+      <GenerateFlashcardModal notes={data.notes}/>
+      <GenerateQuizModal notes={data.notes}/>
     </>
   );
 }

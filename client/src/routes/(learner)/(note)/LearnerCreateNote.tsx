@@ -1,12 +1,10 @@
-import StarterKit from "@tiptap/starter-kit";
-import BulletList from "@tiptap/extension-bullet-list";
-import OrderedList from "@tiptap/extension-ordered-list";
-import CodeBlock from "@tiptap/extension-code-block";
-import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import CustomEditor from "@/components/Editor";
 import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
+import _API_INSTANCE from "@/utils/axios";
+import useAuth from "@/hooks/useAuth";
+import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
 import {
   ArrowLeft,
@@ -16,14 +14,13 @@ import {
   Save,
   X,
 } from "lucide-react";
-import { useLoaderData, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import _API_INSTANCE from "@/utils/axios";
 
 export default function LearnerCreateNotePage() {
-  const data = useLoaderData();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -36,37 +33,7 @@ export default function LearnerCreateNotePage() {
   const editor = useEditor({
     editable: true,
     autofocus: false,
-
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1],
-          HTMLAttributes: {
-            class: "text-4xl",
-          },
-        },
-      }),
-      BulletList.configure({
-        HTMLAttributes: {
-          class: "list-disc pl-8 list-outside",
-        },
-      }),
-      OrderedList.configure({
-        HTMLAttributes: {
-          class: "list-decimal pl-8 list-outside",
-        },
-      }),
-      CodeBlock.configure({
-        HTMLAttributes: {
-          class: "bg-base-200",
-        },
-      }),
-      HorizontalRule.configure({
-        HTMLAttributes: {
-          class: "border-t border-base-content/25",
-        },
-      }),
-    ],
+    extensions: _TIPTAP_EXTENSIONS,
     content: "",
     onUpdate: ({ editor }) => {
       setHTML(editor.getHTML());
@@ -76,13 +43,26 @@ export default function LearnerCreateNotePage() {
   });
   // States for editors //
 
+  useEffect(() => {
+    return () => editor?.destroy();
+  }, []);
+
   if (!editor) return;
 
   const handleSave = async () => {
     setIsSaving(true);
 
     try {
-      const res = await _API_INSTANCE.post("/");
+      const res = await _API_INSTANCE.post("/notes/create", {
+        title: title,
+        content: html,
+        user_id: user?.id,
+      });
+
+      if (res.status == 200) {
+        toast.success("Note created.");
+        navigate("/learner/library");
+      }
     } catch (err) {
       toast.error(err.message);
       throw err;
@@ -105,6 +85,7 @@ export default function LearnerCreateNotePage() {
           <button
             className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1 lg:flex-initial"
             disabled={isSaving}
+            onClick={handleSave}
           >
             <Save />
             <p>Save changes</p>

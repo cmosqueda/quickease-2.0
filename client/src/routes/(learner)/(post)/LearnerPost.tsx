@@ -1,3 +1,8 @@
+import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
+import CustomEditor from "@/components/Editor";
+import dayjs from "dayjs";
+
+import { EditorProvider, useEditor } from "@tiptap/react";
 import {
   ArrowLeft,
   ChevronDown,
@@ -5,11 +10,25 @@ import {
   EllipsisVertical,
   MessageCircle,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 
 export default function LearnerPostPage() {
   const data = useLoaderData();
   const navigate = useNavigate();
+
+  const [html, setHTML] = useState("");
+  const editor = useEditor({
+    editable: true,
+    extensions: _TIPTAP_EXTENSIONS,
+    onUpdate: (e) => {
+      setHTML(e.editor.getHTML());
+    },
+  });
+
+  useEffect(() => {
+    return () => editor?.destroy();
+  }, []);
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
@@ -35,32 +54,31 @@ export default function LearnerPostPage() {
       <div className="flex flex-row items-center gap-3">
         <div className="bg-base-300 rounded-3xl shadow w-[3rem] h-[3rem] aspect-square" />
         <div>
-          <p>user123986712893</p>
-          <p className="text-base-content/40">January 1, 1970</p>
+          <p>
+            {data.user.first_name} {data.user.last_name}
+          </p>
+          <p className="text-base-content/40">
+            {dayjs(data.created_at).format("MMMM DD, YYYY").toString()}
+          </p>
         </div>
       </div>
+      <h1 className="text-4xl font-bold">{data.title}</h1>
       <div className="p-4 rounded-3xl bg-base-100 shadow border border-base-200">
-        <p>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
-        </p>
+        <EditorProvider
+          content={data.post_body}
+          extensions={_TIPTAP_EXTENSIONS}
+          editable={false}
+        ></EditorProvider>
       </div>
       <div className="flex flex-row gap-2">
         <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-200">
           <ChevronUp className="cursor-pointer delay-0 duration-300 transition-all hover:text-green-500" />
-          <p>1</p>
+          <p>{data.vote_summary.upvotes - data.vote_summary.downvotes}</p>
           <ChevronDown className="cursor-pointer delay-0 duration-300 transition-all hover:text-red-500" />
         </div>
         <div className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300">
           <MessageCircle />
-          <p>2</p>
+          <p>{data.comments.length}</p>
         </div>
       </div>
       <div className="flex flex-col gap-2">
@@ -93,6 +111,15 @@ export default function LearnerPostPage() {
             />
           </div>
         </div>
+      </div>
+      <div className="flex flex-col gap-4">
+        <CustomEditor
+          editor={editor}
+          placeholder="Write your comment here..."
+        />
+        <button className="btn btn-success w-fit self-end">
+          <p>Comment</p>
+        </button>
       </div>
     </div>
   );

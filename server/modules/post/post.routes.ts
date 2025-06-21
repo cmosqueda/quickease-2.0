@@ -3,7 +3,8 @@ import {
     get_user_posts, get_post,
     get_comments, create_post, comment_on_post, vote_on_post,
     reply_on_comment, vote_on_comment, add_tag_on_post,
-    delete_post, toggle_post_visibility
+    delete_post, toggle_post_visibility,
+    get_recent_posts
 } from './post.controller';
 
 
@@ -13,10 +14,15 @@ export default async function postRoutes(fastify: FastifyInstance) {
         handler: get_user_posts
     });
 
-    fastify.post('/post/view', {
+    fastify.get('/post/:post_id', {
         preHandler: [fastify.authenticate],
         handler: get_post
     });
+
+    fastify.get('/posts/recent', {
+        preHandler: [fastify.authenticate],
+        handler: get_recent_posts
+    })
 
     fastify.post('/comments/view', {
         preHandler: [fastify.authenticate],

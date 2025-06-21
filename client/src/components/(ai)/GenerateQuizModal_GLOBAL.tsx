@@ -11,24 +11,28 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-export default function GenerateQuizModal() {
+export default function GenerateQuizModal({
+  notes,
+}: {
+  notes: {
+    title: string;
+    date: string;
+    link: string;
+  };
+}) {
   const [index, setIndex] = useState(0);
 
   const tabs = [
     <>
       <div className="grid lg:grid-cols-2 gap-4 flex-wrap">
-        <NoteCard style="bg-base-200 w-full" />
-        <NoteCard style="bg-base-200 w-full" />
-        <NoteCard style="bg-base-200 w-full" />
-        <NoteCard style="bg-base-200 w-full" />
-        <NoteCard style="bg-base-200 w-full" />
-        <NoteCard style="bg-base-200 w-full" />
-        <NoteCard style="bg-base-200 w-full" />
-        <NoteCard style="bg-base-200 w-full" />
-        <NoteCard style="bg-base-200 w-full" />
-        <NoteCard style="bg-base-200 w-full" />
-        <NoteCard style="bg-base-200 w-full" />
-        <NoteCard style="bg-base-200 w-full" />
+        {notes.map((c) => (
+          <NoteCard
+            title={c.title}
+            date={c.created_at}
+            link={c.id}
+            style="bg-base-200 w-full"
+          />
+        ))}
       </div>
     </>,
     <>

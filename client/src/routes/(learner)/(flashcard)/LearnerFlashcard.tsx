@@ -36,16 +36,34 @@ export default function LearnerFlashcardPage() {
           </details>
         </div>
       </div>
-      <FlippableCard back="Jhon Lloyd Viernes" front="What is my name?" />
+      <FlippableCard
+        front={data.flashcards[cardIndex].front}
+        back={data.flashcards[cardIndex].back}
+      />
       <div className="flex flex-row items-center justify-center gap-12">
         <ChevronLeft
           className="cursor-pointer p-1.5 delay-0 duration-300 transition-all hover:bg-base-100 rounded-full hover:shadow"
           size={36}
+          onClick={() => {
+            if (cardIndex != 0) {
+              setCardIndex((prev) => prev - 1);
+            }
+          }}
         />
-        <p>1/24</p>
+        <p>
+          {cardIndex + 1}/{data.flashcards.length}
+        </p>
         <ChevronRight
           className="cursor-pointer p-1.5 delay-0 duration-300 transition-all hover:bg-base-100 rounded-full hover:shadow"
           size={36}
+          onClick={() => {
+            setCardIndex((prev) => {
+              if (prev + 1 < data.flashcards.length) {
+                return prev + 1;
+              }
+              return prev;
+            });
+          }}
         />
       </div>
     </div>
