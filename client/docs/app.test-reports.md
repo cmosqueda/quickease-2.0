@@ -6,7 +6,33 @@ This documents all app test reports
 
 ## TLDR:
 
--
+<details>
+<summary><strong>Summary of Test Results (Click to Expand)</strong></summary>
+
+- ⚠️ **Register**
+
+  - Partially passed.
+  - Major issue: Registration proceeds even when only _email_ and _password_ are filled.
+  - **Recommendation**: Add validation to ensure all required fields are filled before submission.
+  - Toast messages need to be clearer for users.
+
+- ✅ **Log-in**
+
+  - Fully passed all criteria.
+  - Works as expected with valid credentials.
+  - **Minor Issue**: Error-handling toasts show raw API status codes — recommend user-friendly messages.
+
+- ✅ **Flashcards (Manual Creation)**
+
+  - All features passed.
+  - Works as intended, including front/back previews and flip animations.
+  - **UX Suggestion**: Add visual distinction between front and back (e.g., different background colors).
+
+- ⚠️ **Notes (Manual Creation)**
+  - Mostly passed; note creation, editing, and saving work well.
+  - **Minor Issue**: `Quote` markdown function does not work.
+
+</details>
 
 ## Register
 
