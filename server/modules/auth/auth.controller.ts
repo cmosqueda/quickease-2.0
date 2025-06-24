@@ -1,71 +1,90 @@
 import db_client from "../../utils/client";
-
 import { FastifyReply, FastifyRequest } from "fastify";
 import { loginUser, registerUser } from "./auth.service";
 
 export async function login_user(request: FastifyRequest, reply: FastifyReply) {
-    const { email, password } = request.body as {
-        email: string;
-        password: string;
-    }
-
     try {
+        const { email, password } = request.body as {
+            email: string;
+            password: string;
+        };
 
-        const user = await loginUser(email, password)
-
-        if (user == false) {
-            return reply.code(400).send({
-                message: "Check your credentials."
-            })
+        if (!email || !password) {
+            return reply.code(400).send({ message: "Email and password are required." });
         }
 
-        const token = await reply.jwtSign(user)
+        const user = await loginUser(email, password);
+
+        if (!user) {
+            return reply.code(400).send({ message: "Check your credentials." });
+        }
+
+        const token = await reply.jwtSign(user);
 
         reply.setCookie('QUICKEASE_TOKEN', token, {
             path: '/',
             secure: true,
             httpOnly: true,
+            sameSite: 'strict'
         }).code(200).send({
             is_admin: user.is_admin
-        })
+        });
 
     } catch (err) {
-        reply.code(400).send({
-            message: "Bad request, check your credentials."
-        })
+        console.error("Login error:", err);
+        reply.code(500).send({
+            message: "Internal server error. Please try again later."
+        });
     }
-
 }
 
 export async function register_user(request: FastifyRequest, reply: FastifyReply) {
-    const { firstName, lastName, email, password
-    } = request.body as { firstName: string, lastName: string, email: string, password: string }
-    const existed = await db_client.user.findUnique({
-        where: {
-            email: email
+    try {
+        const { firstName, lastName, email, password } = request.body as {
+            firstName: string;
+            lastName: string;
+            email: string;
+            password: string;
+        };
+
+        if (!firstName || !lastName || !email || !password) {
+            return reply.code(400).send({ message: "All fields are required." });
         }
-    })
 
-    if (existed) {
-        return reply.code(406).send({
-            message: "Email already in use."
-        })
+        const existed = await db_client.user.findUnique({
+            where: { email }
+        });
+
+        if (existed) {
+            return reply.code(406).send({ message: "Email already in use." });
+        }
+
+        const user = await registerUser(firstName, lastName, email, password);
+        const token = await reply.jwtSign(user);
+
+        reply.setCookie('QUICKEASE_TOKEN', token, {
+            path: '/',
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict'
+        }).code(201).send({
+            role: 'user'
+        });
+
+    } catch (err) {
+        console.error("Register error:", err);
+        reply.code(500).send({
+            message: "Internal server error. Could not register user."
+        });
     }
-
-    const user = await registerUser(firstName, lastName, email, password)
-    const token = await reply.jwtSign(user)
-
-    reply.setCookie('QUICKEASE_TOKEN', token, {
-        path: '/',
-        httpOnly: true,
-        secure: true
-    }).send({
-        role: 'user'
-    })
 }
 
 export async function logout(request: FastifyRequest, reply: FastifyReply) {
-    reply.clearCookie('QUICKEASE_TOKEN')
-
-    return reply.code(200).send('Logout successfully.')
+    try {
+        reply.clearCookie('QUICKEASE_TOKEN');
+        return reply.code(200).send('Logout successfully.');
+    } catch (err) {
+        console.error("Logout error:", err);
+        return reply.code(500).send('Error occurred while logging out.');
+    }
 }

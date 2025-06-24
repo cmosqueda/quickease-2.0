@@ -21,8 +21,8 @@ import { toast } from "sonner";
 
 export default function LearnerCreateNotePage() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
+  const navigate = useNavigate();
 
   // States for editors //
   const [html, setHTML] = useState("");

@@ -23,6 +23,9 @@ import LearnerFlashcardsPage from "./routes/(learner)/(dashboard)/LearnerFlashca
 import LearnerQuizPage from "./routes/(learner)/(quiz)/LearnerQuiz";
 import LearnerCreateQuizPage from "./routes/(learner)/(quiz)/LearnerCreateQuiz";
 import LearnerCreateNotePage from "./routes/(learner)/(note)/LearnerCreateNote";
+import LearnerAnswerQuizPage from "./routes/(learner)/(quiz)/LearnerAnswerQuiz";
+import LearnerEditQuizPage from "./routes/(learner)/(quiz)/LearnerEditQuiz";
+import LearnerQuizAttemptPage from "./routes/(learner)/(quiz)/LearnerViewAttempt";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -37,12 +40,9 @@ import useAuth from "./hooks/useAuth";
 import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import "../global.css";
-import { toast } from "sonner";
-import LearnerAnswerQuizPage from "./routes/(learner)/(quiz)/LearnerAnswerQuiz";
-import LearnerEditQuizPage from "./routes/(learner)/(quiz)/LearnerEditQuiz";
-import LearnerQuizAttemptPage from "./routes/(learner)/(quiz)/LearnerViewAttempt";
 
 const client = new QueryClient();
 
