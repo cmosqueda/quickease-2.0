@@ -39,6 +39,8 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "../global.css";
+import { toast } from "sonner";
+import LearnerAnswerQuizPage from "./routes/(learner)/(quiz)/LearnerAnswerQuiz";
 
 const client = new QueryClient();
 
@@ -191,6 +193,8 @@ const router = createBrowserRouter([
           const flashcard = await _API_INSTANCE.get("/flashcard");
           const quiz = await _API_INSTANCE.get("/quiz");
 
+          console.log(quiz);
+
           return {
             notes: notes.data,
             flashcards: flashcard.data,
@@ -215,7 +219,9 @@ const router = createBrowserRouter([
         Component: LearnerPostPage,
         loader: async ({ params }) => {
           try {
-            const { data } = await _API_INSTANCE.get(`/forum/post/${params.id}`);
+            const { data } = await _API_INSTANCE.get(
+              `/forum/post/${params.id}`
+            );
 
             return data;
           } catch (err) {
@@ -260,7 +266,37 @@ const router = createBrowserRouter([
           {
             Component: LearnerQuizPage,
             path: ":id",
-            loader: async () => {},
+            loader: async ({ params }) => {
+              try {
+                const { data } = await _API_INSTANCE.get(`/quiz/${params.id}`);
+                console.log(data)
+
+                return data;
+              } catch (err) {
+                toast.error("Error getting quiz data.");
+                return redirect("/learner/library");
+              }
+            },
+          },
+          {
+            Component: LearnerAnswerQuizPage,
+            path: ":id/answer",
+            loader: async ({ params }) => {
+              try {
+                const string = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
+                const parsed = JSON.parse(string!);
+
+                if (parsed.id == params.id) {
+                  return parsed;
+                } else {
+                  toast.error("Invalid quiz ID.");
+                  return redirect("/learner/library");
+                }
+              } catch (err) {
+                toast.error("Error getting quiz data.");
+                return redirect("/learner/library");
+              }
+            },
           },
           {
             Component: LearnerCreateQuizPage,

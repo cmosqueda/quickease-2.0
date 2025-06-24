@@ -76,6 +76,8 @@ model Quiz {
   created_at      DateTime @default(now())
   updated_at      DateTime @default(now())
   is_ai_generated Boolean? @default(false)
+  is_randomized   Boolean? @default(false)
+  timed_quiz      Decimal?
 
   attachments PostAttachment[]
   attempts    QuizAttempt[]
@@ -175,7 +177,6 @@ model QuizAttempt {
   user_id      String
   started_at   DateTime
   completed_at DateTime?
-  time_taken   String? // store as ISO string or raw interval string
   answer_data  Json
   is_public    Boolean   @default(false)
 }

@@ -19,7 +19,7 @@ export default function LearnerLibraryPage() {
   const tabs = [
     <NotesTab notes={data.notes} />,
     <FlashcardTab flashcards={data.flashcards} />,
-    <QuizTab quizzes={[]} />,
+    <QuizTab quizzes={data.quizzes} />,
   ]; // 0 - notes | 1 - flashcard | 2 - quiz
 
   return (

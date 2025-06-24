@@ -3,7 +3,27 @@ import QuizCard from "./QuizCard";
 import { Search, Plus } from "lucide-react";
 import { NavLink } from "react-router";
 
-export default function QuizTab({ quizzes }: { quizzes: any[] }) {
+export default function QuizTab({
+  quizzes,
+}: {
+  quizzes: {
+    id: string;
+    title: string;
+    description: string;
+    quiz_content: {
+      correctAnswers: number[];
+      description: string;
+      options: string[];
+      question: string;
+    }[];
+    is_public: boolean;
+    is_ai_generated: boolean;
+    is_randomized: boolean;
+    timed_quiz: number;
+    created_at: string;
+    user_id: string;
+  }[];
+}) {
   return (
     <>
       <div className="flex flex-row justify-between items-center gap-4">
@@ -40,7 +60,14 @@ export default function QuizTab({ quizzes }: { quizzes: any[] }) {
         />
       </div>
       <div className="flex flex-row gap-4 flex-wrap">
-        <QuizCard link="1" />
+        {quizzes.map((quiz) => (
+          <QuizCard
+            link={quiz.id}
+            date={quiz.date}
+            title={quiz.title}
+            term={quiz.quiz_content.length}
+          />
+        ))}
       </div>
     </>
   );

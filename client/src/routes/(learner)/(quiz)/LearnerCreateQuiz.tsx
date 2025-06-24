@@ -1,6 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import _API_INSTANCE from "@/utils/axios";
+import clsx from "clsx";
+
 import { ArrowLeft, ArrowRightFromLine, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 interface Question {
   question: string;
@@ -22,15 +27,42 @@ export default function LearnerCreateQuizPage() {
   const [quizTitle, setQuizTitle] = useState("Untitled Quiz");
   const [quizDescription, setQuizDescription] = useState("");
   const [isTimedQuiz, setIsTimedQuiz] = useState(false);
-  const [time, setTime] = useState("");
+  const [isRandomized, setIsRandomized] = useState(false);
+  const [totalSeconds, setTotalSeconds] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleTimeChange = (unit: string, value: string) => {
+    const numericValue = Math.max(0, parseInt(value) || 0);
+    const currentHours = Math.floor(totalSeconds / 3600);
+    const currentMinutes = Math.floor((totalSeconds % 3600) / 60);
+    const currentSeconds = totalSeconds % 60;
+
+    let newTotal = 0;
+    if (unit === "hours") {
+      newTotal = numericValue * 3600 + currentMinutes * 60 + currentSeconds;
+    } else if (unit === "minutes") {
+      newTotal = currentHours * 3600 + numericValue * 60 + currentSeconds;
+    } else if (unit === "seconds") {
+      newTotal = currentHours * 3600 + currentMinutes * 60 + numericValue;
+    }
+
+    setTotalSeconds(newTotal);
+  };
+
+  const getUnitValue = (unit: string) => {
+    if (unit === "hours") return Math.floor(totalSeconds / 3600);
+    if (unit === "minutes") return Math.floor((totalSeconds % 3600) / 60);
+    if (unit === "seconds") return totalSeconds % 60;
+    return 0;
+  };
 
   const handleQuestionChange = (
     index: number,
     field: keyof Question,
-    value: any
+    value: string | string[]
   ) => {
     const newQuestions = [...questions];
-    newQuestions[index][field] = value;
+    newQuestions[index][field] = value as never; // more specific in larger form systems
     setQuestions(newQuestions);
   };
 
@@ -74,7 +106,36 @@ export default function LearnerCreateQuizPage() {
     setQuestions(newQuestions);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (questions.length < 2) return false;
+
+    for (const q of questions) {
+      if (!q.question.trim()) return false;
+      if (q.options.some((opt) => !opt.trim())) return false;
+      if (q.correctAnswers.length === 0) return false;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const { status } = await _API_INSTANCE.post("/quiz/create", {
+        title: quizTitle.trim(),
+        description: quizDescription.trim(),
+        quiz_content: questions,
+        is_randomized: isRandomized,
+        timed_quiz: isTimedQuiz ? totalSeconds : 0,
+      });
+
+      if (status == 200) {
+        toast.success("Quiz created.");
+        return navigate("/learner/library");
+      }
+    } catch (err) {
+      toast.error("Error creating quiz.");
+      throw err;
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -82,10 +143,14 @@ export default function LearnerCreateQuizPage() {
       <div className="flex justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate("/learner/library")} // or another route
+          onClick={() => navigate("/learner/library")}
         />
-        <button className="btn btn-primary flex gap-2" onClick={handleSubmit}>
-          <span>Save Quiz</span>
+        <button
+          className="btn btn-primary flex gap-2"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+        >
+          <p>{isSubmitting ? "Saving..." : "Save Quiz"}</p>
           <ArrowRightFromLine />
         </button>
       </div>
@@ -109,7 +174,12 @@ export default function LearnerCreateQuizPage() {
         <div className="flex flex-col gap-2">
           <h1 className="font-bold">Quiz options</h1>
           <div className="flex flex-row items-center gap-2">
-            <input type="checkbox" className="checkbox" />
+            <input
+              type="checkbox"
+              className="checkbox"
+              checked={isRandomized}
+              onChange={() => setIsRandomized((prev) => !prev)}
+            />
             <h1>Randomize questions</h1>
           </div>
           <div className="flex flex-row items-center gap-2">
@@ -122,36 +192,28 @@ export default function LearnerCreateQuizPage() {
             <h1>Timed quiz</h1>
           </div>
           <div className="flex flex-row gap-2">
-            <fieldset className="fieldset">
-              <input
-                type="number"
-                className="input"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                disabled={!isTimedQuiz}
-              />
-              <p className="label">Hour/s</p>
-            </fieldset>
-            <fieldset className="fieldset">
-              <input
-                type="number"
-                className="input"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                disabled={!isTimedQuiz}
-              />
-              <p className="label">Minute/s</p>
-            </fieldset>
-            <fieldset className="fieldset">
-              <input
-                type="number"
-                className="input"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                disabled={!isTimedQuiz}
-              />
-              <p className="label">Second/s</p>
-            </fieldset>
+            {["hours", "minutes", "seconds"].map((unit) => (
+              <fieldset className="fieldset" key={unit}>
+                <input
+                  type="number"
+                  className={clsx(
+                    isTimedQuiz ? "opacity-100" : "opacity-0",
+                    "input"
+                  )}
+                  value={getUnitValue(unit)}
+                  onChange={(e) => handleTimeChange(unit, e.target.value)}
+                  disabled={!isTimedQuiz}
+                />
+                <p
+                  className={clsx(
+                    isTimedQuiz ? "opacity-100" : "opacity-0",
+                    "label"
+                  )}
+                >
+                  {unit.charAt(0).toUpperCase() + unit.slice(1)}/s
+                </p>
+              </fieldset>
+            ))}
           </div>
         </div>
       </div>
