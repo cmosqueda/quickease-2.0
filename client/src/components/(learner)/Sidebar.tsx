@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { NavLink, useNavigate, type NavigateFunction } from "react-router";
+import _API_INSTANCE from "@/utils/axios";
 
 const links = [
   {
@@ -284,7 +285,10 @@ const Floating = ({
                 "p-2 rounded-full shrink-0 border border-base-300 bg-base-100 transition-all delay-0 duration-300 cursor-pointer hover:shadow",
                 isOpen ? "rotate-180" : "rotate-0"
               )}
-              onClick={() => navigate("/")}
+              onClick={async () => {
+                await _API_INSTANCE.post("/auth/logout");
+                navigate("/");
+              }}
             />
           </div>
         </>

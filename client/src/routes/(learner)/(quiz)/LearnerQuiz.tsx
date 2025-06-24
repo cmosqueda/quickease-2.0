@@ -1,6 +1,8 @@
-import { calculateScore } from "@/utils/quiz";
 import clsx from "clsx";
 import dayjs from "dayjs";
+import useAuth from "@/hooks/useAuth";
+
+import { calculateScore } from "@/utils/quiz";
 import {
   ArrowLeft,
   ArrowRightFromLine,
@@ -9,8 +11,11 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
+import { toast } from "sonner";
+import _API_INSTANCE from "@/utils/axios";
 
 export default function LearnerQuizPage() {
+  const { user } = useAuth();
   const data = useLoaderData() as {
     id: string;
     user_id: string;
@@ -38,7 +43,7 @@ export default function LearnerQuizPage() {
           correctAnswers: number[];
         }[];
         user_answer: number[];
-      };
+      }[];
       user_id: string;
       started_at: string;
       completed_at: string;
@@ -51,6 +56,29 @@ export default function LearnerQuizPage() {
   const handleAnswerQuiz = async () => {
     await localStorage.setItem("QUICKEASE_CURRENT_QUIZ", JSON.stringify(data));
     navigate(`answer`);
+  };
+
+  const handleEditQuiz = async () => {
+    await localStorage.setItem("QUICKEASE_CURRENT_QUIZ", JSON.stringify(data));
+    navigate(`edit`);
+  };
+
+  const handleDeleteQuiz = async () => {
+    try {
+      const { status } = await _API_INSTANCE.delete(`/quiz/delete`, {
+        data: {
+          quiz_id: data.id,
+        },
+      });
+
+      if (status == 200) {
+        toast.success("Quiz deleted.");
+        return navigate("/learner/library");
+      }
+    } catch (err) {
+      toast.error("Failed to delete.");
+      return;
+    }
   };
 
   const tabs = [
@@ -78,17 +106,21 @@ export default function LearnerQuizPage() {
           onClick={() => navigate("/learner/library")}
         />
         <div className="flex flex-row gap-6 items-center">
-          <Edit />
-          <details className="dropdown dropdown-end cursor-pointer">
-            <summary className="list-none">
-              <EllipsisVertical />
-            </summary>
-            <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4">
-              <li>
-                <a>Delete</a>
-              </li>
-            </ul>
-          </details>
+          {data.user_id == user?.id && (
+            <>
+              <Edit onClick={handleEditQuiz} className="cursor-pointer" />
+              <details className="dropdown dropdown-end cursor-pointer">
+                <summary className="list-none">
+                  <EllipsisVertical />
+                </summary>
+                <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4">
+                  <li>
+                    <a onClick={handleDeleteQuiz}>Delete</a>
+                  </li>
+                </ul>
+              </details>
+            </>
+          )}
           <button
             className="btn btn-primary btn-soft"
             onClick={handleAnswerQuiz}

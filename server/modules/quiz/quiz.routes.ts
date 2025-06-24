@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { get_user_quizzes, create_user_quiz, update_user_quiz, update_user_quiz_visibility, delete_user_quiz, get_quiz, submit_quiz_attempt } from './quiz.controller';
+import { get_user_quizzes, create_user_quiz, update_user_quiz, update_user_quiz_visibility, delete_user_quiz, get_quiz, submit_quiz_attempt, get_quiz_attempt } from './quiz.controller';
 
 
 export default async function quizRoutes(fastify: FastifyInstance) {
@@ -11,6 +11,11 @@ export default async function quizRoutes(fastify: FastifyInstance) {
     fastify.get('/:quiz_id', {
         preHandler: [fastify.authenticate],
         handler: get_quiz
+    })
+
+    fastify.get('/attempt/:attempt_id', {
+        preHandler: [fastify.authenticate],
+        handler: get_quiz_attempt,
     })
 
     fastify.post('/submit', {
@@ -32,6 +37,7 @@ export default async function quizRoutes(fastify: FastifyInstance) {
         preHandler: [fastify.authenticate],
         handler: update_user_quiz_visibility,
     });
+
 
     fastify.delete('/delete', {
         preHandler: [fastify.authenticate],

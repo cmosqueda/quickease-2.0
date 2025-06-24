@@ -78,7 +78,7 @@ export async function submitQuizAttempt(answer_data: {
     user_answer: number[];
 }, started_at: string, completed_at: string, quiz_id: string, user_id: string) {
 
-    const attempt = await db_client.quizAttempt.create({
+    await db_client.quizAttempt.create({
         data: {
             user_id,
             started_at,
@@ -89,4 +89,14 @@ export async function submitQuizAttempt(answer_data: {
     })
 
     return true
+}
+
+export async function getQuizAttempt(quiz_id: string) {
+    const attempt = await db_client.quizAttempt.findUnique({
+        where: {
+            id: quiz_id
+        }
+    })
+
+    return attempt
 }

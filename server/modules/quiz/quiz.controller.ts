@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { createUserQuiz, deleteUserQuiz, getQuiz, getUserQuizzes, submitQuizAttempt, updateUserQuiz, updateUserQuizVisibility } from "./quiz.service";
+import { createUserQuiz, deleteUserQuiz, getQuiz, getQuizAttempt, getUserQuizzes, submitQuizAttempt, updateUserQuiz, updateUserQuizVisibility } from "./quiz.service";
 
 export async function get_user_quizzes(request: FastifyRequest, reply: FastifyReply) {
     try {
@@ -111,5 +111,19 @@ export async function submit_quiz_attempt(request: FastifyRequest, reply: Fastif
         })
     }
 
+}
+
+export async function get_quiz_attempt(request: FastifyRequest, reply: FastifyReply) {
+    const { attempt_id } = request.params as { attempt_id: string }
+
+    try {
+        const attempt = await getQuizAttempt(attempt_id)
+
+        reply.code(200).send(attempt)
+    } catch (err) {
+        reply.code(500).send({
+            message: "Error submitting attempt."
+        })
+    }
 }
 
