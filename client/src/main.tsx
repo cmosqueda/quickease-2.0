@@ -43,6 +43,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import "../global.css";
+import LearnerAICreateNotePage from "./routes/(learner)/(note)/LearnerAICreateNote";
 
 const client = new QueryClient();
 
@@ -329,7 +330,7 @@ const router = createBrowserRouter([
                   `/quiz/attempt/${params.attempt_id}`
                 );
 
-                console.log(data)
+                console.log(data);
 
                 return data;
               } catch (err) {
@@ -367,8 +368,22 @@ const router = createBrowserRouter([
       },
       {
         path: "note/create",
-        loader: async () => {},
         Component: LearnerCreateNotePage,
+      },
+      {
+        path: "note/create/ai",
+        loader: async () => {
+          const generatedContent = localStorage.getItem(
+            "QUICKEASE_GENERATED_CONTENT"
+          );
+
+          if (generatedContent) {
+            return JSON.parse(generatedContent);
+          } else {
+            return "";
+          }
+        },
+        Component: LearnerAICreateNotePage,
       },
     ],
   },

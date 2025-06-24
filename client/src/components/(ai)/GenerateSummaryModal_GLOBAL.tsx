@@ -1,23 +1,100 @@
+import _API_INSTANCE from "@/utils/axios";
 import clsx from "clsx";
 
 import { ArrowRight, Image, Paperclip, Text, X } from "lucide-react";
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
+import { useNavigate, type NavigateFunction } from "react-router";
+import { toast } from "sonner";
 
-export default function GenerateSummaryModal() {
-  const [generatedContent, setGeneratedContent] = useState("<h1>Test</h1>");
-  const [index, setIndex] = useState(0);
+const GenerateFromText = ({
+  text,
+  isGenerating,
+  setText,
+  setGeneratedContent,
+  setIsGenerating,
+  navigate,
+}: {
+  text: string;
+  isGenerating: boolean;
+  setText: Dispatch<SetStateAction<string>>;
+  setGeneratedContent: Dispatch<SetStateAction<string>>;
+  setIsGenerating: Dispatch<SetStateAction<boolean>>;
+  navigate: NavigateFunction;
+}) => {
+  const handleGenerate = async () => {
+    if (!text) {
+      toast.error("No text.");
+      return;
+    }
 
-  const tabs = [
+    setIsGenerating(true);
+
+    try {
+      const { data, status } = await _API_INSTANCE.post(
+        "/ai/generate-notes-from-prompt",
+        {
+          prompt: text,
+        },
+        { timeout: 10000 }
+      );
+
+      console.log(data);
+
+      if (status == 200) {
+        setGeneratedContent(data);
+        localStorage.setItem(
+          "QUICKEASE_GENERATED_CONTENT",
+          JSON.stringify(data)
+        );
+        document.getElementById("generate-summary-modal-global").close();
+        navigate("/learner/note/create/ai", { viewTransition: true });
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Error summarizing notes.");
+      return;
+    } finally {
+      setIsGenerating(false);
+      setGeneratedContent("");
+    }
+  };
+
+  return (
     <>
       <textarea
         className="textarea h-[18rem] w-full resize-none"
         placeholder="Notes?"
+        onChange={(e) => setText(e.target.value)}
+        value={text}
       />
-      <button className="btn btn-soft btn-success w-fit self-end">
+      <button
+        className="btn btn-soft btn-success w-fit self-end"
+        disabled={isGenerating}
+        onClick={handleGenerate}
+      >
         <h1>Summarize</h1>
         <ArrowRight />
       </button>
-    </>,
+    </>
+  );
+};
+
+export default function GenerateSummaryModal() {
+  const navigate = useNavigate();
+  const [generatedContent, setGeneratedContent] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [text, setText] = useState("");
+  const [index, setIndex] = useState(0);
+
+  const _TABS = [
+    <GenerateFromText
+      setText={setText}
+      text={text}
+      setGeneratedContent={setGeneratedContent}
+      setIsGenerating={setIsGenerating}
+      isGenerating={isGenerating}
+      navigate={navigate}
+    />,
     <>
       <div className="flex items-center justify-center w-full">
         <label
@@ -109,55 +186,59 @@ export default function GenerateSummaryModal() {
   return (
     <dialog id="generate-summary-modal-global" className="modal">
       <div className="modal-box max-w-5xl flex flex-col gap-4">
-        <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4">
-          <div className="flex flex-row gap-4 items-center">
-            <X
-              onClick={() => {
-                document
-                  .getElementById("generate-summary-modal-global")
-                  .close();
-              }}
-              className="cursor-pointer"
-            />
-            <h1 className="font-bold text-3xl lg:text-4xl">Generate summary</h1>
+        {!generatedContent && (
+          <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4">
+            <div className="flex flex-row gap-4 items-center">
+              <X
+                onClick={() => {
+                  document
+                    .getElementById("generate-summary-modal-global")
+                    .close();
+                }}
+                className="cursor-pointer"
+              />
+              <h1 className="font-bold text-3xl lg:text-4xl">
+                Generate summary
+              </h1>
+            </div>
+            <div role="tablist" className="tabs tabs-box gap-4">
+              <a
+                role="tab"
+                className={clsx(
+                  "flex flex-row gap-4 tab grow lg:grow-0",
+                  index == 0 ? "tab-active" : null
+                )}
+                onClick={() => setIndex(0)}
+              >
+                <Text />
+                <h1>Input text</h1>
+              </a>
+              <a
+                role="tab"
+                className={clsx(
+                  "flex flex-row gap-4 tab grow lg:grow-0",
+                  index == 1 ? "tab-active" : null
+                )}
+                onClick={() => setIndex(1)}
+              >
+                <Paperclip />
+                <h1>Upload document</h1>
+              </a>
+              <a
+                role="tab"
+                className={clsx(
+                  "flex flex-row gap-4 tab flex-1 lg:flex",
+                  index == 2 ? "tab-active" : null
+                )}
+                onClick={() => setIndex(2)}
+              >
+                <Image />
+                <h1>Upload image</h1>
+              </a>
+            </div>
           </div>
-          <div role="tablist" className="tabs tabs-box gap-4">
-            <a
-              role="tab"
-              className={clsx(
-                "flex flex-row gap-4 tab grow lg:grow-0",
-                index == 0 ? "tab-active" : null
-              )}
-              onClick={() => setIndex(0)}
-            >
-              <Text />
-              <h1>Input text</h1>
-            </a>
-            <a
-              role="tab"
-              className={clsx(
-                "flex flex-row gap-4 tab grow lg:grow-0",
-                index == 1 ? "tab-active" : null
-              )}
-              onClick={() => setIndex(1)}
-            >
-              <Paperclip />
-              <h1>Upload document</h1>
-            </a>
-            <a
-              role="tab"
-              className={clsx(
-                "flex flex-row gap-4 tab flex-1 lg:flex",
-                index == 2 ? "tab-active" : null
-              )}
-              onClick={() => setIndex(2)}
-            >
-              <Image />
-              <h1>Upload image</h1>
-            </a>
-          </div>
-        </div>
-        {tabs[index]}
+        )}
+        {_TABS[index]}
       </div>
     </dialog>
   );

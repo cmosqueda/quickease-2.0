@@ -89,5 +89,4 @@ export async function generate_notes_from_prompt(request: FastifyRequest, reply:
             message: "Error generating summary notes."
         })
     }
-
 }

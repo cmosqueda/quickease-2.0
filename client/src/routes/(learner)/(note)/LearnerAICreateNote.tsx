@@ -14,12 +14,13 @@ import {
   Save,
   X,
 } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export default function LearnerCreateNotePage() {
+export default function LearnerAICreateNotePage() {
+  const data = useLoaderData(); // for generated content
   const { user } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export default function LearnerCreateNotePage() {
     editable: true,
     autofocus: false,
     extensions: _TIPTAP_EXTENSIONS,
-    content: "",
+    content: data.content,
     onUpdate: ({ editor }) => {
       setHTML(editor.getHTML());
       setText(editor.getText());
