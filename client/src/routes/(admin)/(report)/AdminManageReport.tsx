@@ -9,7 +9,7 @@ export default function AdminManagePostPage() {
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto min-h-screen">
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
-          onClick={() => navigate("/admin/")}
+          onClick={() => navigate("/admin/", { viewTransition: true })}
           className="cursor-pointer"
         />
         <details className="dropdown dropdown-end">

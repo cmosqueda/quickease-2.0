@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import ThemeBox from "../ThemeBox";
+import _API_INSTANCE from "@/utils/axios";
 
 import {
   BookUser,
@@ -15,19 +16,10 @@ import {
 } from "lucide-react";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { NavLink, useNavigate, type NavigateFunction } from "react-router";
-import _API_INSTANCE from "@/utils/axios";
 
-const links = [
-  {
-    title: "Forum",
-    icon: <MessageCircle />,
-    link: "/learner",
-  },
-  {
-    title: "Library",
-    icon: <BookUser />,
-    link: "/learner/library",
-  },
+const _LINKS = [
+  { title: "Forum", icon: <MessageCircle />, link: "/learner" },
+  { title: "Library", icon: <BookUser />, link: "/learner/library" },
   {
     title: "Summarize Notes",
     icon: <NotebookTabs />,
@@ -43,11 +35,7 @@ const links = [
     icon: <FileQuestion />,
     element: "generate-quiz-modal-global",
   },
-  {
-    title: "Pomodoro",
-    icon: <Timer />,
-    link: "/learner/timer",
-  },
+  { title: "Pomodoro", icon: <Timer />, link: "/learner/timer" },
 ];
 
 const Mobile = ({
@@ -65,85 +53,78 @@ const Mobile = ({
       <div className="drawer-side">
         <label
           htmlFor="mobile-drawer"
-          aria-label="close sidebar"
           className="drawer-overlay"
-        ></label>
+          aria-label="close sidebar"
+        />
         <ul className="w-[20rem] p-4 flex flex-col gap-8 bg-base-100 h-screen">
-          <div className="flex flex-row gap-4">
-            <img
-              src="/assets/images/icon.png"
-              className="w-[36px] h-[36px] aspect-square"
-            />
+          <div className="flex items-center gap-4">
+            <img src="/assets/images/icon.png" alt="Logo" className="w-9 h-9" />
             <h1 className="font-bold text-3xl">QuickEase</h1>
           </div>
+
           <div className="flex flex-col gap-2">
-            {links.slice(0, 2).map((link) => (
+            {_LINKS.slice(0, 2).map((link) => (
               <NavLink
-                to={link.link}
+                key={link.title}
+                to={link.link!}
                 className={clsx(
-                  "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
-                  currentTab == link.link
+                  "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer",
+                  currentTab === link.link
                     ? "bg-neutral text-white"
                     : "hover:bg-base-200",
                   isOpen ? "justify-start" : "justify-center"
                 )}
               >
                 {link.icon}
-                <h1 className={clsx(isOpen ? "block" : "hidden")}>
-                  {link.title}
-                </h1>
+                {isOpen && <span>{link.title}</span>}
               </NavLink>
             ))}
           </div>
-          <div className="divider">
-            <h1 className="">Quick Study Tools</h1>
-          </div>
+
+          <div className="divider">Quick Study Tools</div>
+
           <div className="flex flex-col gap-2">
-            {links.slice(2, 5).map((link) => (
+            {_LINKS.slice(2, 5).map((link) => (
               <button
-                onClick={() =>
-                  document.getElementById(link.element).showModal()
-                }
+                key={link.title}
+                onClick={() => {
+                  const modal = document.getElementById(link.element!);
+                  if (modal && "showModal" in modal) modal.showModal();
+                }}
                 className={clsx(
-                  "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
-                  currentTab == link.link
-                    ? "bg-neutral text-white"
-                    : "hover:bg-base-200",
-                  isOpen ? "justify-start" : "justify-center"
+                  "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer",
+                  isOpen ? "justify-start" : "justify-center",
+                  "hover:bg-base-200"
                 )}
               >
                 {link.icon}
-                <h1 className={clsx(isOpen ? "block" : "hidden")}>
-                  {link.title}
-                </h1>
+                {isOpen && <span>{link.title}</span>}
               </button>
             ))}
+
             <NavLink
-              to={links[5].link}
+              to={_LINKS[5].link}
               className={clsx(
-                "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
-                currentTab == links[5].link
+                "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer",
+                currentTab === _LINKS[5].link
                   ? "bg-neutral text-white"
                   : "hover:bg-base-200",
                 isOpen ? "justify-start" : "justify-center"
               )}
             >
-              {links[5].icon}
-              <h1 className={clsx(isOpen ? "block" : "hidden")}>
-                {links[5].title}
-              </h1>
+              {_LINKS[5].icon}
+              {isOpen && <span>{_LINKS[5].title}</span>}
             </NavLink>
           </div>
+
+          <button
+            className="btn btn-soft btn-accent self-end mt-auto"
+            onClick={() => navigate("/", { viewTransition: true })}
+          >
+            <LogOut />
+            <span>Logout</span>
+          </button>
         </ul>
-        <button
-          className="btn btn-soft btn-accent self-end m-4"
-          onClick={() => {
-            navigate("/");
-          }}
-        >
-          <LogOut />
-          <p>Logout</p>
-        </button>
       </div>
     </div>
   );
@@ -158,87 +139,71 @@ const Desktop = ({
 }) => {
   return (
     <div className="hidden relative lg:sticky lg:top-0 lg:flex flex-col gap-2 p-4">
-      {links.slice(0, 2).map((link) => (
+      {_LINKS.slice(0, 2).map((link) => (
         <NavLink
+          key={link.title}
           to={link.link}
           className={clsx(
-            "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
-            currentTab == link.link
+            "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer",
+            currentTab === link.link
               ? "bg-neutral text-white"
               : "hover:bg-base-200",
             isOpen ? "justify-start" : "justify-center"
           )}
         >
           {link.icon}
-          <h1 className={clsx(isOpen ? "block" : "hidden")}>{link.title}</h1>
+          {isOpen && <span>{link.title}</span>}
         </NavLink>
       ))}
+
       <div className="divider">
-        <h1 className={clsx("text-gray-400", isOpen ? "block" : "hidden")}>
-          Quick Study Tools
-        </h1>
+        {isOpen && <span className="text-gray-400">Quick Study Tools</span>}
       </div>
-      {links.slice(2, 5).map((link) => (
+
+      {_LINKS.slice(2, 5).map((link) => (
         <button
+          key={link.title}
           onClick={() => {
-            document.getElementById(link.element).showModal();
+            const modal = document.getElementById(link.element);
+            if (modal && "showModal" in modal) modal.showModal();
           }}
           className={clsx(
-            "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
-            currentTab == link.link
-              ? "bg-neutral text-white"
-              : "hover:bg-base-200",
-            isOpen ? "justify-start" : "justify-center"
+            "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer",
+            isOpen ? "justify-start" : "justify-center",
+            "hover:bg-base-200"
           )}
         >
           {link.icon}
-          <h1 className={clsx(isOpen ? "block" : "hidden")}>{link.title}</h1>
+          {isOpen && <span>{link.title}</span>}
         </button>
       ))}
+
       <NavLink
-        to={links[5].link}
+        to={_LINKS[5].link!}
         className={clsx(
-          "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
-          currentTab == links[5].link
+          "flex gap-4 items-center transition p-4 rounded-xl",
+          currentTab === _LINKS[5].link
             ? "bg-neutral text-white"
             : "hover:bg-base-200",
           isOpen ? "justify-start" : "justify-center"
         )}
       >
-        {links[5].icon}
-        <h1 className={clsx(isOpen ? "block" : "hidden")}>{links[5].title}</h1>
+        {_LINKS[5].icon}
+        {isOpen && <span>{_LINKS[5].title}</span>}
       </NavLink>
     </div>
   );
 };
 
 const DesktopHeading = ({ isOpen }: { isOpen: boolean }) => {
-  if (!isOpen) {
-    return (
-      <div className="hidden lg:flex flex-col items-center justify-center">
-        <img
-          src="/assets/images/icon.png"
-          className="w-[52px] h-[52px] aspect-square"
-        />
-      </div>
-    );
-  }
-
   return (
-    <div className="hidden lg:flex flex-row gap-4 items-center justify-center">
+    <div className="hidden lg:flex items-center gap-4 justify-center mb-4">
       <img
         src="/assets/images/icon.png"
-        className="w-[52px] h-[52px] aspect-square"
+        alt="Logo"
+        className="w-[52px] h-[52px]"
       />
-      <h1
-        className={clsx(
-          "lg:block hidden",
-          "font-bold text-center transition-all delay-0 duration-100",
-          isOpen ? "text-3xl block" : "hidden"
-        )}
-      >
-        QuickEase
-      </h1>
+      {isOpen && <h1 className="font-bold text-3xl transition">QuickEase</h1>}
     </div>
   );
 };
@@ -252,42 +217,40 @@ const Floating = ({
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   navigate: NavigateFunction;
 }) => {
+  const isClient = typeof window !== "undefined";
+
   return (
     <>
       <ChevronLeft
         size={36}
         className={clsx(
           "hidden lg:block",
-          "p-2 rounded-full absolute -right-4 top-8 shrink-0 border border-base-300 bg-base-100 transition-all delay-0 duration-300 cursor-pointer hover:shadow",
-          isOpen ? "rotate-180" : "rotate-0"
+          "p-2 absolute -right-4 top-8 rounded-full border bg-base-100 border-base-300 cursor-pointer hover:shadow transition",
+          isOpen && "rotate-180"
         )}
         onClick={() => setIsOpen((prev) => !prev)}
       />
-      {window.screen.width > 480 && (
+      {isClient && window.innerWidth > 480 && (
         <>
           <ThemeBox />
-          <div className="tooltip absolute -right-4 top-34" data-tip="Settings">
+          <div className="tooltip absolute -right-4 top-36" data-tip="Settings">
             <Settings
               size={36}
-              className={clsx(
-                "hidden lg:block",
-                "p-2 rounded-full shrink-0 border border-base-300 bg-base-100 transition-all delay-0 duration-300 cursor-pointer hover:shadow",
-                isOpen ? "rotate-180" : "rotate-0"
-              )}
-              onClick={() => navigate("/learner/settings")}
+              className="hidden lg:block p-2 border bg-base-100 border-base-300 rounded-full cursor-pointer hover:shadow"
+              onClick={() => navigate("/learner/settings", { viewTransition: true })}
             />
           </div>
-          <div className="tooltip absolute -right-4 top-46" data-tip="Log-out">
+          <div className="tooltip absolute -right-4 top-52" data-tip="Log-out">
             <LogOut
               size={36}
-              className={clsx(
-                "hidden lg:block",
-                "p-2 rounded-full shrink-0 border border-base-300 bg-base-100 transition-all delay-0 duration-300 cursor-pointer hover:shadow",
-                isOpen ? "rotate-180" : "rotate-0"
-              )}
+              className="hidden lg:block p-2 border bg-base-100 border-base-300 rounded-full cursor-pointer hover:shadow"
               onClick={async () => {
-                await _API_INSTANCE.post("/auth/logout");
-                navigate("/");
+                try {
+                  await _API_INSTANCE.post("/auth/logout");
+                  navigate("/", { viewTransition: true });
+                } catch (err) {
+                  console.error("Logout failed", err);
+                }
               }}
             />
           </div>
@@ -309,30 +272,25 @@ export default function Sidebar({ tab }: { tab: string }) {
   return (
     <div
       className={clsx(
-        "w-full p-3",
-        "relative bg-base-100 border-r border-base-300 transition-all delay-0 duration-300 ease-in-out lg:px-4 lg:py-8 ",
-        isOpen ? "lg:w-[18rem] " : "lg:w-[8rem]"
+        "w-full p-3 relative bg-base-100 border-r border-base-300 transition-all duration-300 lg:px-4 lg:py-8",
+        isOpen ? "lg:w-[18rem]" : "lg:w-[8rem]"
       )}
     >
       <DesktopHeading isOpen={isOpen} />
-      <div className="flex flex-row lg:hidden justify-between gap-4">
-        <div className="flex flex-row gap-3 items-center">
-          <img
-            src="/assets/images/icon.png"
-            className="w-[36px] h-[36px] aspect-square"
-          />
+      {/* Mobile Header */}
+      <div className="flex lg:hidden justify-between items-center mb-4">
+        <div className="flex items-center gap-3">
+          <img src="/assets/images/icon.png" alt="Logo" className="w-9 h-9" />
           <h1 className="font-bold text-xl">QuickEase</h1>
         </div>
-        <div className="drawer-content flex flex-col items-center justify-center">
-          {/* Page content here */}
-          <label htmlFor="mobile-drawer" className="lg:hidden">
-            <Menu />
-          </label>
-        </div>
+        <label htmlFor="mobile-drawer" className="cursor-pointer">
+          <Menu />
+        </label>
       </div>
+
       <Mobile currentTab={currentTab} isOpen={isOpen} navigate={navigate} />
       <Desktop currentTab={currentTab} isOpen={isOpen} />
-      <Floating isOpen={isOpen} navigate={navigate} setIsOpen={setIsOpen} />
+      <Floating isOpen={isOpen} setIsOpen={setIsOpen} navigate={navigate} />
     </div>
   );
 }

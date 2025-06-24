@@ -38,7 +38,7 @@ export default function LearnerQuizAttemptPage() {
   return (
     <div className="flex flex-col w-full min-h-screen max-w-7xl mx-auto p-8 gap-6">
       <div className="flex justify-between items-center">
-        <ArrowLeft className="cursor-pointer" onClick={() => navigate(-1)} />
+        <ArrowLeft className="cursor-pointer" onClick={() => navigate(-1, { viewTransition: true })} />
         <div className="text-right">
           <p className="text-sm text-base-content/50">
             {dayjs(data.started_at).format("MMM DD, YYYY h:mm A")}

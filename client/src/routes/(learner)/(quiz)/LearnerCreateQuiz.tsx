@@ -104,7 +104,7 @@ export default function LearnerCreateQuizPage() {
 
       if (status == 200) {
         toast.success("Quiz created.");
-        return navigate("/learner/library");
+        return navigate(-1, { viewTransition: true });
       }
     } catch (err) {
       toast.error("Error creating quiz.");
@@ -119,7 +119,7 @@ export default function LearnerCreateQuizPage() {
       <div className="flex justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate("/learner/library")}
+          onClick={() => navigate(-1, { viewTransition: true })}
         />
         <button
           className="btn btn-primary flex gap-2"

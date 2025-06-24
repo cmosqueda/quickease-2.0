@@ -19,7 +19,7 @@ export default function LearnerFlashcardPage() {
     <div className="flex flex-col w-full lg:min-h-screen max-w-7xl mx-auto p-8 gap-4">
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
-          onClick={() => navigate("/learner/library")}
+          onClick={() => navigate(-1, { viewTransition: true })}
           className="cursor-pointer"
         />
         <div className="flex flex-row gap-6 items-center">

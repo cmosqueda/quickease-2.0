@@ -65,7 +65,7 @@ export default function AuthRegisterPage() {
       );
 
       if (response.status == 200) {
-        navigate("/learner");
+        navigate("/learner", { viewTransition: true });
       }
     } catch (err) {
       toast.error(`Error: ${err}`);

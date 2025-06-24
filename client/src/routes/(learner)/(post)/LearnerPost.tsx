@@ -35,7 +35,7 @@ export default function LearnerPostPage() {
       <div className="flex items-center justify-between">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate("/learner")}
+          onClick={() => navigate(-1, { viewTransition: true })}
         />
         <details className="dropdown dropdown-end">
           <summary className="list-none cursor-pointer">
