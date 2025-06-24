@@ -58,6 +58,7 @@ export default function LearnerAICreateNotePage() {
         title: title,
         content: html,
         user_id: user?.id,
+        is_ai_generated: true,
       });
 
       if (res.status == 200) {
