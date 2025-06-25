@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import ThemeBox from "../ThemeBox";
 
 import {
   BookOpen,
@@ -10,7 +11,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
-import ThemeBox from "../ThemeBox";
 
 export default function Sidebar({ tab }: { tab: string }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -166,7 +166,9 @@ export default function Sidebar({ tab }: { tab: string }) {
                 "p-2 rounded-full shrink-0 border border-base-300 bg-base-100 transition-all delay-0 duration-300 cursor-pointer hover:shadow",
                 isOpen ? "rotate-180" : "rotate-0"
               )}
-              onClick={() => navigate("/admin/settings")}
+              onClick={() =>
+                navigate("/admin/settings", { viewTransition: true })
+              }
             />
           </div>
           <div className="tooltip absolute -right-4 top-46" data-tip="Log-out">
@@ -177,7 +179,7 @@ export default function Sidebar({ tab }: { tab: string }) {
                 "p-2 rounded-full shrink-0 border border-base-300 bg-base-100 transition-all delay-0 duration-300 cursor-pointer hover:shadow",
                 isOpen ? "rotate-180" : "rotate-0"
               )}
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/", { viewTransition: true })}
             />
           </div>
         </>

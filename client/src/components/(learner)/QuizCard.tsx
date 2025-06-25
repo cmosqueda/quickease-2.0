@@ -1,7 +1,16 @@
 import dayjs from "dayjs";
+import clsx from "clsx";
 
 import { EllipsisVertical } from "lucide-react";
 import { NavLink } from "react-router";
+
+type QuizCardProps = {
+  title: string;
+  term: number;
+  date: string;
+  link?: string;
+  onClick?: () => void;
+};
 
 export default function QuizCard({
   title,
@@ -9,60 +18,38 @@ export default function QuizCard({
   date,
   link,
   onClick,
-}: {
-  title: string;
-  term: number;
-  date: string;
-  link?: string;
-  onClick?: () => void;
-}) {
-  if (link) {
-    return (
-      <NavLink
-        to={`/learner/quizzes/${link}`}
-        className="flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 "
-      >
-        <div className="flex flex-row justify-between items-center">
-          <h1 className="font-bold text-xl">{title}</h1>
-          <details className="dropdown dropdown-end">
-            <summary className="list-none cursor-pointer">
-              <EllipsisVertical />
-            </summary>
-            <ul className="menu dropdown-content bg-base-100 border border-base-300 rounded-box z-1 w-52 p-2 shadow-sm">
-              <li>
-                <a>Delete</a>
-              </li>
-            </ul>
-          </details>
-        </div>
-        <p>
-          {term} items / {dayjs(date).format("MMMM DD, YYYY").toString()}
-        </p>
-      </NavLink>
-    );
-  }
+}: QuizCardProps) {
+  const Wrapper = link ? NavLink : "div";
+  const wrapperProps = link ? { to: `/learner/quizzes/${link}` } : { onClick };
+
+  const formattedDate = dayjs(date).isValid()
+    ? dayjs(date).format("MMMM DD, YYYY")
+    : "Unknown date";
 
   return (
-    <div
-      onClick={onClick}
-      className="flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 "
+    <Wrapper
+      {...wrapperProps}
+      className={clsx(
+        "flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 cursor-pointer",
+        !link && onClick && "hover:bg-base-200 transition"
+      )}
     >
       <div className="flex flex-row justify-between items-center">
-        <h1 className="font-bold text-xl">{title}</h1>
+        <h1 className="font-bold text-xl truncate">{title}</h1>
         <details className="dropdown dropdown-end">
           <summary className="list-none cursor-pointer">
             <EllipsisVertical />
           </summary>
-          <ul className="menu dropdown-content bg-base-100 border border-base-300 rounded-box z-1 w-52 p-2 shadow-sm">
+          <ul className="menu dropdown-content bg-base-100 border border-base-300 rounded-box z-10 w-52 p-2 shadow-sm">
             <li>
-              <a>Delete</a>
+              <button type="button">Delete</button>
             </li>
           </ul>
         </details>
       </div>
-      <p>
-        {term} items / {dayjs(date).format("MMMM DD, YYYY").toString()}
+      <p className="text-sm text-gray-500">
+        {term} item{term !== 1 && "s"} / {formattedDate}
       </p>
-    </div>
+    </Wrapper>
   );
 }

@@ -1,71 +1,78 @@
-import db_client from '../../utils/client'
-import { z } from 'zod'
+import db_client from '../../utils/client';
 
 export async function getUserNotes(user_id: string) {
-    const notes = await db_client.note.findMany({
-        where: {
-            user_id: user_id
-        }
-    })
-
-    return notes
+    try {
+        return await db_client.note.findMany({
+            where: { user_id }
+        });
+    } catch (err) {
+        console.error("getUserNotes error:", err);
+        throw err;
+    }
 }
 
 export async function getUserNote(note_id: string) {
-    const note = await db_client.note.findFirst({
-        where: {
-            id: note_id
-        }
-    })
-
-    return note
+    try {
+        return await db_client.note.findFirst({
+            where: { id: note_id }
+        });
+    } catch (err) {
+        console.error("getUserNote error:", err);
+        throw err;
+    }
 }
 
 export async function createUserNote(title: string, content: string, user_id: string) {
-    const notes = await db_client.note.create({
-        data: {
-            title: title,
-            notes_content: content,
-            user_id: user_id
-        }
-    })
-
-    return notes
+    try {
+        return await db_client.note.create({
+            data: {
+                title,
+                notes_content: content,
+                user_id
+            }
+        });
+    } catch (err) {
+        console.error("createUserNote error:", err);
+        throw err;
+    }
 }
 
-export async function updateUserNote(title: string, content: string, note_id: string,) {
-    const notes = await db_client.note.update({
-        data: {
-            title: title,
-            notes_content: content,
-        },
-        where: {
-            id: note_id
-        }
-    })
-
-    return notes
+export async function updateUserNote(title: string, content: string, note_id: string) {
+    try {
+        return await db_client.note.update({
+            data: {
+                title,
+                notes_content: content
+            },
+            where: { id: note_id }
+        });
+    } catch (err) {
+        console.error("updateUserNote error:", err);
+        throw err;
+    }
 }
 
 export async function deleteUserNote(note_id: string) {
-    await db_client.note.delete({
-        where: {
-            id: note_id
-        }
-    })
-
-    return true
+    try {
+        await db_client.note.delete({
+            where: { id: note_id }
+        });
+        return true;
+    } catch (err) {
+        console.error("deleteUserNote error:", err);
+        throw err;
+    }
 }
 
 export async function toggleNoteVisibility(visibility: boolean, note_id: string) {
-    await db_client.note.update({
-        data: {
-            is_public: visibility
-        },
-        where: {
-            id: note_id
-        }
-    })
-
-    return true
+    try {
+        await db_client.note.update({
+            data: { is_public: visibility },
+            where: { id: note_id }
+        });
+        return true;
+    } catch (err) {
+        console.error("toggleNoteVisibility error:", err);
+        throw err;
+    }
 }

@@ -1,5 +1,4 @@
 import clsx from "clsx";
-
 import {
   Bold,
   Italic,
@@ -15,115 +14,129 @@ import {
 import { Editor, EditorContent } from "@tiptap/react";
 
 const iconClass =
-  "shrink-0 p-2 transition-all duration-300 hover:bg-base-200 rounded-xl cursor-pointer";
+  "p-2 transition-all duration-300 hover:bg-base-200 rounded-xl cursor-pointer";
 
-const toolbarItems = [
+type ToolbarAction = {
+  Icon: React.ElementType;
+  action: (editor: Editor) => void;
+  canExecute?: (editor: Editor) => boolean;
+  isActive?: (editor: Editor) => boolean;
+  label: string;
+};
+
+const toolbarItems: ToolbarAction[] = [
   {
     Icon: Bold,
-    action: (editor: Editor) => editor.chain().focus().toggleBold().run(),
-    canExecute: (editor: Editor) =>
-      editor.can().chain().focus().toggleBold().run(),
-    isActive: (editor: Editor) => editor.isActive("bold"),
+    action: (e) => e.chain().focus().toggleBold().run(),
+    canExecute: (e) => e.can().chain().focus().toggleBold().run(),
+    isActive: (e) => e.isActive("bold"),
+    label: "Bold",
   },
   {
     Icon: Italic,
-    action: (editor: Editor) => editor.chain().focus().toggleItalic().run(),
-    canExecute: (editor: Editor) =>
-      editor.can().chain().focus().toggleItalic().run(),
-    isActive: (editor: Editor) => editor.isActive("italic"),
+    action: (e) => e.chain().focus().toggleItalic().run(),
+    canExecute: (e) => e.can().chain().focus().toggleItalic().run(),
+    isActive: (e) => e.isActive("italic"),
+    label: "Italic",
   },
   {
     Icon: Strikethrough,
-    action: (editor: Editor) => editor.chain().focus().toggleStrike().run(),
-    canExecute: (editor: Editor) =>
-      editor.can().chain().focus().toggleStrike().run(),
-    isActive: (editor: Editor) => editor.isActive("strike"),
+    action: (e) => e.chain().focus().toggleStrike().run(),
+    canExecute: (e) => e.can().chain().focus().toggleStrike().run(),
+    isActive: (e) => e.isActive("strike"),
+    label: "Strikethrough",
   },
   {
     Icon: Code,
-    action: (editor: Editor) => editor.chain().focus().toggleCode().run(),
-    canExecute: (editor: Editor) =>
-      editor.can().chain().focus().toggleCode().run(),
-    isActive: (editor: Editor) => editor.isActive("code"),
+    action: (e) => e.chain().focus().toggleCode().run(),
+    canExecute: (e) => e.can().chain().focus().toggleCode().run(),
+    isActive: (e) => e.isActive("code"),
+    label: "Inline Code",
   },
   {
     Icon: Quote,
-    action: (editor: Editor) => editor.chain().focus().toggleBlockquote().run(),
-    isActive: (editor: Editor) => editor.isActive("blockquote"),
+    action: (e) => e.chain().focus().toggleBlockquote().run(),
+    isActive: (e) => e.isActive("blockquote"),
+    label: "Blockquote",
   },
   {
     Icon: Heading1,
-    action: (editor: Editor) =>
-      editor.chain().focus().toggleHeading({ level: 1 }).run(),
-    isActive: (editor: Editor) => editor.isActive("heading", { level: 1 }),
+    action: (e) => e.chain().focus().toggleHeading({ level: 1 }).run(),
+    isActive: (e) => e.isActive("heading", { level: 1 }),
+    label: "Heading 1",
   },
   {
     Icon: List,
-    action: (editor: Editor) => editor.chain().focus().toggleBulletList().run(),
-    isActive: (editor: Editor) => editor.isActive("bulletList"),
+    action: (e) => e.chain().focus().toggleBulletList().run(),
+    isActive: (e) => e.isActive("bulletList"),
+    label: "Bullet List",
   },
   {
     Icon: ListOrdered,
-    action: (editor: Editor) =>
-      editor.chain().focus().toggleOrderedList().run(),
-    isActive: (editor: Editor) => editor.isActive("orderedList"),
+    action: (e) => e.chain().focus().toggleOrderedList().run(),
+    isActive: (e) => e.isActive("orderedList"),
+    label: "Ordered List",
   },
   {
     Icon: Code2,
-    action: (editor: Editor) => editor.chain().focus().toggleCodeBlock().run(),
-    isActive: (editor: Editor) => editor.isActive("codeBlock"),
+    action: (e) => e.chain().focus().toggleCodeBlock().run(),
+    isActive: (e) => e.isActive("codeBlock"),
+    label: "Code Block",
   },
   {
     Icon: Minus,
-    action: (editor: Editor) =>
-      editor.chain().focus().setHorizontalRule().run(),
+    action: (e) => e.chain().focus().setHorizontalRule().run(),
+    label: "Horizontal Rule",
   },
 ];
 
-const CustomEditor = ({
-  editor,
-  style,
-  placeholder,
-}: {
+type Props = {
   editor: Editor | null;
   style?: string;
   placeholder?: string;
-}) => {
+};
+
+export default function CustomEditor({ editor, style, placeholder }: Props) {
   if (!editor) return null;
 
   return (
     <>
-      <div className="flex flex-row gap-4 items-center">
-        <div className="flex flex-wrap gap-2 p-4 rounded-3xl bg-base-100 border border-base-300 w-fit">
-          {toolbarItems.map(({ Icon, action, canExecute, isActive }, idx) => {
+      <div className="flex flex-wrap gap-2 p-4 rounded-3xl bg-base-100 border border-base-300 w-fit mb-4">
+        {toolbarItems.map(
+          ({ Icon, action, canExecute, isActive, label }, idx) => {
             const disabled = canExecute ? !canExecute(editor) : false;
             const active = isActive ? isActive(editor) : false;
 
             return (
-              <Icon
+              <button
                 key={idx}
-                onClick={() => action(editor)}
+                type="button"
+                title={label}
+                aria-label={label}
                 disabled={disabled}
-                className={clsx(iconClass, active && "is-active")}
-                size={32}
-              />
+                onClick={() => action(editor)}
+                className={clsx(
+                  iconClass,
+                  "flex items-center justify-center",
+                  active && "bg-base-300",
+                  disabled && "opacity-40 cursor-not-allowed"
+                )}
+              >
+                <Icon size={20} />
+              </button>
             );
-          })}
-        </div>
+          }
+        )}
       </div>
 
       <EditorContent
         editor={editor}
-        autoFocus
-        rows={3}
         placeholder={placeholder}
         className={clsx(
           style,
-          "prose bg-base-100 rounded-xl p-4 outline-hidden border border-base-300"
+          "prose bg-base-100 rounded-xl p-4 border border-base-300 focus:outline-none"
         )}
       />
     </>
   );
-};
-
-export default CustomEditor;
+}

@@ -25,11 +25,11 @@ export default function AuthLoginPage() {
       );
 
       if (status == 200 && data.is_admin == false) {
-        navigate("/learner");
+        navigate("/learner", { viewTransition: true });
       }
 
       if (status == 200 && data.is_admin == true) {
-        navigate("/admin");
+        navigate("/admin", { viewTransition: true });
       }
     } catch (err) {
       toast.error(err.message);

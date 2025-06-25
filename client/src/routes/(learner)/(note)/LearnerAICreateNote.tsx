@@ -3,8 +3,8 @@ import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
 import _API_INSTANCE from "@/utils/axios";
-import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import useAuth from "@/hooks/useAuth";
+import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
 import {
   ArrowLeft,
@@ -19,27 +19,23 @@ import { useEditor } from "@tiptap/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export default function LearnerNotePage() {
+export default function LearnerAICreateNotePage() {
+  const data = useLoaderData(); // for generated content
   const { user } = useAuth();
-  const data = useLoaderData();
+  const [isSaving, setIsSaving] = useState(false);
   const navigate = useNavigate();
 
   // States for editors //
-  const [html, setHTML] = useState("");
+  const [html, setHTML] = useState(data.content);
   const [text, setText] = useState("");
   const [json, setJSON] = useState({});
   const [title, setTitle] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    setTitle(data.title);
-  }, [data]);
 
   const editor = useEditor({
     editable: true,
     autofocus: false,
     extensions: _TIPTAP_EXTENSIONS,
-    content: data.notes_content,
+    content: data.content,
     onUpdate: ({ editor }) => {
       setHTML(editor.getHTML());
       setText(editor.getText());
@@ -48,21 +44,25 @@ export default function LearnerNotePage() {
   });
   // States for editors //
 
+  useEffect(() => {
+    return () => editor?.destroy();
+  }, []);
+
   if (!editor) return;
 
   const handleSave = async () => {
     setIsSaving(true);
 
     try {
-      const res = await _API_INSTANCE.put("/notes/update", {
+      const res = await _API_INSTANCE.post("/notes/create", {
         title: title,
         content: html,
-        note_id: data.id,
         user_id: user?.id,
+        is_ai_generated: true,
       });
 
       if (res.status == 200) {
-        toast.success("Note updated.");
+        toast.success("Note created.");
         navigate(-1);
       }
     } catch (err) {
@@ -76,15 +76,18 @@ export default function LearnerNotePage() {
   return (
     <div className="flex flex-col min-h-screen w-full">
       <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 lg:items-center border-b border-base-300 p-4 bg-base-100">
-        <ArrowLeft
-          onClick={() => navigate(-1, { viewTransition: true })}
-          className="cursor-pointer lg:ml-6"
-        />
+        <div className="flex flex-row items-center gap-4">
+          <ArrowLeft
+            onClick={() => navigate(-1, { viewTransition: true })}
+            className="cursor-pointer lg:ml-6"
+          />
+          <h1 className="text-2xl font-bold">Create note</h1>
+        </div>
         <div className="flex flex-row gap-4 w-full lg:w-fit">
           <button
+            className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1 lg:flex-initial"
             disabled={isSaving}
             onClick={handleSave}
-            className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1 lg:flex-initial"
           >
             <Save />
             <p>Save changes</p>

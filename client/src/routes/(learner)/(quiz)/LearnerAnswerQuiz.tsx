@@ -101,7 +101,7 @@ export default function LearnerAnswerQuizPage() {
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate(`/learner/quizzes/${data.id}`)}
+          onClick={() => navigate(-1, { viewTransition: true })}
         />
         <div className="flex flex-row gap-6 items-center">
           <details className="dropdown dropdown-end cursor-pointer">

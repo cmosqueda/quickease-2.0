@@ -23,6 +23,9 @@ import LearnerFlashcardsPage from "./routes/(learner)/(dashboard)/LearnerFlashca
 import LearnerQuizPage from "./routes/(learner)/(quiz)/LearnerQuiz";
 import LearnerCreateQuizPage from "./routes/(learner)/(quiz)/LearnerCreateQuiz";
 import LearnerCreateNotePage from "./routes/(learner)/(note)/LearnerCreateNote";
+import LearnerAnswerQuizPage from "./routes/(learner)/(quiz)/LearnerAnswerQuiz";
+import LearnerEditQuizPage from "./routes/(learner)/(quiz)/LearnerEditQuiz";
+import LearnerQuizAttemptPage from "./routes/(learner)/(quiz)/LearnerViewAttempt";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -37,10 +40,10 @@ import useAuth from "./hooks/useAuth";
 import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import "../global.css";
-import { toast } from "sonner";
-import LearnerAnswerQuizPage from "./routes/(learner)/(quiz)/LearnerAnswerQuiz";
+import LearnerAICreateNotePage from "./routes/(learner)/(note)/LearnerAICreateNote";
 
 const client = new QueryClient();
 
@@ -269,7 +272,7 @@ const router = createBrowserRouter([
             loader: async ({ params }) => {
               try {
                 const { data } = await _API_INSTANCE.get(`/quiz/${params.id}`);
-                console.log(data)
+                console.log(data);
 
                 return data;
               } catch (err) {
@@ -292,6 +295,44 @@ const router = createBrowserRouter([
                   toast.error("Invalid quiz ID.");
                   return redirect("/learner/library");
                 }
+              } catch (err) {
+                toast.error("Error getting quiz data.");
+                return redirect("/learner/library");
+              }
+            },
+          },
+          {
+            Component: LearnerEditQuizPage,
+            path: ":id/edit",
+            loader: async ({ params }) => {
+              try {
+                const string = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
+                const parsed = JSON.parse(string!);
+
+                if (parsed.id == params.id) {
+                  return parsed;
+                } else {
+                  toast.error("Invalid quiz ID.");
+                  return redirect("/learner/library");
+                }
+              } catch (err) {
+                toast.error("Error getting quiz data.");
+                return redirect("/learner/library");
+              }
+            },
+          },
+          {
+            Component: LearnerQuizAttemptPage,
+            path: ":id/attempt/:attempt_id",
+            loader: async ({ params }) => {
+              try {
+                const { data } = await _API_INSTANCE.get(
+                  `/quiz/attempt/${params.attempt_id}`
+                );
+
+                console.log(data);
+
+                return data;
               } catch (err) {
                 toast.error("Error getting quiz data.");
                 return redirect("/learner/library");
@@ -327,8 +368,22 @@ const router = createBrowserRouter([
       },
       {
         path: "note/create",
-        loader: async () => {},
         Component: LearnerCreateNotePage,
+      },
+      {
+        path: "note/create/ai",
+        loader: async () => {
+          const generatedContent = localStorage.getItem(
+            "QUICKEASE_GENERATED_CONTENT"
+          );
+
+          if (generatedContent) {
+            return JSON.parse(generatedContent);
+          } else {
+            return "";
+          }
+        },
+        Component: LearnerAICreateNotePage,
       },
     ],
   },
