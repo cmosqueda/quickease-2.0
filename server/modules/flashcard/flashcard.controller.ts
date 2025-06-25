@@ -46,9 +46,10 @@ export async function get_user_flashcard(request: FastifyRequest, reply: Fastify
 }
 
 export async function create_user_flashcard(request: FastifyRequest, reply: FastifyReply) {
-    const { title, description, flashcards } = request.body as {
+    const { title, description, flashcards, isAI } = request.body as {
         title: string;
         description: string;
+        isAI: boolean
         flashcards: { front: string; back: string; }[];
     };
 
@@ -76,7 +77,7 @@ export async function create_user_flashcard(request: FastifyRequest, reply: Fast
             return reply.code(401).send({ message: "Unauthorized" });
         }
 
-        const flashcard = await createUserFlashcard(title, description, flashcards, userId);
+        const flashcard = await createUserFlashcard(title, description, flashcards, isAI, userId);
         reply.code(201).send(flashcard);
     } catch (err) {
         console.error("create_user_flashcard error:", err);

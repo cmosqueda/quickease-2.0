@@ -44,6 +44,7 @@ import { toast } from "sonner";
 
 import "../global.css";
 import LearnerAICreateNotePage from "./routes/(learner)/(note)/LearnerAICreateNote";
+import LearnerAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIFlashcard";
 
 const client = new QueryClient();
 
@@ -255,6 +256,28 @@ const router = createBrowserRouter([
               }
             },
             path: ":id",
+          },
+          {
+            Component: LearnerAIFlashcardPage,
+            loader: async ({ params }) => {
+              const generatedContent = localStorage.getItem(
+                "QUICKEASE_GENERATED_CONTENT"
+              );
+
+              if (generatedContent) {
+                const parsed = JSON.parse(generatedContent);
+                const cards = JSON.parse(parsed.content.content);
+                console.log(parsed);
+
+                return {
+                  title: parsed.content.title,
+                  content: cards,
+                };
+              } else {
+                return redirect(-1);
+              }
+            },
+            path: "ai",
           },
           {
             Component: LearnerCreateFlashcardPage,

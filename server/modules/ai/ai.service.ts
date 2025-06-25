@@ -54,7 +54,10 @@ export async function generateFlashcardFromNote(note_id: string) {
                 `.trim()
             })
 
-            return response.text
+            return {
+                title: note.title,
+                content: response.text!.replace(/```json|```/g, '')
+            }
         }
     } catch (err) {
         return false

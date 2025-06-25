@@ -26,6 +26,7 @@ export async function createUserFlashcard(
     title: string,
     description: string,
     flashcards: { front: string; back: string; }[],
+    is_ai_generated: boolean,
     user_id: string
 ) {
     try {
@@ -34,6 +35,7 @@ export async function createUserFlashcard(
                 title,
                 description,
                 flashcards,
+                is_ai_generated,
                 user_id,
             }
         });

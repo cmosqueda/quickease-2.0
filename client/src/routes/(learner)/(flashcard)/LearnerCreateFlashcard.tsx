@@ -49,7 +49,7 @@ export default function LearnerCreateFlashcardPage() {
         user_id: user?.id,
       });
 
-      if (status == 200) {
+      if (status == 201) {
         toast.success("Flashcard created.");
         navigate(-1, { viewTransition: true });
       }
