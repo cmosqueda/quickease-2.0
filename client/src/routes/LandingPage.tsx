@@ -8,6 +8,7 @@ import {
   NotebookPen,
   Paintbrush,
   SquareStack,
+  Users,
 } from "lucide-react";
 import { NavLink } from "react-router";
 
@@ -42,11 +43,16 @@ export default function LandingPage() {
       title: "Test with AI quizzes",
       description: "Challenge your knowledge with tailored questions.",
     },
+    {
+      icon: <Users size={36} className="p-1 shrink-0 rounded-lg bg-base-100" />,
+      title: "Have a question?",
+      description: "Ask the community/users!",
+    },
   ];
 
   return (
     <>
-      <header className="flex flex-row xl:max-w-7xl justify-between py-4 xl:px-0 px-4 xl:mx-auto bg-base-100 items-center ">
+      <header className="flex flex-row xl:max-w-7xl justify-between py-4 xl:px-0 px-4 xl:mx-auto bg-base-100 items-center">
         <h1 className="font-bold text-2xl">QuickEase</h1>
         <div className="hidden flex-row gap-4 items-center lg:flex">
           <NavLink to="/auth/login" viewTransition>
@@ -184,36 +190,71 @@ export default function LandingPage() {
           </ul>
         </details>
       </header>
-      <main className="min-h-screen bg-base-200 flex flex-col py-4 gap-8 border-t border-base-300 border-b">
-        <div className="max-w-7xl mx-auto lg:px-0 px-2">
-          <video controls={false} autoPlay muted className="w-full rounded-3xl">
-            <source src="assets/videos/landing.mp4" type="video/mp4" />
-          </video>
-        </div>
-        <div className="flex flex-col max-w-7xl mx-auto gap-2 lg:px-0 px-2">
-          <h1 className="font-black text-xl lg:text-4xl text-center">
-            Supercharge your learning!
+      <div className="flex flex-col lg:grid lg:grid-cols-2 py-[8rem] xl:min-h-[85vh] xl:max-w-7xl mx-auto">
+        <div className="flex flex-col gap-2">
+          <p className="tracking-widest">SUPERCHARGE YOUR LEARNING.</p>
+          <h1 className="text-7xl font-black">
+            Learning has never been more easier with{" "}
+            <span className="text-accent">QuickEase.</span>
           </h1>
-          <p className="text-gray-400 text-center">
-            Experience the power of AI-driven learning tools designed to enhance
-            your study journey.
+          <p className="text-xl my-4 text-base-content/75">
+            QuickEase is a study assistant that helps you on your study,
+            generate flashcards/quizzes.
           </p>
+          <div className="flex flex-row gap-4 items-center">
+            <NavLink
+              className="btn btn-xl btn-accent"
+              to="/auth/login"
+              viewTransition
+            >
+              <p>Join now</p>
+            </NavLink>
+            <NavLink
+              className="btn btn-xl btn-neutral btn-ghost"
+              to="/auth/register"
+              viewTransition
+            >
+              <p>Sign in</p>
+            </NavLink>
+          </div>
         </div>
-        <div className="max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-3 gap-4 lg:px-0 px-2">
-          {cardContents.map((content) => (
-            <div className="flex flex-col gap-2 p-8 bg-base-100 rounded-3xl shadow">
-              <div className="flex flex-row gap-2 justify-between">
-                {content.icon}
+      </div>
+      <div className="flex flex-col gap-4 xl:max-w-7xl mx-auto">
+        <h1 className="text-5xl font-bold text-center">Features</h1>
+        <div className="grid grid-cols-3 gap-4">
+          {cardContents.map((card) => (
+            <div className="bg-base-100 p-4 rounded-xl flex flex-col gap-2">
+              <div className="flex flex-col">
+                {card.icon}
+                <h1 className="font-bold text-2xl">{card.title}</h1>
               </div>
-              <h1 className="font-bold text-lg">{content.title}</h1>
-              <p className="text-gray-400">{content.description}</p>
+              <p>{card.description}</p>
             </div>
           ))}
         </div>
-      </main>
-      <footer className="flex flex-col max-w-7xl mx-auto p-8 bg-base-100">
-        <p>© 2025 QuickEase. All rights reserved.</p>
-      </footer>
+      </div>
+      <div className="flex flex-col gap-4 xl:max-w-7xl mx-auto my-12">
+        <h1 className="text-5xl font-bold text-center">Downloads</h1>
+        <p className="text-center text-xl">
+          Choose the correct download for your platform. For details, see the{" "}
+          <NavLink to="" className="text-accent">
+            installation guide
+          </NavLink>
+          .
+        </p>
+        <div className="divider" />
+        <div className="flex flex-row justify-between">
+          <div>
+            <h1 className="font-bold text-4xl">Mobile</h1>
+            <p className="text-xl text-base-content/50">
+              QuickEase Mobile is the official Android app.
+            </p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <h1>Scan the QR code below.</h1>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
