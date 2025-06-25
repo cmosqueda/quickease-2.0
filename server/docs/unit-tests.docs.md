@@ -291,6 +291,15 @@ Learn more at [Jest docs](https://jestjs.io/docs/getting-started)
 
 ## SUMMARY
 
+- ✅ **30 Test Suites Passed**
+- ❌ **1 Test Suite Failed**
+  - `auth.controller.test.ts` failed due to a **TypeScript type mismatch** involving a nullable field in `phone_number` and `jwtSign` usage.
+- ✅ **91/92 Total Tests Passed**
+- 🧪 **Key Modules Tested:** Auth, User, Note, Flashcard, Quiz, Post, AI
+- 🛠️ **Main Issue Identified:** `auth.controller.ts` needs adjustment in JWT-related code to handle `null` types safely.
+
+> Overall test coverage is strong. Only one controller (Auth) requires debugging for type safety.
+
 </details>
 
 <details>
