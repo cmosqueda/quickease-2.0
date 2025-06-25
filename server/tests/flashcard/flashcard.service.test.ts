@@ -2,12 +2,16 @@ import * as flashcardService from "../../modules/flashcard/flashcard.service";
 import db_client from "../../utils/client";
 
 jest.mock("../../utils/client", () => ({
-  flashcard: {
-    findMany: jest.fn(),
-    findFirst: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
+  __esModule: true,
+  default: {
+    flashcard: {
+      findMany: jest.fn(),
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    },
   },
 }));
 
@@ -44,7 +48,11 @@ describe("Flashcard Service", () => {
     const result = await flashcardService.createUserFlashcard(
       "Test Flashcard",
       "Description",
-      [{ front: "Q1", back: "A1" }],
+      [
+        { front: "Q1", back: "A1" },
+        { front: "Q2", back: "A2" },
+      ],
+      false,
       "user-1"
     );
     expect(result).toEqual(mockFlashcard);
@@ -52,7 +60,11 @@ describe("Flashcard Service", () => {
       data: {
         title: "Test Flashcard",
         description: "Description",
-        flashcards: [{ front: "Q1", back: "A1" }],
+        flashcards: [
+          { front: "Q1", back: "A1" },
+          { front: "Q2", back: "A2" },
+        ],
+        is_ai_generated: false,
         user_id: "user-1",
       },
     });

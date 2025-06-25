@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import NoteCard from "../(learner)/NoteCard";
+import _API_INSTANCE from "@/utils/axios";
 
 import {
   ArrowRight,
@@ -9,32 +10,76 @@ import {
   Text,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, type NavigateFunction } from "react-router";
+import { toast } from "sonner";
+
+const GenerateFlashcardFromNotes = ({
+  notes,
+  navigate,
+}: {
+  notes: {
+    id: string;
+    title: string;
+    date: string;
+    link: string;
+    created_at: string;
+  }[];
+  navigate: NavigateFunction;
+}) => {
+  const handleGenerate = async (id: string) => {
+    try {
+      const { data } = await _API_INSTANCE.post(
+        "/ai/generate-flashcards-from-note",
+        {
+          note_id: id,
+        },
+        { timeout: 10000 }
+      );
+
+      await localStorage.setItem(
+        "QUICKEASE_GENERATED_CONTENT",
+        JSON.stringify(data)
+      );
+
+      document.getElementById("generate-flashcard-modal-global").close();
+      return navigate("/learner/flashcards/ai");
+    } catch (err) {
+      toast.error("Error generating content.");
+      throw err;
+    }
+  };
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-4 flex-wrap">
+      {notes.map((c) => (
+        <NoteCard
+          title={c.title}
+          date={c.created_at}
+          onClick={() => handleGenerate(c.id)}
+          style="bg-base-200 w-full"
+        />
+      ))}
+    </div>
+  );
+};
 
 export default function GenerateFlashcardModal({
   notes,
 }: {
   notes: {
+    id: string;
     title: string;
     date: string;
     link: string;
-  };
+    created_at: string;
+  }[];
 }) {
+  const navigate = useNavigate();
   const [index, setIndex] = useState(0);
 
   const tabs = [
-    <>
-      <div className="grid lg:grid-cols-2 gap-4 flex-wrap">
-        {notes.map((c) => (
-          <NoteCard
-            title={c.title}
-            date={c.created_at}
-            link={c.id}
-            style="bg-base-200 w-full"
-          />
-        ))}
-      </div>
-    </>,
+    <GenerateFlashcardFromNotes notes={notes} navigate={navigate} />,
     <>
       <div>
         <div className="flex flex-row gap-2 items-center">

@@ -43,11 +43,11 @@ describe("AI Service", () => {
       expect(result).toEqual(mockAIResponse.text);
     });
 
-    it("should return false if note not found", async () => {
+    it("should return undefined if note not found", async () => {
       (db_client.note.findUnique as jest.Mock).mockResolvedValue(null);
 
       const result = await aiService.generateQuizFromNote("invalid-note");
-      expect(result).toBe(false);
+      expect(result).toBe(undefined);
     });
   });
 

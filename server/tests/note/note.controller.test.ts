@@ -73,7 +73,7 @@ describe("Note Controller", () => {
   });
 
   //   create user note
-  test("create_user_note should return 200 with created note", async () => {
+  test("create_user_note should return 201 with created note", async () => {
     (noteService.createUserNote as jest.Mock).mockResolvedValue(mockNote);
 
     const response = await app.inject({
@@ -81,7 +81,7 @@ describe("Note Controller", () => {
       url: "/notes",
       payload: { title: "Test Note", content: "Sample content", user_id: "user-1" },
     });
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(201);
     expect(JSON.parse(response.body)).toEqual(mockNote);
   });
 
@@ -109,7 +109,7 @@ describe("Note Controller", () => {
       payload: { note_id: "note-1" },
     });
     expect(response.statusCode).toBe(200);
-    expect(JSON.parse(response.body)).toEqual(true);
+    expect(JSON.parse(response.body)).toEqual({ message: "Note deleted successfully." });
   });
 
   //   toggle note visibility
@@ -122,7 +122,7 @@ describe("Note Controller", () => {
       payload: { visibility: true, note_id: "note-1" },
     });
     expect(response.statusCode).toBe(200);
-    expect(JSON.parse(response.body)).toEqual(true);
+    expect(JSON.parse(response.body)).toEqual({ message: "Note visibility updated." });
   });
 
   test("create_user_note should return 400 on invalid input", async () => {

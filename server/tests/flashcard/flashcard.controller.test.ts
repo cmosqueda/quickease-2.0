@@ -70,7 +70,7 @@ describe("Flashcard Controller", () => {
     expect(JSON.parse(res.body)).toEqual(mockFlashcard);
   });
 
-  test("create_user_flashcard should return 200 on valid input", async () => {
+  test("create_user_flashcard should return 201 on valid input", async () => {
     (flashcardService.createUserFlashcard as jest.Mock).mockResolvedValue(mockFlashcard);
 
     const res = await app.inject({
@@ -83,7 +83,7 @@ describe("Flashcard Controller", () => {
       },
     });
 
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(201);
     expect(JSON.parse(res.body)).toEqual(mockFlashcard);
   });
 

@@ -8,7 +8,8 @@
   "main": "server.ts",
   "scripts": {
     "dev": "tsnd --respawn --transpile-only --exit-child server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:verbose": "jest --verbose"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",

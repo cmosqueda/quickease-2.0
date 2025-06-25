@@ -66,7 +66,7 @@ describe("Quiz Controller", () => {
     expect(JSON.parse(res.body)).toEqual(mockQuiz);
   });
 
-  test("create_user_quiz should return 200 with created quiz", async () => {
+  test("create_user_quiz should return 201 with created quiz", async () => {
     (quizService.createUserQuiz as jest.Mock).mockResolvedValue(mockQuiz);
 
     const res = await app.inject({
@@ -81,7 +81,7 @@ describe("Quiz Controller", () => {
       },
     });
 
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(201);
     expect(JSON.parse(res.body)).toEqual(mockQuiz);
   });
 

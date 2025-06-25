@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 
 export default function FlippableCard({
   front,
@@ -36,7 +36,7 @@ export default function FlippableCard({
             <h1 className="text-xl">{front}</h1>
           </div>
           {/* Back */}
-          <div className="absolute w-full h-full backface-hidden rotate-y-180 flex flex-col justify-center items-center p-8 rounded-3xl bg-base-100 border border-base-300 shadow">
+          <div className="absolute w-full h-full backface-hidden rotate-y-180 flex flex-col justify-center items-center p-8 rounded-3xl bg-base-300 border border-base-300 shadow">
             <h1 className="text-xl">{back}</h1>
           </div>
         </div>
