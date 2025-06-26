@@ -289,15 +289,17 @@ Learn more at [Jest docs](https://jestjs.io/docs/getting-started)
 
 <details><summary><strong>TL;DR</strong></summary>
 
-- ✅ **35 Test Suites Passed**
+## SUMMARY
+
+- ✅ **12 Test Suites Passed**
 - ❌ **2 Test Suites Failed**
-  - `auth.controller.test.ts` failed due to a **JWT payload type mismatch** (nullable `phone_number`)
-  - `quiz.controller.test.ts` failed due to **duplicate variable declarations** and unsafe type assumptions
-- ✅ **97/99 Total Tests Passed**
+  - `auth.controller.test.ts` Type mismatch in JWT payload `(phone_number: string | null)`.
+  - `quiz.controller.test.ts` Block-scoped variable redeclaration (`result` used multiple times).
+- ✅ **86/86 Total Tests Passed**
 - 🧪 **Key Modules Tested:** Auth, User, Note, Flashcard, Quiz, Post, AI
 - 🛠️ **Main Issues Identified:**
-  - `auth.controller.ts`: Fix JWT payload by handling `phone_number: string | null`
-  - `quiz.controller.ts`: Resolve duplicate `result` variables and properly type `safeParse`
+  - `auth.controller.ts`: Fix jwtSign payload to avoid passing nullable fields.
+  - `quiz.controller.ts`: Rename or scope `result` variable to prevent redeclarations.
 
 > Overall coverage is excellent. Controller-level type safety issues remain in `auth` and `quiz`, but services are working as expected.
 
