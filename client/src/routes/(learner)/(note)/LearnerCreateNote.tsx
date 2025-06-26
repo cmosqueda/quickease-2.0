@@ -1,5 +1,4 @@
 import CustomEditor from "@/components/Editor";
-import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
 import useAuth from "@/hooks/useAuth";

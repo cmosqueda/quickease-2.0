@@ -31,7 +31,7 @@ export async function get_recent_posts(request: FastifyRequest, reply: FastifyRe
 export async function get_post(request: FastifyRequest, reply: FastifyReply) {
     const { post_id } = request.params as { post_id: string }
     try {
-        const post = await getPost(post_id)
+        const post = await getPost(post_id, request.user.id)
 
         reply.code(200).send(post)
     } catch (err) {
@@ -84,7 +84,7 @@ export async function comment_on_post(request: FastifyRequest, reply: FastifyRep
 }
 
 export async function vote_on_post(request: FastifyRequest, reply: FastifyReply) {
-    const { vote_type, post_id, } = request.body as { vote_type: number, post_id: string }
+    const { vote_type, post_id } = request.body as { vote_type: number, post_id: string }
     try {
         const vote = await voteOnPost(vote_type, post_id, request.user.id)
 

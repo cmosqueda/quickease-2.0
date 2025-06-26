@@ -1,5 +1,8 @@
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import dayjs from "dayjs";
+import clsx from "clsx";
+
+import { useVote } from "@/hooks/useVote";
 import { EditorProvider } from "@tiptap/react";
 import {
   EllipsisVertical,
@@ -8,6 +11,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { NavLink } from "react-router";
+import { toast } from "sonner";
 
 type PostCardProps = {
   post: {
@@ -15,16 +19,19 @@ type PostCardProps = {
     title: string;
     post_body: string;
     created_at: string;
+    vote_sum: number;
+    user_vote: number;
     user: {
       first_name: string;
       last_name: string;
     };
-    votes: { id: string }[];
     comments: { id: string }[];
   };
 };
 
 export default function PostCard({ post }: PostCardProps) {
+  const { mutate: vote, isPending } = useVote();
+
   const fullName = `${post?.user?.first_name ?? "Unknown"} ${
     post?.user?.last_name ?? "User"
   }`;
@@ -33,9 +40,21 @@ export default function PostCard({ post }: PostCardProps) {
     ? dayjs(post.created_at).format("MMMM DD, YYYY")
     : "Unknown date";
 
+  const handleVote = (vote_type: number) => {
+    if (post.user_vote === vote_type) {
+      toast("Already voted");
+      return;
+    }
+
+    vote({
+      post_id: post.id,
+      vote_type,
+    });
+  };
+
   return (
     <div className="flex flex-col gap-2 w-full">
-      {/* Header: user info + menu */}
+      {/* Header */}
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row gap-2 items-center">
           <div className="w-[32px] h-[32px] rounded-full bg-base-100" />
@@ -72,17 +91,33 @@ export default function PostCard({ post }: PostCardProps) {
         />
       </NavLink>
 
-      {/* Footer: votes + comments */}
+      {/* Footer */}
       <div className="flex flex-row gap-4 mt-2">
         <div className="flex flex-row items-center gap-2 p-3 rounded-3xl bg-base-100 border border-base-200">
-          <ChevronUp className="cursor-pointer hover:text-green-500" />
-          <p className="text-sm">{post.votes?.length ?? 0}</p>
-          <ChevronDown className="cursor-pointer hover:text-red-500" />
+          <ChevronUp
+            className={clsx(
+              "cursor-pointer hover:text-green-500",
+              post.user_vote === 1 ? "text-green-600" : ""
+            )}
+            onClick={() => handleVote(1)}
+          />
+          <p className="text-sm">{post.vote_sum ?? 0}</p>
+          <ChevronDown
+            className={clsx(
+              "cursor-pointer hover:text-red-500",
+              post.user_vote === -1 ? "text-red-600" : ""
+            )}
+            onClick={() => handleVote(-1)}
+          />
         </div>
-        <div className="flex flex-row items-center gap-2 px-6 py-3 rounded-3xl bg-base-100 border border-base-200 cursor-pointer hover:bg-base-300 transition">
+        <NavLink
+          to={`/learner/post/${post.id}`}
+          viewTransition
+          className="flex flex-row items-center gap-2 px-6 py-3 rounded-3xl bg-base-100 border border-base-200 cursor-pointer hover:bg-base-300 transition"
+        >
           <MessageCircle />
           <p className="text-sm">{post.comments?.length ?? 0}</p>
-        </div>
+        </NavLink>
       </div>
     </div>
   );

@@ -34,6 +34,7 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
             votes: {
                 select: {
                     vote_type: true,
+                    user_id: true
                 }
             },
             comments: {
@@ -64,18 +65,28 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
     const hasMore = posts.length > limit;
     const items = hasMore ? posts.slice(0, -1) : posts;
 
+
+    const postsWithVoteSum = items.map((post) => {
+        const vote_sum = post.votes.reduce((total, vote) => total + vote.vote_type, 0);
+        const user_vote = post.votes[0]?.vote_type ?? 0;
+
+        return {
+            ...post,
+            vote_sum,
+            user_vote,
+        };
+    })
+
     return {
-        posts: items,
+        posts: postsWithVoteSum,
         nextCursor: hasMore ? items[items.length - 1].id : null,
     };
 }
 
-
-export async function getPost(post_id: string) {
+export async function getPost(post_id: string, user_id: string) {
     const post = await db_client.post.findFirst({
         where: { id: post_id },
         include: {
-            comments: true,
             user: {
                 select: {
                     first_name: true,
@@ -83,11 +94,46 @@ export async function getPost(post_id: string) {
                     email: true,
                 },
             },
+            votes: {
+                where: {
+                    user_id, // only include current user's vote
+                },
+                select: {
+                    vote_type: true,
+                },
+            },
+            comments: {
+                select: {
+                    id: true,
+                    comment_body: true,
+                    created_at: true,
+                    user: {
+                        select: {
+                            first_name: true,
+                            last_name: true,
+                            email: true,
+                        },
+                    },
+                    votes: {
+                        select: {
+                            vote_type: true,
+                            user_id: true,
+                        },
+                    },
+                    replies: true,
+                    _count: {
+                        select: {
+                            replies: true,
+                        },
+                    },
+                },
+            },
         },
     });
 
     if (!post) return null;
 
+    // Total upvote/downvote count (optional if you also want vote_sum)
     const [upvotes, downvotes] = await Promise.all([
         db_client.postVote.count({
             where: {
@@ -103,14 +149,20 @@ export async function getPost(post_id: string) {
         }),
     ]);
 
+    const vote_sum = upvotes - downvotes;
+    const user_vote = post.votes[0]?.vote_type ?? 0;
+
     return {
         ...post,
+        vote_sum,
+        user_vote,
         vote_summary: {
             upvotes,
             downvotes,
         },
     };
 }
+
 
 
 export async function getComments(post_id: string) {
@@ -173,30 +225,6 @@ export async function replyOnComment(body: string, comment_id: string, user_id: 
     return { replied: true }
 }
 
-export async function voteOnPost(vote_type: number, post_id: string, user_id: string) {
-    await db_client.postVote.upsert({
-        where: {
-            user_id_post_id: { user_id, post_id },
-        },
-        update: { vote_type },
-        create: { user_id, post_id, vote_type },
-    });
-
-    return { voted: true }
-}
-
-export async function voteOnComment(vote_type: number, comment_id: string, user_id: string) {
-    await db_client.commentVote.upsert({
-        where: {
-            user_id_comment_id: { user_id, comment_id },
-        },
-        update: { vote_type },
-        create: { user_id, comment_id, vote_type },
-    });
-
-    return { voted: true }
-}
-
 export async function addTagOnPost(post_id: string, tag_ids: string[]) {
     const postTags = await Promise.all(
         tag_ids.map(tag_id => db_client.postTag.upsert({
@@ -228,4 +256,46 @@ export async function togglePostVisibility(visibility: boolean, post_id: string)
     })
 
     return true
+}
+
+export async function voteOnPost(vote_type: number, post_id: string, user_id: string) {
+    if (![1, -1].includes(vote_type)) {
+        throw new Error('Invalid vote type');
+    }
+
+    const result = await db_client.postVote.upsert({
+        where: {
+            user_id_post_id: { user_id, post_id },
+        },
+        update: { vote_type },
+        create: { user_id, post_id, vote_type },
+    });
+
+    const totalVotes = await db_client.postVote.aggregate({
+        where: { post_id },
+        _sum: { vote_type: true },
+    });
+
+    return { voted: true, vote: result, vote_sum: totalVotes._sum.vote_type || 0 };
+}
+
+export async function voteOnComment(vote_type: number, comment_id: string, user_id: string) {
+    if (![1, -1].includes(vote_type)) {
+        throw new Error('Invalid vote type');
+    }
+
+    const result = await db_client.commentVote.upsert({
+        where: {
+            user_id_comment_id: { user_id, comment_id },
+        },
+        update: { vote_type },
+        create: { user_id, comment_id, vote_type },
+    });
+
+    const totalVotes = await db_client.commentVote.aggregate({
+        where: { comment_id },
+        _sum: { vote_type: true },
+    });
+
+    return { voted: true, vote: result, vote_sum: totalVotes._sum.vote_type || 0 };
 }

@@ -1,6 +1,7 @@
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import CustomEditor from "@/components/Editor";
 import dayjs from "dayjs";
+import clsx from "clsx";
 
 import { EditorProvider, useEditor } from "@tiptap/react";
 import {
@@ -12,10 +13,15 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
+import { useVote } from "@/hooks/useVote";
+import { toast } from "sonner";
 
 export default function LearnerPostPage() {
+  const { mutate: vote, isPending } = useVote(["post"]);
   const data = useLoaderData();
   const navigate = useNavigate();
+
+  const [postData, setPostData] = useState(data);
 
   const [html, setHTML] = useState("");
   const editor = useEditor({
@@ -29,6 +35,24 @@ export default function LearnerPostPage() {
   useEffect(() => {
     return () => editor?.destroy();
   }, []);
+
+  const handleVote = (vote_type: number) => {
+    if (postData.user_vote === vote_type) {
+      toast("Already voted");
+      return;
+    }
+
+    setPostData((prev: { vote_sum: number }) => ({
+      ...prev,
+      vote_sum: prev.vote_sum + vote_type,
+      user_vote: vote_type,
+    }));
+
+    vote({
+      post_id: postData.id,
+      vote_type,
+    });
+  };
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
@@ -72,9 +96,21 @@ export default function LearnerPostPage() {
       </div>
       <div className="flex flex-row gap-2">
         <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-200">
-          <ChevronUp className="cursor-pointer delay-0 duration-300 transition-all hover:text-green-500" />
-          <p>{data.vote_summary.upvotes - data.vote_summary.downvotes}</p>
-          <ChevronDown className="cursor-pointer delay-0 duration-300 transition-all hover:text-red-500" />
+          <ChevronUp
+            className={clsx(
+              "cursor-pointer hover:text-green-500",
+              postData.user_vote === 1 ? "text-green-600" : ""
+            )}
+            onClick={() => handleVote(1)}
+          />
+          <p className="text-sm">{postData.vote_sum}</p>
+          <ChevronDown
+            className={clsx(
+              "cursor-pointer hover:text-red-500",
+              postData.user_vote === -1 ? "text-red-600" : ""
+            )}
+            onClick={() => handleVote(-1)}
+          />
         </div>
         <div className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300">
           <MessageCircle />
