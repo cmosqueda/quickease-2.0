@@ -5,8 +5,6 @@ import { NavLink } from "react-router";
 import { Plus, Search } from "lucide-react";
 import type { Note } from "@/types/types";
 
-
-
 export default function NotesTab({ notes }: { notes: Note[] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<"all" | "user" | "ai">("all");
@@ -26,7 +24,7 @@ export default function NotesTab({ notes }: { notes: Note[] }) {
   return (
     <>
       {/* Header: Search + Create */}
-      <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+      <div className="flex flex-row justify-between items-center gap-4">
         <label className="input w-full lg:w-fit flex items-center gap-2">
           <Search size={20} />
           <input
@@ -39,7 +37,7 @@ export default function NotesTab({ notes }: { notes: Note[] }) {
         </label>
         <NavLink to="/learner/note/create" className="btn btn-soft btn-success">
           <Plus />
-          <span>Manually Create</span>
+          <span className="lg:block hidden">Manually Create</span>
         </NavLink>
       </div>
 

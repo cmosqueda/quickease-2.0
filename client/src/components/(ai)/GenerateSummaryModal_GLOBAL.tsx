@@ -182,7 +182,7 @@ export default function GenerateSummaryModal() {
 
   return (
     <dialog id="generate-summary-modal-global" className="modal">
-      <div className="modal-box max-w-5xl flex flex-col gap-4">
+      <div className="modal-box max-w-5xl lg:max-h-[65vh] lg:rounded-3xl rounded-none w-full h-full flex flex-col gap-4">
         {!generatedContent && (
           <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4">
             <div className="flex flex-row gap-4 items-center">
@@ -224,7 +224,7 @@ export default function GenerateSummaryModal() {
               <a
                 role="tab"
                 className={clsx(
-                  "flex flex-row gap-4 tab flex-1 lg:flex",
+                  "flex flex-row gap-4 tab grow lg:flex",
                   index == 2 ? "tab-active" : null
                 )}
                 onClick={() => setIndex(2)}
