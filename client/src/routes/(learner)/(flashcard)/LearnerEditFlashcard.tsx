@@ -45,16 +45,12 @@ export default function LearnerEditFlashcardPage() {
 
     try {
       setIsSaving(true);
-      const { status } = await _API_INSTANCE.put(
-        `/flashcard/${data.id}/update`,
-        {
-          id: data.id,
-          title,
-          description,
-          flashcards: cards,
-          user_id: user?.id,
-        }
-      );
+      const { status } = await _API_INSTANCE.put(`/flashcard/update`, {
+        flashcard_id: data.id,
+        title,
+        description,
+        flashcards: cards,
+      });
 
       if (status === 200) {
         toast.success("Flashcard updated.");
