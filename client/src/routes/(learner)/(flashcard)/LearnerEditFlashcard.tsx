@@ -4,22 +4,25 @@ import _API_INSTANCE from "@/utils/axios";
 
 import { ArrowLeft, EllipsisVertical, Save } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLoaderData } from "react-router";
 import { toast } from "sonner";
 
-export default function LearnerCreateFlashcardPage() {
+export default function LearnerEditFlashcardPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const data = useLoaderData() as {
+    id: string;
+    user_id: string;
+    title: string;
+    description: string | null;
+    flashcards: { front: string; back: string }[];
+  };
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-
-  // cards
+  const [title, setTitle] = useState(data.title);
+  const [description, setDescription] = useState(data.description || "");
+  const [cards, setCards] = useState(data.flashcards);
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
-  const [cards, setCards] = useState<{ front: string; back: string }[]>([]);
-  // cards
-
   const [isSaving, setIsSaving] = useState(false);
 
   const handleAddCard = () => {
@@ -29,33 +32,38 @@ export default function LearnerCreateFlashcardPage() {
     }
 
     const newCard = { front, back };
-    cards.push(newCard);
-
+    setCards([...cards, newCard]);
     setFront("");
     setBack("");
   };
 
   const handleSave = async () => {
     if (cards.length < 2) {
-      toast.info("The flashcards must contain atleast 2.");
+      toast.info("The flashcards must contain at least 2.");
       return;
     }
 
     try {
-      const { status } = await _API_INSTANCE.post("flashcard/create", {
-        title: title,
-        description: description,
-        flashcards: cards,
-        user_id: user?.id,
-      });
+      setIsSaving(true);
+      const { status } = await _API_INSTANCE.put(
+        `/flashcard/${data.id}/update`,
+        {
+          id: data.id,
+          title,
+          description,
+          flashcards: cards,
+          user_id: user?.id,
+        }
+      );
 
-      if (status == 201) {
-        toast.success("Flashcard created.");
+      if (status === 200) {
+        toast.success("Flashcard updated.");
         navigate(-1, { viewTransition: true });
       }
     } catch (err) {
-      toast.error(`Error creating flashcard: ${err.message}`);
-      return;
+      toast.error(`Error updating flashcard: ${err.message}`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -144,6 +152,7 @@ export default function LearnerCreateFlashcardPage() {
           Add Flashcard
         </button>
       </div>
+
       {cards.length > 0 && (
         <div className="flex flex-col gap-4">
           <h1 className="text-3xl font-bold">Flashcards</h1>

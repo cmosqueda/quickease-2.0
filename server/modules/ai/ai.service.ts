@@ -91,16 +91,19 @@ export async function generateFlashcardsFromPrompt(prompt: string) {
         const response = await _AI.models.generateContent({
             model: 'gemini-2.0-flash',
             contents: `
-                Generate atleast 10 flashcards or more from this prompt: "${prompt}"
-
                 Return a JSON string in this format:
                 { front: string; back: string; }[]
 
-                Only output the JSON string.
+                Only output the JSON string or return { malicious: true } if it's a malicious prompt.
+
+                Generate atleast 10 flashcards or more from this prompt: "${prompt}"
                 `.trim()
         })
 
-        return response.text
+        return {
+            title: prompt,
+            content: response.text!.replace(/```json|```/g, '')
+        }
     } catch (err) { return false }
 }
 

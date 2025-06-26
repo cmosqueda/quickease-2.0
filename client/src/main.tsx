@@ -26,6 +26,10 @@ import LearnerCreateNotePage from "./routes/(learner)/(note)/LearnerCreateNote";
 import LearnerAnswerQuizPage from "./routes/(learner)/(quiz)/LearnerAnswerQuiz";
 import LearnerEditQuizPage from "./routes/(learner)/(quiz)/LearnerEditQuiz";
 import LearnerQuizAttemptPage from "./routes/(learner)/(quiz)/LearnerViewAttempt";
+import LearnerAICreateNotePage from "./routes/(learner)/(note)/LearnerAICreateNote";
+import LearnerAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIFlashcard";
+import LearnerEditFlashcardPage from "./routes/(learner)/(flashcard)/LearnerEditFlashcard";
+import LearnerEditAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIEditFlashcard";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -43,8 +47,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import "../global.css";
-import LearnerAICreateNotePage from "./routes/(learner)/(note)/LearnerAICreateNote";
-import LearnerAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIFlashcard";
 
 const client = new QueryClient();
 
@@ -258,6 +260,21 @@ const router = createBrowserRouter([
             path: ":id",
           },
           {
+            Component: LearnerEditFlashcardPage,
+            loader: async ({ params }) => {
+              try {
+                const { data } = await _API_INSTANCE.get(
+                  `/flashcard/${params.id}`
+                );
+
+                return data;
+              } catch (err) {
+                return redirect("/learner/library");
+              }
+            },
+            path: ":id/edit",
+          },
+          {
             Component: LearnerAIFlashcardPage,
             loader: async ({ params }) => {
               const generatedContent = localStorage.getItem(
@@ -267,7 +284,6 @@ const router = createBrowserRouter([
               if (generatedContent) {
                 const parsed = JSON.parse(generatedContent);
                 const cards = JSON.parse(parsed.content.content);
-                console.log(parsed);
 
                 return {
                   title: parsed.content.title,
@@ -278,6 +294,27 @@ const router = createBrowserRouter([
               }
             },
             path: "ai",
+          },
+          {
+            Component: LearnerEditAIFlashcardPage,
+            loader: async ({ params }) => {
+              const generatedContent = localStorage.getItem(
+                "QUICKEASE_GENERATED_CONTENT"
+              );
+
+              if (generatedContent) {
+                const parsed = JSON.parse(generatedContent);
+                const cards = JSON.parse(parsed.content.content);
+
+                return {
+                  title: parsed.content.title,
+                  content: cards,
+                };
+              } else {
+                return redirect(-1);
+              }
+            },
+            path: "ai/edit",
           },
           {
             Component: LearnerCreateFlashcardPage,

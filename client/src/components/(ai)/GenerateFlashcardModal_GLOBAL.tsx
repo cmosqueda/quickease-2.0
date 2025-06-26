@@ -4,13 +4,14 @@ import _API_INSTANCE from "@/utils/axios";
 
 import {
   ArrowRight,
+  LoaderPinwheel,
   Notebook,
   Paperclip,
   SendHorizonal,
   Text,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { toast } from "sonner";
 
@@ -27,7 +28,10 @@ const GenerateFlashcardFromNotes = ({
   }[];
   navigate: NavigateFunction;
 }) => {
+  const [isDisabled, setIsDisabled] = useState(false);
   const handleGenerate = async (id: string) => {
+    setIsDisabled(true);
+
     try {
       const { data } = await _API_INSTANCE.post(
         "/ai/generate-flashcards-from-note",
@@ -47,6 +51,8 @@ const GenerateFlashcardFromNotes = ({
     } catch (err) {
       toast.error("Error generating content.");
       throw err;
+    } finally {
+      setIsDisabled(false);
     }
   };
 
@@ -57,9 +63,79 @@ const GenerateFlashcardFromNotes = ({
           title={c.title}
           date={c.created_at}
           onClick={() => handleGenerate(c.id)}
-          style="bg-base-200 w-full"
+          style="bg-base-200 w-full items-start"
+          disabled={isDisabled}
         />
       ))}
+    </div>
+  );
+};
+
+const GenerateFlashcardFromPrompt = ({
+  navigate,
+}: {
+  navigate: NavigateFunction;
+}) => {
+  const [text, setText] = useState("");
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  const handleGenerate = async () => {
+    if (!text) {
+      toast.error("Invalid input.");
+      return;
+    }
+
+    setIsDisabled(true);
+
+    try {
+      const { data } = await _API_INSTANCE.post(
+        "/ai/generate-flashcards-from-prompt",
+        {
+          prompt: text,
+        },
+        { timeout: 10000 }
+      );
+
+      await localStorage.setItem(
+        "QUICKEASE_GENERATED_CONTENT",
+        JSON.stringify(data)
+      );
+
+      document.getElementById("generate-flashcard-modal-global").close();
+      return navigate("/learner/flashcards/ai");
+    } catch (err) {
+      toast.error("Error generating content.");
+      throw err;
+    } finally {
+      setIsDisabled(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex flex-row gap-2 items-center">
+        <input
+          className="input rounded-3xl w-full"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <button onClick={handleGenerate} disabled={isDisabled}>
+          {isDisabled ? (
+            <LoaderPinwheel
+              className="p-2 rounded-full bg-base-100 border border-base-content/30 shrink-0 cursor-not-allowed disabled:bg-base-300 animate-spin"
+              size={40}
+            />
+          ) : (
+            <SendHorizonal
+              className="p-2 rounded-full bg-base-100 border border-base-content/30 shrink-0 cursor-pointer disabled:bg-base-300"
+              size={40}
+            />
+          )}
+        </button>
+      </div>
+      <p className="hover:text-blue-500 text-xs my-2 cursor-pointer text-base-content/30 transition-all delay-0 duration-300 w-fit">
+        Please follow rules & regulations before generating.
+      </p>
     </div>
   );
 };
@@ -80,20 +156,7 @@ export default function GenerateFlashcardModal({
 
   const tabs = [
     <GenerateFlashcardFromNotes notes={notes} navigate={navigate} />,
-    <>
-      <div>
-        <div className="flex flex-row gap-2 items-center">
-          <input className="input rounded-3xl w-full" />
-          <SendHorizonal
-            className="p-2 rounded-full bg-base-100 border border-base-content/30 shrink-0 cursor-pointer"
-            size={40}
-          />
-        </div>
-        <p className="hover:text-blue-500 text-xs my-2 cursor-pointer text-base-content/30 transition-all delay-0 duration-300">
-          Please follow rules & regulations before generating.
-        </p>
-      </div>
-    </>,
+    <GenerateFlashcardFromPrompt navigate={navigate} />,
     <>
       <div className="flex items-center justify-center w-full">
         <label

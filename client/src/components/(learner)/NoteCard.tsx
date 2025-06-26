@@ -8,6 +8,7 @@ type NoteCardProps = {
   link?: string;
   onClick?: () => void;
   style?: string;
+  disabled?: boolean;
 };
 
 export default function NoteCard({
@@ -16,8 +17,9 @@ export default function NoteCard({
   link,
   onClick,
   style,
+  disabled = false,
 }: NoteCardProps) {
-  const Wrapper = link ? NavLink : "div";
+  const Wrapper = link ? NavLink : "button";
   const wrapperProps = link ? { to: `/learner/note/${link}` } : { onClick };
 
   const formattedDate =
@@ -27,10 +29,11 @@ export default function NoteCard({
 
   return (
     <Wrapper
+      disabled={disabled}
       {...wrapperProps}
       className={clsx(
         style,
-        "flex flex-col justify-between w-[24rem] min-h-[16rem] p-4 rounded-3xl bg-base-100",
+        "flex flex-col justify-between w-[24rem] min-h-[16rem] p-4 rounded-3xl bg-base-100 disabled:bg-base-300 disabled:cursor-not-allowed",
         "transition-all delay-0 duration-300 hover:shadow cursor-pointer"
       )}
     >
