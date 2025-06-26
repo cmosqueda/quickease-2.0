@@ -125,8 +125,8 @@ export default function LearnerAnswerQuizPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-[0.3fr_1fr]">
-        <div className="flex flex-row flex-wrap gap-2">
+      <div className="grid grid-cols-[0.3fr_1fr] gap-8">
+        <div className="flex flex-row flex-wrap gap-2 h-fit">
           {data.quiz_content?.map((_, index) => (
             <div
               key={index}
