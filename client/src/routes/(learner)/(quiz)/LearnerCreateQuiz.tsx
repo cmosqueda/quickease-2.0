@@ -83,13 +83,25 @@ export default function LearnerCreateQuizPage() {
   };
 
   const handleSubmit = async () => {
-    if (questions.length < 2) return false;
-
-    for (const q of questions) {
-      if (!q.question.trim()) return false;
-      if (q.options.some((opt) => !opt.trim())) return false;
-      if (q.correctAnswers.length === 0) return false;
+    if (questions.length < 2) {
+      toast.error("Must have atleast 2 questions.");
+      return;
     }
+
+    questions.forEach((q, index) => {
+      if (!q.question.trim()) {
+        toast.error(`Question ${index + 1} is empty.`);
+        return;
+      }
+      if (q.options.some((opt) => !opt.trim())) {
+        toast.error(`Question ${index + 1} has an empty option.`);
+        return;
+      }
+      if (q.correctAnswers.length === 0) {
+        toast.error(`Question ${index + 1} has no correct answer selected.`);
+        return;
+      }
+    });
 
     setIsSubmitting(true);
 
@@ -102,9 +114,9 @@ export default function LearnerCreateQuizPage() {
         timed_quiz: isTimedQuiz ? totalSeconds : 0,
       });
 
-      if (status == 200) {
+      if (status == 201) {
         toast.success("Quiz created.");
-        return navigate('/learner/library?tab=quiz', { viewTransition: true });
+        return navigate("/learner/library?tab=quizzes", { viewTransition: true });
       }
     } catch (err) {
       toast.error("Error creating quiz.");
@@ -119,7 +131,9 @@ export default function LearnerCreateQuizPage() {
       <div className="flex justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate('/learner/library?tab=quiz', { viewTransition: true })}
+          onClick={() =>
+            navigate("/learner/library?tab=quizzes", { viewTransition: true })
+          }
         />
         <button
           className="btn btn-primary flex gap-2"

@@ -169,7 +169,7 @@ export async function submit_quiz_attempt(request: FastifyRequest, reply: Fastif
     };
 
     const schema = z.object({
-        answer_data: z.object({
+        answer_data: z.array(z.object({
             question: z.object({
                 question: z.string(),
                 description: z.string().optional(),
@@ -177,7 +177,7 @@ export async function submit_quiz_attempt(request: FastifyRequest, reply: Fastif
                 correctAnswers: z.array(z.number())
             }),
             user_answer: z.array(z.number())
-        }),
+        })),
         started_at: z.string(),
         completed_at: z.string(),
         quiz_id: z.string().min(1)
@@ -193,8 +193,8 @@ export async function submit_quiz_attempt(request: FastifyRequest, reply: Fastif
     }
 
     try {
-        await submitQuizAttempt(answer_data, started_at, completed_at, quiz_id, request.user.id);
-        reply.code(200).send({ submitted: true });
+        const data = await submitQuizAttempt(answer_data, started_at, completed_at, quiz_id, request.user.id);
+        reply.code(200).send(data);
     } catch (err) {
         reply.code(500).send({ message: "Error submitting attempt." });
     }

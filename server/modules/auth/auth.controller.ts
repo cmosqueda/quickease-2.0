@@ -71,7 +71,7 @@ export async function register_user(request: FastifyRequest, reply: FastifyReply
         });
 
     } catch (err) {
-        error("Register error:", err);
+        console.error("Register error:", err);
         reply.code(500).send({
             message: "Internal server error. Could not register user."
         });

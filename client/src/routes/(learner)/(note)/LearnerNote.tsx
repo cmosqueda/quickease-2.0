@@ -33,6 +33,7 @@ export default function LearnerNotePage() {
 
   useEffect(() => {
     setTitle(data.title);
+    setHTML(data.notes_content);
   }, [data]);
 
   const editor = useEditor({
@@ -51,6 +52,11 @@ export default function LearnerNotePage() {
   if (!editor) return;
 
   const handleSave = async () => {
+    if (title === data.title && html === data.notes_content) {
+      toast.info("No changes to save.");
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -77,7 +83,9 @@ export default function LearnerNotePage() {
     <div className="flex flex-col min-h-screen w-full">
       <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 lg:items-center border-b border-base-300 p-4 bg-base-100">
         <ArrowLeft
-          onClick={() => navigate('/learner/library?tab=notes', { viewTransition: true })}
+          onClick={() =>
+            navigate("/learner/library?tab=notes", { viewTransition: true })
+          }
           className="cursor-pointer lg:ml-6"
         />
         <div className="flex flex-row gap-4 w-full lg:w-fit">
@@ -90,7 +98,9 @@ export default function LearnerNotePage() {
             <p>Save changes</p>
           </button>
           <button
-            onClick={() => navigate('/learner/library?tab=notes', { viewTransition: true })}
+            onClick={() =>
+              navigate("/learner/library?tab=notes", { viewTransition: true })
+            }
             className="btn btn-ghost btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
           >
             <X />

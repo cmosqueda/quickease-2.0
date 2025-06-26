@@ -8,7 +8,7 @@ type AuthUserRecord = {
   last_name: string;
   email: string;
   gender?: "male" | "female";
-  phone_number?: string;
+  phone_number: string;
   badges: {
     id: string;
     title: string;

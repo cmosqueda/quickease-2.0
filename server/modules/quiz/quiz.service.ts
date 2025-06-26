@@ -115,7 +115,7 @@ export async function submitQuizAttempt(
     user_id: string
 ) {
     try {
-        await db_client.quizAttempt.create({
+        const { id } = await db_client.quizAttempt.create({
             data: {
                 user_id,
                 started_at,
@@ -124,7 +124,10 @@ export async function submitQuizAttempt(
                 quiz_id
             }
         });
-        return true;
+        return {
+            submitted: true,
+            id: id
+        };
     } catch (err) {
         throw err;
     }
