@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 import clsx from "clsx";
-import { EllipsisVertical } from "lucide-react";
 import { NavLink } from "react-router";
 
 type FlashcardCardProps = {
@@ -42,16 +41,6 @@ export default function FlashcardCard({
         <h1 className="font-bold text-xl line-clamp-1">
           {title || "Untitled"}
         </h1>
-        <details className="dropdown dropdown-end">
-          <summary className="list-none cursor-pointer">
-            <EllipsisVertical />
-          </summary>
-          <ul className="menu dropdown-content bg-base-100 border border-base-300 rounded-box z-1 w-52 p-2 shadow-sm">
-            <li>
-              <button type="button">Delete</button>
-            </li>
-          </ul>
-        </details>
       </div>
       <p className="text-sm text-gray-500">
         {term} Terms / {formattedDate}

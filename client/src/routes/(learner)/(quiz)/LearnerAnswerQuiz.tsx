@@ -59,7 +59,6 @@ export default function LearnerAnswerQuizPage() {
         user_answer: Array.from(selected),
       };
 
-      console.log(updated);
       return updated;
     });
   };
@@ -101,7 +100,7 @@ export default function LearnerAnswerQuizPage() {
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate(-1, { viewTransition: true })}
+          onClick={() => navigate('/learner/library?tab=quiz', { viewTransition: true })}
         />
         <div className="flex flex-row gap-6 items-center">
           <details className="dropdown dropdown-end cursor-pointer">
@@ -125,8 +124,8 @@ export default function LearnerAnswerQuizPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-[0.3fr_1fr]">
-        <div className="flex flex-row flex-wrap gap-2">
+      <div className="grid grid-cols-[0.3fr_1fr] gap-8">
+        <div className="flex flex-row flex-wrap gap-2 h-fit">
           {data.quiz_content?.map((_, index) => (
             <div
               key={index}

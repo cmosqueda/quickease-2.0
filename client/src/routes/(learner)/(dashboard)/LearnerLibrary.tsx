@@ -6,21 +6,35 @@ import QuizTab from "@/components/(learner)/QuizTab";
 import clsx from "clsx";
 
 import { useEffect, useState } from "react";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useSearchParams } from "react-router";
 
 export default function LearnerLibraryPage() {
   const data = useLoaderData();
+  const [params, setParams] = useSearchParams();
   const [tabIndex, setTabIndex] = useState(0);
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   const tabs = [
     <NotesTab notes={data.notes} />,
     <FlashcardTab flashcards={data.flashcards} />,
     <QuizTab quizzes={data.quizzes} />,
-  ]; // 0 - notes | 1 - flashcard | 2 - quiz
+  ];
+
+  useEffect(() => {
+    switch (params.get("tab")) {
+      case "notes":
+        setTabIndex(0);
+        break;
+      case "flashcards":
+        setTabIndex(1);
+        break;
+      case "quizzes":
+        setTabIndex(2);
+        break;
+      default:
+        setTabIndex(0);
+        break;
+    }
+  }, [params]);
 
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto min-h-screen">

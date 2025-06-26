@@ -6,7 +6,6 @@ export async function getUserNotes(user_id: string) {
             where: { user_id }
         });
     } catch (err) {
-        console.error("getUserNotes error:", err);
         throw err;
     }
 }
@@ -17,7 +16,6 @@ export async function getUserNote(note_id: string) {
             where: { id: note_id }
         });
     } catch (err) {
-        console.error("getUserNote error:", err);
         throw err;
     }
 }
@@ -32,7 +30,6 @@ export async function createUserNote(title: string, content: string, user_id: st
             }
         });
     } catch (err) {
-        console.error("createUserNote error:", err);
         throw err;
     }
 }
@@ -47,7 +44,6 @@ export async function updateUserNote(title: string, content: string, note_id: st
             where: { id: note_id }
         });
     } catch (err) {
-        console.error("updateUserNote error:", err);
         throw err;
     }
 }
@@ -59,7 +55,6 @@ export async function deleteUserNote(note_id: string) {
         });
         return true;
     } catch (err) {
-        console.error("deleteUserNote error:", err);
         throw err;
     }
 }
@@ -72,7 +67,6 @@ export async function toggleNoteVisibility(visibility: boolean, note_id: string)
         });
         return true;
     } catch (err) {
-        console.error("toggleNoteVisibility error:", err);
         throw err;
     }
 }

@@ -2,15 +2,8 @@ import FlippableCard from "@/components/(learner)/FlippableCard";
 import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "@/utils/axios";
 
-import {
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  Edit,
-  EllipsisVertical,
-  Save,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Edit, Save } from "lucide-react";
+import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
 
@@ -35,14 +28,11 @@ export default function LearnerAIFlashcardPage() {
         isAI: true,
       });
 
-      console.log(status)
-
       if (status == 201) {
         toast.success("Flashcard created.");
-        navigate('/learner/library', { viewTransition: true });
+        navigate("/learner/library?tab=flashcards", { viewTransition: true });
       }
     } catch (err) {
-      console.log(err);
       toast.error(`Error creating flashcard: ${err.message}`);
       return;
     }
@@ -52,21 +42,15 @@ export default function LearnerAIFlashcardPage() {
     <div className="flex flex-col w-full lg:min-h-screen max-w-7xl mx-auto p-8 gap-4">
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
-          onClick={() => navigate(-1, { viewTransition: true })}
+          onClick={() =>
+            navigate("/learner/library?tab=flashcards", {
+              viewTransition: true,
+            })
+          }
           className="cursor-pointer"
         />
         <div className="flex flex-row gap-6 items-center">
-          <Edit className="cursor-pointer" />
-          <details className="dropdown dropdown-end cursor-pointer">
-            <summary className="list-none">
-              <EllipsisVertical />
-            </summary>
-            <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4">
-              <li>
-                <a>Delete</a>
-              </li>
-            </ul>
-          </details>
+          <Edit className="cursor-pointer" onClick={() => navigate("edit")} />
           <button className="btn btn-ghost btn-success" onClick={handleSave}>
             <Save />
             <p>Save generated flashcards</p>

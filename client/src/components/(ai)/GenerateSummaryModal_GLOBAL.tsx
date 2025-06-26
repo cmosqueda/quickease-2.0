@@ -38,8 +38,6 @@ const GenerateFromText = ({
         { timeout: 10000 }
       );
 
-      console.log(data);
-
       if (status == 200) {
         setGeneratedContent(data);
         localStorage.setItem(
@@ -50,7 +48,6 @@ const GenerateFromText = ({
         navigate("/learner/note/create/ai", { viewTransition: true });
       }
     } catch (err) {
-      console.log(err);
       toast.error("Error summarizing notes.");
       return;
     } finally {

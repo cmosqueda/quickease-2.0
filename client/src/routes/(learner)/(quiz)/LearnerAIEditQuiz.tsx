@@ -1,35 +1,39 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import _API_INSTANCE from "@/utils/axios";
-import { getUnitValue, handleTimeChange } from "@/utils/quiz";
 import clsx from "clsx";
 
 import { ArrowLeft, ArrowRightFromLine, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
+import { getUnitValue, handleTimeChange } from "@/utils/quiz";
 
 interface Question {
   question: string;
-  description: string;
+  description?: string;
   options: string[];
   correctAnswers: number[];
 }
 
-export default function LearnerCreateQuizPage() {
+export default function LearnerAIEditQuizPage() {
+  const data = useLoaderData() as {
+    id?: string;
+    title: string;
+    description?: string;
+    quiz_content: Question[];
+    is_randomized?: boolean;
+    timed_quiz?: number;
+  };
+
   const navigate = useNavigate();
-  const [questions, setQuestions] = useState<Question[]>([
-    {
-      question: "",
-      description: "",
-      options: ["", "", "", ""],
-      correctAnswers: [],
-    },
-  ]);
-  const [quizTitle, setQuizTitle] = useState("Untitled Quiz");
-  const [quizDescription, setQuizDescription] = useState("");
-  const [isTimedQuiz, setIsTimedQuiz] = useState(false);
-  const [isRandomized, setIsRandomized] = useState(false);
-  const [totalSeconds, setTotalSeconds] = useState(0);
+
+  const [quizTitle, setQuizTitle] = useState(data.title);
+  const [quizDescription, setQuizDescription] = useState(
+    data.description || ""
+  );
+  const [questions, setQuestions] = useState<Question[]>(data.quiz_content);
+  const [isRandomized, setIsRandomized] = useState(data.is_randomized || false);
+  const [isTimedQuiz, setIsTimedQuiz] = useState(!!data.timed_quiz);
+  const [totalSeconds, setTotalSeconds] = useState(data.timed_quiz || 0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleQuestionChange = (
@@ -38,7 +42,7 @@ export default function LearnerCreateQuizPage() {
     value: string | string[]
   ) => {
     const newQuestions = [...questions];
-    newQuestions[index][field] = value as never; // more specific in larger form systems
+    newQuestions[index][field] = value as never;
     setQuestions(newQuestions);
   };
 
@@ -83,32 +87,40 @@ export default function LearnerCreateQuizPage() {
   };
 
   const handleSubmit = async () => {
-    if (questions.length < 2) return false;
+    if (questions.length < 2) {
+      toast.error("At least 2 questions required.");
+      return;
+    }
 
     for (const q of questions) {
-      if (!q.question.trim()) return false;
-      if (q.options.some((opt) => !opt.trim())) return false;
-      if (q.correctAnswers.length === 0) return false;
+      if (!q.question.trim())
+        return toast.error("Each question must have a title.");
+      if (q.options.some((opt) => !opt.trim()))
+        return toast.error("All options must be filled.");
+      if (q.correctAnswers.length === 0)
+        return toast.error(
+          "Each question must have at least one correct answer."
+        );
     }
 
     setIsSubmitting(true);
 
     try {
       const { status } = await _API_INSTANCE.post("/quiz/create", {
-        title: quizTitle.trim(),
+        title: `${quizTitle.trim()}`,
         description: quizDescription.trim(),
         quiz_content: questions,
         is_randomized: isRandomized,
         timed_quiz: isTimedQuiz ? totalSeconds : 0,
+        isAI: true,
       });
 
-      if (status == 200) {
-        toast.success("Quiz created.");
-        return navigate('/learner/library?tab=quiz', { viewTransition: true });
+      if (status === 201) {
+        toast.success("Generated quiz saved.");
+        navigate("/learner/library?tab=flashcards", { viewTransition: true });
       }
     } catch (err) {
-      toast.error("Error creating quiz.");
-      throw err;
+      toast.error("Error saving quiz.");
     } finally {
       setIsSubmitting(false);
     }
@@ -119,20 +131,22 @@ export default function LearnerCreateQuizPage() {
       <div className="flex justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate('/learner/library?tab=quiz', { viewTransition: true })}
+          onClick={() =>
+            navigate("/learner/library?tab=quiz", { viewTransition: true })
+          }
         />
         <button
           className="btn btn-primary flex gap-2"
           onClick={handleSubmit}
           disabled={isSubmitting}
         >
-          <p>{isSubmitting ? "Saving..." : "Save Quiz"}</p>
+          <p>{isSubmitting ? "Saving..." : "Save Changes"}</p>
           <ArrowRightFromLine />
         </button>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-4 items-center">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full">
           <input
             type="text"
             value={quizTitle}
@@ -193,7 +207,7 @@ export default function LearnerCreateQuizPage() {
                     "label"
                   )}
                 >
-                  {unit.charAt(0).toUpperCase() + unit.slice(1)}/s
+                  {unit.charAt(0).toUpperCase() + unit.slice(1)}
                 </p>
               </fieldset>
             ))}

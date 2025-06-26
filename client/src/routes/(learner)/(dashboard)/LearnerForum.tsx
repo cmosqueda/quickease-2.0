@@ -9,6 +9,7 @@ import { Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useEditor } from "@tiptap/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router";
 
 export default function LearnerForumPage() {
   const [title, setTitle] = useState("");
@@ -30,8 +31,6 @@ export default function LearnerForumPage() {
       const { data: posts } = await _API_INSTANCE.get("/forum/posts/recent", {
         params: { cursor: pageParam, limit: 10 },
       });
-
-      console.log(posts);
 
       return posts;
     },
@@ -73,7 +72,7 @@ export default function LearnerForumPage() {
         )}
       </div>
       <PostModal
-        editor={editor}
+        editor={editor!}
         html={html}
         setTitle={setTitle}
         title={title}

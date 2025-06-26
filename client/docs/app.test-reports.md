@@ -6,10 +6,10 @@ For test case codes and description references, access [this link](https://docs.
 
 # June 21, 2025
 
-## TL;DR:
-
 <details>
-<summary><strong>Summary of Test Results</strong></summary>
+<summary><strong>TL;DR</strong></summary>
+
+## SUMMARY
 
 - ⚠️ **Register**
 
@@ -35,6 +35,8 @@ For test case codes and description references, access [this link](https://docs.
   - **Minor Issue**: `Quote` markdown function does not work.
 
 </details>
+
+<details><summary><strong>FULL REPORT</strong></summary>
 
 ## Register
 
@@ -90,7 +92,7 @@ Feedback by Mosqueda:
 - Log in works as expected.
 - Error-handling pop-ups/toasts gives only api requests status codes. This is minimal priority.
 
-## Learner - Notes (Manual Creation)
+## Learner Notes - Manual Creation
 
 Criterias:
 
@@ -114,7 +116,7 @@ Feedback by Mosqueda:
 - The `quote` markdown function does not work.
 - Can edit and save notes properly. Tested both in api and frontend.
 
-## Learner - Flashcards (Manual Creation)
+## Learner Flashcards - Manual Creation
 
 Criterias:
 
@@ -136,3 +138,47 @@ Feedback by Mosqueda:
 
 - Flashcards work well as expected.
 - RECOMMENDATION: There should be distinction if the card is facing front or back. Maybe, differentiate the color of the cards background.
+
+</details>
+
+---
+
+# June 26, 2025
+
+<details>
+<summary><strong>TL;DR</strong></summary>
+
+## SUMMARY
+
+</details>
+
+<details>
+<summary><strong>FULL REPORT</strong></summary>
+
+## Learner Quiz
+
+Criterias:
+
+- LQ002: User can create quizzes manually.
+- LQ003: User can edit the existing quiz and save it properly.
+- LQ004: User can answer and review existing saved quiz.
+- LQ005: Correct answer(s) from multiple choice are displayed as expected.
+- LQ006: Exact scores are calculated and displayed as expected after answering the quiz/reviewing the quiz overview.
+- LQ007: After a quiz is answered, a quiz review is available for viewing.
+
+Success Rate:
+
+- LQ002: 50%
+- LQ003: 20%
+- LQ004: 0%
+- LQ005: 100%
+- LQ006: 100%
+- LQ007: 100%
+
+Status: **PARTIAL PASSED**
+
+Feedback:
+
+- Error in creating quiz. Axios error at routes/(learner)/(quiz)/LearnerQuiz.tsx
+
+</details>

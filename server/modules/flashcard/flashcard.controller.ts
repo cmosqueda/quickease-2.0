@@ -19,7 +19,6 @@ export async function get_user_flashcards(request: FastifyRequest, reply: Fastif
         const flashcards = await getUserFlashcards(userId);
         reply.code(200).send(flashcards);
     } catch (err) {
-        console.error("get_user_flashcards error:", err);
         reply.code(500).send({ message: "Error getting user's flashcards." });
     }
 }
@@ -40,7 +39,6 @@ export async function get_user_flashcard(request: FastifyRequest, reply: Fastify
 
         reply.code(200).send(flashcard);
     } catch (err) {
-        console.error("get_user_flashcard error:", err);
         reply.code(500).send({ message: "Error getting user's flashcard." });
     }
 }
@@ -80,7 +78,6 @@ export async function create_user_flashcard(request: FastifyRequest, reply: Fast
         const flashcard = await createUserFlashcard(title, description, flashcards, isAI, userId);
         reply.code(201).send(flashcard);
     } catch (err) {
-        console.error("create_user_flashcard error:", err);
         reply.code(500).send({ message: "Error creating flashcard." });
     }
 }
@@ -121,7 +118,6 @@ export async function update_user_flashcard(request: FastifyRequest, reply: Fast
         const flashcard = await updateUserFlashcard(title, description, flashcards, userId, flashcard_id);
         reply.code(200).send(flashcard);
     } catch (err) {
-        console.error("update_user_flashcard error:", err);
         reply.code(500).send({ message: "Error updating flashcard." });
     }
 }
@@ -137,7 +133,6 @@ export async function delete_user_flashcard(request: FastifyRequest, reply: Fast
         await deleteUserFlashcard(flashcard_id);
         reply.code(200).send({ message: "Deleted flashcard." });
     } catch (err) {
-        console.error("delete_user_flashcard error:", err);
         reply.code(500).send({ message: "Error deleting flashcard." });
     }
 }
@@ -153,7 +148,6 @@ export async function toggle_flashcard_visibility(request: FastifyRequest, reply
         await toggleFlashcardVisibility(flashcard_id);
         reply.code(200).send({ message: "Updated flashcard visibility." });
     } catch (err) {
-        console.error("toggle_flashcard_visibility error:", err);
         reply.code(500).send({ message: "Error updating flashcard visibility." });
     }
 }

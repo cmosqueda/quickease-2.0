@@ -17,6 +17,7 @@ jest.mock("../../utils/ai", () => ({
 describe("AI Service", () => {
   const mockNote = {
     id: "note-1",
+    title: "Note Title",
     notes_content: "This is a test note content for quiz or flashcard generation.",
   };
 
@@ -57,7 +58,10 @@ describe("AI Service", () => {
       (_AI.models.generateContent as jest.Mock).mockResolvedValue(mockAIResponse);
 
       const result = await aiService.generateFlashcardFromNote("note-1");
-      expect(result).toEqual(mockAIResponse.text);
+      expect(result).toEqual({
+        title: mockNote.title,
+        content: mockAIResponse.text.replace(/```json|```/g, ""),
+      });
     });
   });
 

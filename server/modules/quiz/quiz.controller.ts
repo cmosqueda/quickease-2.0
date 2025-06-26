@@ -11,6 +11,22 @@ import {
 } from "./quiz.service";
 import { z } from "zod";
 
+const CreateUpdateSchema = z.object({
+  title: z.string().min(3),
+  description: z.string().nullable(),
+  quiz_content: z
+    .array(
+      z.object({
+        question: z.string(),
+        options: z.array(z.string()),
+        correctAnswers: z.array(z.number().int().nonnegative()),
+      })
+    )
+    .min(1),
+  is_randomized: z.boolean(),
+  timed_quiz: z.number().int().nonnegative(),
+});
+
 export async function get_user_quizzes(request: FastifyRequest, reply: FastifyReply) {
   try {
     const userId = request.user?.id;
@@ -19,7 +35,6 @@ export async function get_user_quizzes(request: FastifyRequest, reply: FastifyRe
     const quizzes = await getUserQuizzes(userId);
     reply.code(200).send(quizzes);
   } catch (err) {
-    console.error("get_user_quizzes error:", err);
     reply.code(500).send({ message: "Error getting user quizzes." });
   }
 }
@@ -35,37 +50,26 @@ export async function get_quiz(request: FastifyRequest, reply: FastifyReply) {
 
     return reply.code(200).send(quiz);
   } catch (err) {
-    console.error("get_quiz error:", err);
     reply.code(500).send({ message: "Error getting quiz." });
   }
 }
 
 export async function create_user_quiz(request: FastifyRequest, reply: FastifyReply) {
-  const { title, description, quiz_content, is_randomized, timed_quiz } = request.body as {
+  const { title, description, quiz_content, is_randomized, timed_quiz, isAI } = request.body as {
     title: string;
     description: string;
-    quiz_content: { answers: string[]; question: string; correct_answer_index: number }[];
+    quiz_content: {
+      question: string;
+      description?: string;
+      options: string[];
+      correctAnswers: number[];
+    }[];
     is_randomized: boolean;
     timed_quiz: number;
+    isAI: boolean;
   };
 
-  const schema = z.object({
-    title: z.string().min(3),
-    description: z.string(),
-    quiz_content: z
-      .array(
-        z.object({
-          question: z.string(),
-          answers: z.array(z.string()),
-          correct_answer_index: z.number().int().nonnegative(),
-        })
-      )
-      .min(1),
-    is_randomized: z.boolean(),
-    timed_quiz: z.number().int().nonnegative(),
-  });
-
-  const result = schema.safeParse({ title, description, quiz_content, is_randomized, timed_quiz });
+  const result = CreateUpdateSchema.safeParse({ title, description, quiz_content, is_randomized, timed_quiz });
 
   if (!result.success) {
     return reply.code(400).send({
@@ -75,10 +79,17 @@ export async function create_user_quiz(request: FastifyRequest, reply: FastifyRe
   }
 
   try {
-    const quiz = await createUserQuiz(title, description, quiz_content, is_randomized, timed_quiz, request.user.id);
+    const quiz = await createUserQuiz(
+      title,
+      description,
+      quiz_content,
+      is_randomized,
+      timed_quiz,
+      request.user.id,
+      isAI
+    );
     reply.code(201).send(quiz);
   } catch (err) {
-    console.error("create_user_quiz error:", err);
     reply.code(500).send({ message: "Error creating quiz." });
   }
 }
@@ -87,30 +98,18 @@ export async function update_user_quiz(request: FastifyRequest, reply: FastifyRe
   const { title, description, quiz_content, is_randomized, timed_quiz, quiz_id } = request.body as {
     title: string;
     description: string;
-    quiz_content: { answers: string[]; question: string; correct_answer_index: number }[];
+    quiz_content: {
+      question: string;
+      description: string;
+      options: string[];
+      correctAnswers: number[];
+    }[];
     is_randomized: boolean;
     timed_quiz: number;
     quiz_id: string;
   };
 
-  const schema = z.object({
-    title: z.string().min(3),
-    description: z.string(),
-    quiz_content: z
-      .array(
-        z.object({
-          question: z.string(),
-          answers: z.array(z.string()),
-          correct_answer_index: z.number().int().nonnegative(),
-        })
-      )
-      .min(1),
-    is_randomized: z.boolean(),
-    timed_quiz: z.number().int().nonnegative(),
-    quiz_id: z.string().min(1),
-  });
-
-  const result = schema.safeParse({ title, description, quiz_content, is_randomized, timed_quiz, quiz_id });
+  const result = CreateUpdateSchema.safeParse({ title, description, quiz_content, is_randomized, timed_quiz, quiz_id });
 
   if (!result.success) {
     return reply.code(400).send({
@@ -123,7 +122,6 @@ export async function update_user_quiz(request: FastifyRequest, reply: FastifyRe
     await updateUserQuiz(title, description, quiz_content, is_randomized, timed_quiz, quiz_id);
     reply.code(200).send({ message: "Updated quiz." });
   } catch (err) {
-    console.error("update_user_quiz error:", err);
     reply.code(500).send({ message: "Error updating quiz." });
   }
 }
@@ -145,11 +143,19 @@ export async function update_user_quiz_visibility(request: FastifyRequest, reply
     });
   }
 
+  const result = schema.safeParse({ visibility, quiz_id });
+
+  if (!result.success) {
+    return reply.code(400).send({
+      message: "Invalid visibility update",
+      errors: result.error.errors,
+    });
+  }
+
   try {
     await updateUserQuizVisibility(visibility, quiz_id);
     reply.code(200).send({ message: "Updated quiz visibility." });
   } catch (err) {
-    console.error("update_user_quiz_visibility error:", err);
     reply.code(500).send({ message: "Error updating quiz visibility." });
   }
 }
@@ -163,7 +169,6 @@ export async function delete_user_quiz(request: FastifyRequest, reply: FastifyRe
     await deleteUserQuiz(quiz_id);
     reply.code(200).send({ message: "Deleted quiz." });
   } catch (err) {
-    console.error("delete_user_quiz error:", err);
     reply.code(500).send({ message: "Error deleting quiz." });
   }
 }
@@ -208,11 +213,19 @@ export async function submit_quiz_attempt(request: FastifyRequest, reply: Fastif
     });
   }
 
+  const result = schema.safeParse({ answer_data, started_at, completed_at, quiz_id });
+
+  if (!result.success) {
+    return reply.code(400).send({
+      message: "Invalid quiz attempt input",
+      errors: result.error.errors,
+    });
+  }
+
   try {
     await submitQuizAttempt(answer_data, started_at, completed_at, quiz_id, request.user.id);
     reply.code(200).send({ submitted: true });
   } catch (err) {
-    console.error("submit_quiz_attempt error:", err);
     reply.code(500).send({ message: "Error submitting attempt." });
   }
 }
@@ -228,7 +241,6 @@ export async function get_quiz_attempt(request: FastifyRequest, reply: FastifyRe
 
     reply.code(200).send(attempt);
   } catch (err) {
-    console.error("get_quiz_attempt error:", err);
     reply.code(500).send({ message: "Error fetching attempt." });
   }
 }

@@ -8,6 +8,7 @@ import {
   ArrowRightFromLine,
   Edit,
   EllipsisVertical,
+  Info,
 } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
@@ -73,7 +74,7 @@ export default function LearnerQuizPage() {
 
       if (status == 200) {
         toast.success("Quiz deleted.");
-        return navigate(-1, { viewTransition: true });
+        return navigate('/learner/library?tab=quiz', { viewTransition: true });
       }
     } catch (err) {
       toast.error("Failed to delete.");
@@ -103,7 +104,7 @@ export default function LearnerQuizPage() {
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate(-1, { viewTransition: true })}
+          onClick={() => navigate('/learner/library?tab=quiz', { viewTransition: true })}
         />
         <div className="flex flex-row gap-6 items-center">
           {data.user_id == user?.id && (
@@ -131,6 +132,12 @@ export default function LearnerQuizPage() {
         </div>
       </div>
       <div>
+        {data.is_ai_generated && (
+          <div className="flex flex-row items-center gap-2">
+            <Info size={16} className="text-sm text-base-content/50" />
+            <h1 className="text-sm text-base-content/50">AI-generated</h1>
+          </div>
+        )}
         <h1 className="font-bold text-3xl lg:text-6xl">
           {data.title || "Untitled"}
         </h1>
