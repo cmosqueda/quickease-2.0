@@ -24,7 +24,7 @@ export type Quiz = {
         description: string;
         options: string[];
         question: string;
-    };
+    }[];
     is_public: boolean;
     is_ai_generated: boolean;
     is_randomized: boolean;
