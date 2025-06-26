@@ -1,5 +1,7 @@
 **This documents all unit tests executed on jest.**
 
+For test case codes and description references, access [this link](https://docs.google.com/spreadsheets/d/1JOolp5MGG8KnSi7auB_1pmLtYCR8nEPIwKX8CYza8HY/edit?usp=sharing) and go to the `Test Case Repository` sheet.
+
 # Test Framework Setup
 
 **Library Used:** Jest
@@ -293,8 +295,8 @@ Learn more at [Jest docs](https://jestjs.io/docs/getting-started)
 
 - ✅ **12 Test Suites Passed**
 - ❌ **2 Test Suites Failed**
-  - `auth.controller.test.ts` Type mismatch in JWT payload `(phone_number: string | null)`.
-  - `quiz.controller.test.ts` Block-scoped variable redeclaration (`result` used multiple times).
+  - **UT002** `auth.controller.test.ts` Type mismatch in JWT payload `(phone_number: string | null)`.
+  - **UT010** `quiz.controller.test.ts` Block-scoped variable redeclaration (`result` used multiple times).
 - ✅ **86/86 Total Tests Passed**
 - 🧪 **Key Modules Tested:** Auth, User, Note, Flashcard, Quiz, Post, AI
 - 🛠️ **Main Issues Identified:**
@@ -382,9 +384,9 @@ Time:        8.974 s
 Ran all test suites matching tests/auth.
 ```
 
-### `auth.service.test.ts` - ✅ PASS
+### UT001 `auth.service.test.ts` - ✅ PASS
 
-### `auth.controller.test.ts` - ❌ FAIL
+### UT002 `auth.controller.test.ts` - ❌ FAIL
 
 > Test suite failed to run: Needs debugging at `auth.controller.ts`. Could be a JWT type mismatch. Ensure the token payload excludes or transforms nullable fields appropriately.
 
@@ -421,9 +423,9 @@ Time:        7.001 s, estimated 12 s
 Ran all test suites matching tests/user.
 ```
 
-### `user.service.test.ts` - ✅ PASS
+### UT003 `user.service.test.ts` - ✅ PASS
 
-### `user.controller.test.ts` - ✅ PASS
+### UT004 `user.controller.test.ts` - ✅ PASS
 
 ## NOTE
 
@@ -456,9 +458,9 @@ Time:        7.593 s, estimated 14 s
 Ran all test suites matching tests/note.
 ```
 
-### `note.service.test.ts` - ✅ PASS
+### UT005 `note.service.test.ts` - ✅ PASS
 
-### `note.controller.test.ts` - ✅ PASS
+### UT006 `note.controller.test.ts` - ✅ PASS
 
 ## FLASHCARD
 
@@ -492,9 +494,9 @@ Time:        6.818 s, estimated 13 s
 Ran all test suites matching tests/flashcard.
 ```
 
-### `flashcard.service.test.ts` - ✅ PASS
+### UT007 `flashcard.service.test.ts` - ✅ PASS
 
-### `flashcard.controller.test.ts` - ✅ PASS
+### UT008 `flashcard.controller.test.ts` - ✅ PASS
 
 ## QUIZ
 
@@ -547,9 +549,9 @@ Time:        10.012 s
 Ran all test suites matching tests/quiz.
 ```
 
-### `quiz.service.test.ts` - ✅ PASS
+### UT009 `quiz.service.test.ts` - ✅ PASS
 
-### `quiz.controller.test.ts` - ❌ FAIL
+### UT010 `quiz.controller.test.ts` - ❌ FAIL
 
 > The error message indicates that there are duplicate variable declarations in the `quiz.controller.ts` file.
 
@@ -593,9 +595,9 @@ Time:        5.103 s
 Ran all test suites matching tests/post.
 ```
 
-### `post.service.test.ts` - ✅ PASS
+### UT011 `post.service.test.ts` - ✅ PASS
 
-### `post.controller.test.ts` - ✅ PASS
+### UT012 `post.controller.test.ts` - ✅ PASS
 
 ## AI
 
@@ -631,9 +633,9 @@ Time:        6.856 s, estimated 8 s
 Ran all test suites matching tests/ai.
 ```
 
-### `ai.service.test.ts` - ✅ PASS
+### UT013 `ai.service.test.ts` - ✅ PASS
 
-### `ai.controller.test.ts` - ✅ PASS
+### UT014 `ai.controller.test.ts` - ✅ PASS
 
 </details>
 
