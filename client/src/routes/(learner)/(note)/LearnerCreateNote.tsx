@@ -59,7 +59,7 @@ export default function LearnerCreateNotePage() {
         user_id: user?.id,
       });
 
-      if (res.status == 200) {
+      if (res.status == 201) {
         toast.success("Note created.");
         navigate("/learner/library?tab=notes");
       }
