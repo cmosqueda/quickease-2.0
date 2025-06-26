@@ -7,7 +7,6 @@ declare module '@fastify/jwt' {
       first_name: string;
       last_name: string;
       email: string;
-      phone_number: string;
       is_public: boolean
       [key: string]: any;
     }
@@ -16,8 +15,6 @@ declare module '@fastify/jwt' {
       first_name: string;
       last_name: string;
       email: string;
-      phone_number: string;
-      is_public: boolean
       [key: string]: any;
     }
   }

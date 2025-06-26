@@ -2,8 +2,8 @@ import CustomEditor from "@/components/Editor";
 import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
-import _API_INSTANCE from "@/utils/axios";
 import useAuth from "@/hooks/useAuth";
+import _API_INSTANCE from "@/utils/axios";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
 import {
@@ -11,7 +11,9 @@ import {
   BookDown,
   CalendarRange,
   ClipboardList,
+  Delete,
   Save,
+  Share,
   X,
 } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -25,7 +27,7 @@ export default function LearnerCreateNotePage() {
   const navigate = useNavigate();
 
   // States for editors //
-  const [html, setHTML] = useState(data.content);
+  const [html, setHTML] = useState("");
   const [text, setText] = useState("");
   const [json, setJSON] = useState({});
   const [title, setTitle] = useState("");
@@ -59,9 +61,9 @@ export default function LearnerCreateNotePage() {
         user_id: user?.id,
       });
 
-      if (res.status == 200) {
+      if (res.status == 201) {
         toast.success("Note created.");
-        navigate('/learner/library?tab=notes');
+        navigate("/learner/library?tab=notes");
       }
     } catch (err) {
       toast.error(err.message);
@@ -76,7 +78,9 @@ export default function LearnerCreateNotePage() {
       <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 lg:items-center border-b border-base-300 p-4 bg-base-100">
         <div className="flex flex-row items-center gap-4">
           <ArrowLeft
-            onClick={() => navigate('/learner/library?tab=notes', { viewTransition: true })}
+            onClick={() =>
+              navigate("/learner/library?tab=notes", { viewTransition: true })
+            }
             className="cursor-pointer lg:ml-6"
           />
           <h1 className="text-2xl font-bold">Create note</h1>
@@ -91,7 +95,9 @@ export default function LearnerCreateNotePage() {
             <p>Save changes</p>
           </button>
           <button
-            onClick={() => navigate('/learner/library?tab=notes', { viewTransition: true })}
+            onClick={() =>
+              navigate("/learner/library?tab=notes", { viewTransition: true })
+            }
             className="btn btn-ghost btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
           >
             <X />
@@ -110,6 +116,16 @@ export default function LearnerCreateNotePage() {
           <CustomEditor editor={editor} />
         </div>
         <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
+          <h1 className="font-bold text-xl">Note options</h1>
+          <button
+            className="rounded-3xl btn btn-soft gap-2 join-item"
+            onClick={() =>
+              navigate("/learner/library?tab=notes", { viewTransition: true })
+            }
+          >
+            <Delete />
+            <h1>Delete</h1>
+          </button>
           <h1 className="font-bold text-xl">Study options</h1>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"

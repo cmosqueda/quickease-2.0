@@ -1,6 +1,5 @@
 import StarterKit from "@tiptap/starter-kit";
 
-
 const _TIPTAP_EXTENSIONS = [
     StarterKit.configure({
         heading: {
@@ -28,6 +27,11 @@ const _TIPTAP_EXTENSIONS = [
             HTMLAttributes: {
                 class: "border-t border-base-content/25",
             },
+        },
+        blockquote: {
+            HTMLAttributes: {
+                class: "p-4 my-4 border-s-4 bg-base-200 w-fit"
+            }
         }
     })
 ]

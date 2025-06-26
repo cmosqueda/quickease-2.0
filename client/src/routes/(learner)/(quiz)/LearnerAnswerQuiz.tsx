@@ -69,19 +69,29 @@ export default function LearnerAnswerQuizPage() {
     setEndTime(completionTime);
 
     try {
-      const { status } = await _API_INSTANCE.post("/quiz/submit", {
-        answer_data: userAnswers,
-        started_at: startTime,
-        completed_at: endTime,
-        quiz_id: data.id,
-      });
+      const { status, data: attempt_data } = await _API_INSTANCE.post(
+        "/quiz/submit",
+        {
+          answer_data: userAnswers,
+          started_at: startTime,
+          completed_at: new Date().toISOString(),
+          quiz_id: data.id,
+        }
+      );
 
       if (status === 200) {
         toast(
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row gap-2 items-center flex-1">
               <CheckCircle2 size={16} />
-              <button className="btn btn-sm btn-ghost self-end">
+              <button
+                className="btn btn-sm btn-ghost self-end"
+                onClick={() =>
+                  navigate(
+                    `/learner/quizzes/${data.id}/attempt/${attempt_data.id}`
+                  )
+                }
+              >
                 View attempt
               </button>
             </div>
@@ -100,7 +110,9 @@ export default function LearnerAnswerQuizPage() {
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate('/learner/library?tab=quiz', { viewTransition: true })}
+          onClick={() =>
+            navigate("/learner/library?tab=quizzes", { viewTransition: true })
+          }
         />
         <div className="flex flex-row gap-6 items-center">
           <details className="dropdown dropdown-end cursor-pointer">

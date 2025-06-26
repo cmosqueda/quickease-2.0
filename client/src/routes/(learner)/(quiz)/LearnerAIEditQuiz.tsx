@@ -132,7 +132,7 @@ export default function LearnerAIEditQuizPage() {
         <ArrowLeft
           className="cursor-pointer"
           onClick={() =>
-            navigate("/learner/library?tab=quiz", { viewTransition: true })
+            navigate("/learner/library?tab=quizzes", { viewTransition: true })
           }
         />
         <button

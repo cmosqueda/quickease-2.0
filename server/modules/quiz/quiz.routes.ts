@@ -38,7 +38,6 @@ export default async function quizRoutes(fastify: FastifyInstance) {
         handler: update_user_quiz_visibility,
     });
 
-
     fastify.delete('/delete', {
         preHandler: [fastify.authenticate],
         handler: delete_user_quiz,

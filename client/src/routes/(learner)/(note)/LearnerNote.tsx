@@ -1,5 +1,4 @@
 import CustomEditor from "@/components/Editor";
-import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
 import _API_INSTANCE from "@/utils/axios";
@@ -11,13 +10,16 @@ import {
   BookDown,
   CalendarRange,
   ClipboardList,
+  Delete,
   Save,
+  Share,
   X,
 } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import clsx from "clsx";
 
 export default function LearnerNotePage() {
   const { user } = useAuth();
@@ -31,10 +33,6 @@ export default function LearnerNotePage() {
   const [title, setTitle] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    setTitle(data.title);
-  }, [data]);
-
   const editor = useEditor({
     editable: true,
     autofocus: false,
@@ -46,11 +44,26 @@ export default function LearnerNotePage() {
       setJSON(editor.getJSON());
     },
   });
+
+  useEffect(() => {
+    setTitle(data.title);
+    setHTML(data.notes_content);
+  }, [data]);
+
+  useEffect(() => {
+    if (editor && editor.isEditable && editor.getText().trim()) {
+      setText(editor.getText());
+      setJSON(editor.getJSON());
+    }
+  }, [editor]);
   // States for editors //
 
-  if (!editor) return;
-
   const handleSave = async () => {
+    if (title === data.title && html === data.notes_content) {
+      toast.info("No changes to save.");
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -73,14 +86,41 @@ export default function LearnerNotePage() {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const { status } = await _API_INSTANCE.delete("/notes/delete", {
+        data: { note_id: data.id },
+      });
+
+      if (status == 200) {
+        toast.success("Note deleted.");
+        return navigate(-1);
+      }
+    } catch (err) {
+      toast.error("Error deleting note.");
+      throw err;
+    }
+  };
+
+  if (!editor) return;
+
   return (
     <div className="flex flex-col min-h-screen w-full">
       <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 lg:items-center border-b border-base-300 p-4 bg-base-100">
         <ArrowLeft
-          onClick={() => navigate('/learner/library?tab=notes', { viewTransition: true })}
+          onClick={() =>
+            navigate("/learner/library?tab=notes", { viewTransition: true })
+          }
           className="cursor-pointer lg:ml-6"
         />
-        <div className="flex flex-row gap-4 w-full lg:w-fit">
+        <div
+          className={clsx(
+            "flex flex-row gap-4 w-full lg:w-fit",
+            title === data.title && html === data.notes_content
+              ? "opacity-0"
+              : "opacity-100"
+          )}
+        >
           <button
             disabled={isSaving}
             onClick={handleSave}
@@ -90,7 +130,9 @@ export default function LearnerNotePage() {
             <p>Save changes</p>
           </button>
           <button
-            onClick={() => navigate('/learner/library?tab=notes', { viewTransition: true })}
+            onClick={() =>
+              navigate("/learner/library?tab=notes", { viewTransition: true })
+            }
             className="btn btn-ghost btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
           >
             <X />
@@ -109,16 +151,24 @@ export default function LearnerNotePage() {
           <CustomEditor editor={editor} />
         </div>
         <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
-          <h1 className="font-bold text-xl">Study options</h1>
+          <h1 className="font-bold text-xl">Note options</h1>
+          <button
+            className="rounded-3xl btn btn-soft gap-2 join-item"
+            onClick={handleDelete}
+          >
+            <Delete />
+            <h1>Delete</h1>
+          </button>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
             onClick={() =>
-              document.getElementById("generate-summary-modal").showModal()
+              navigate("/learner/library?tab=notes", { viewTransition: true })
             }
           >
-            <BookDown />
-            <h1>Generate summary</h1>
+            <Share />
+            <h1>Share</h1>
           </button>
+          <h1 className="font-bold text-xl">Study options</h1>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
             onClick={() =>
@@ -139,9 +189,8 @@ export default function LearnerNotePage() {
           </button>
         </div>
       </div>
-      <GenerateSummaryModal html={html} text={text} json={json} />
-      <GenerateFlashcardModal html={html} text={text} json={json} />
-      <GenerateQuizModal html={html} text={text} json={json} />
+      <GenerateFlashcardModal text={text} />
+      <GenerateQuizModal text={text} />
     </div>
   );
 }

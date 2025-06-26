@@ -2,13 +2,15 @@ import clsx from "clsx";
 import dayjs from "dayjs";
 
 import { useLoaderData, useNavigate } from "react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 
 export default function LearnerQuizAttemptPage() {
   const navigate = useNavigate();
 
   const data = useLoaderData() as {
     id: string;
+    title: string;
+    description: string;
     quiz_id: string;
     user_id: string;
     started_at: string;
@@ -23,6 +25,7 @@ export default function LearnerQuizAttemptPage() {
       };
       user_answer: number[];
     }[];
+    is_ai_generated: boolean;
   };
 
   const totalQuestions = data.answer_data.length;
@@ -38,7 +41,12 @@ export default function LearnerQuizAttemptPage() {
   return (
     <div className="flex flex-col w-full min-h-screen max-w-7xl mx-auto p-8 gap-6">
       <div className="flex justify-between items-center">
-        <ArrowLeft className="cursor-pointer" onClick={() => navigate(-1, { viewTransition: true })} />
+        <ArrowLeft
+          className="cursor-pointer"
+          onClick={() =>
+            navigate("/learner/library?tab=quizzes", { viewTransition: true })
+          }
+        />
         <div className="text-right">
           <p className="text-sm text-base-content/50">
             {dayjs(data.started_at).format("MMM DD, YYYY h:mm A")}
@@ -47,6 +55,21 @@ export default function LearnerQuizAttemptPage() {
             Score: {correctCount}/{totalQuestions}
           </p>
         </div>
+      </div>
+
+      <div>
+        {data.is_ai_generated && (
+          <div className="flex flex-row items-center gap-2">
+            <Info size={16} className="text-sm text-base-content/50" />
+            <h1 className="text-sm text-base-content/50">AI-generated</h1>
+          </div>
+        )}
+        <h1 className="font-bold text-3xl lg:text-6xl">
+          {data.title || "Untitled"}
+        </h1>
+        <p className="text-lg text-base-content/50">
+          {data.description || "No description provided"}
+        </p>
       </div>
 
       <div className="flex flex-col gap-8">

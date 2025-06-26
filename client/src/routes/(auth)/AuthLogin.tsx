@@ -32,7 +32,7 @@ export default function AuthLoginPage() {
         navigate("/admin", { viewTransition: true });
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response.data.message);
       throw err;
     } finally {
       setIsRegistering(false);

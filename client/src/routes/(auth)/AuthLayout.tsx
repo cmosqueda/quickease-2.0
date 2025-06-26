@@ -1,12 +1,10 @@
-import { Outlet, useLoaderData } from "react-router";
+import { Outlet } from "react-router";
 import { Toaster } from "sonner";
 
 export default function AuthLayout() {
-  const data = useLoaderData();
-
   return (
     <>
-      <Toaster />
+      <Toaster position="top-right" />
       <Outlet />
     </>
   );
