@@ -296,12 +296,10 @@ Learn more at [Jest docs](https://jestjs.io/docs/getting-started)
 - ✅ **12 Test Suites Passed**
 - ❌ **2 Test Suites Failed**
   - **UT002** `auth.controller.test.ts` Type mismatch in JWT payload `(phone_number: string | null)`.
-  - **UT010** `quiz.controller.test.ts` Block-scoped variable redeclaration (`result` used multiple times).
 - ✅ **86/86 Total Tests Passed**
 - 🧪 **Key Modules Tested:** Auth, User, Note, Flashcard, Quiz, Post, AI
 - 🛠️ **Main Issues Identified:**
   - `auth.controller.ts`: Fix jwtSign payload to avoid passing nullable fields.
-  - `quiz.controller.ts`: Rename or scope `result` variable to prevent redeclarations.
 
 > Overall coverage is excellent. Controller-level type safety issues remain in `auth` and `quiz`, but services are working as expected.
 
@@ -503,57 +501,37 @@ Ran all test suites matching tests/flashcard.
 ### Result
 
 ```
- PASS  tests/quiz/quiz.service.test.ts (5.095 s)
+ PASS  tests/quiz/quiz.service.test.ts
   Quiz Service
-    √ getUserQuizzes should return quizzes by user ID (13 ms)
+    √ getUserQuizzes should return quizzes by user ID (8 ms)
     √ getQuiz should return quiz with attempts (1 ms)
-    √ createUserQuiz should create and return a quiz (2 ms)
-    √ updateUserQuiz should update and return quiz (2 ms)
-    √ updateUserQuizVisibility should update and return quiz (2 ms)
-    √ deleteUserQuiz should delete quiz and return true (2 ms)
-    √ submitQuizAttempt should store attempt and return true (2 ms)
-    √ getQuizAttempt should return attempt by ID (2 ms)
+    √ createUserQuiz should create and return a quiz (1 ms)
+    √ updateUserQuiz should update and return quiz (1 ms)
+    √ updateUserQuizVisibility should update and return quiz (1 ms)
+    √ deleteUserQuiz should delete quiz and return true (1 ms)
+    √ submitQuizAttempt should store attempt and return true (1 ms)
+    √ getQuizAttempt should return attempt by ID (1 ms)
 
- FAIL  tests/quiz/quiz.controller.test.ts
-  ● Test suite failed to run
+ PASS  tests/quiz/quiz.controller.test.ts
+  Quiz Controller
+    √ get_user_quizzes should return 200 with quizzes (34 ms)
+    √ get_quiz should return 200 with a quiz (1 ms)
+    √ create_user_quiz should return 201 with created quiz (5 ms)
+    √ update_user_quiz should return 200 on success (3 ms)
+    √ update_user_quiz_visibility should return 200 on success (2 ms)
+    √ delete_user_quiz should return 200 on success (1 ms)
+    √ submit_quiz_attempt should return 200 on success (1 ms)
 
-    modules/quiz/quiz.controller.ts:137:9 - error TS2451: Cannot redeclare block-scoped variable 'result'.
-
-    137   const result = schema.safeParse({ visibility, quiz_id });
-                ~~~~~~
-    modules/quiz/quiz.controller.ts:146:9 - error TS2451: Cannot redeclare block-scoped variable 'result'.
-
-    146   const result = schema.safeParse({ visibility, quiz_id });
-                ~~~~~~
-    modules/quiz/quiz.controller.ts:151:22 - error TS2339: Property 'error' does not exist on type 'never'.
-
-    151       errors: result.error.errors,
-                             ~~~~~
-    modules/quiz/quiz.controller.ts:207:9 - error TS2451: Cannot redeclare block-scoped variable 'result'.
-
-    207   const result = schema.safeParse({ answer_data, started_at, completed_at, quiz_id });
-                ~~~~~~
-    modules/quiz/quiz.controller.ts:216:9 - error TS2451: Cannot redeclare block-scoped variable 'result'.
-
-    216   const result = schema.safeParse({ answer_data, started_at, completed_at, quiz_id });
-                ~~~~~~
-    modules/quiz/quiz.controller.ts:221:22 - error TS2339: Property 'error' does not exist on type 'never'.
-
-    221       errors: result.error.errors,
-                             ~~~~~
-
-Test Suites: 1 failed, 1 passed, 2 total
-Tests:       8 passed, 8 total
+Test Suites: 2 passed, 2 total
+Tests:       15 passed, 15 total
 Snapshots:   0 total
-Time:        10.012 s
+Time:        5.431 s
 Ran all test suites matching tests/quiz.
 ```
 
 ### UT009 `quiz.service.test.ts` - ✅ PASS
 
-### UT010 `quiz.controller.test.ts` - ❌ FAIL
-
-> The error message indicates that there are duplicate variable declarations in the `quiz.controller.ts` file.
+### UT010 `quiz.controller.test.ts` - ✅ PASS
 
 ## POST
 

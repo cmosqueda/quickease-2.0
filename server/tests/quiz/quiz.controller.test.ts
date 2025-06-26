@@ -19,8 +19,8 @@ const mockQuiz = {
   quiz_content: [
     {
       question: "What is 2 + 2?",
-      answers: ["1", "2", "3", "4"],
-      correct_answer_index: 3,
+      options: ["1", "2", "3", "4"],
+      correctAnswers: [3],
     },
   ],
   is_randomized: false,
