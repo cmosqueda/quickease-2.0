@@ -132,16 +132,15 @@ export default function LearnerQuizPage() {
         </div>
       </div>
       <div>
+        {data.is_ai_generated && (
+          <div className="flex flex-row items-center gap-2">
+            <Info size={16} className="text-sm text-base-content/50" />
+            <h1 className="text-sm text-base-content/50">AI-generated</h1>
+          </div>
+        )}
         <h1 className="font-bold text-3xl lg:text-6xl">
           {data.title || "Untitled"}
         </h1>
-        {data.is_ai_generated && (
-          <div className="flex flex-row items-center gap-4">
-            <Info />
-            <h1>AI-generated</h1>
-          </div>
-        )}
-
         <p className="text-lg text-base-content/50">
           {data.description || "No description provided"}
         </p>
