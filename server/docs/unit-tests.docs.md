@@ -285,20 +285,21 @@ Learn more at [Jest docs](https://jestjs.io/docs/getting-started)
 
 ---
 
-# June 25, 2025
+# June 25-26, 2025
 
 <details><summary><strong>TL;DR</strong></summary>
 
-## SUMMARY
-
-- ✅ **30 Test Suites Passed**
-- ❌ **1 Test Suite Failed**
-  - `auth.controller.test.ts` failed due to a **TypeScript type mismatch** involving a nullable field in `phone_number` and `jwtSign` usage.
-- ✅ **91/92 Total Tests Passed**
+- ✅ **35 Test Suites Passed**
+- ❌ **2 Test Suites Failed**
+  - `auth.controller.test.ts` failed due to a **JWT payload type mismatch** (nullable `phone_number`)
+  - `quiz.controller.test.ts` failed due to **duplicate variable declarations** and unsafe type assumptions
+- ✅ **97/99 Total Tests Passed**
 - 🧪 **Key Modules Tested:** Auth, User, Note, Flashcard, Quiz, Post, AI
-- 🛠️ **Main Issue Identified:** `auth.controller.ts` needs adjustment in JWT-related code to handle `null` types safely.
+- 🛠️ **Main Issues Identified:**
+  - `auth.controller.ts`: Fix JWT payload by handling `phone_number: string | null`
+  - `quiz.controller.ts`: Resolve duplicate `result` variables and properly type `safeParse`
 
-> Overall test coverage is strong. Only one controller (Auth) requires debugging for type safety.
+> Overall coverage is excellent. Controller-level type safety issues remain in `auth` and `quiz`, but services are working as expected.
 
 </details>
 
@@ -310,62 +311,80 @@ Learn more at [Jest docs](https://jestjs.io/docs/getting-started)
 ### Result
 
 ```
- PASS  tests/auth/auth.service.test.ts
+ PASS  tests/auth/auth.service.test.ts (7.789 s)
   Auth Service
     loginUser
-      √ should return false if user is not found (11 ms)
+      √ should return false if user is not found (14 ms)
       √ should return false if password does not match (1 ms)
       √ should return false if email or password is missing (1 ms)
       √ should return user if credentials match (2 ms)
     registerUser
       √ should hash password and create user instance (3 ms)
+      √ should throw error if user creation fails (10 ms)
 
  FAIL  tests/auth/auth.controller.test.ts
   ● Test suite failed to run
 
     modules/auth/auth.controller.ts:22:43 - error TS2769: No overload matches this call.
-
-    (...)
-
-    (...)
-
-            Types of property 'phone_number' are incompatible.
+      Overload 1 of 5, '(payload: { [key: string]: any; id: string; first_name: string; last_name: string; email: string; phone_number: string; is_public: boolean; }, options?: FastifyJwtSignOptions | undefined): Promise<...>', gave the following error.
+        Argument of type '{ email: string; password: string; id: string; first_name: string; last_name: string; gender: string | null; phone_number: string | null; badges: JsonValue; is_public: boolean; created_at: Date; updated_at: Date; is_admin: boolean; }' is not assignable to parameter of type '{ [key: string]: any; id: string; first_name: string; last_name: string; email: string; phone_number: string; is_public: boolean; }'.
+          Types of property 'phone_number' are incompatible.
+            Type 'string | null' is not assignable to type 'string'.
+              Type 'null' is not assignable to type 'string'.
+      Overload 2 of 5, '(payload: { [key: string]: any; id: string; first_name: string; last_name: string; email: string; phone_number: string; is_public: boolean; }, options?: Partial<SignOptions> | undefined): Promise<...>', gave the following error.
+        Argument of type '{ email: string; password: string; id: string; first_name: string; last_name: string; gender: string | null; phone_number: string | null; badges: JsonValue; is_public: boolean; created_at: Date; updated_at: Date; is_admin: boolean; }' is not assignable to parameter of type '{ [key: string]: any; id: string; first_name: string; last_name: string; email: string; phone_number: string; is_public: boolean; }'.
+          Types of property 'phone_number' are incompatible.
             Type 'string | null' is not assignable to type 'string'.
               Type 'null' is not assignable to type 'string'.
 
-    63         const token = await reply.jwtSign(user);
+    22         const token = await reply.jwtSign(user);
                                                  ~~~~
 
-    modules/auth/auth.controller.ts:65:44 - error TS2345: Argument of type 'Promise<string> & void' is not assignable to parameter of type 'string'.
+    modules/auth/auth.controller.ts:24:44 - error TS2345: Argument of type 'Promise<string> & void' is not assignable to parameter of type 'string'.
 
-    65         reply.setCookie('QUICKEASE_TOKEN', token, {
+    24         reply.setCookie('QUICKEASE_TOKEN', token, {
                                                   ~~~~~
+    modules/auth/auth.controller.ts:62:43 - error TS2769: No overload matches this call.
+      Overload 1 of 5, '(payload: { [key: string]: any; id: string; first_name: string; last_name: string; email: string; phone_number: string; is_public: boolean; }, options?: FastifyJwtSignOptions | undefined): Promise<...>', gave the following error.
+        Argument of type '{ email: string; password: string; id: string; first_name: string; last_name: string; gender: string | null; phone_number: string | null; badges: JsonValue; is_public: boolean; created_at: Date; updated_at: Date; is_admin: boolean; }' is not assignable to parameter of type '{ [key: string]: any; id: string; first_name: string; last_name: string; email: string; phone_number: string; is_public: boolean; }'.
+          Types of property 'phone_number' are incompatible.
+            Type 'string | null' is not assignable to type 'string'.
+              Type 'null' is not assignable to type 'string'.
+      Overload 2 of 5, '(payload: { [key: string]: any; id: string; first_name: string; last_name: string; email: string; phone_number: string; is_public: boolean; }, options?: Partial<SignOptions> | undefined): Promise<...>', gave the following error.
+        Argument of type '{ email: string; password: string; id: string; first_name: string; last_name: string; gender: string | null; phone_number: string | null; badges: JsonValue; is_public: boolean; created_at: Date; updated_at: Date; is_admin: boolean; }' is not assignable to parameter of type '{ [key: string]: any; id: string; first_name: string; last_name: string; email: string; phone_number: string; is_public: boolean; }'.
+          Types of property 'phone_number' are incompatible.
+            Type 'string | null' is not assignable to type 'string'.
+              Type 'null' is not assignable to type 'string'.
+
+    62         const token = await reply.jwtSign(user);
+                                                 ~~~~
+
+    modules/auth/auth.controller.ts:64:44 - error TS2345: Argument of type 'Promise<string> & void' is not assignable to parameter of type 'string'.
+
+    64         reply.setCookie('QUICKEASE_TOKEN', token, {
+                                                  ~~~~~
+    modules/auth/auth.controller.ts:74:9 - error TS2552: Cannot find name 'error'. Did you mean 'err'?
+
+    74         error("Register error:", err);
+               ~~~~~
+
+      modules/auth/auth.controller.ts:73:14
+        73     } catch (err) {
+                        ~~~
+        'err' is declared here.
 
 Test Suites: 1 failed, 1 passed, 2 total
-Tests:       5 passed, 5 total
+Tests:       6 passed, 6 total
 Snapshots:   0 total
-Time:        8.017 s
+Time:        8.974 s
 Ran all test suites matching tests/auth.
 ```
 
 ### `auth.service.test.ts` - ✅ PASS
 
-✅ All tests passed
-
-- loginUser
-
-  - should return false if user is not found
-  - should return false if password does not match
-  - should return false if email or password is missing
-  - should return user if credentials match
-
-- registerUser
-  - should hash password and create user instance
-
 ### `auth.controller.test.ts` - ❌ FAIL
 
-- test suite failed to run
-  - **IMPORTANT:** needs debugging at `auth.controller.ts`. Could be a JWT type mismatch. Ensure the token payload excludes or transforms nullable fields appropriately.
+> Test suite failed to run: Needs debugging at `auth.controller.ts`. Could be a JWT type mismatch. Ensure the token payload excludes or transforms nullable fields appropriately.
 
 ## USER
 
@@ -480,36 +499,57 @@ Ran all test suites matching tests/flashcard.
 ### Result
 
 ```
- PASS  tests/quiz/quiz.service.test.ts
+ PASS  tests/quiz/quiz.service.test.ts (5.095 s)
   Quiz Service
-    √ getUserQuizzes should return quizzes by user ID (8 ms)
+    √ getUserQuizzes should return quizzes by user ID (13 ms)
     √ getQuiz should return quiz with attempts (1 ms)
-    √ createUserQuiz should create and return a quiz (1 ms)
-    √ updateUserQuiz should update and return quiz (1 ms)
-    √ updateUserQuizVisibility should update and return quiz (1 ms)
-    √ deleteUserQuiz should delete quiz and return true (1 ms)
-    √ submitQuizAttempt should store attempt and return true (1 ms)
+    √ createUserQuiz should create and return a quiz (2 ms)
+    √ updateUserQuiz should update and return quiz (2 ms)
+    √ updateUserQuizVisibility should update and return quiz (2 ms)
+    √ deleteUserQuiz should delete quiz and return true (2 ms)
+    √ submitQuizAttempt should store attempt and return true (2 ms)
+    √ getQuizAttempt should return attempt by ID (2 ms)
 
- PASS  tests/quiz/quiz.controller.test.ts
-  Quiz Controller
-    √ get_user_quizzes should return 200 with quizzes (60 ms)
-    √ get_quiz should return 200 with a quiz (4 ms)
-    √ create_user_quiz should return 201 with created quiz (8 ms)
-    √ update_user_quiz should return 200 on success (3 ms)
-    √ update_user_quiz_visibility should return 200 on success (4 ms)
-    √ delete_user_quiz should return 200 on success (4 ms)
-    √ submit_quiz_attempt should return 200 on success (3 ms)
+ FAIL  tests/quiz/quiz.controller.test.ts
+  ● Test suite failed to run
 
-Test Suites: 2 passed, 2 total
-Tests:       14 passed, 14 total
+    modules/quiz/quiz.controller.ts:137:9 - error TS2451: Cannot redeclare block-scoped variable 'result'.
+
+    137   const result = schema.safeParse({ visibility, quiz_id });
+                ~~~~~~
+    modules/quiz/quiz.controller.ts:146:9 - error TS2451: Cannot redeclare block-scoped variable 'result'.
+
+    146   const result = schema.safeParse({ visibility, quiz_id });
+                ~~~~~~
+    modules/quiz/quiz.controller.ts:151:22 - error TS2339: Property 'error' does not exist on type 'never'.
+
+    151       errors: result.error.errors,
+                             ~~~~~
+    modules/quiz/quiz.controller.ts:207:9 - error TS2451: Cannot redeclare block-scoped variable 'result'.
+
+    207   const result = schema.safeParse({ answer_data, started_at, completed_at, quiz_id });
+                ~~~~~~
+    modules/quiz/quiz.controller.ts:216:9 - error TS2451: Cannot redeclare block-scoped variable 'result'.
+
+    216   const result = schema.safeParse({ answer_data, started_at, completed_at, quiz_id });
+                ~~~~~~
+    modules/quiz/quiz.controller.ts:221:22 - error TS2339: Property 'error' does not exist on type 'never'.
+
+    221       errors: result.error.errors,
+                             ~~~~~
+
+Test Suites: 1 failed, 1 passed, 2 total
+Tests:       8 passed, 8 total
 Snapshots:   0 total
-Time:        4.852 s, estimated 13 s
+Time:        10.012 s
 Ran all test suites matching tests/quiz.
 ```
 
 ### `quiz.service.test.ts` - ✅ PASS
 
-### `quiz.controller.test.ts` - ✅ PASS
+### `quiz.controller.test.ts` - ❌ FAIL
+
+> The error message indicates that there are duplicate variable declarations in the `quiz.controller.ts` file.
 
 ## POST
 
@@ -563,29 +603,29 @@ Ran all test suites matching tests/post.
  PASS  tests/ai/ai.service.test.ts
   AI Service
     generateQuizFromNote
-      √ should return AI response text when note exists (6 ms)
-      √ should return undefined if note not found (1 ms)
+      √ should return AI response text when note exists (11 ms)
+      √ should return false if note not found (1 ms)
     generateFlashcardFromNote
       √ should return AI response text for flashcards (1 ms)
     generateQuizFromPrompt
-      √ should return AI response text from prompt
+      √ should return AI response text from prompt (1 ms)
     generateFlashcardsFromPrompt
       √ should return AI flashcard string from prompt (1 ms)
     generateNotesFromPrompt
       √ should return generated notes string from prompt (1 ms)
 
- PASS  tests/ai/ai.controller.test.ts
+ PASS  tests/ai/ai.controller.test.ts (5.698 s)
   AI Controller
-    √ generate_quiz_from_note should return 200 with content (32 ms)
-    √ generate_flashcards_from_note should return 200 with content (3 ms)
-    √ generate_quiz_from_prompt should return 200 with content (2 ms)
-    √ generate_flashcards_from_prompt should return 200 with content (2 ms)
-    √ generate_notes_from_prompt should return 200 with content (1 ms)
+    √ generate_quiz_from_note should return 200 with content (56 ms)
+    √ generate_flashcards_from_note should return 200 with content (4 ms)
+    √ generate_quiz_from_prompt should return 200 with content (3 ms)
+    √ generate_flashcards_from_prompt should return 200 with content (3 ms)
+    √ generate_notes_from_prompt should return 200 with content (2 ms)
 
 Test Suites: 2 passed, 2 total
 Tests:       11 passed, 11 total
 Snapshots:   0 total
-Time:        4.302 s, estimated 12 s
+Time:        6.856 s, estimated 8 s
 Ran all test suites matching tests/ai.
 ```
 
@@ -594,3 +634,5 @@ Ran all test suites matching tests/ai.
 ### `ai.controller.test.ts` - ✅ PASS
 
 </details>
+
+---

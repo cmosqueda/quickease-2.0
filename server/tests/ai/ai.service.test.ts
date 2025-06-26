@@ -25,8 +25,9 @@ describe("AI Service", () => {
     text: JSON.stringify([
       {
         question: "What is 2 + 2?",
-        answers: ["1", "2", "3", "4"],
-        correct_answer_index: 3,
+        description: "Simple math",
+        options: ["1", "2", "3", "4"],
+        correctAnswers: [3],
       },
     ]),
   };
@@ -41,10 +42,13 @@ describe("AI Service", () => {
       (_AI.models.generateContent as jest.Mock).mockResolvedValue(mockAIResponse);
 
       const result = await aiService.generateQuizFromNote("note-1");
-      expect(result).toEqual(mockAIResponse.text);
+      expect(result).toEqual({
+        title: mockNote.title,
+        content: mockAIResponse.text.replace(/```json|```/g, ""),
+      });
     });
 
-    it("should return undefined if note not found", async () => {
+    it("should return false if note not found", async () => {
       (db_client.note.findUnique as jest.Mock).mockResolvedValue(null);
 
       const result = await aiService.generateQuizFromNote("invalid-note");
@@ -69,8 +73,12 @@ describe("AI Service", () => {
     it("should return AI response text from prompt", async () => {
       (_AI.models.generateContent as jest.Mock).mockResolvedValue(mockAIResponse);
 
-      const result = await aiService.generateQuizFromPrompt("What is AI?");
-      expect(result).toEqual(mockAIResponse.text);
+      const prompt = "What is AI?";
+      const result = await aiService.generateQuizFromPrompt(prompt);
+      expect(result).toEqual({
+        title: prompt,
+        content: mockAIResponse.text.replace(/```json|```/g, ""),
+      });
     });
   });
 
@@ -78,17 +86,21 @@ describe("AI Service", () => {
     it("should return AI flashcard string from prompt", async () => {
       (_AI.models.generateContent as jest.Mock).mockResolvedValue(mockAIResponse);
 
-      const result = await aiService.generateFlashcardsFromPrompt("Explain AI concepts.");
-      expect(result).toEqual(mockAIResponse.text);
+      const prompt = "Explain AI concepts.";
+      const result = await aiService.generateFlashcardsFromPrompt(prompt);
+      expect(result).toEqual({
+        title: prompt,
+        content: mockAIResponse.text.replace(/```json|```/g, ""),
+      });
     });
   });
 
   describe("generateNotesFromPrompt", () => {
     it("should return generated notes string from prompt", async () => {
-      (_AI.models.generateContent as jest.Mock).mockResolvedValue({ text: "Summary of the prompt..." });
+      (_AI.models.generateContent as jest.Mock).mockResolvedValue({ text: "```html<h1>Intro</h1>```" });
 
       const result = await aiService.generateNotesFromPrompt("Explain the basics of AI");
-      expect(result).toEqual("Summary of the prompt...");
+      expect(result).toEqual("<h1>Intro</h1>");
     });
   });
 });

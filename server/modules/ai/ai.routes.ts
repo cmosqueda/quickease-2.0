@@ -1,16 +1,10 @@
 import { FastifyInstance } from "fastify";
 import {
-<<<<<<< HEAD
   generate_flashcards_from_note,
   generate_flashcards_from_prompt,
   generate_notes_from_prompt,
   generate_quiz_from_note,
   generate_quiz_from_prompt,
-=======
-    generate_flashcards_from_note, generate_flashcards_from_prompt,
-    generate_notes_from_prompt, generate_quiz_from_note,
-    generate_quiz_from_prompt
->>>>>>> upstream/main
 } from "./ai.controller";
 
 export default async function aiRoutes(fastify: FastifyInstance) {

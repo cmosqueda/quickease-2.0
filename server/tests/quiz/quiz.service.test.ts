@@ -13,6 +13,7 @@ jest.mock("../../utils/client", () => ({
     },
     quizAttempt: {
       create: jest.fn(),
+      findUnique: jest.fn(),
     },
   },
 }));
@@ -24,8 +25,9 @@ const mockQuiz = {
   quiz_content: [
     {
       question: "What is 2 + 2?",
-      answers: ["1", "2", "3", "4"],
-      correct_answer_index: 3,
+      description: "A basic math question",
+      options: ["1", "2", "3", "4"],
+      correctAnswers: [3],
     },
   ],
   is_randomized: false,
@@ -162,6 +164,26 @@ describe("Quiz Service", () => {
         answer_data: attemptData,
         quiz_id: "quiz-1",
       },
+    });
+  });
+
+  test("getQuizAttempt should return attempt by ID", async () => {
+    const mockAttempt = {
+      id: "attempt-1",
+      quiz_id: "quiz-1",
+      user_id: "user-1",
+      answer_data: {},
+      started_at: "2025-06-01T10:00:00Z",
+      completed_at: "2025-06-01T10:10:00Z",
+    };
+
+    (db_client.quizAttempt.findUnique as jest.Mock).mockResolvedValue(mockAttempt);
+
+    const result = await quizService.getQuizAttempt("attempt-1");
+
+    expect(result).toEqual(mockAttempt);
+    expect(db_client.quizAttempt.findUnique).toHaveBeenCalledWith({
+      where: { id: "attempt-1" },
     });
   });
 });

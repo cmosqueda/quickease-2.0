@@ -25,7 +25,10 @@ describe("AI Controller", () => {
     jest.clearAllMocks();
   });
 
-  const mockContent = JSON.stringify([{ question: "Sample?", answers: ["A", "B", "C", "D"], correct_answer_index: 0 }]);
+  const mockContent = {
+    title: "Mock Title",
+    content: JSON.stringify([{ question: "Sample?", options: ["A", "B", "C", "D"], correctAnswers: [0] }]),
+  };
 
   test("generate_quiz_from_note should return 200 with content", async () => {
     (aiService.generateQuizFromNote as jest.Mock).mockResolvedValue(mockContent);

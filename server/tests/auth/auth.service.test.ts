@@ -98,5 +98,14 @@ describe("Auth Service", () => {
 
       expect(result).toEqual(mockUser);
     });
+
+    test("should throw error if user creation fails", async () => {
+      jest.spyOn(hashUtils, "hashPassword").mockResolvedValue("hashed123");
+      (db_client.user.create as jest.Mock).mockRejectedValue(new Error("DB error"));
+
+      await expect(registerUser("Jane", "Doe", "janedoe@example.com", "plainPassword")).rejects.toThrow(
+        "User registration failed"
+      );
+    });
   });
 });
