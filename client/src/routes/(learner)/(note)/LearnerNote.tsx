@@ -11,13 +11,16 @@ import {
   BookDown,
   CalendarRange,
   ClipboardList,
+  Delete,
   Save,
+  Share,
   X,
 } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import clsx from "clsx";
 
 export default function LearnerNotePage() {
   const { user } = useAuth();
@@ -79,6 +82,22 @@ export default function LearnerNotePage() {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const { status } = await _API_INSTANCE.delete("/notes/delete", {
+        data: { note_id: data.id },
+      });
+
+      if (status == 200) {
+        toast.success("Note deleted.");
+        return navigate(-1);
+      }
+    } catch (err) {
+      toast.error("Error deleting note.");
+      throw err;
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen w-full">
       <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 lg:items-center border-b border-base-300 p-4 bg-base-100">
@@ -88,7 +107,14 @@ export default function LearnerNotePage() {
           }
           className="cursor-pointer lg:ml-6"
         />
-        <div className="flex flex-row gap-4 w-full lg:w-fit">
+        <div
+          className={clsx(
+            "flex flex-row gap-4 w-full lg:w-fit",
+            title === data.title && html === data.notes_content
+              ? "opacity-0"
+              : "opacity-100"
+          )}
+        >
           <button
             disabled={isSaving}
             onClick={handleSave}
@@ -119,6 +145,23 @@ export default function LearnerNotePage() {
           <CustomEditor editor={editor} />
         </div>
         <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
+          <h1 className="font-bold text-xl">Note options</h1>
+          <button
+            className="rounded-3xl btn btn-soft gap-2 join-item"
+            onClick={handleDelete}
+          >
+            <Delete />
+            <h1>Delete</h1>
+          </button>
+          <button
+            className="rounded-3xl btn btn-soft gap-2 join-item"
+            onClick={() =>
+              navigate("/learner/library?tab=notes", { viewTransition: true })
+            }
+          >
+            <Share />
+            <h1>Share</h1>
+          </button>
           <h1 className="font-bold text-xl">Study options</h1>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"

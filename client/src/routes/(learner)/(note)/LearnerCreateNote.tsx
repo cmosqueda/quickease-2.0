@@ -11,7 +11,9 @@ import {
   BookDown,
   CalendarRange,
   ClipboardList,
+  Delete,
   Save,
+  Share,
   X,
 } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -114,6 +116,16 @@ export default function LearnerCreateNotePage() {
           <CustomEditor editor={editor} />
         </div>
         <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
+          <h1 className="font-bold text-xl">Note options</h1>
+          <button
+            className="rounded-3xl btn btn-soft gap-2 join-item"
+            onClick={() =>
+              navigate("/learner/library?tab=notes", { viewTransition: true })
+            }
+          >
+            <Delete />
+            <h1>Delete</h1>
+          </button>
           <h1 className="font-bold text-xl">Study options</h1>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
