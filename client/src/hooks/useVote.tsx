@@ -24,30 +24,25 @@ export function useVote(keysToInvalidate: string[] = ["recent-posts"]) {
       vote_type: number;
     }) => voteOnPost(post_id, vote_type),
 
-    // Only optimistically update recent-posts, not single post
     onMutate: async ({ post_id, vote_type }) => {
-      if (!keysToInvalidate.includes("recent-posts")) return;
-
-      await queryClient.cancelQueries({ queryKey: ["recent-posts"] });
-      const previous = queryClient.getQueryData(["recent-posts"]);
-
-      queryClient.setQueryData(["recent-posts"], (old: any) => ({
-        ...old,
-        pages: old.pages.map((page: any) => ({
-          ...page,
-          posts: page.posts.map((post: any) =>
-            post.id === post_id
-              ? {
-                  ...post,
-                  vote_sum: (post.vote_sum ?? 0) + vote_type,
-                  user_vote: vote_type,
-                }
-              : post
-          ),
-        })),
-      }));
-
-      return { previous };
+      queryClient.setQueryData(["recent-posts"], (old: any) => {
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            posts: page.posts.map((post: any) =>
+              post.id === post_id
+                ? {
+                    ...post,
+                    vote_sum:
+                      (post.vote_sum ?? 0) - (post.user_vote ?? 0) + vote_type,
+                    user_vote: vote_type,
+                  }
+                : post
+            ),
+          })),
+        };
+      });
     },
 
     onError: (_err, _vars, context) => {

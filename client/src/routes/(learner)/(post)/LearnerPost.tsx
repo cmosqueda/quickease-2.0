@@ -38,13 +38,13 @@ export default function LearnerPostPage() {
 
   const handleVote = (vote_type: number) => {
     if (postData.user_vote === vote_type) {
-      toast("Already voted");
+      toast("Already voted.");
       return;
     }
 
-    setPostData((prev: { vote_sum: number }) => ({
+    setPostData((prev: { vote_sum: number; user_vote: any }) => ({
       ...prev,
-      vote_sum: prev.vote_sum + vote_type,
+      vote_sum: prev.vote_sum - (prev.user_vote ?? 0) + vote_type,
       user_vote: vote_type,
     }));
 

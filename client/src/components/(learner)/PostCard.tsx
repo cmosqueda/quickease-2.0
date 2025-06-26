@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router";
 import { toast } from "sonner";
+import { useState } from "react";
 
 type PostCardProps = {
   post: {
@@ -42,7 +43,7 @@ export default function PostCard({ post }: PostCardProps) {
 
   const handleVote = (vote_type: number) => {
     if (post.user_vote === vote_type) {
-      toast("Already voted");
+      toast("Already voted.");
       return;
     }
 
