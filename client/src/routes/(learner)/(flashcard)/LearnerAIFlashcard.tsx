@@ -2,15 +2,8 @@ import FlippableCard from "@/components/(learner)/FlippableCard";
 import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "@/utils/axios";
 
-import {
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  Edit,
-  EllipsisVertical,
-  Save,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Edit, Save } from "lucide-react";
+import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
 

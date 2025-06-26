@@ -1,5 +1,9 @@
 import { FastifyInstance } from "fastify";
-import { generate_flashcards_from_note, generate_flashcards_from_prompt, generate_notes_from_prompt, generate_quiz_from_note, generate_quiz_from_prompt } from "./ai.controller";
+import {
+    generate_flashcards_from_note, generate_flashcards_from_prompt,
+    generate_notes_from_prompt, generate_quiz_from_note,
+    generate_quiz_from_prompt
+} from "./ai.controller";
 
 export default async function aiRoutes(fastify: FastifyInstance) {
     fastify.post("/generate-quiz-from-note", { preHandler: [fastify.authenticate] }, generate_quiz_from_note);

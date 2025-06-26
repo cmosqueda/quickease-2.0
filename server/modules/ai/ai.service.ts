@@ -17,16 +17,20 @@ export async function generateQuizFromNote(note_id: string) {
 
                 Return a JSON string in this format:
                 {
-                "question": string,
-                "answers": string[4],
-                "correct_answer_index": number
-                }
+                question: string;
+                description: string;
+                options: string[];
+                correctAnswers: number[];
+                }[]
 
                 Only output the JSON string.
                 `.trim()
             })
 
-            return response.text
+            return {
+                title: note.title,
+                content: response.text!.replace(/```json|```/g, '')
+            }
         }
     } catch (err) {
         return false
@@ -73,16 +77,20 @@ export async function generateQuizFromPrompt(prompt: string) {
 
                 Return a JSON string in this format:
                 {
-                "question": string,
-                "answers": string[4],
-                "correct_answer_index": number
-                }
+                question: string;
+                description: string;
+                options: string[];
+                correctAnswers: number[];
+                }[]
 
                 Only output the JSON string.
                 `.trim()
         })
 
-        return response.text
+        return {
+            title: prompt,
+            content: response.text!.replace(/```json|```/g, '')
+        }
     } catch (err) { return false }
 }
 

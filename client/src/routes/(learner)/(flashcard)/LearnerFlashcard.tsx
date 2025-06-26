@@ -18,22 +18,21 @@ export default function LearnerFlashcardPage() {
   const [cardIndex, setCardIndex] = useState(0);
 
   const handleDelete = async () => {
-    try{
-      const {status} = await _API_INSTANCE.delete('/flashcard/delete', {
+    try {
+      const { status } = await _API_INSTANCE.delete("/flashcard/delete", {
         data: {
-          flashcard_id: data.id
-        }
-      })
+          flashcard_id: data.id,
+        },
+      });
 
       if (status == 200) {
-        toast.success("Flashcard deleted.")
-        return navigate(-1, {viewTransition: true})
+        toast.success("Flashcard deleted.");
+        return navigate(-1, { viewTransition: true });
       }
-
-    }catch(err){
-      toast.error("Error deleting flashcard.")
+    } catch (err) {
+      toast.error("Error deleting flashcard.");
     }
-  }
+  };
 
   return (
     <div className="flex flex-col w-full lg:min-h-screen max-w-7xl mx-auto p-8 gap-4">
@@ -43,7 +42,7 @@ export default function LearnerFlashcardPage() {
           className="cursor-pointer"
         />
         <div className="flex flex-row gap-6 items-center">
-          <Edit className="cursor-pointer" onClick={() => navigate('edit')}/>
+          <Edit className="cursor-pointer" onClick={() => navigate("edit")} />
           <details className="dropdown dropdown-end cursor-pointer">
             <summary className="list-none">
               <EllipsisVertical />
@@ -55,6 +54,10 @@ export default function LearnerFlashcardPage() {
             </ul>
           </details>
         </div>
+      </div>
+      <div>
+        <h1 className="text-4xl font-bold">{data.title}</h1>
+        {data.description && <p>{data.description}</p>}
       </div>
       <FlippableCard
         front={data.flashcards[cardIndex].front}

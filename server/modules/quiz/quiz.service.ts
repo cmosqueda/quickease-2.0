@@ -24,10 +24,16 @@ export async function getQuiz(quiz_id: string) {
 export async function createUserQuiz(
     title: string,
     description: string,
-    quiz_content: { answers: string[], question: string, correct_answer_index: number }[],
+    quiz_content: {
+        question: string;
+        description?: string;
+        options: string[];
+        correctAnswers: number[];
+    }[],
     is_randomized: boolean,
     timed_quiz: number,
-    user_id: string
+    user_id: string,
+    isAI?: boolean
 ) {
     try {
         return await db_client.quiz.create({
@@ -37,7 +43,8 @@ export async function createUserQuiz(
                 quiz_content,
                 is_randomized,
                 timed_quiz,
-                user_id
+                user_id,
+                is_ai_generated: isAI
             }
         });
     } catch (err) {
@@ -49,7 +56,12 @@ export async function createUserQuiz(
 export async function updateUserQuiz(
     title: string,
     description: string,
-    quiz_content: { answers: string[], question: string, correct_answer_index: number }[],
+    quiz_content: {
+        question: string;
+        description?: string;
+        options: string[];
+        correctAnswers: number[];
+    }[],
     is_randomized: boolean,
     timed_quiz: number,
     quiz_id: string

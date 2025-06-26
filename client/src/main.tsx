@@ -30,6 +30,7 @@ import LearnerAICreateNotePage from "./routes/(learner)/(note)/LearnerAICreateNo
 import LearnerAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIFlashcard";
 import LearnerEditFlashcardPage from "./routes/(learner)/(flashcard)/LearnerEditFlashcard";
 import LearnerEditAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIEditFlashcard";
+import LearnerAIEditQuizPage from "./routes/(learner)/(quiz)/LearnerAIEditQuiz";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -402,6 +403,26 @@ const router = createBrowserRouter([
           {
             Component: LearnerCreateQuizPage,
             path: "create",
+          },
+          {
+            Component: LearnerAIEditQuizPage,
+            loader: async ({ params }) => {
+              const generatedContent = localStorage.getItem(
+                "QUICKEASE_GENERATED_CONTENT"
+              );
+
+              if (generatedContent) {
+                const parsed = JSON.parse(generatedContent);
+
+                return {
+                  title: parsed.content.title,
+                  quiz_content: JSON.parse(parsed.content.content),
+                };
+              } else {
+                return redirect(-1);
+              }
+            },
+            path: "ai",
           },
         ],
       },

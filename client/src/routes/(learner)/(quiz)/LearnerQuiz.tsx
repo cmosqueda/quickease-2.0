@@ -8,6 +8,7 @@ import {
   ArrowRightFromLine,
   Edit,
   EllipsisVertical,
+  Info,
 } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
@@ -134,6 +135,13 @@ export default function LearnerQuizPage() {
         <h1 className="font-bold text-3xl lg:text-6xl">
           {data.title || "Untitled"}
         </h1>
+        {data.is_ai_generated && (
+          <div className="flex flex-row items-center gap-4">
+            <Info />
+            <h1>AI-generated</h1>
+          </div>
+        )}
+
         <p className="text-lg text-base-content/50">
           {data.description || "No description provided"}
         </p>
