@@ -16,7 +16,7 @@ export async function loginUser(email: string, password: string) {
 
         return user;
     } catch (err) {
-        return false;
+        throw new Error("User login failed.");
     }
 }
 

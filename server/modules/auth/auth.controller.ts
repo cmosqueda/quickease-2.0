@@ -1,4 +1,5 @@
 import db_client from "../../utils/client";
+
 import { FastifyReply, FastifyRequest } from "fastify";
 import { loginUser, registerUser } from "./auth.service";
 
@@ -16,7 +17,7 @@ export async function login_user(request: FastifyRequest, reply: FastifyReply) {
         const user = await loginUser(email, password);
 
         if (!user) {
-            return reply.code(400).send({ message: "Check your credentials." });
+            return reply.code(400).send({ message: "Invalid email/password, check your credentials." });
         }
 
         const token = await reply.jwtSign(user);
@@ -46,8 +47,19 @@ export async function register_user(request: FastifyRequest, reply: FastifyReply
             password: string;
         };
 
-        if (!firstName || !lastName || !email || !password) {
-            return reply.code(400).send({ message: "All fields are required." });
+        if (!firstName) {
+            return reply.code(400).send({ message: "Error: First name required." })
+        }
+        if (!lastName) {
+            return reply.code(400).send({ message: "Error: Last name required." })
+        }
+
+        if (!email) {
+            return reply.code(400).send({ message: "Error: Email required." })
+        }
+
+        if (!password) {
+            return reply.code(400).send({ message: "Error: Password required." })
         }
 
         const existed = await db_client.user.findUnique({
