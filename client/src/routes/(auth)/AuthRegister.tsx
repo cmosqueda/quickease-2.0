@@ -82,9 +82,7 @@ export default function AuthRegisterPage() {
         style={{ animation: "floatAnimation 4s ease-in-out infinite" }}
         src="/assets/images/mascot.png"
       />
-      <h1 className="font-bold text-3xl my-8 block lg:hidden text-center">
-        QuickEase
-      </h1>
+      <h1 className="font-bold text-3xl my-8 block lg:hidden text-center">QuickEase</h1>
       <div className="flex flex-col gap-4 justify-center p-8 2xl:px-[12rem]">
         <div className="">
           <h1 className="font-bold text-4xl">Create your account </h1>
@@ -152,18 +150,12 @@ export default function AuthRegisterPage() {
           I accept the{" "}
           <button
             className="text--500 cursor-pointer"
-            onClick={() =>
-              document.getElementById("terms-of-use-modal").showModal()
-            }
+            onClick={() => document.getElementById("terms-of-use-modal").showModal()}
           >
             terms of use and privacy policy
           </button>
         </label>
-        <button
-          className="btn btn-soft btn-success btn-lg"
-          disabled={isRegistering}
-          onClick={handleRegister}
-        >
+        <button className="btn btn-soft btn-success btn-lg" disabled={isRegistering} onClick={handleRegister}>
           Create account
         </button>
         <p>
@@ -195,10 +187,7 @@ export default function AuthRegisterPage() {
                   data-set-theme={theme}
                   onClick={() => setTheme(theme)}
                 >
-                  <div
-                    className="bg-base-100 text-base-content w-full cursor-pointer font-sans"
-                    data-theme={theme}
-                  >
+                  <div className="bg-base-100 text-base-content w-full cursor-pointer font-sans" data-theme={theme}>
                     <div className="grid grid-cols-5 grid-rows-3">
                       <div className="bg-base-200 col-start-1 row-span-2 row-start-1"></div>{" "}
                       <div className="bg-base-300 col-start-1 row-start-3"></div>{" "}
@@ -206,24 +195,16 @@ export default function AuthRegisterPage() {
                         <div className="font-bold">{theme}</div>{" "}
                         <div className="flex flex-wrap gap-1">
                           <div className="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                            <div className="text-primary-content text-sm font-bold">
-                              A
-                            </div>
+                            <div className="text-primary-content text-sm font-bold">A</div>
                           </div>{" "}
                           <div className="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                            <div className="text-secondary-content text-sm font-bold">
-                              A
-                            </div>
+                            <div className="text-secondary-content text-sm font-bold">A</div>
                           </div>{" "}
                           <div className="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                            <div className="text-accent-content text-sm font-bold">
-                              A
-                            </div>
+                            <div className="text-accent-content text-sm font-bold">A</div>
                           </div>{" "}
                           <div className="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                            <div className="text-neutral-content text-sm font-bold">
-                              A
-                            </div>
+                            <div className="text-neutral-content text-sm font-bold">A</div>
                           </div>
                         </div>
                       </div>
@@ -244,10 +225,7 @@ export default function AuthRegisterPage() {
                   data-set-theme={theme}
                   onClick={() => setTheme(theme)}
                 >
-                  <div
-                    className="bg-base-100 text-base-content w-full cursor-pointer font-sans"
-                    data-theme={theme}
-                  >
+                  <div className="bg-base-100 text-base-content w-full cursor-pointer font-sans" data-theme={theme}>
                     <div className="grid grid-cols-5 grid-rows-3">
                       <div className="bg-base-200 col-start-1 row-span-2 row-start-1"></div>{" "}
                       <div className="bg-base-300 col-start-1 row-start-3"></div>{" "}
@@ -255,24 +233,16 @@ export default function AuthRegisterPage() {
                         <div className="font-bold">{theme}</div>{" "}
                         <div className="flex flex-wrap gap-1">
                           <div className="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                            <div className="text-primary-content text-sm font-bold">
-                              A
-                            </div>
+                            <div className="text-primary-content text-sm font-bold">A</div>
                           </div>{" "}
                           <div className="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                            <div className="text-secondary-content text-sm font-bold">
-                              A
-                            </div>
+                            <div className="text-secondary-content text-sm font-bold">A</div>
                           </div>{" "}
                           <div className="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                            <div className="text-accent-content text-sm font-bold">
-                              A
-                            </div>
+                            <div className="text-accent-content text-sm font-bold">A</div>
                           </div>{" "}
                           <div className="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                            <div className="text-neutral-content text-sm font-bold">
-                              A
-                            </div>
+                            <div className="text-neutral-content text-sm font-bold">A</div>
                           </div>
                         </div>
                       </div>

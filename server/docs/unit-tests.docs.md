@@ -293,15 +293,15 @@ Learn more at [Jest docs](https://jestjs.io/docs/getting-started)
 
 ## SUMMARY
 
-- ✅ **12 Test Suites Passed**
-- ❌ **2 Test Suites Failed**
+- ✅ **13 Test Suites Passed**
+- ❌ **1 Test Suite Failed**
   - **UT002** `auth.controller.test.ts` Type mismatch in JWT payload `(phone_number: string | null)`.
-- ✅ **86/86 Total Tests Passed**
+- ✅ **93/93 Total Tests Passed**
 - 🧪 **Key Modules Tested:** Auth, User, Note, Flashcard, Quiz, Post, AI
 - 🛠️ **Main Issues Identified:**
   - `auth.controller.ts`: Fix jwtSign payload to avoid passing nullable fields.
 
-> Overall coverage is excellent. Controller-level type safety issues remain in `auth` and `quiz`, but services are working as expected.
+> Overall coverage is excellent. Controller-level type safety issues remain in `auth`, but service is working as expected.
 
 </details>
 

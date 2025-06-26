@@ -150,35 +150,169 @@ Feedback by Mosqueda:
 
 ## SUMMARY
 
+- ✅ **Log-in**, **Logout**, **Learner Library**, and **Learner Forums** modules **PASSED** with all major features working as expected. Only minor UX improvements (e.g., better toast messages) are needed.
+- ✅ **Learner Quiz** **PASSED WITH MINIMAL FIXES**. Core features like creating, editing, scoring, and reviewing quizzes work. However, submitting answers and card UI (ellipsis) needs fixing.
+- 🟡 **Learner Flashcards** **PARTIAL PASSED**. Creating, viewing, deleting works fine, but editing flashcards (manual & AI) fails due to server-side errors.
+- ❌ **Register** and **Learner Notes** **FAILED** due to missing input validations, error message handling, and saving/editing issues that result in data loss or rendering errors.
+
+> **Overall:** Core functionalities are mostly in place. Emphasis should be placed on improving form validation feedback, data preservation, and error handling on the client side.
+
 </details>
 
 <details>
 <summary><strong>FULL REPORT</strong></summary>
 
-## Learner Quiz
+## Register
 
-Criterias:
+Criteria and Success Rate:
 
-- LQ002: User can create quizzes manually.
-- LQ003: User can edit the existing quiz and save it properly.
-- LQ004: User can answer and review existing saved quiz.
-- LQ005: Correct answer(s) from multiple choice are displayed as expected.
-- LQ006: Exact scores are calculated and displayed as expected after answering the quiz/reviewing the quiz overview.
-- LQ007: After a quiz is answered, a quiz review is available for viewing.
+- **R001** – 100% – The input fields must respond no more than 0.8s when clicked.
+- **R002** – - – The user can only register with a valid, NEW email. Used emails are not allowed for re-registration.
+- **R003** – - – Require user to enter ALL input fields (first name, last name, email, password, confirm password).
+- **R004** – - – Account creation MUST ONLY proceed if user SUCCESSFULLY fills in ALL required input fields.
+- **R005** – 0% – Error-handling pop-ups/toasts understandable for users are implemented.
+- **R006** – 100% – The user must be directed to `Log in` screen when the highlighted `Sign in` text is clicked.
 
-Success Rate:
-
-- LQ002: 50%
-- LQ003: 20%
-- LQ004: 0%
-- LQ005: 100%
-- LQ006: 100%
-- LQ007: 100%
-
-Status: **PARTIAL PASSED**
+Status: ❌ **FAILED**
 
 Feedback:
 
-- Error in creating quiz. Axios error at routes/(learner)/(quiz)/LearnerQuiz.tsx
+- Has controller-level error handling especially in validating inputs, but is not explicitly displayed at the interface.
+- If I register a new user account, the new data is successfully saved at the database. But the console tells that there is a problem in handling registration at client-side `client\src\routes\(auth)\AuthRegister.tsx`
+- This may be connected to the error not resolved at `auth.controller.ts`
+
+## Log-in
+
+Criteria and Success Rate:
+
+- **L001** – 100% – The input fields must respond no more than 0.8s when clicked.
+- **L002** – 100% – The user can only log in with a registered account (used email).
+- **L003** – 50% – Error-handling pop-ups/toasts understandable for users are implemented.
+- **L004** – 100% – Log in must only proceed if valid credentials are entered.
+- **L005** – 100% – The user must be directed to `Register` screen when the highlighted `Register Now` text is clicked.
+- **L006** – 100% – User can logout
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- Only need improvement at defining toast messages understandable for users. Replace error codes with simple, readable error messages.
+
+## Learner Notes
+
+Criteria and Success Rate:
+
+- **LN001** – 0% – User can create notes manually.
+- **LN002** – 90% – All implemented markdown functions work properly.
+- **LN003** – 100% – User can edit the existing note inside text box.
+- **LN004** – 100% – User can view saved notes.
+- **LN005** – - – Ellipsis icon is available and clickable for viewing additional notes options.
+- **LN006** – 50% – User can save notes properly.
+- **LN007** – 100% – Back button redirects user to Library Notes module.
+- **LN008** – - – User can delete an existing note.
+- **LN009** – - – Users can share a note via "more options".
+- **LN010** – - – Ellipsis icon is available and clickable on note card.
+
+Status: ❌ **FAILED**
+
+Feedback:
+
+- Render errors at `client/src/routes/(learner)/(note)/LearnerCreateNote.tsx`, **data** at `const [html, setHTML] = useState(data.content);` not defined.
+- `Quote` markdown functionality not working
+- Saving works at creating new notes, but needs fixing at saving edited existing notes.
+  > Scenario: When `save changes` button is clicked without editing any existing content, it erases the previously saved content, results into losing previously saved data at `notes_content` column
+
+## Learner Flashcards
+
+Criteria and Success Rate:
+
+- **LFC001** – 100% – User can create flashcards manually.
+- **LFC002** – 100% – User can preview front and back contents of flashcards.
+- **LFC003** – 100% – Flashcard contents display accurately.
+- **LFC004** – 100% – Flashcards respond with a flip in no more than 0.8s.
+- **LFC005** – 100% – Ellipsis icon is available and clickable on flashcards page.
+- **LFC006** – 100% – Back button redirects user to Library Flashcards module.
+- **LFC007** – 0% – User can edit manually created flashcards.
+- **LFC008** – 0% – User can edit AI-generated flashcards.
+- **LFC009** – - – User can share flashcards via "more options".
+- **LFC010** – 100% – User can delete an existing flashcard set.
+- **LFC011** – - – Ellipsis icon is available and clickable on flashcard card.
+
+Status: ✅ **PARTIAL PASSED**
+
+Feedback:
+
+- User cannot edit existing flashcard created manually or created from AI generation. Error persists at
+  ```
+    LearnerEditFlashcard.tsx:48
+    PUT http://localhost:3000/api/flashcard/update 400 (Bad Request)
+    handleSave	@	LearnerEditFlashcard.tsx:48
+    <button>
+    LearnerEditFlashcardPage	@	LearnerEditFlashcard.tsx:84
+  ```
+
+## Learner Quiz
+
+Criteria and Success Rate:
+
+- **LQ001** – 100% – UI/buttons respond in no more than 0.8s.
+- **LQ002** – 100% – User can create quizzes manually.
+- **LQ003** – 100% – User can edit quizzes and save properly.
+- **LQ004** – 0% – User can answer and review quizzes.
+- **LQ005** – 100% – Correct answers are displayed as expected.
+- **LQ006** – 100% – Exact scores are calculated and displayed.
+- **LQ007** – 100% – Quiz review is available after answering.
+- **LQ008** – 0% – Back button should redirect to Library Quiz module.
+- **LQ009** – 100% – User can delete existing quizzes.
+- **LQ010** – 100% – User can edit AI-generated quizzes.
+- **LQ011** – 100% – Ellipsis icon works on quiz page preview.
+- **LQ012** – 20% – Ellipsis icon is clickable on quiz card.
+
+Status: ✅ **PASSED WITH MINIMAL FIXES**
+
+Feedback:
+
+- Can create quiz manually but no popup/toast notification to notify users if the quiz is saved properly.
+- Can edit and delete, toast notifications are displayed properly
+- Error in answering / submitting answer attempts. Error persists at
+  ```LearnerAnswerQuiz.tsx:72
+  POST http://localhost:3000/api/quiz/submit 400 (Bad Request)
+  handleSubmit	@	LearnerAnswerQuiz.tsx:72
+  <button>
+  LearnerAnswerQuizPage	@	LearnerAnswerQuiz.tsx:116
+  ```
+- Ellipsis icon is not yet functional at quiz card
+
+## Learner Library
+
+Criteria and Success Rate:
+
+- **LL001** – - – Search functionality returns accurate results.
+- **LL002** – 100% – Learner's materials data are fetched and displayed properly.
+- **LL003** – 100% – Filter works for `AI-Generated` or `From User`.
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- All implementations passed. Only improvements needed.
+
+## Learner Forums
+
+Criteria and Success Rate:
+
+- **LF001** – 100% – User can create a post in forums.
+- **LF002** – - – User can edit an existing post.
+- **LF003** – - – User can upload Summary Notes from the Library.
+- **LF004** – - – User can upload Quiz from the Library.
+- **LF005** – - – User can upload Flashcard Quiz from the Library.
+- **LF006** – - – _(Undefined)_
+- **LF007** – - – _(Undefined)_
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- Create post on forums works properly as expected.
 
 </details>
