@@ -27,7 +27,7 @@ export default function LearnerFlashcardPage() {
 
       if (status == 200) {
         toast.success("Flashcard deleted.");
-        return navigate(-1, { viewTransition: true });
+        return navigate('/learner/library?tab=flashcards', { viewTransition: true });
       }
     } catch (err) {
       toast.error("Error deleting flashcard.");
@@ -38,7 +38,7 @@ export default function LearnerFlashcardPage() {
     <div className="flex flex-col w-full lg:min-h-screen max-w-7xl mx-auto p-8 gap-4">
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
-          onClick={() => navigate(-1, { viewTransition: true })}
+          onClick={() => navigate('/learner/library?tab=flashcards', { viewTransition: true })}
           className="cursor-pointer"
         />
         <div className="flex flex-row gap-6 items-center">

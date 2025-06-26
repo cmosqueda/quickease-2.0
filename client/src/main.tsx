@@ -195,12 +195,10 @@ const router = createBrowserRouter([
       {
         Component: LearnerLibraryPage,
         path: "library",
-        loader: async () => {
+        loader: async ({ params }) => {
           const notes = await _API_INSTANCE.get("/notes");
           const flashcard = await _API_INSTANCE.get("/flashcard");
           const quiz = await _API_INSTANCE.get("/quiz");
-
-          console.log(quiz);
 
           return {
             notes: notes.data,
@@ -255,7 +253,7 @@ const router = createBrowserRouter([
 
                 return data;
               } catch (err) {
-                return redirect("/learner/library");
+                return redirect("/learner/library?tab=flashcard");
               }
             },
             path: ":id",
@@ -270,7 +268,7 @@ const router = createBrowserRouter([
 
                 return data;
               } catch (err) {
-                return redirect("/learner/library");
+                return redirect("/learner/library?tab=flashcard");
               }
             },
             path: ":id/edit",
@@ -333,12 +331,11 @@ const router = createBrowserRouter([
             loader: async ({ params }) => {
               try {
                 const { data } = await _API_INSTANCE.get(`/quiz/${params.id}`);
-                console.log(data);
 
                 return data;
               } catch (err) {
                 toast.error("Error getting quiz data.");
-                return redirect("/learner/library");
+                return redirect("/learner/library?tab=quizzes");
               }
             },
           },
@@ -354,11 +351,11 @@ const router = createBrowserRouter([
                   return parsed;
                 } else {
                   toast.error("Invalid quiz ID.");
-                  return redirect("/learner/library");
+                  return redirect("/learner/library?tab=quizzes");
                 }
               } catch (err) {
                 toast.error("Error getting quiz data.");
-                return redirect("/learner/library");
+                return redirect("/learner/library?tab=quizzes");
               }
             },
           },
@@ -374,11 +371,11 @@ const router = createBrowserRouter([
                   return parsed;
                 } else {
                   toast.error("Invalid quiz ID.");
-                  return redirect("/learner/library");
+                  return redirect("/learner/library?tab=quizzes");
                 }
               } catch (err) {
                 toast.error("Error getting quiz data.");
-                return redirect("/learner/library");
+                return redirect("/learner/library?tab=quizzes");
               }
             },
           },
@@ -391,12 +388,10 @@ const router = createBrowserRouter([
                   `/quiz/attempt/${params.attempt_id}`
                 );
 
-                console.log(data);
-
                 return data;
               } catch (err) {
                 toast.error("Error getting quiz data.");
-                return redirect("/learner/library");
+                return redirect("/learner/library?tab=quizzes");
               }
             },
           },
@@ -442,7 +437,7 @@ const router = createBrowserRouter([
 
             return data;
           } catch (err) {
-            return redirect("/learner/library");
+            return redirect("/learner/library?tab=notes");
           }
         },
         Component: LearnerNotePage,

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { NavLink, useNavigate, type NavigateFunction } from "react-router";
+import { toast } from "sonner";
 
 const _LINKS = [
   { title: "Forum", icon: <MessageCircle />, link: "/learner" },
@@ -237,7 +238,9 @@ const Floating = ({
             <Settings
               size={36}
               className="hidden lg:block p-2 border bg-base-100 border-base-300 rounded-full cursor-pointer hover:shadow"
-              onClick={() => navigate("/learner/settings", { viewTransition: true })}
+              onClick={() =>
+                navigate("/learner/settings", { viewTransition: true })
+              }
             />
           </div>
           <div className="tooltip absolute -right-4 top-52" data-tip="Log-out">
@@ -249,7 +252,8 @@ const Floating = ({
                   await _API_INSTANCE.post("/auth/logout");
                   navigate("/", { viewTransition: true });
                 } catch (err) {
-                  console.error("Logout failed", err);
+                  toast.error("Logout error.");
+                  throw err;
                 }
               }}
             />

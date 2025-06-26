@@ -190,7 +190,7 @@ export default function LandingPage() {
           </ul>
         </details>
       </header>
-      <div className="flex flex-col lg:grid lg:grid-cols-2 py-[8rem] xl:min-h-[85vh] xl:max-w-7xl mx-auto">
+      <div className="flex flex-col lg:grid lg:grid-cols-2 py-[8rem] xl:min-h-[85vh] xl:max-w-7xl mx-auto items-center">
         <div className="flex flex-col gap-2">
           <p className="tracking-widest">SUPERCHARGE YOUR LEARNING.</p>
           <h1 className="text-7xl font-black">
@@ -204,20 +204,25 @@ export default function LandingPage() {
           <div className="flex flex-row gap-4 items-center">
             <NavLink
               className="btn btn-xl btn-accent"
-              to="/auth/login"
+              to="/auth/register"
               viewTransition
             >
               <p>Join now</p>
             </NavLink>
             <NavLink
               className="btn btn-xl btn-neutral btn-ghost"
-              to="/auth/register"
+              to="/auth/login"
               viewTransition
             >
               <p>Sign in</p>
             </NavLink>
           </div>
         </div>
+          <img
+            className="w-full lg:block hidden"
+            style={{ animation: "floatAnimation 4s ease-in-out infinite" }}
+            src="/assets/images/mascot.png"
+          />
       </div>
       <div className="flex flex-col gap-4 xl:max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-center">Features</h1>

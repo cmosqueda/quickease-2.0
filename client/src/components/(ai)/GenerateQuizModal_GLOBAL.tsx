@@ -60,6 +60,7 @@ const GenerateQuizzesFromNotes = ({
     <div className="grid lg:grid-cols-2 gap-4 flex-wrap">
       {notes.map((c) => (
         <NoteCard
+          key={c.id}
           title={c.title}
           date={c.created_at}
           onClick={() => handleGenerate(c.id)}

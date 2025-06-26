@@ -31,7 +31,6 @@ export async function login_user(request: FastifyRequest, reply: FastifyReply) {
         });
 
     } catch (err) {
-        console.error("Login error:", err);
         reply.code(500).send({
             message: "Internal server error. Please try again later."
         });
@@ -72,7 +71,7 @@ export async function register_user(request: FastifyRequest, reply: FastifyReply
         });
 
     } catch (err) {
-        console.error("Register error:", err);
+        error("Register error:", err);
         reply.code(500).send({
             message: "Internal server error. Could not register user."
         });
@@ -84,7 +83,6 @@ export async function logout(request: FastifyRequest, reply: FastifyReply) {
         reply.clearCookie('QUICKEASE_TOKEN');
         return reply.code(200).send('Logout successfully.');
     } catch (err) {
-        console.error("Logout error:", err);
         return reply.code(500).send('Error occurred while logging out.');
     }
 }

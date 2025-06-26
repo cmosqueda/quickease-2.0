@@ -51,7 +51,7 @@ export default function LearnerCreateFlashcardPage() {
 
       if (status == 201) {
         toast.success("Flashcard created.");
-        navigate(-1, { viewTransition: true });
+        navigate('/learner/library?tab=flashcards', { viewTransition: true });
       }
     } catch (err) {
       toast.error(`Error creating flashcard: ${err.message}`);
@@ -73,7 +73,7 @@ export default function LearnerCreateFlashcardPage() {
     <div className="flex flex-col w-full lg:min-h-screen max-w-4xl mx-auto p-8 gap-6">
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
-          onClick={() => navigate("/learner/library", { viewTransition: true })}
+          onClick={() => navigate("/learner/library?tab=flashcards", { viewTransition: true })}
           className="cursor-pointer"
         />
         <div className="flex flex-row gap-4 items-center">

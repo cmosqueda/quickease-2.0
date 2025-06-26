@@ -109,7 +109,7 @@ export default function LearnerEditQuizPage() {
 
       if (status === 200) {
         toast.success("Quiz updated.");
-        return navigate(-1, { viewTransition: true });
+        return navigate('/learner/library?tab=quiz', { viewTransition: true });
       }
     } catch (err) {
       toast.error("Error updating quiz.");
@@ -124,7 +124,7 @@ export default function LearnerEditQuizPage() {
       <div className="flex justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate(-1, { viewTransition: true })}
+          onClick={() => navigate('/learner/library?tab=quiz', { viewTransition: true })}
         />
         <button
           className="btn btn-primary flex gap-2"

@@ -17,7 +17,6 @@ export async function get_user_notes(request: FastifyRequest, reply: FastifyRepl
         const notes = await getUserNotes(userId);
         reply.code(200).send(notes);
     } catch (err) {
-        console.error("get_user_notes error:", err);
         reply.code(500).send({ message: "Error retrieving user's notes." });
     }
 }
@@ -34,7 +33,6 @@ export async function get_user_note(request: FastifyRequest, reply: FastifyReply
 
         reply.code(200).send(note);
     } catch (err) {
-        console.error("get_user_note error:", err);
         reply.code(500).send({ message: "Error retrieving note." });
     }
 }
@@ -65,7 +63,6 @@ export async function create_user_note(request: FastifyRequest, reply: FastifyRe
         const note = await createUserNote(title, content, user_id);
         reply.code(201).send(note);
     } catch (err) {
-        console.error("create_user_note error:", err);
         reply.code(500).send({ message: "Error creating note." });
     }
 }
@@ -96,7 +93,6 @@ export async function update_user_note(request: FastifyRequest, reply: FastifyRe
         const note = await updateUserNote(title, content, note_id);
         reply.code(200).send(note);
     } catch (err) {
-        console.error("update_user_note error:", err);
         reply.code(500).send({ message: "Error updating note." });
     }
 }
@@ -121,7 +117,6 @@ export async function delete_user_note(request: FastifyRequest, reply: FastifyRe
         await deleteUserNote(note_id);
         reply.code(200).send({ message: "Note deleted successfully." });
     } catch (err) {
-        console.error("delete_user_note error:", err);
         reply.code(500).send({ message: "Error deleting note." });
     }
 }
@@ -150,7 +145,6 @@ export async function toggle_user_note_visibility(request: FastifyRequest, reply
         await toggleNoteVisibility(visibility, note_id);
         reply.code(200).send({ message: "Note visibility updated." });
     } catch (err) {
-        console.error("toggle_user_note_visibility error:", err);
         reply.code(500).send({ message: "Error updating note visibility." });
     }
 }

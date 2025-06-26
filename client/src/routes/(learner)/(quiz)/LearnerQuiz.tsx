@@ -74,7 +74,7 @@ export default function LearnerQuizPage() {
 
       if (status == 200) {
         toast.success("Quiz deleted.");
-        return navigate(-1, { viewTransition: true });
+        return navigate('/learner/library?tab=quiz', { viewTransition: true });
       }
     } catch (err) {
       toast.error("Failed to delete.");
@@ -104,7 +104,7 @@ export default function LearnerQuizPage() {
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate(-1, { viewTransition: true })}
+          onClick={() => navigate('/learner/library?tab=quiz', { viewTransition: true })}
         />
         <div className="flex flex-row gap-6 items-center">
           {data.user_id == user?.id && (

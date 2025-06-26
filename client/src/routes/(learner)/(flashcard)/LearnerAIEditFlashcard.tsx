@@ -47,7 +47,7 @@ export default function LearnerEditAIFlashcardPage() {
 
       if (status === 201) {
         toast.success("Flashcard saved to library.");
-        navigate("/learner/library", { viewTransition: true });
+        navigate("/learner/library?tab=flashcards", { viewTransition: true });
       }
     } catch (err) {
       toast.error(`Error saving flashcard: ${err.message}`);
@@ -58,7 +58,7 @@ export default function LearnerEditAIFlashcardPage() {
     <div className="flex flex-col w-full max-w-4xl mx-auto p-8 gap-6">
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
-          onClick={() => navigate("/learner/library", { viewTransition: true })}
+          onClick={() => navigate("/learner/library?tab=flashcards", { viewTransition: true })}
           className="cursor-pointer"
         />
         <div className="flex flex-row gap-4 items-center">

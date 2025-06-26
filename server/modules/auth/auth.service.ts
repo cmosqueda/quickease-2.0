@@ -16,7 +16,6 @@ export async function loginUser(email: string, password: string) {
 
         return user;
     } catch (err) {
-        console.error("loginUser error:", err);
         return false;
     }
 }
@@ -36,7 +35,6 @@ export async function registerUser(firstName: string, lastName: string, email: s
 
         return user;
     } catch (err) {
-        console.error("registerUser error:", err);
         throw new Error("User registration failed");
     }
 }

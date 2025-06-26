@@ -31,7 +31,6 @@ export async function get_user_quizzes(request: FastifyRequest, reply: FastifyRe
         const quizzes = await getUserQuizzes(userId);
         reply.code(200).send(quizzes);
     } catch (err) {
-        console.error("get_user_quizzes error:", err);
         reply.code(500).send({ message: "Error getting user quizzes." });
     }
 }
@@ -47,7 +46,6 @@ export async function get_quiz(request: FastifyRequest, reply: FastifyReply) {
 
         return reply.code(200).send(quiz);
     } catch (err) {
-        console.error("get_quiz error:", err);
         reply.code(500).send({ message: "Error getting quiz." });
     }
 }
@@ -80,7 +78,6 @@ export async function create_user_quiz(request: FastifyRequest, reply: FastifyRe
         const quiz = await createUserQuiz(title, description, quiz_content, is_randomized, timed_quiz, request.user.id, isAI);
         reply.code(201).send(quiz);
     } catch (err) {
-        console.error("create_user_quiz error:", err);
         reply.code(500).send({ message: "Error creating quiz." });
     }
 }
@@ -113,7 +110,6 @@ export async function update_user_quiz(request: FastifyRequest, reply: FastifyRe
         await updateUserQuiz(title, description, quiz_content, is_randomized, timed_quiz, quiz_id);
         reply.code(200).send({ message: "Updated quiz." });
     } catch (err) {
-        console.error("update_user_quiz error:", err);
         reply.code(500).send({ message: "Error updating quiz." });
     }
 }
@@ -139,7 +135,6 @@ export async function update_user_quiz_visibility(request: FastifyRequest, reply
         await updateUserQuizVisibility(visibility, quiz_id);
         reply.code(200).send({ message: "Updated quiz visibility." });
     } catch (err) {
-        console.error("update_user_quiz_visibility error:", err);
         reply.code(500).send({ message: "Error updating quiz visibility." });
     }
 }
@@ -153,7 +148,6 @@ export async function delete_user_quiz(request: FastifyRequest, reply: FastifyRe
         await deleteUserQuiz(quiz_id);
         reply.code(200).send({ message: "Deleted quiz." });
     } catch (err) {
-        console.error("delete_user_quiz error:", err);
         reply.code(500).send({ message: "Error deleting quiz." });
     }
 }
@@ -202,7 +196,6 @@ export async function submit_quiz_attempt(request: FastifyRequest, reply: Fastif
         await submitQuizAttempt(answer_data, started_at, completed_at, quiz_id, request.user.id);
         reply.code(200).send({ submitted: true });
     } catch (err) {
-        console.error("submit_quiz_attempt error:", err);
         reply.code(500).send({ message: "Error submitting attempt." });
     }
 }
@@ -218,7 +211,6 @@ export async function get_quiz_attempt(request: FastifyRequest, reply: FastifyRe
 
         reply.code(200).send(attempt);
     } catch (err) {
-        console.error("get_quiz_attempt error:", err);
         reply.code(500).send({ message: "Error fetching attempt." });
     }
 }

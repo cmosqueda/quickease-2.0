@@ -6,7 +6,6 @@ export async function getUserFlashcards(user_id: string) {
             where: { user_id }
         });
     } catch (err) {
-        console.error("getUserFlashcards error:", err);
         throw err;
     }
 }
@@ -17,7 +16,6 @@ export async function getUserFlashcard(flashcard_id: string) {
             where: { id: flashcard_id }
         });
     } catch (err) {
-        console.error("getUserFlashcard error:", err);
         throw err;
     }
 }
@@ -40,7 +38,6 @@ export async function createUserFlashcard(
             }
         });
     } catch (err) {
-        console.error("createUserFlashcard error:", err);
         throw err;
     }
 }
@@ -65,7 +62,6 @@ export async function updateUserFlashcard(
             }
         });
     } catch (err) {
-        console.error("updateUserFlashcard error:", err);
         throw err;
     }
 }
@@ -77,7 +73,6 @@ export async function deleteUserFlashcard(flashcard_id: string) {
         });
         return true;
     } catch (err) {
-        console.error("deleteUserFlashcard error:", err);
         throw err;
     }
 }
@@ -98,7 +93,6 @@ export async function toggleFlashcardVisibility(flashcard_id: string) {
 
         return true;
     } catch (err) {
-        console.error("toggleFlashcardVisibility error:", err);
         throw err;
     }
 }

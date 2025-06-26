@@ -4,7 +4,6 @@ export async function getUserQuizzes(user_id: string) {
     try {
         return await db_client.quiz.findMany({ where: { user_id } });
     } catch (err) {
-        console.error("getUserQuizzes error:", err);
         throw err;
     }
 }
@@ -16,7 +15,6 @@ export async function getQuiz(quiz_id: string) {
             include: { attempts: true }
         });
     } catch (err) {
-        console.error("getQuiz error:", err);
         throw err;
     }
 }
@@ -48,7 +46,6 @@ export async function createUserQuiz(
             }
         });
     } catch (err) {
-        console.error("createUserQuiz error:", err);
         throw err;
     }
 }
@@ -78,7 +75,6 @@ export async function updateUserQuiz(
             where: { id: quiz_id }
         });
     } catch (err) {
-        console.error("updateUserQuiz error:", err);
         throw err;
     }
 }
@@ -90,7 +86,6 @@ export async function updateUserQuizVisibility(visibility: boolean, quiz_id: str
             where: { id: quiz_id }
         });
     } catch (err) {
-        console.error("updateUserQuizVisibility error:", err);
         throw err;
     }
 }
@@ -100,7 +95,6 @@ export async function deleteUserQuiz(quiz_id: string) {
         await db_client.quiz.delete({ where: { id: quiz_id } });
         return true;
     } catch (err) {
-        console.error("deleteUserQuiz error:", err);
         throw err;
     }
 }
@@ -132,7 +126,6 @@ export async function submitQuizAttempt(
         });
         return true;
     } catch (err) {
-        console.error("submitQuizAttempt error:", err);
         throw err;
     }
 }
@@ -143,7 +136,6 @@ export async function getQuizAttempt(attempt_id: string) {
             where: { id: attempt_id }
         });
     } catch (err) {
-        console.error("getQuizAttempt error:", err);
         throw err;
     }
 }

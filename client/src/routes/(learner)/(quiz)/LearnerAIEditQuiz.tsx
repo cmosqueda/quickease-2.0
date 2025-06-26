@@ -117,26 +117,23 @@ export default function LearnerAIEditQuizPage() {
 
       if (status === 201) {
         toast.success("Generated quiz saved.");
-        navigate("/learner/library", { viewTransition: true });
+        navigate("/learner/library?tab=flashcards", { viewTransition: true });
       }
     } catch (err) {
-      console.error(err);
       toast.error("Error saving quiz.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   return (
     <div className="flex flex-col w-full mb-16 lg:mb-24 max-w-7xl mx-auto p-8 gap-6">
       <div className="flex justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate(-1, { viewTransition: true })}
+          onClick={() =>
+            navigate("/learner/library?tab=quiz", { viewTransition: true })
+          }
         />
         <button
           className="btn btn-primary flex gap-2"
