@@ -1,5 +1,4 @@
 import CustomEditor from "@/components/Editor";
-import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_NOTE";
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
 import _API_INSTANCE from "@/utils/axios";
@@ -34,11 +33,6 @@ export default function LearnerNotePage() {
   const [title, setTitle] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    setTitle(data.title);
-    setHTML(data.notes_content);
-  }, [data]);
-
   const editor = useEditor({
     editable: true,
     autofocus: false,
@@ -50,9 +44,19 @@ export default function LearnerNotePage() {
       setJSON(editor.getJSON());
     },
   });
-  // States for editors //
 
-  if (!editor) return;
+  useEffect(() => {
+    setTitle(data.title);
+    setHTML(data.notes_content);
+  }, [data]);
+
+  useEffect(() => {
+    if (editor && editor.isEditable && editor.getText().trim()) {
+      setText(editor.getText());
+      setJSON(editor.getJSON());
+    }
+  }, [editor]);
+  // States for editors //
 
   const handleSave = async () => {
     if (title === data.title && html === data.notes_content) {
@@ -97,6 +101,8 @@ export default function LearnerNotePage() {
       throw err;
     }
   };
+
+  if (!editor) return;
 
   return (
     <div className="flex flex-col min-h-screen w-full">
@@ -166,15 +172,6 @@ export default function LearnerNotePage() {
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
             onClick={() =>
-              document.getElementById("generate-summary-modal").showModal()
-            }
-          >
-            <BookDown />
-            <h1>Generate summary</h1>
-          </button>
-          <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() =>
               document.getElementById("generate-flashcard-modal").showModal()
             }
           >
@@ -192,9 +189,8 @@ export default function LearnerNotePage() {
           </button>
         </div>
       </div>
-      <GenerateSummaryModal html={html} text={text} json={json} />
-      <GenerateFlashcardModal html={html} text={text} json={json} />
-      <GenerateQuizModal html={html} text={text} json={json} />
+      <GenerateFlashcardModal text={text} />
+      <GenerateQuizModal text={text} />
     </div>
   );
 }
