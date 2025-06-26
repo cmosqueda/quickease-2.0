@@ -190,14 +190,14 @@ export default function LandingPage() {
           </ul>
         </details>
       </header>
-      <div className="flex flex-col lg:grid lg:grid-cols-2 py-[8rem] xl:min-h-[85vh] xl:max-w-7xl mx-auto items-center">
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col lg:grid lg:grid-cols-2 py-[8rem] xl:min-h-[85vh] xl:max-w-7xl lg:p-0 p-4 mx-auto items-center">
+        <div className="flex flex-col gap-2 items-center lg:items-start">
           <p className="tracking-widest">SUPERCHARGE YOUR LEARNING.</p>
-          <h1 className="text-7xl font-black">
+          <h1 className="text-7xl font-black text-center lg:text-start">
             Learning has never been more easier with{" "}
             <span className="text-accent">QuickEase.</span>
           </h1>
-          <p className="text-xl my-4 text-base-content/75">
+          <p className="text-xl my-4 text-base-content/75 text-center lg:text-start">
             QuickEase is a study assistant that helps you on your study,
             generate flashcards/quizzes.
           </p>
@@ -218,15 +218,15 @@ export default function LandingPage() {
             </NavLink>
           </div>
         </div>
-          <img
-            className="w-full lg:block hidden"
-            style={{ animation: "floatAnimation 4s ease-in-out infinite" }}
-            src="/assets/images/mascot.png"
-          />
+        <img
+          className="w-full lg:block hidden"
+          style={{ animation: "floatAnimation 4s ease-in-out infinite" }}
+          src="/assets/images/mascot.png"
+        />
       </div>
       <div className="flex flex-col gap-4 xl:max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-center">Features</h1>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           {cardContents.map((card) => (
             <div className="bg-base-100 p-4 rounded-xl flex flex-col gap-2">
               <div className="flex flex-col">
@@ -240,7 +240,7 @@ export default function LandingPage() {
       </div>
       <div className="flex flex-col gap-4 xl:max-w-7xl mx-auto my-12">
         <h1 className="text-5xl font-bold text-center">Downloads</h1>
-        <p className="text-center text-xl">
+        <p className="text-center text-xl lg:p-0 px-4">
           Choose the correct download for your platform. For details, see the{" "}
           <NavLink to="" className="text-accent">
             installation guide
@@ -248,7 +248,7 @@ export default function LandingPage() {
           .
         </p>
         <div className="divider" />
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between lg:p-0 p-4">
           <div>
             <h1 className="font-bold text-4xl">Mobile</h1>
             <p className="text-xl text-base-content/50">

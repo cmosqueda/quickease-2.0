@@ -205,7 +205,7 @@ export default function GenerateQuizModal({
 
   return (
     <dialog id="generate-quiz-modal-global" className="modal">
-      <div className="modal-box max-w-5xl lg:max-h-[65vh] lg:rounded-3xl rounded-none w-full flex flex-col gap-4">
+      <div className="modal-box max-w-5xl lg:max-h-[65vh] lg:rounded-3xl rounded-none w-full h-full flex flex-col gap-4">
         <div className="flex flex-col gap-4 lg:gap-0 lg:flex-row justify-between">
           <div className="flex flex-row gap-4 items-center">
             <X

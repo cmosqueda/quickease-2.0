@@ -120,7 +120,15 @@ const Mobile = ({
 
           <button
             className="btn btn-soft btn-accent self-end mt-auto"
-            onClick={() => navigate("/", { viewTransition: true })}
+            onClick={async () => {
+              try {
+                await _API_INSTANCE.post("/auth/logout");
+                navigate("/", { viewTransition: true });
+              } catch (err) {
+                toast.error("Logout error.");
+                throw err;
+              }
+            }}
           >
             <LogOut />
             <span>Logout</span>
@@ -282,7 +290,7 @@ export default function Sidebar({ tab }: { tab: string }) {
     >
       <DesktopHeading isOpen={isOpen} />
       {/* Mobile Header */}
-      <div className="flex lg:hidden justify-between items-center mb-4">
+      <div className="flex lg:hidden justify-between items-center">
         <div className="flex items-center gap-3">
           <img src="/assets/images/icon.png" alt="Logo" className="w-9 h-9" />
           <h1 className="font-bold text-xl">QuickEase</h1>
