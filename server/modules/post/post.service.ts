@@ -95,14 +95,11 @@ export async function getPost(post_id: string, user_id: string) {
                 },
             },
             votes: {
-                where: {
-                    user_id, // only include current user's vote
-                },
-                select: {
-                    vote_type: true,
-                },
+                where: { user_id },
+                select: { vote_type: true },
             },
             comments: {
+                orderBy: { created_at: "desc" },
                 select: {
                     id: true,
                     comment_body: true,
@@ -122,9 +119,7 @@ export async function getPost(post_id: string, user_id: string) {
                     },
                     replies: true,
                     _count: {
-                        select: {
-                            replies: true,
-                        },
+                        select: { replies: true },
                     },
                 },
             },
@@ -133,37 +128,38 @@ export async function getPost(post_id: string, user_id: string) {
 
     if (!post) return null;
 
-    // Total upvote/downvote count (optional if you also want vote_sum)
     const [upvotes, downvotes] = await Promise.all([
         db_client.postVote.count({
-            where: {
-                post_id,
-                vote_type: 1,
-            },
+            where: { post_id, vote_type: 1 },
         }),
         db_client.postVote.count({
-            where: {
-                post_id,
-                vote_type: -1,
-            },
+            where: { post_id, vote_type: -1 },
         }),
     ]);
 
     const vote_sum = upvotes - downvotes;
     const user_vote = post.votes[0]?.vote_type ?? 0;
 
+    // Add vote_sum to each comment
+    const comments_with_vote_sum = post.comments.map((comment) => {
+        const vote_sum = comment.votes.reduce((sum, vote) => sum + vote.vote_type, 0);
+        const user_vote = comment.votes.find((v) => v.user_id === user_id)?.vote_type ?? 0;
+
+        return {
+            ...comment,
+            vote_sum,
+            user_vote,
+        };
+    });
+
     return {
         ...post,
         vote_sum,
         user_vote,
-        vote_summary: {
-            upvotes,
-            downvotes,
-        },
+        vote_summary: { upvotes, downvotes },
+        comments: comments_with_vote_sum,
     };
 }
-
-
 
 export async function getComments(post_id: string) {
     const comments = await db_client.comment.findMany({
@@ -192,15 +188,6 @@ export async function commentOnPost(body: string, post_id: string, user_id: stri
             post_id,
             user_id
         }
-    })
-
-    await db_client.post.update({
-        data: {
-            comments: {
-                create: comment
-            }
-        },
-        where: { id: post_id }
     })
 
     return comment

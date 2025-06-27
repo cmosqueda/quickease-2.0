@@ -23,39 +23,49 @@ export function useVote(keysToInvalidate: string[] = ["recent-posts"]) {
       post_id: string;
       vote_type: number;
     }) => voteOnPost(post_id, vote_type),
-
-    onMutate: async ({ post_id, vote_type }) => {
-      queryClient.setQueryData(["recent-posts"], (old: any) => {
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            posts: page.posts.map((post: any) =>
-              post.id === post_id
-                ? {
-                    ...post,
-                    vote_sum:
-                      (post.vote_sum ?? 0) - (post.user_vote ?? 0) + vote_type,
-                    user_vote: vote_type,
-                  }
-                : post
-            ),
-          })),
-        };
-      });
+    onSuccess: (_data, _variables) => {
+      queryClient.invalidateQueries({ queryKey: ["recent-post"] });
     },
-
     onError: (_err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(["recent-posts"], context.previous);
-      }
       toast.error("Failed to vote");
     },
-
     onSettled: () => {
       keysToInvalidate.forEach((key) => {
         queryClient.invalidateQueries({ queryKey: [key] });
       });
+    },
+  });
+}
+
+export function useVoteOnComment() {
+  const queryClient = useQueryClient();
+
+  const voteOnComment = async (comment_id: string, vote_type: number) => {
+    const { status, data } = await _API_INSTANCE.post(
+      "/forum/post/comment/vote",
+      {
+        comment_id: comment_id,
+        vote_type: vote_type,
+      }
+    );
+
+    if (status !== 200) throw new Error("Failed to vote");
+    return data;
+  };
+
+  return useMutation({
+    mutationFn: ({
+      comment_id,
+      vote_type,
+    }: {
+      comment_id: string;
+      vote_type: number;
+    }) => voteOnComment(comment_id, vote_type),
+    onSuccess: (_data, _variables) => {
+      queryClient.invalidateQueries({ queryKey: ["post"] });
+    },
+    onError: (_err, _vars, context) => {
+      toast.error("Failed to vote");
     },
   });
 }

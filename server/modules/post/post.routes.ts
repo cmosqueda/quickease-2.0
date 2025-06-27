@@ -34,7 +34,7 @@ export default async function postRoutes(fastify: FastifyInstance) {
         handler: create_post
     });
 
-    fastify.post('/comments/comment', {
+    fastify.post('/post/comment', {
         preHandler: [fastify.authenticate],
         handler: comment_on_post
     });
@@ -44,12 +44,12 @@ export default async function postRoutes(fastify: FastifyInstance) {
         handler: vote_on_post
     });
 
-    fastify.post('/comments/reply', {
+    fastify.post('/post/comment/reply', {
         preHandler: [fastify.authenticate],
         handler: reply_on_comment
     });
 
-    fastify.post('/comments/vote', {
+    fastify.post('/post/comment/vote', {
         preHandler: [fastify.authenticate],
         handler: vote_on_comment
     });

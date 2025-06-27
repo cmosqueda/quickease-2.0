@@ -228,7 +228,7 @@ const router = createBrowserRouter([
               `/forum/post/${params.id}`
             );
 
-            return data;
+            return { id: data.id };
           } catch (err) {
             return redirect("/learner");
           }

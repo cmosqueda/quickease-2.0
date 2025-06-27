@@ -23,10 +23,6 @@ type AuthStore = {
   user?: AuthUserRecord;
   setUser: (user: AuthUserRecord) => void;
   setToken: (token: string) => void;
-  requestChangePassword: (id: string) => void;
-  requestChangeEmail: (id: string) => void;
-  changeName: (first_name: string, last_name: string) => void;
-  togglePublicProfile: () => void;
 };
 
 const useAuth = create<AuthStore>()(
@@ -42,10 +38,6 @@ const useAuth = create<AuthStore>()(
         state.token = token;
       });
     },
-    requestChangePassword: (id) => {},
-    requestChangeEmail: (id) => {},
-    changeName: (first_name, last_name) => {},
-    togglePublicProfile: () => {},
   }))
 );
 

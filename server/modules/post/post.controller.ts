@@ -78,7 +78,7 @@ export async function comment_on_post(request: FastifyRequest, reply: FastifyRep
         reply.code(200).send(comment)
     } catch (err) {
         reply.code(500).send({
-            message: "Error"
+            message: "Error."
         })
     }
 }
