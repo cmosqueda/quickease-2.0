@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import _API_INSTANCE from "@/utils/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -6,7 +5,7 @@ import { toast } from "sonner";
 type CommentInput = {
   body: string;
   post_id: string;
-  parent_comment_id?: string; // optional — if present, it's a reply
+  parent_comment_id?: string;
 };
 
 export function useComment() {
@@ -17,33 +16,43 @@ export function useComment() {
     post_id,
     parent_comment_id,
   }: CommentInput) => {
-    if (parent_comment_id) {
-      const { data } = await _API_INSTANCE.post("/forum/post/comment/reply", {
-        comment_id: parent_comment_id,
-        post_id,
-        body,
-      });
+    if (!body || !post_id) {
+      throw new Error("Missing required fields: body or post_id.");
+    }
+
+    try {
+      const endpoint = parent_comment_id
+        ? "/forum/post/comment/reply"
+        : "/forum/post/comment";
+
+      const payload = parent_comment_id
+        ? { comment_id: parent_comment_id, post_id, body }
+        : { post_id, body };
+
+      const { data, status } = await _API_INSTANCE.post(endpoint, payload);
+
+      if (status !== 200) {
+        throw new Error("Non-200 response from server.");
+      }
 
       return data;
-    } else {
-      const { data } = await _API_INSTANCE.post("/forum/post/comment", {
-        post_id,
-        body,
-      });
-
-      return data;
+    } catch (err: any) {
+      console.error("Error in createComment:", err);
+      throw new Error(
+        err?.response?.data?.message || "Failed to post comment."
+      );
     }
   };
 
   return useMutation({
     mutationFn: createComment,
-    onSuccess: (_data, _variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["post"] });
-      queryClient.invalidateQueries({ queryKey: ["recent-post"] });
+      queryClient.invalidateQueries({ queryKey: ["recent-posts"] });
     },
     onError: (err: any) => {
       console.error(err);
-      toast.error("Failed to post comment.");
+      toast.error(err?.message || "Failed to post comment.");
     },
   });
 }

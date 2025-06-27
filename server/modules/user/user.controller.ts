@@ -1,7 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { changeUserName, getUser, toggleProfileVisibility } from "./user.service";
+import { changeUserName, getUser, toggleProfileVisibility, viewProfile } from "./user.service";
 import { z } from "zod";
-
 
 export async function get_user(request: FastifyRequest, reply: FastifyReply) {
     try {
@@ -72,3 +71,19 @@ export async function toggle_user_visibility(request: FastifyRequest, reply: Fas
 export async function request_email_change(request: FastifyRequest, reply: FastifyReply) { }
 export async function request_change_password(request: FastifyRequest, reply: FastifyReply) { }
 export async function change_email(request: FastifyRequest, reply: FastifyReply) { }
+
+export async function view_profile(request: FastifyRequest, reply: FastifyReply) {
+    const { user_id } = request.params as { user_id: string }
+
+    try {
+        const user = await viewProfile(user_id);
+
+        if (!user) {
+            return reply.code(404).send({ message: "User not found." });
+        }
+
+        reply.code(200).send(user);
+    } catch (err) {
+        reply.code(500).send({ message: "Error getting user's details." });
+    }
+}

@@ -12,7 +12,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLoaderData, useNavigate } from "react-router";
+import { NavLink, useLoaderData, useNavigate } from "react-router";
 import { useVote, useVoteOnComment } from "@/hooks/useVote";
 import { toast } from "sonner";
 import { useComment } from "@/hooks/useComment";
@@ -23,6 +23,7 @@ type CommentCardProps = {
   comment_body: string;
   created_at: string;
   user: {
+    id: string;
     first_name: string;
     last_name: string;
     email: string;
@@ -36,13 +37,13 @@ const PostCard = ({ data }: { data: any }) => {
   const { mutate: vote } = useVote(["post"]);
 
   const handlePostVote = (vote_type: number) => {
-    if (data.user_vote === vote_type) {
+    if (data?.user_vote === vote_type) {
       toast("Already voted.");
       return;
     }
 
-    vote({
-      post_id: data.id,
+    vote?.({
+      post_id: data?.id,
       vote_type,
     });
   };
@@ -53,42 +54,42 @@ const PostCard = ({ data }: { data: any }) => {
         <div className="bg-base-300 rounded-3xl shadow w-[3rem] h-[3rem] aspect-square" />
         <div>
           <p>
-            {data.user.first_name} {data.user.last_name}
+            {data?.user?.first_name} {data?.user?.last_name}
           </p>
           <p className="text-base-content/40">
-            {dayjs(data.created_at).format("MMMM DD, YYYY").toString()}
+            {dayjs(data?.created_at).format("MMMM DD, YYYY").toString()}
           </p>
         </div>
       </div>
-      <h1 className="text-4xl font-bold">{data.title}</h1>
+      <h1 className="text-4xl font-bold">{data?.title}</h1>
       <div className="p-4 rounded-3xl bg-base-100 shadow border border-base-200">
         <EditorProvider
-          content={data.post_body}
+          content={data?.post_body || ""}
           extensions={_TIPTAP_EXTENSIONS}
           editable={false}
-        ></EditorProvider>
+        />
       </div>
       <div className="flex flex-row gap-2">
         <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-200">
           <ChevronUp
             className={clsx(
               "cursor-pointer hover:text-green-500",
-              data.user_vote === 1 ? "text-green-600" : ""
+              data?.user_vote === 1 && "text-green-600"
             )}
             onClick={() => handlePostVote(1)}
           />
-          <p className="text-sm">{data.vote_sum}</p>
+          <p className="text-sm">{data?.vote_sum ?? 0}</p>
           <ChevronDown
             className={clsx(
               "cursor-pointer hover:text-red-500",
-              data.user_vote === -1 ? "text-red-600" : ""
+              data?.user_vote === -1 && "text-red-600"
             )}
             onClick={() => handlePostVote(-1)}
           />
         </div>
         <div className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300">
           <MessageCircle />
-          <p>{data.comments.length}</p>
+          <p>{data?.comments?.length ?? 0}</p>
         </div>
       </div>
     </>
@@ -115,13 +116,13 @@ const CommentCard = ({
   });
 
   const handlePostVote = (vote_type: number) => {
-    if (comment.user_vote === vote_type) {
+    if (comment?.user_vote === vote_type) {
       toast("Already voted.");
       return;
     }
 
-    vote({
-      comment_id: comment.id,
+    vote?.({
+      comment_id: comment?.id,
       vote_type,
     });
   };
@@ -129,15 +130,20 @@ const CommentCard = ({
   const handleSubmitReply = async () => {
     if (!text) {
       toast.error("Reply is empty.");
+      return;
     }
 
-    await reply({
-      post_id: post_id,
-      parent_comment_id: comment.id,
-      body: text,
-    });
-    editor?.commands.clearContent();
-    setReplyBoxVisibility(false);
+    try {
+      await reply?.({
+        post_id,
+        parent_comment_id: comment?.id,
+        body: text,
+      });
+      editor?.commands.clearContent();
+      setReplyBoxVisibility(false);
+    } catch (error) {
+      toast.error("Failed to submit reply.");
+    }
   };
 
   return (
@@ -145,17 +151,18 @@ const CommentCard = ({
       <div className="flex flex-row gap-4 items-start">
         <div className="w-[36px] aspect-square rounded-full bg-base-300" />
         <div className="flex flex-col flex-1">
-          <p>
-            {comment.user.first_name} {comment.user.last_name}
-          </p>
+          <NavLink
+            className={"font-bold"}
+            to={`/learner/profile/${comment.user.id}`}
+          >
+            {comment?.user?.first_name} {comment?.user?.last_name}
+          </NavLink>
           <p className="text-base-content/40">
-            {dayjs(comment.created_at)
-              .format("MMMM DD, YYYY / h:mm A")
-              .toString()}
+            {dayjs(comment?.created_at).format("MMMM DD, YYYY / h:mm A")}
           </p>
           <div className="my-2">
             <EditorProvider
-              content={comment.comment_body}
+              content={comment?.comment_body || ""}
               extensions={_TIPTAP_EXTENSIONS}
               editable={false}
             />
@@ -165,15 +172,15 @@ const CommentCard = ({
               <ChevronUp
                 className={clsx(
                   "cursor-pointer hover:text-green-500",
-                  comment.user_vote === 1 ? "text-green-600" : ""
+                  comment?.user_vote === 1 && "text-green-600"
                 )}
                 onClick={() => handlePostVote(1)}
               />
-              <p className="text-sm">{comment.vote_sum}</p>
+              <p className="text-sm">{comment?.vote_sum ?? 0}</p>
               <ChevronDown
                 className={clsx(
                   "cursor-pointer hover:text-red-500",
-                  comment.user_vote === -1 ? "text-red-600" : ""
+                  comment?.user_vote === -1 && "text-red-600"
                 )}
                 onClick={() => handlePostVote(-1)}
               />
@@ -183,14 +190,8 @@ const CommentCard = ({
               className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300"
             >
               <MessageCircle />
-              <p>{comment.replies.length}</p>
+              <p>{comment?.replies?.length ?? 0}</p>
             </button>
-          </div>
-
-          <div className="mt-4 relative">
-            {comment.replies.map((reply) => (
-              <CommentCard comment={reply} post_id={post_id} key={reply.id} />
-            ))}
           </div>
 
           {isReplyBoxVisible && (
@@ -210,6 +211,12 @@ const CommentCard = ({
               </button>
             </div>
           )}
+
+          <div className="mt-4 relative">
+            {comment?.replies?.map((reply) => (
+              <CommentCard comment={reply} post_id={post_id} key={reply.id} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -222,15 +229,16 @@ export default function LearnerPostPage() {
   const navigate = useNavigate();
 
   const { data: postData, isFetched } = useQuery({
-    queryKey: ["post", data.id],
+    queryKey: ["post", data?.id],
     queryFn: async () => {
-      const { data: post } = await _API_INSTANCE.get(`/forum/post/${data.id}`);
-      return post;
+      const response = await _API_INSTANCE.get(`/forum/post/${data?.id}`);
+      return response.data;
     },
     refetchOnWindowFocus: false,
   });
 
   const [html, setHTML] = useState("");
+
   const editor = useEditor({
     editable: true,
     extensions: _TIPTAP_EXTENSIONS,
@@ -241,21 +249,29 @@ export default function LearnerPostPage() {
   });
 
   useEffect(() => {
-    return () => editor?.destroy();
-  }, []);
+    return () => {
+      editor?.destroy();
+    };
+  }, [editor]);
 
   const handleSubmitComment = async () => {
     if (!html) {
       toast.error("Comment is empty.");
+      return;
     }
 
-    await comment({ post_id: postData.id, body: html });
-    editor?.commands.clearContent();
+    try {
+      await comment?.({
+        post_id: postData?.id,
+        body: html,
+      });
+      editor?.commands.clearContent();
+    } catch (error) {
+      toast.error("Failed to submit comment.");
+    }
   };
 
-  if (!isFetched) {
-    return;
-  }
+  if (!isFetched || !postData) return null;
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
@@ -295,8 +311,8 @@ export default function LearnerPostPage() {
         </button>
       </div>
       <div className="flex flex-col gap-2">
-        {postData.comments.map((comment: CommentCardProps) => (
-          <CommentCard comment={comment} key={comment.id} post_id={data.id} />
+        {postData?.comments?.map((comment: CommentCardProps) => (
+          <CommentCard comment={comment} key={comment.id} post_id={data?.id} />
         ))}
       </div>
     </div>

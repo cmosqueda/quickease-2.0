@@ -28,6 +28,7 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
         include: {
             user: {
                 select: {
+                    id: true,
                     first_name: true,
                     last_name: true,
                     email: true,
@@ -87,10 +88,11 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
 
 export async function getPost(post_id: string, user_id: string) {
     const post = await db_client.post.findFirst({
-        where: { id: post_id },
+        where: { id: post_id }, orderBy: { 'created_at': 'desc' },
         include: {
             user: {
                 select: {
+                    id: true,
                     first_name: true,
                     last_name: true,
                     email: true,
@@ -116,6 +118,7 @@ export async function getPost(post_id: string, user_id: string) {
             post_id: true,
             user: {
                 select: {
+                    id: true,
                     first_name: true,
                     last_name: true,
                     email: true,

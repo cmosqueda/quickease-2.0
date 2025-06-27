@@ -71,7 +71,7 @@ export default function AuthRegisterPage() {
         { withCredentials: true }
       );
 
-      if (response.status == 200) {
+      if (response.status == 201) {
         navigate("/learner", { viewTransition: true });
       }
     } catch (err) {

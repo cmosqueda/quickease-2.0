@@ -1,6 +1,5 @@
 import useTheme from "@/hooks/useTheme";
 import clsx from "clsx";
-
 import { darkThemes, lightThemes } from "@/types/themes";
 import {
   BookCheck,
@@ -12,209 +11,158 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router";
 
-export default function LandingPage() {
-  const { setTheme, theme } = useTheme();
+const cardContents = [
+  {
+    icon: NotebookPen,
+    title: "Summarize with AI",
+    description: "Quickly turn long contents into key points.",
+  },
+  {
+    icon: SquareStack,
+    title: "Review with AI flashcards",
+    description: "Reinforce key concepts for better learning.",
+  },
+  {
+    icon: BookCheck,
+    title: "Test with AI quizzes",
+    description: "Challenge your knowledge with tailored questions.",
+  },
+  {
+    icon: Users,
+    title: "Have a question?",
+    description: "Ask the community/users!",
+  },
+];
 
-  const cardContents = [
-    {
-      icon: (
-        <NotebookPen
-          size={36}
-          className="p-1 shrink-0 rounded-lg bg-base-100"
-        />
-      ),
-      title: "Summarize with AI",
-      description: "Quickly turn long contents into key points.",
-    },
-    {
-      icon: (
-        <SquareStack
-          size={36}
-          className="p-1 shrink-0 rounded-lg bg-base-100"
-        />
-      ),
-      title: "Review with AI flashcards",
-      description: "Reinforce key concepts for better learning.",
-    },
-    {
-      icon: (
-        <BookCheck size={36} className="p-1 shrink-0 rounded-lg bg-base-100" />
-      ),
-      title: "Test with AI quizzes",
-      description: "Challenge your knowledge with tailored questions.",
-    },
-    {
-      icon: <Users size={36} className="p-1 shrink-0 rounded-lg bg-base-100" />,
-      title: "Have a question?",
-      description: "Ask the community/users!",
-    },
-  ];
+const NavLinks = () => (
+  <>
+    <NavLink to="/auth/login" viewTransition>
+      <h1>Sign In</h1>
+    </NavLink>
+    <NavLink to="/auth/register" viewTransition>
+      <button className="btn btn-soft">Join now</button>
+    </NavLink>
+  </>
+);
+
+const ThemeGridSection = ({
+  themes,
+  label,
+}: {
+  themes: string[];
+  label: string;
+}) => {
+  const { setTheme } = useTheme();
 
   return (
+    <div className="flex flex-col gap-2">
+      <h1 className="font-bold text-xl">{label}</h1>
+      <div className="rounded-box grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        {themes.map((theme) => (
+          <div
+            key={theme}
+            className="border-base-content/20 hover:border-base-content/40 overflow-hidden rounded-lg border outline-2 outline-offset-2 outline-transparent cursor-pointer"
+            data-act-className="outline-base-content!"
+            data-set-theme={theme}
+            onClick={() => setTheme(theme)}
+          >
+            <div
+              className="bg-base-100 text-base-content font-sans"
+              data-theme={theme}
+            >
+              <div className="grid grid-cols-5 grid-rows-3">
+                <div className="bg-base-200 col-start-1 row-span-2 row-start-1" />
+                <div className="bg-base-300 col-start-1 row-start-3" />
+                <div className="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
+                  <div className="font-bold">{theme}</div>
+                  <div className="flex flex-wrap gap-1">
+                    {["primary", "secondary", "accent", "neutral"].map(
+                      (type) => (
+                        <div
+                          key={type}
+                          className={`bg-${type} flex aspect-square w-5 items-center justify-center rounded lg:w-6`}
+                        >
+                          <div
+                            className={`text-${type}-content text-sm font-bold`}
+                          >
+                            A
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default function LandingPage() {
+  return (
     <>
-      <header className="flex flex-row xl:max-w-7xl justify-between py-4 xl:px-0 px-4 xl:mx-auto bg-base-100 items-center">
+      {/* Header */}
+      <header className="flex flex-row justify-between items-center py-4 xl:px-0 px-4 xl:max-w-7xl xl:mx-auto bg-base-100">
         <h1 className="font-bold text-2xl">QuickEase</h1>
-        <div className="hidden flex-row gap-4 items-center lg:flex">
-          <NavLink to="/auth/login" viewTransition>
-            <h1>Sign In</h1>
-          </NavLink>
-          <NavLink to="/auth/register" viewTransition>
-            <button className="btn btn-soft">Join now</button>
-          </NavLink>
+
+        {/* Desktop nav */}
+        <div className="hidden lg:flex flex-row items-center gap-4">
+          <NavLinks />
           <details
             className={clsx(
-              "dropdown dropdown-end",
-              "hidden lg:grid",
-              "rounded-full p-1.5 shrink-0 border border-base-300 bg-base-100 transition-all delay-0 duration-300 cursor-pointer hover:shadow"
+              "dropdown dropdown-end hidden lg:grid rounded-full p-1.5 shrink-0 border border-base-300 bg-base-100 transition-all duration-300 cursor-pointer hover:shadow"
             )}
           >
             <summary className="list-none">
               <Paintbrush />
             </summary>
-            <ul className="border border-base-300 flex flex-col p-4 gap-8 dropdown-content bg-base-100 rounded-box z-1 w-[52rem] shadow-sm">
-              <div className="flex flex-col gap-2">
-                <h1 className="font-bold text-xl">Dark themes</h1>
-                <div className="rounded-box grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                  {darkThemes.map((theme) => (
-                    <div
-                      className="border-base-content/20 hover:border-base-content/40 overflow-hidden rounded-lg border outline-2 outline-offset-2 outline-transparent"
-                      data-act-className="outline-base-content!"
-                      data-set-theme={theme}
-                      onClick={() => setTheme(theme)}
-                    >
-                      <div
-                        className="bg-base-100 text-base-content w-full cursor-pointer font-sans"
-                        data-theme={theme}
-                      >
-                        <div className="grid grid-cols-5 grid-rows-3">
-                          <div className="bg-base-200 col-start-1 row-span-2 row-start-1"></div>{" "}
-                          <div className="bg-base-300 col-start-1 row-start-3"></div>{" "}
-                          <div className="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
-                            <div className="font-bold">{theme}</div>{" "}
-                            <div className="flex flex-wrap gap-1">
-                              <div className="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                <div className="text-primary-content text-sm font-bold">
-                                  A
-                                </div>
-                              </div>{" "}
-                              <div className="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                <div className="text-secondary-content text-sm font-bold">
-                                  A
-                                </div>
-                              </div>{" "}
-                              <div className="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                <div className="text-accent-content text-sm font-bold">
-                                  A
-                                </div>
-                              </div>{" "}
-                              <div className="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                <div className="text-neutral-content text-sm font-bold">
-                                  A
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <h1 className="font-bold text-xl">Light themes</h1>
-                <div className="rounded-box grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                  {lightThemes.map((theme) => (
-                    <div
-                      className="border-base-content/20 hover:border-base-content/40 overflow-hidden rounded-lg border outline-2 outline-offset-2 outline-transparent"
-                      data-act-className="outline-base-content!"
-                      data-set-theme={theme}
-                      onClick={() => setTheme(theme)}
-                    >
-                      <div
-                        className="bg-base-100 text-base-content w-full cursor-pointer font-sans"
-                        data-theme={theme}
-                      >
-                        <div className="grid grid-cols-5 grid-rows-3">
-                          <div className="bg-base-200 col-start-1 row-span-2 row-start-1"></div>{" "}
-                          <div className="bg-base-300 col-start-1 row-start-3"></div>{" "}
-                          <div className="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
-                            <div className="font-bold">{theme}</div>{" "}
-                            <div className="flex flex-wrap gap-1">
-                              <div className="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                <div className="text-primary-content text-sm font-bold">
-                                  A
-                                </div>
-                              </div>{" "}
-                              <div className="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                <div className="text-secondary-content text-sm font-bold">
-                                  A
-                                </div>
-                              </div>{" "}
-                              <div className="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                <div className="text-accent-content text-sm font-bold">
-                                  A
-                                </div>
-                              </div>{" "}
-                              <div className="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                <div className="text-neutral-content text-sm font-bold">
-                                  A
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <ul className="dropdown-content border border-base-300 bg-base-100 p-4 rounded-box z-10 w-[52rem] shadow-sm flex flex-col gap-8">
+              <ThemeGridSection themes={darkThemes} label="Dark themes" />
+              <ThemeGridSection themes={lightThemes} label="Light themes" />
             </ul>
           </details>
         </div>
+
+        {/* Mobile nav */}
         <details className="dropdown lg:hidden dropdown-end">
           <summary className="btn m-1">
             <Menu />
           </summary>
-          <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm">
             <li>
-              <NavLink to="/auth/login" viewTransition>
-                Login
-              </NavLink>
+              <NavLink to="/auth/login">Login</NavLink>
             </li>
             <li>
-              <NavLink to="/auth/register" viewTransition>
-                Register
-              </NavLink>
+              <NavLink to="/auth/register">Register</NavLink>
             </li>
           </ul>
         </details>
       </header>
-      <div className="flex flex-col lg:grid lg:grid-cols-2 py-[8rem] xl:min-h-[85vh] xl:max-w-7xl lg:p-0 p-4 mx-auto items-center">
+
+      {/* Hero Section */}
+      <section className="flex flex-col lg:grid lg:grid-cols-2 py-[8rem] xl:min-h-[85vh] xl:max-w-7xl lg:p-0 p-4 mx-auto items-center">
         <div className="flex flex-col gap-2 items-center lg:items-start">
           <p className="tracking-widest">SUPERCHARGE YOUR LEARNING.</p>
-          <h1 className="text-7xl font-black text-center lg:text-start">
-            Learning has never been more easier with{" "}
+          <h1 className="text-6xl lg:text-7xl font-black text-center lg:text-start">
+            Learning has never been easier with{" "}
             <span className="text-accent">QuickEase.</span>
           </h1>
           <p className="text-xl my-4 text-base-content/75 text-center lg:text-start">
-            QuickEase is a study assistant that helps you on your study,
-            generate flashcards/quizzes.
+            QuickEase is a study assistant that helps you generate flashcards
+            and quizzes effortlessly.
           </p>
           <div className="flex flex-row gap-4 items-center">
-            <NavLink
-              className="btn btn-xl btn-accent"
-              to="/auth/register"
-              viewTransition
-            >
-              <p>Join now</p>
+            <NavLink className="btn btn-xl btn-accent" to="/auth/register">
+              Join now
             </NavLink>
             <NavLink
               className="btn btn-xl btn-neutral btn-ghost"
               to="/auth/login"
-              viewTransition
             >
-              <p>Sign in</p>
+              Sign in
             </NavLink>
           </div>
         </div>
@@ -222,23 +170,34 @@ export default function LandingPage() {
           className="w-full lg:block hidden"
           style={{ animation: "floatAnimation 4s ease-in-out infinite" }}
           src="/assets/images/mascot.png"
+          alt="Mascot"
         />
-      </div>
-      <div className="flex flex-col gap-4 xl:max-w-7xl mx-auto">
+      </section>
+
+      {/* Features Section */}
+      <section className="flex flex-col gap-4 xl:max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-center">Features</h1>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {cardContents.map((card) => (
-            <div className="bg-base-100 p-4 rounded-xl flex flex-col gap-2">
+          {cardContents.map(({ icon: Icon, title, description }) => (
+            <div
+              key={title}
+              className="bg-base-100 p-4 rounded-xl flex flex-col gap-2"
+            >
               <div className="flex flex-col">
-                {card.icon}
-                <h1 className="font-bold text-2xl">{card.title}</h1>
+                <Icon
+                  size={36}
+                  className="p-1 shrink-0 rounded-lg bg-base-100"
+                />
+                <h1 className="font-bold text-2xl">{title}</h1>
               </div>
-              <p>{card.description}</p>
+              <p>{description}</p>
             </div>
           ))}
         </div>
-      </div>
-      <div className="flex flex-col gap-4 xl:max-w-7xl mx-auto my-12">
+      </section>
+
+      {/* Download Section */}
+      <section className="flex flex-col gap-4 xl:max-w-7xl mx-auto my-12">
         <h1 className="text-5xl font-bold text-center">Downloads</h1>
         <p className="text-center text-xl lg:p-0 px-4">
           Choose the correct download for your platform. For details, see the{" "}
@@ -259,7 +218,7 @@ export default function LandingPage() {
             <h1>Scan the QR code below.</h1>
           </div>
         </div>
-      </div>
+      </section>
     </>
   );
 }

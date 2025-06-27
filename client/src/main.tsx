@@ -40,12 +40,16 @@ import AdminManageReportsPage from "./routes/(admin)/(dashboard)/AdminManageRepo
 import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
 
 import _API_INSTANCE from "./utils/axios";
-import useAuth from "./hooks/useAuth";
 
 import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { toast } from "sonner";
+import {
+  checkAuthAndRedirect,
+  loadLearnerResources,
+  getGeneratedContent,
+} from "./utils/router";
 
 import "../global.css";
 
@@ -55,442 +59,219 @@ const router = createBrowserRouter([
   {
     path: "/",
     Component: LandingPage,
-    loader: async () => {
-      try {
-        const response = await _API_INSTANCE.get("/users", {
-          withCredentials: true,
-        });
-
-        const { status, data } = response;
-
-        if (status === 200 && data && typeof data.is_admin === "boolean") {
-          const auth = useAuth.getState();
-          auth.setUser(data);
-
-          if (data.is_admin) {
-            return redirect("/admin");
-          } else {
-            return redirect("/learner");
-          }
-        } else {
-          console.warn("Unexpected response format or status", response);
-          return null;
-        }
-      } catch (err) {
-        if (err?.response?.status === 401) {
-          return null;
-        }
-
-        return null;
-      }
-    },
+    loader: checkAuthAndRedirect,
   },
-  // Auth
   {
     path: "auth",
     Component: AuthLayout,
     children: [
-      {
-        path: "login",
-        Component: AuthLoginPage,
-        loader: async () => {
-          try {
-            const response = await _API_INSTANCE.get("/users", {
-              withCredentials: true,
-            });
-
-            const { status, data } = response;
-
-            if (status === 200 && data && typeof data.is_admin === "boolean") {
-              const auth = useAuth.getState();
-              auth.setUser(data);
-
-              if (data.is_admin) {
-                return redirect("/admin");
-              } else {
-                return redirect("/learner");
-              }
-            } else {
-              console.warn("Unexpected response format or status", response);
-              return null;
-            }
-          } catch (err) {
-            if (err?.response?.status === 401) {
-              return null;
-            }
-
-            return null;
-          }
-        },
-      },
+      { path: "login", Component: AuthLoginPage, loader: checkAuthAndRedirect },
       {
         path: "register",
         Component: AuthRegisterPage,
-        loader: async () => {
-          try {
-            const response = await _API_INSTANCE.get("/users", {
-              withCredentials: true,
-            });
-
-            const { status, data } = response;
-
-            if (status === 200 && data && typeof data.is_admin === "boolean") {
-              const auth = useAuth.getState();
-              auth.setUser(data);
-
-              if (data.is_admin) {
-                return redirect("/admin");
-              } else {
-                return redirect("/learner");
-              }
-            } else {
-              console.warn("Unexpected response format or status", response);
-              return null;
-            }
-          } catch (err) {
-            if (err?.response?.status === 401) {
-              return null;
-            }
-
-            return null;
-          }
-        },
+        loader: checkAuthAndRedirect,
       },
     ],
   },
-  // Auth
-
-  // Learner
   {
     path: "learner",
     Component: LearnerLayout,
-    loader: async () => {
-      try {
-        const { status, data } = await _API_INSTANCE.get("/users", {
-          withCredentials: true,
-        });
-        if (status == 200) {
-          const auth = useAuth.getState();
-          auth.setUser(data);
-
-          const notes = await _API_INSTANCE.get("/notes");
-          const flashcard = await _API_INSTANCE.get("/flashcard");
-          const quiz = await _API_INSTANCE.get("/quiz");
-
-          return {
-            notes: notes.data,
-            flashcards: flashcard.data,
-            quizzes: quiz.data,
-          };
-        }
-      } catch (err) {
-        return redirect("/");
-      }
-    },
+    loader: loadLearnerResources,
     children: [
+      { index: true, Component: LearnerForumPage },
       {
-        Component: LearnerForumPage,
-        index: true,
-      },
-      {
-        Component: LearnerLibraryPage,
         path: "library",
+        Component: LearnerLibraryPage,
+        loader: loadLearnerResources,
+      },
+      { path: "summarize", Component: LearnerSummarizePage },
+      { path: "profile", Component: LearnerProfilePage },
+      {
+        path: "profile/:id",
+        Component: LearnerProfilePage,
         loader: async ({ params }) => {
-          const notes = await _API_INSTANCE.get("/notes");
-          const flashcard = await _API_INSTANCE.get("/flashcard");
-          const quiz = await _API_INSTANCE.get("/quiz");
+          try {
+            const { data } = await _API_INSTANCE.get(`/users/view/${params.id}`);
 
-          return {
-            notes: notes.data,
-            flashcards: flashcard.data,
-            quizzes: quiz.data,
-          };
+            return data;
+          } catch (err) {
+            console.log(err)
+            toast.error("Error viewing profile.");
+            return redirect("/");
+          }
         },
       },
       {
-        Component: LearnerSummarizePage,
-        path: "summarize",
-      },
-      {
-        Component: LearnerProfilePage,
-        path: "profile",
-      },
-      {
-        Component: LearnerProfilePage,
-        loader: async () => {},
-        path: "profile/:id",
-      },
-      {
+        path: "post/:id",
         Component: LearnerPostPage,
         loader: async ({ params }) => {
           try {
             const { data } = await _API_INSTANCE.get(
               `/forum/post/${params.id}`
             );
-
             return { id: data.id };
-          } catch (err) {
+          } catch {
             return redirect("/learner");
           }
         },
-        path: "post/:id",
       },
       {
         path: "flashcards",
         children: [
+          { index: true, Component: LearnerFlashcardsPage },
           {
-            Component: LearnerFlashcardsPage,
-            loader: async () => {},
-            index: true,
-          },
-          {
+            path: ":id",
             Component: LearnerFlashcardPage,
             loader: async ({ params }) => {
               try {
                 const { data } = await _API_INSTANCE.get(
                   `/flashcard/${params.id}`
                 );
-
                 return data;
-              } catch (err) {
+              } catch {
                 return redirect("/learner/library?tab=flashcard");
               }
             },
-            path: ":id",
           },
           {
+            path: ":id/edit",
             Component: LearnerEditFlashcardPage,
             loader: async ({ params }) => {
               try {
                 const { data } = await _API_INSTANCE.get(
                   `/flashcard/${params.id}`
                 );
-
                 return data;
-              } catch (err) {
+              } catch {
                 return redirect("/learner/library?tab=flashcard");
               }
             },
-            path: ":id/edit",
           },
           {
-            Component: LearnerAIFlashcardPage,
-            loader: async ({ params }) => {
-              const generatedContent = localStorage.getItem(
-                "QUICKEASE_GENERATED_CONTENT"
-              );
-
-              if (generatedContent) {
-                const parsed = JSON.parse(generatedContent);
-                const cards = JSON.parse(parsed.content.content);
-
-                return {
-                  title: parsed.content.title,
-                  content: cards,
-                };
-              } else {
-                return redirect(-1);
-              }
-            },
             path: "ai",
+            Component: LearnerAIFlashcardPage,
+            loader: () => getGeneratedContent() ?? redirect(-1),
           },
           {
-            Component: LearnerEditAIFlashcardPage,
-            loader: async ({ params }) => {
-              const generatedContent = localStorage.getItem(
-                "QUICKEASE_GENERATED_CONTENT"
-              );
-
-              if (generatedContent) {
-                const parsed = JSON.parse(generatedContent);
-                const cards = JSON.parse(parsed.content.content);
-
-                return {
-                  title: parsed.content.title,
-                  content: cards,
-                };
-              } else {
-                return redirect(-1);
-              }
-            },
             path: "ai/edit",
+            Component: LearnerEditAIFlashcardPage,
+            loader: () => getGeneratedContent() ?? redirect(-1),
           },
-          {
-            Component: LearnerCreateFlashcardPage,
-            path: "create",
-          },
+          { path: "create", Component: LearnerCreateFlashcardPage },
         ],
       },
       {
         path: "quizzes",
         children: [
-          { Component: LearnerQuizzes, index: true, loader: async () => {} },
+          { index: true, Component: LearnerQuizzes },
           {
-            Component: LearnerQuizPage,
             path: ":id",
+            Component: LearnerQuizPage,
             loader: async ({ params }) => {
               try {
                 const { data } = await _API_INSTANCE.get(`/quiz/${params.id}`);
-
                 return data;
-              } catch (err) {
+              } catch {
                 toast.error("Error getting quiz data.");
                 return redirect("/learner/library?tab=quizzes");
               }
             },
           },
           {
-            Component: LearnerAnswerQuizPage,
             path: ":id/answer",
-            loader: async ({ params }) => {
+            Component: LearnerAnswerQuizPage,
+            loader: ({ params }) => {
               try {
-                const string = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
-                const parsed = JSON.parse(string!);
-
-                if (parsed.id == params.id) {
-                  return parsed;
-                } else {
-                  toast.error("Invalid quiz ID.");
-                  return redirect("/learner/library?tab=quizzes");
-                }
-              } catch (err) {
-                toast.error("Error getting quiz data.");
+                const raw = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
+                const parsed = JSON.parse(raw!);
+                return parsed?.id == params.id
+                  ? parsed
+                  : redirect("/learner/library?tab=quizzes");
+              } catch {
                 return redirect("/learner/library?tab=quizzes");
               }
             },
           },
           {
-            Component: LearnerEditQuizPage,
             path: ":id/edit",
-            loader: async ({ params }) => {
+            Component: LearnerEditQuizPage,
+            loader: ({ params }) => {
               try {
-                const string = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
-                const parsed = JSON.parse(string!);
-
-                if (parsed.id == params.id) {
-                  return parsed;
-                } else {
-                  toast.error("Invalid quiz ID.");
-                  return redirect("/learner/library?tab=quizzes");
-                }
-              } catch (err) {
-                toast.error("Error getting quiz data.");
+                const raw = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
+                const parsed = JSON.parse(raw!);
+                return parsed?.id == params.id
+                  ? parsed
+                  : redirect("/learner/library?tab=quizzes");
+              } catch {
                 return redirect("/learner/library?tab=quizzes");
               }
             },
           },
           {
-            Component: LearnerQuizAttemptPage,
             path: ":id/attempt/:attempt_id",
+            Component: LearnerQuizAttemptPage,
             loader: async ({ params }) => {
               try {
                 const { data } = await _API_INSTANCE.get(
                   `/quiz/attempt/${params.attempt_id}`
                 );
-
                 return data;
-              } catch (err) {
-                toast.error("Error getting quiz data.");
+              } catch {
                 return redirect("/learner/library?tab=quizzes");
               }
             },
           },
+          { path: "create", Component: LearnerCreateQuizPage },
           {
-            Component: LearnerCreateQuizPage,
-            path: "create",
-          },
-          {
-            Component: LearnerAIEditQuizPage,
-            loader: async ({ params }) => {
-              const generatedContent = localStorage.getItem(
-                "QUICKEASE_GENERATED_CONTENT"
-              );
-
-              if (generatedContent) {
-                const parsed = JSON.parse(generatedContent);
-
-                return {
-                  title: parsed.content.title,
-                  quiz_content: JSON.parse(parsed.content.content),
-                };
-              } else {
-                return redirect(-1);
-              }
-            },
             path: "ai",
+            Component: LearnerAIEditQuizPage,
+            loader: () => {
+              const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
+              if (!raw) return redirect(-1);
+              const parsed = JSON.parse(raw);
+              return {
+                title: parsed.content.title,
+                quiz_content: JSON.parse(parsed.content.content),
+              };
+            },
           },
         ],
       },
-      {
-        Component: LearnerSettingsPage,
-        path: "settings",
-      },
-      {
-        Component: LearnerTimerPage,
-        path: "timer",
-      },
+      { path: "settings", Component: LearnerSettingsPage },
+      { path: "timer", Component: LearnerTimerPage },
       {
         path: "note/:id",
+        Component: LearnerNotePage,
         loader: async ({ params }) => {
           try {
             const { data } = await _API_INSTANCE.get(`/notes/${params.id}`);
-
             return data;
-          } catch (err) {
+          } catch {
             return redirect("/learner/library?tab=notes");
           }
         },
-        Component: LearnerNotePage,
       },
-      {
-        path: "note/create",
-        Component: LearnerCreateNotePage,
-      },
+      { path: "note/create", Component: LearnerCreateNotePage },
       {
         path: "note/create/ai",
-        loader: async () => {
-          const generatedContent = localStorage.getItem(
-            "QUICKEASE_GENERATED_CONTENT"
-          );
-
-          if (generatedContent) {
-            return JSON.parse(generatedContent);
-          } else {
-            return "";
-          }
-        },
         Component: LearnerAICreateNotePage,
+        loader: () => {
+          const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
+          return raw ? JSON.parse(raw) : "";
+        },
       },
     ],
   },
-  // Learner
-
-  // Admin
   {
-    Component: AdminLayout,
     path: "admin",
+    Component: AdminLayout,
     children: [
-      {
-        index: true,
-        Component: AdminManageUsersPage,
-      },
-      {
-        path: "reports",
-        Component: AdminManageReportsPage,
-      },
-      {
-        path: "user/:userId",
-        Component: AdminManageUserPage,
-        loader: async () => {},
-      },
-      {
-        path: "report/:reportId",
-        Component: AdminManagePostPage,
-        loader: async () => {},
-      },
+      { index: true, Component: AdminManageUsersPage },
+      { path: "reports", Component: AdminManageReportsPage },
+      { path: "user/:userId", Component: AdminManageUserPage },
+      { path: "report/:reportId", Component: AdminManagePostPage },
     ],
   },
-  // Admin
 ]);
 
 createRoot(document.getElementById("root")!).render(
