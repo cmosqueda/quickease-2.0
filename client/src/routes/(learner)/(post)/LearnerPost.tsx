@@ -27,6 +27,7 @@ type CommentCardProps = {
     last_name: string;
     email: string;
   };
+  replies: CommentCardProps[];
   user_vote: number;
   vote_sum: number;
 };
@@ -94,8 +95,24 @@ const PostCard = ({ data }: { data: any }) => {
   );
 };
 
-const CommentCard = ({ comment }: { comment: CommentCardProps }) => {
+const CommentCard = ({
+  comment,
+  post_id,
+}: {
+  comment: CommentCardProps;
+  post_id: string;
+}) => {
   const { mutate: vote } = useVoteOnComment();
+  const { mutate: reply } = useComment();
+  const [isReplyBoxVisible, setReplyBoxVisibility] = useState(false);
+  const [text, setText] = useState("");
+
+  const editor = useEditor({
+    editable: true,
+    extensions: _TIPTAP_EXTENSIONS,
+    autofocus: true,
+    onUpdate: (e) => setText(e.editor.getHTML()),
+  });
 
   const handlePostVote = (vote_type: number) => {
     if (comment.user_vote === vote_type) {
@@ -109,47 +126,90 @@ const CommentCard = ({ comment }: { comment: CommentCardProps }) => {
     });
   };
 
+  const handleSubmitReply = async () => {
+    if (!text) {
+      toast.error("Reply is empty.");
+    }
+
+    await reply({
+      post_id: post_id,
+      parent_comment_id: comment.id,
+      body: text,
+    });
+    editor?.commands.clearContent();
+    setReplyBoxVisibility(false);
+  };
+
   return (
-    <div className="flex flex-row gap-4 items-start">
-      <div className="w-[36px] aspect-square rounded-full bg-base-300" />
-      <div className="flex flex-col">
-        <p>
-          {comment.user.first_name} {comment.user.last_name}
-        </p>
-        <p className="text-base-content/40">
-          {dayjs(comment.created_at)
-            .format("MMMM DD, YYYY / h:mm A")
-            .toString()}
-        </p>
-        <div className="my-2">
-          <EditorProvider
-            content={comment.comment_body}
-            extensions={_TIPTAP_EXTENSIONS}
-            editable={false}
-          />
-        </div>
-        <div className="flex flex-row gap-2">
-          <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-200">
-            <ChevronUp
-              className={clsx(
-                "cursor-pointer hover:text-green-500",
-                comment.user_vote === 1 ? "text-green-600" : ""
-              )}
-              onClick={() => handlePostVote(1)}
-            />
-            <p className="text-sm">{comment.vote_sum}</p>
-            <ChevronDown
-              className={clsx(
-                "cursor-pointer hover:text-red-500",
-                comment.user_vote === -1 ? "text-red-600" : ""
-              )}
-              onClick={() => handlePostVote(-1)}
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-row gap-4 items-start">
+        <div className="w-[36px] aspect-square rounded-full bg-base-300" />
+        <div className="flex flex-col flex-1">
+          <p>
+            {comment.user.first_name} {comment.user.last_name}
+          </p>
+          <p className="text-base-content/40">
+            {dayjs(comment.created_at)
+              .format("MMMM DD, YYYY / h:mm A")
+              .toString()}
+          </p>
+          <div className="my-2">
+            <EditorProvider
+              content={comment.comment_body}
+              extensions={_TIPTAP_EXTENSIONS}
+              editable={false}
             />
           </div>
-          <div className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300">
-            <MessageCircle />
-            <p>{comment.replies.length}</p>
+          <div className="flex flex-row gap-2">
+            <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-200">
+              <ChevronUp
+                className={clsx(
+                  "cursor-pointer hover:text-green-500",
+                  comment.user_vote === 1 ? "text-green-600" : ""
+                )}
+                onClick={() => handlePostVote(1)}
+              />
+              <p className="text-sm">{comment.vote_sum}</p>
+              <ChevronDown
+                className={clsx(
+                  "cursor-pointer hover:text-red-500",
+                  comment.user_vote === -1 ? "text-red-600" : ""
+                )}
+                onClick={() => handlePostVote(-1)}
+              />
+            </div>
+            <button
+              onClick={() => setReplyBoxVisibility((prev) => !prev)}
+              className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300"
+            >
+              <MessageCircle />
+              <p>{comment.replies.length}</p>
+            </button>
           </div>
+
+          <div className="mt-4 relative">
+            {comment.replies.map((reply) => (
+              <CommentCard comment={reply} post_id={post_id} key={reply.id} />
+            ))}
+          </div>
+
+          {isReplyBoxVisible && (
+            <div className="mt-4 relative">
+              <EditorContent
+                editor={editor}
+                className={clsx(
+                  "prose bg-base-100 rounded-xl p-4 border focus:outline-none outline-none border-transparent focus:border-transparent focus:ring-0"
+                )}
+                placeholder="Comment"
+              />
+              <button
+                className="btn btn-success w-fit self-end absolute right-2 bottom-2"
+                onClick={handleSubmitReply}
+              >
+                <p>Comment</p>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -235,22 +295,9 @@ export default function LearnerPostPage() {
         </button>
       </div>
       <div className="flex flex-col gap-2">
-        {postData.comments.map(
-          (comment: {
-            id: string;
-            comment_body: string;
-            created_at: string;
-            user: {
-              first_name: string;
-              last_name: string;
-              email: string;
-            };
-            user_vote: number;
-            vote_sum: number;
-          }) => (
-            <CommentCard comment={comment} key={comment.id} />
-          )
-        )}
+        {postData.comments.map((comment: CommentCardProps) => (
+          <CommentCard comment={comment} key={comment.id} post_id={data.id} />
+        ))}
       </div>
     </div>
   );

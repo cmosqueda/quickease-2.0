@@ -1,5 +1,30 @@
 import { JWT } from '@fastify/jwt'
 
+// for building comment tree
+export type FlatComment = {
+  id: string;
+  comment_body: string;
+  created_at: Date;
+  parent_comment_id: string | null;
+  post_id: string;
+  user: {
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
+  votes: {
+    vote_type: number;
+    user_id: string;
+  }[];
+};
+
+export type NestedComment = FlatComment & {
+  replies: NestedComment[];
+  vote_sum: number;
+  user_vote: number;
+};
+// for building comment tree
+
 declare module '@fastify/jwt' {
   interface FastifyJWT {
     payload: {

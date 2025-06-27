@@ -1,6 +1,8 @@
 import db_client from "../../utils/client"
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc';
+import { FlatComment, NestedComment } from "../../utils/types";
+import { buildCommentTree } from "../../utils/tree";
 
 export async function getUserPosts(user_id: string) {
     const posts = await db_client.post.findMany({
@@ -98,35 +100,37 @@ export async function getPost(post_id: string, user_id: string) {
                 where: { user_id },
                 select: { vote_type: true },
             },
-            comments: {
-                orderBy: { created_at: "desc" },
+        },
+    });
+
+    if (!post) return null;
+
+    const flatComments = await db_client.comment.findMany({
+        where: { post_id },
+        orderBy: { created_at: "asc" },
+        select: {
+            id: true,
+            comment_body: true,
+            created_at: true,
+            parent_comment_id: true,
+            post_id: true,
+            user: {
                 select: {
-                    id: true,
-                    comment_body: true,
-                    created_at: true,
-                    user: {
-                        select: {
-                            first_name: true,
-                            last_name: true,
-                            email: true,
-                        },
-                    },
-                    votes: {
-                        select: {
-                            vote_type: true,
-                            user_id: true,
-                        },
-                    },
-                    replies: true,
-                    _count: {
-                        select: { replies: true },
-                    },
+                    first_name: true,
+                    last_name: true,
+                    email: true,
+                },
+            },
+            votes: {
+                select: {
+                    vote_type: true,
+                    user_id: true,
                 },
             },
         },
     });
 
-    if (!post) return null;
+    const nestedComments = buildCommentTree(flatComments, user_id);
 
     const [upvotes, downvotes] = await Promise.all([
         db_client.postVote.count({
@@ -140,24 +144,12 @@ export async function getPost(post_id: string, user_id: string) {
     const vote_sum = upvotes - downvotes;
     const user_vote = post.votes[0]?.vote_type ?? 0;
 
-    // Add vote_sum to each comment
-    const comments_with_vote_sum = post.comments.map((comment) => {
-        const vote_sum = comment.votes.reduce((sum, vote) => sum + vote.vote_type, 0);
-        const user_vote = comment.votes.find((v) => v.user_id === user_id)?.vote_type ?? 0;
-
-        return {
-            ...comment,
-            vote_sum,
-            user_vote,
-        };
-    });
-
     return {
         ...post,
         vote_sum,
         user_vote,
         vote_summary: { upvotes, downvotes },
-        comments: comments_with_vote_sum,
+        comments: nestedComments,
     };
 }
 
