@@ -40,7 +40,10 @@ const GenerateFromText = ({
 
       if (status == 200) {
         setGeneratedContent(data);
-        localStorage.setItem("QUICKEASE_GENERATED_CONTENT", JSON.stringify(data));
+        localStorage.setItem(
+          "QUICKEASE_GENERATED_CONTENT",
+          JSON.stringify(data)
+        );
         document.getElementById("generate-summary-modal-global").close();
         navigate("/learner/note/create/ai", { viewTransition: true });
       }
@@ -61,7 +64,11 @@ const GenerateFromText = ({
         onChange={(e) => setText(e.target.value)}
         value={text}
       />
-      <button className="btn btn-soft btn-success w-fit self-end" disabled={isGenerating} onClick={handleGenerate}>
+      <button
+        className="btn btn-soft btn-success w-fit self-end"
+        disabled={isGenerating}
+        onClick={handleGenerate}
+      >
         <h1>Summarize</h1>
         <ArrowRight />
       </button>
@@ -108,9 +115,12 @@ export default function GenerateSummaryModal() {
               />
             </svg>
             <p className="mb-2 text-sm text-base-content">
-              <span className="font-semibold">Click to upload</span> or drag and drop
+              <span className="font-semibold">Click to upload</span> or drag and
+              drop
             </p>
-            <p className="text-xs text-base-content/40">DOCX, DOC, PDF, ODF (max 5MB)</p>
+            <p className="text-xs text-base-content/40">
+              DOCX, DOC, PDF, ODF (max 5MB)
+            </p>
           </div>
           <input
             id="dropzone-file"
@@ -148,11 +158,19 @@ export default function GenerateSummaryModal() {
               />
             </svg>
             <p className="mb-2 text-sm text-base-content">
-              <span className="font-semibold">Click to upload</span> or drag and drop
+              <span className="font-semibold">Click to upload</span> or drag and
+              drop
             </p>
-            <p className="text-xs text-base-content/40">PNG, JPG, JPEG (max 5MB)</p>
+            <p className="text-xs text-base-content/40">
+              PNG, JPG, JPEG (max 5MB)
+            </p>
           </div>
-          <input id="dropzone-file" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" />
+          <input
+            id="dropzone-file"
+            type="file"
+            className="hidden"
+            accept="image/png, image/jpg, image/jpeg"
+          />
         </label>
       </div>
       <button className="btn btn-soft btn-success w-fit self-end">
@@ -170,16 +188,23 @@ export default function GenerateSummaryModal() {
             <div className="flex flex-row gap-4 items-center">
               <X
                 onClick={() => {
-                  document.getElementById("generate-summary-modal-global").close();
+                  document
+                    .getElementById("generate-summary-modal-global")
+                    .close();
                 }}
                 className="cursor-pointer"
               />
-              <h1 className="font-bold text-3xl lg:text-4xl">Generate summary</h1>
+              <h1 className="font-bold text-3xl lg:text-4xl">
+                Generate summary
+              </h1>
             </div>
             <div role="tablist" className="tabs tabs-box gap-4">
               <a
                 role="tab"
-                className={clsx("flex flex-row gap-4 tab grow lg:grow-0", index == 0 ? "tab-active" : null)}
+                className={clsx(
+                  "flex flex-row gap-4 tab grow lg:grow-0",
+                  index == 0 ? "tab-active" : null
+                )}
                 onClick={() => setIndex(0)}
               >
                 <Text />
@@ -187,7 +212,10 @@ export default function GenerateSummaryModal() {
               </a>
               <a
                 role="tab"
-                className={clsx("flex flex-row gap-4 tab grow lg:grow-0", index == 1 ? "tab-active" : null)}
+                className={clsx(
+                  "flex flex-row gap-4 tab grow lg:grow-0",
+                  index == 1 ? "tab-active" : null
+                )}
                 onClick={() => setIndex(1)}
               >
                 <Paperclip />
@@ -195,7 +223,10 @@ export default function GenerateSummaryModal() {
               </a>
               <a
                 role="tab"
-                className={clsx("flex flex-row gap-4 tab grow lg:flex", index == 2 ? "tab-active" : null)}
+                className={clsx(
+                  "flex flex-row gap-4 tab grow lg:flex",
+                  index == 2 ? "tab-active" : null
+                )}
                 onClick={() => setIndex(2)}
               >
                 <Image />
