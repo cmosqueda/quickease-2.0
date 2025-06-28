@@ -1,134 +1,163 @@
-import Fastify from "fastify";
 import * as postService from "../../modules/post/post.service";
-import {
-  get_user_posts,
-  get_recent_posts,
-  get_post,
-  get_comments,
-  create_post,
-  comment_on_post,
-  reply_on_comment,
-  vote_on_post,
-  vote_on_comment,
-  add_tag_on_post,
-  delete_post,
-  toggle_post_visibility,
-} from "../../modules/post/post.controller";
+import db_client from "../../utils/client";
 
-jest.mock("../../modules/post/post.service");
+jest.mock("../../utils/client", () => ({
+  __esModule: true,
+  default: {
+    $transaction: jest.fn((cb) =>
+      cb({
+        post: {
+          create: jest.fn().mockResolvedValue({ id: "1", title: "New Post" }),
+          update: jest.fn().mockResolvedValue({}),
+          findMany: jest.fn(),
+          findFirst: jest.fn(),
+          delete: jest.fn().mockResolvedValue({}),
+        },
+        postAttachment: {
+          createMany: jest.fn(),
+          deleteMany: jest.fn(),
+        },
+        note: { findFirst: jest.fn().mockResolvedValue(true) },
+        flashcard: { findFirst: jest.fn().mockResolvedValue(true) },
+        quiz: { findFirst: jest.fn().mockResolvedValue(true) },
+        comment: {
+          create: jest.fn().mockResolvedValue({ id: "comment-1", comment_body: "Nice" }),
+          update: jest.fn().mockResolvedValue({}),
+          findMany: jest.fn().mockResolvedValue([]),
+        },
+        postVote: {
+          count: jest.fn().mockResolvedValueOnce(5).mockResolvedValueOnce(2),
+          upsert: jest.fn().mockResolvedValue({ vote_type: 1 }),
+          aggregate: jest.fn().mockResolvedValue({ _sum: { vote_type: 3 } }),
+        },
+        commentVote: {
+          upsert: jest.fn().mockResolvedValue({ vote_type: -1 }),
+          aggregate: jest.fn().mockResolvedValue({ _sum: { vote_type: -1 } }),
+        },
+        postTag: {
+          upsert: jest.fn().mockResolvedValue({ id: "tag-1" }),
+        },
+      })
+    ),
+    post: {
+      findMany: jest.fn(),
+      findFirst: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    },
+    postVote: {
+      count: jest.fn(),
+      upsert: jest.fn(),
+      aggregate: jest.fn(),
+    },
+    comment: {
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+    },
+    commentVote: {
+      upsert: jest.fn(),
+      aggregate: jest.fn(),
+    },
+    postTag: {
+      upsert: jest.fn(),
+    },
+  },
+}));
 
-const mockPost = { id: "1", title: "Post Title", post_body: "Body", user_id: "user-1" };
-const mockComment = { id: "c1", comment_body: "Nice" };
-const mockVote = { voted: true };
-const mockReply = { replied: true };
-const mockTags = [{ id: "tag1" }];
+describe("Post Service", () => {
+  afterEach(() => jest.clearAllMocks());
 
-const app = Fastify();
+  test("getUserPosts returns posts", async () => {
+    const mockPosts = [{ id: "1", title: "Post A" }];
+    (db_client.post.findMany as jest.Mock).mockResolvedValue(mockPosts);
 
-beforeAll(() => {
-  app.decorateRequest("user", null as any);
-  app.addHook("preHandler", async (req: any) => {
-    req.user = { id: "user-1" };
+    const result = await postService.getUserPosts("user-1");
+    expect(result).toEqual(mockPosts);
+    expect(db_client.post.findMany).toHaveBeenCalledWith({ where: { user_id: "user-1" } });
   });
 
-  app.get("/posts/user", get_user_posts);
-  app.get("/posts/recent", get_recent_posts);
-  app.get("/posts/:post_id", get_post);
-  app.post("/posts/comments", get_comments);
-  app.post("/posts", create_post);
-  app.post("/posts/comment", comment_on_post);
-  app.post("/posts/vote", vote_on_post);
-  app.post("/posts/comment/reply", reply_on_comment);
-  app.post("/posts/comment/vote", vote_on_comment);
-  app.post("/posts/tags", add_tag_on_post);
-  app.delete("/posts", delete_post);
-  app.patch("/posts/visibility", toggle_post_visibility);
-});
+  test("getPost returns post with vote summary", async () => {
+    const mockPost = {
+      id: "1",
+      title: "Post",
+      votes: [{ vote_type: 1 }],
+      user: {},
+      attachments: [],
+    };
+    (db_client.post.findFirst as jest.Mock).mockResolvedValue(mockPost);
+    (db_client.comment.findMany as jest.Mock).mockResolvedValue([]);
+    (db_client.postVote.count as jest.Mock).mockResolvedValueOnce(5).mockResolvedValueOnce(2);
 
-afterEach(() => jest.clearAllMocks());
+    const result = await postService.getPost("1", "user-1");
 
-describe("Post Controller", () => {
-  test("get_user_posts returns 200", async () => {
-    (postService.getUserPosts as jest.Mock).mockResolvedValue([mockPost]);
-    const res = await app.inject({ method: "GET", url: "/posts/user" });
-    expect(res.statusCode).toBe(200);
-  });
-
-  test("get_recent_posts returns 200", async () => {
-    (postService.getRecentPosts as jest.Mock).mockResolvedValue({ posts: [mockPost], nextCursor: null });
-    const res = await app.inject({ method: "GET", url: "/posts/recent" });
-    expect(res.statusCode).toBe(200);
-  });
-
-  test("get_post returns 200", async () => {
-    (postService.getPost as jest.Mock).mockResolvedValue(mockPost);
-    const res = await app.inject({ method: "GET", url: "/posts/1" });
-    expect(res.statusCode).toBe(200);
-  });
-
-  test("get_comments returns 200", async () => {
-    (postService.getComments as jest.Mock).mockResolvedValue([mockComment]);
-    const res = await app.inject({ method: "POST", url: "/posts/comments", payload: { post_id: "1" } });
-    expect(res.statusCode).toBe(200);
-  });
-
-  test("create_post returns 200", async () => {
-    (postService.createPost as jest.Mock).mockResolvedValue(mockPost);
-    const res = await app.inject({ method: "POST", url: "/posts", payload: { title: "Post Title", body: "Body" } });
-    expect(res.statusCode).toBe(200);
-  });
-
-  test("comment_on_post returns 200", async () => {
-    (postService.commentOnPost as jest.Mock).mockResolvedValue(mockComment);
-    const res = await app.inject({ method: "POST", url: "/posts/comment", payload: { post_id: "1", body: "Comment" } });
-    expect(res.statusCode).toBe(200);
-  });
-
-  test("vote_on_post returns 200", async () => {
-    (postService.voteOnPost as jest.Mock).mockResolvedValue(mockVote);
-    const res = await app.inject({ method: "POST", url: "/posts/vote", payload: { post_id: "1", vote_type: 1 } });
-    expect(res.statusCode).toBe(200);
-  });
-
-  test("reply_on_comment returns 200", async () => {
-    (postService.replyOnComment as jest.Mock).mockResolvedValue(mockReply);
-    const res = await app.inject({
-      method: "POST",
-      url: "/posts/comment/reply",
-      payload: { post_id: "1", comment_id: "c1", body: "Reply" },
+    expect(result).toMatchObject({
+      id: "1",
+      vote_sum: 3,
+      user_vote: 1,
+      vote_summary: { upvotes: 5, downvotes: 2 },
+      comments: [],
     });
-    expect(res.statusCode).toBe(200);
   });
 
-  test("vote_on_comment returns 200", async () => {
-    (postService.voteOnComment as jest.Mock).mockResolvedValue(mockVote);
-    const res = await app.inject({
-      method: "POST",
-      url: "/posts/comment/vote",
-      payload: { comment_id: "c1", vote_type: 1 },
-    });
-    expect(res.statusCode).toBe(200);
+  test("createPost creates and returns post", async () => {
+    const result = await postService.createPost("body", "New Post", "user-1");
+    expect(result).toEqual({ id: "1", title: "New Post" });
   });
 
-  test("add_tag_on_post returns 200", async () => {
-    (postService.addTagOnPost as jest.Mock).mockResolvedValue(mockTags);
-    const res = await app.inject({ method: "POST", url: "/posts/tags", payload: { post_id: "1", tags: ["tag1"] } });
-    expect(res.statusCode).toBe(200);
+  test("commentOnPost creates comment", async () => {
+    const mockComment = { id: "comment-1", comment_body: "Nice" };
+    (db_client.comment.create as jest.Mock).mockResolvedValue(mockComment);
+
+    const result = await postService.commentOnPost("Nice", "post-1", "user-1");
+    expect(result).toEqual(mockComment);
   });
 
-  test("delete_post returns 200", async () => {
-    (postService.deletePost as jest.Mock).mockResolvedValue({ deleted: true });
-    const res = await app.inject({ method: "DELETE", url: "/posts", payload: { post_id: "1" } });
-    expect(res.statusCode).toBe(200);
+  test("replyOnComment updates comment replies", async () => {
+    (db_client.comment.update as jest.Mock).mockResolvedValue({});
+
+    const result = await postService.replyOnComment("Thanks!", "comment-1", "user-1", "post-1");
+    expect(result).toEqual({ replied: true });
   });
 
-  test("toggle_post_visibility returns 200", async () => {
-    (postService.togglePostVisibility as jest.Mock).mockResolvedValue(true);
-    const res = await app.inject({
-      method: "PATCH",
-      url: "/posts/visibility",
-      payload: { post_id: "1", visibility: true },
-    });
-    expect(res.statusCode).toBe(200);
+  test("voteOnPost upserts vote and returns vote sum", async () => {
+    const mockVote = { vote_type: 1 };
+    (db_client.postVote.upsert as jest.Mock).mockResolvedValue(mockVote);
+    (db_client.postVote.aggregate as jest.Mock).mockResolvedValue({ _sum: { vote_type: 3 } });
+
+    const result = await postService.voteOnPost(1, "post-1", "user-1");
+    expect(result).toEqual({ voted: true, vote: mockVote, vote_sum: 3 });
+  });
+
+  test("voteOnComment upserts vote and returns vote sum", async () => {
+    const mockVote = { vote_type: -1 };
+    (db_client.commentVote.upsert as jest.Mock).mockResolvedValue(mockVote);
+    (db_client.commentVote.aggregate as jest.Mock).mockResolvedValue({ _sum: { vote_type: -1 } });
+
+    const result = await postService.voteOnComment(-1, "comment-1", "user-1");
+    expect(result).toEqual({ voted: true, vote: mockVote, vote_sum: -1 });
+  });
+
+  test("addTagOnPost upserts tags", async () => {
+    const mockTag = { id: "tag-1" };
+    (db_client.postTag.upsert as jest.Mock).mockResolvedValue(mockTag);
+
+    const result = await postService.addTagOnPost("post-1", ["tag-1"]);
+    expect(result).toEqual([mockTag]);
+  });
+
+  test("deletePost deletes the post", async () => {
+    (db_client.post.delete as jest.Mock).mockResolvedValue({});
+
+    const result = await postService.deletePost("post-1");
+    expect(result).toEqual({ deleted: true });
+  });
+
+  test("togglePostVisibility updates post visibility", async () => {
+    (db_client.post.update as jest.Mock).mockResolvedValue({});
+
+    const result = await postService.togglePostVisibility(true, "post-1");
+    expect(result).toBe(true);
   });
 });

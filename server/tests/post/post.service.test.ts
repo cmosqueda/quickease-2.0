@@ -4,6 +4,41 @@ import db_client from "../../utils/client";
 jest.mock("../../utils/client", () => ({
   __esModule: true,
   default: {
+    $transaction: jest.fn((cb) =>
+      cb({
+        post: {
+          create: jest.fn().mockResolvedValue({ id: "1", title: "New Post" }),
+          update: jest.fn().mockResolvedValue({}),
+          findMany: jest.fn(),
+          findFirst: jest.fn(),
+          delete: jest.fn().mockResolvedValue({}),
+        },
+        postAttachment: {
+          createMany: jest.fn(),
+          deleteMany: jest.fn(),
+        },
+        note: { findFirst: jest.fn().mockResolvedValue(true) },
+        flashcard: { findFirst: jest.fn().mockResolvedValue(true) },
+        quiz: { findFirst: jest.fn().mockResolvedValue(true) },
+        comment: {
+          create: jest.fn().mockResolvedValue({ id: "comment-1", comment_body: "Nice" }),
+          update: jest.fn().mockResolvedValue({}),
+          findMany: jest.fn().mockResolvedValue([]),
+        },
+        postVote: {
+          count: jest.fn().mockResolvedValueOnce(5).mockResolvedValueOnce(2),
+          upsert: jest.fn().mockResolvedValue({ vote_type: 1 }),
+          aggregate: jest.fn().mockResolvedValue({ _sum: { vote_type: 3 } }),
+        },
+        commentVote: {
+          upsert: jest.fn().mockResolvedValue({ vote_type: -1 }),
+          aggregate: jest.fn().mockResolvedValue({ _sum: { vote_type: -1 } }),
+        },
+        postTag: {
+          upsert: jest.fn().mockResolvedValue({ id: "tag-1" }),
+        },
+      })
+    ),
     post: {
       findMany: jest.fn(),
       findFirst: jest.fn(),

@@ -76,7 +76,9 @@ export default function AuthRegisterPage() {
       }
     } catch (err) {
       console.log(err);
-      toast.error(err.response.data.message || "Error registering, please try again.");
+      toast.error(
+        err.response.data.message || "Error registering, please try again."
+      );
       throw err;
     } finally {
       setIsRegistering(false);
@@ -90,7 +92,9 @@ export default function AuthRegisterPage() {
         style={{ animation: "floatAnimation 4s ease-in-out infinite" }}
         src="/assets/images/mascot.png"
       />
-      <h1 className="font-bold text-3xl my-8 block lg:hidden text-center">QuickEase</h1>
+      <h1 className="font-bold text-3xl my-8 block lg:hidden text-center">
+        QuickEase
+      </h1>
       <div className="flex flex-col gap-4 justify-center p-8 2xl:px-[12rem]">
         <div className="">
           <h1 className="font-bold text-4xl">Create your account </h1>
@@ -158,12 +162,18 @@ export default function AuthRegisterPage() {
           I accept the{" "}
           <button
             className="text--500 cursor-pointer"
-            onClick={() => document.getElementById("terms-of-use-modal").showModal()}
+            onClick={() =>
+              document.getElementById("terms-of-use-modal").showModal()
+            }
           >
             terms of use and privacy policy
           </button>
         </label>
-        <button className="btn btn-soft btn-success btn-lg" disabled={isRegistering} onClick={handleRegister}>
+        <button
+          className="btn btn-soft btn-success btn-lg"
+          disabled={isRegistering}
+          onClick={handleRegister}
+        >
           Create account
         </button>
         <p>

@@ -316,3 +316,174 @@ Feedback:
 - Create post on forums works properly as expected.
 
 </details>
+
+---
+
+# June 28, 2025
+
+<details>
+<summary><strong>TL;DR</strong></summary>
+
+## SUMMARY
+
+</details>
+
+<details>
+<summary><strong>FULL REPORT</strong></summary>
+
+## Register
+
+Criterias and Success Rate:
+
+- **R001** – 100% – User can register with valid email and password.
+- **R002** – 100% – The user can only register with a valid, NEW email. Used emails are not allowed for re-registration.
+- **R003** – 100% – Require user to enter ALL input fields (first name, last name, email, password, confirm password).
+- **R004** – 100% – Account creation MUST ONLY proceed if user SUCCESSFULLY fills in ALL required input fields (first name, last name, email, password, confirm password).
+- **R005** – 100% – Error-handling pop-ups/toasts understandable for users are implemented.
+- **R006** – 100% – The user must be directed to `Log in` screen when the highlighted `Sign in` text is clicked.
+
+Status: ✅ PASSED
+
+Feedback:
+
+- Fixes are now applied. Every module works as expected and intended.
+
+## Log-in
+
+Criterias and Success Rate:
+
+- **L001** – 100% – The input fields must respond no more than 0.8s when clicked.
+- **L002** – 100% – The user can only log in with a registered account (used email).
+- **L003** – 100% – Error-handling pop-ups/toasts understandable for users are implemented.
+- **L004** – 100% – Account log in MUST ONLY proceed if valid and existing user account credentials in the database are entered.
+- **L005** – 100% – The user must be directed to `Register` screen when the highlighted `Register Now` text is clicked.
+- **L006** – 100% – The user can log out.
+
+Status: ✅ PASSED
+
+Feedback:
+
+- Fixes are now applied. Every module works as expected and intended.
+
+## Learner Notes
+
+Criterias and Success Rate:
+
+- **LN001** – % – User can create notes manually.
+- **LN002** – % – All implemented markdown functions work properly
+- **LN003** – % – User can edit the existing note inside text box
+- **LN004** – % – User can view saved notes
+- **LN005** – % – At notes page, an ellipsis icon is available and clickable for viewing additional notes options
+- **LN006** – % – User can save notes properly
+- **LN007** – % – When clicking the back button on the selected sumary notes, user should be redirected to Library Notes module
+- **LN008** – % – User can delete an existing note
+- **LN009** – % – Users can share a note either from Note Card or from Note Page, through "more options"
+- **LN010** – % – At notes card, an ellipsis icon is available and clickable for viewing additional notes options
+
+Status:
+
+Feedback:
+
+## Learner Flashcards
+
+Criterias and Success Rate:
+
+- **LFC001** – % – User can create flashcards manually
+- **LFC002** – % – User can preview front content and back content of flashcards.
+- **LFC003** – % – Front and back contents of flashcards must display accurately.
+- **LFC004** – % – User can review flashcards. When a user clicks on the card component, the UI must respond with a flip in no more than 0.8s.
+- **LFC005** – % – At flashcards page, an ellipsis icon is available and clickable for viewing additional flashcard set options at the flashcard set card component
+- **LFC006** – % – When clicking the back button on the selected flashcard, user should be redirected to Library Flashcards module
+- **LFC007** – % – User can edit the existing flashcard created manually
+- **LFC008** – % – User can edit the existing flashcard created from AI generation
+- **LFC009** – % – User can share a flashcard set either from Flashcard Set Card or from Flashcard Page, through "more options"
+- **LFC010** – % – User can delete an existing flashcard set
+- **LFC011** – % – At flashcards set card, an ellipsis icon is available and clickable for viewing additional flashcard set options at the flashcard set card component
+
+Status:
+
+Feedback:
+
+## Learner Quiz
+
+Criterias and Success Rate:
+
+- **LQ001** – % – The UI and buttons respond in no more than 0.8s when clicked.
+- **LQ002** – % – User can create quizzes manually.
+- **LQ003** – % – User can edit the existing quiz created manually
+- **LQ004** – % – User can answer and review existing saved quiz.
+- **LQ005** – % – Correct answer(s) from multiple choice are displayed as expected.
+- **LQ006** – % – Exact scores are calculated and displayed as expected after answering the quiz/reviewing the quiz overview.
+- **LQ007** – % – After a quiz is answered, a quiz review is available for viewing.
+- **LQ008** – % – When clicking the back button on the selected quiz, user should be redirected to Library Quiz module
+- **LQ009** – % – User can delete an existing quiz
+- **LQ010** – % – User can edit the existing quiz created from AI generation
+
+Status:
+
+Feedback:
+
+## Learner Library
+
+Criterias and Success Rate:
+
+- **LL001** – % – Search functionality returns accurate results.
+- **LL002** – % – All learner's materials data (notes, flashcards, quizzes) are fetched accordingly and displays as expected.
+- **LL003** – % – Filter `AI-Generated` or `From User` (manually created) materials.
+
+## Learner Forums - Post
+
+Criterias and Success Rate:
+
+- **LF001** – % – User(s) can create a post in forums
+- **LF002** – % – User can edit an existing post they owned
+- **LF003** – % – User can delete their existing post
+- **LF004** – % – User can select and attach summary notes to share in a post
+- **LF005** – % – User can select and attach flashcards to share in a post
+- **LF006** – % – User can select and attach quizzes to share in a post
+- **LF007** – % – User(s) can upvote or downvote an existing post
+- **LF0011** – % – User(s) can report a post
+
+Status:
+
+Feedback:
+
+## Learner Forums - Comments
+
+Criterias and Success Rate:
+
+- **LF008** – % – User(s) can comment to a post
+- **LF009** – % – User(s) can reply to a comment (like threaded replies)
+- **LF010** – % – User(s) can upvote or downvote an existing comment
+- **LF012** – % – User(s) can report a comment
+
+Status:
+
+Feedback:
+
+## Learner Forums - Report Management
+
+Criterias and Success Rate:
+
+Status:
+
+Feedback:
+
+## Learner Forums - Quiz Sharing
+
+Criterias and Success Rate:
+
+- **QS001** – 100% – User(s) can answer a shared quiz
+- **QS002** – 30% – Multiple users' scores and attempts are saved properly and accurately mapped to the corresponding user.
+- **QS003** – - – Leaderboard rankings for multiple users who answered a shared quiz is implemented
+
+Status: ⚠️ **PARTIALLY PASSED**
+
+Feedback:
+
+- Only the owner can edit their quiz which is correctly implemented as expected.
+- Multiple users' attempts and scores are saved properly and can be viewed by other users but it doesn't show whose user owned which attempt/score. Accurate mapping of scores/attempts to corresponding users must be implemented.
+
+## Profile
+
+</details>
