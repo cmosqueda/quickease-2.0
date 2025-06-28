@@ -4,7 +4,8 @@ import {
     get_comments, create_post, comment_on_post, vote_on_post,
     reply_on_comment, vote_on_comment, add_tag_on_post,
     delete_post, toggle_post_visibility,
-    get_recent_posts
+    get_recent_posts,
+    update_post
 } from './post.controller';
 
 
@@ -18,6 +19,11 @@ export default async function postRoutes(fastify: FastifyInstance) {
         preHandler: [fastify.authenticate],
         handler: get_post
     });
+
+    fastify.put('/post/update', {
+        preHandler: [fastify.authenticate],
+        handler: update_post
+    })
 
     fastify.get('/posts/recent', {
         preHandler: [fastify.authenticate],
@@ -34,7 +40,7 @@ export default async function postRoutes(fastify: FastifyInstance) {
         handler: create_post
     });
 
-    fastify.post('/comments/comment', {
+    fastify.post('/post/comment', {
         preHandler: [fastify.authenticate],
         handler: comment_on_post
     });
@@ -44,12 +50,12 @@ export default async function postRoutes(fastify: FastifyInstance) {
         handler: vote_on_post
     });
 
-    fastify.post('/comments/reply', {
+    fastify.post('/post/comment/reply', {
         preHandler: [fastify.authenticate],
         handler: reply_on_comment
     });
 
-    fastify.post('/comments/vote', {
+    fastify.post('/post/comment/vote', {
         preHandler: [fastify.authenticate],
         handler: vote_on_comment
     });

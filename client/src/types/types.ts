@@ -33,3 +33,4 @@ export type Quiz = {
     user_id: string;
     date: string;
 };
+

@@ -10,6 +10,7 @@ import {
   getUserPosts,
   replyOnComment,
   togglePostVisibility,
+  updatePost,
   voteOnComment,
   voteOnPost,
 } from "./post.service";
@@ -40,7 +41,7 @@ export async function get_recent_posts(request: FastifyRequest, reply: FastifyRe
 export async function get_post(request: FastifyRequest, reply: FastifyReply) {
   const { post_id } = request.params as { post_id: string };
   try {
-    const post = await getPost(post_id);
+    const post = await getPost(post_id, request.user.id);
 
     reply.code(200).send(post);
   } catch (err) {
@@ -65,14 +66,41 @@ export async function get_comments(request: FastifyRequest, reply: FastifyReply)
 }
 
 export async function create_post(request: FastifyRequest, reply: FastifyReply) {
-  const { body, title } = request.body as { body: string; title: string };
-  try {
-    const post = await createPost(body, title, request.user.id);
+  const { body, title, attachments } = request.body as {
+    body: string;
+    title: string;
+    attachments?: {
+      resource_type: "NOTE" | "QUIZ" | "FLASHCARD";
+      resource_id: string;
+    }[];
+  };
 
+  try {
+    const post = await createPost(body, title, request.user.id, attachments);
     reply.code(200).send(post);
   } catch (err) {
-    reply.code(500).send({
-      message: "Error",
+    console.error("Error creating post:", err);
+    reply.code(500).send({ message: "Error posting.", err });
+  }
+}
+
+export async function update_post(request: FastifyRequest, reply: FastifyReply) {
+  const { body, title, post_id, attachments } = request.body as {
+    body: string;
+    title: string;
+    post_id: string;
+    attachments?: {
+      resource_type: "NOTE" | "QUIZ" | "FLASHCARD";
+      resource_id: string;
+    }[];
+  };
+
+  try {
+    const updatedPost = await updatePost(body, title, post_id, request.user.id, attachments);
+    reply.code(200).send(updatedPost);
+  } catch (err: any) {
+    reply.code(400).send({
+      message: err.message || "Error editing post.",
     });
   }
 }
@@ -85,7 +113,7 @@ export async function comment_on_post(request: FastifyRequest, reply: FastifyRep
     reply.code(200).send(comment);
   } catch (err) {
     reply.code(500).send({
-      message: "Error",
+      message: "Error commenting.",
     });
   }
 }
