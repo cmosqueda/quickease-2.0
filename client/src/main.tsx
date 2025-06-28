@@ -80,7 +80,10 @@ const router = createBrowserRouter([
     Component: LearnerLayout,
     loader: loadLearnerResources,
     children: [
-      { index: true, Component: LearnerForumPage },
+      {
+        index: true,
+        Component: LearnerForumPage,
+      },
       {
         path: "library",
         Component: LearnerLibraryPage,
@@ -133,8 +136,6 @@ const router = createBrowserRouter([
                 const { status, data } = await _API_INSTANCE.get(
                   `/forum/post/${params.id}`
                 );
-
-                console.log(data);
 
                 if (status == 200) {
                   if (data.user_id == useAuth.getState().user?.id) {

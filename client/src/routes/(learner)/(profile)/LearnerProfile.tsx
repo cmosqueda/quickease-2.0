@@ -171,10 +171,6 @@ export default function LearnerProfilePage() {
   const { user } = useAuth();
   const data = useLoaderData();
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   if (!data) {
     return <User user={user} />;
   }

@@ -18,7 +18,7 @@ export default async function userRoutes(fastify: FastifyInstance) {
         handler: edit_user_name
     });
 
-    fastify.put('/visibility', {
+    fastify.put('/toggle-visibility', {
         preHandler: [fastify.authenticate],
         handler: toggle_user_visibility
     });

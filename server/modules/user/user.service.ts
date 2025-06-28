@@ -3,7 +3,8 @@ import db_client from "../../utils/client"
 export async function getUser(user_id: string) {
 
     const user = await db_client.user.findUnique({
-        where: { id: user_id }
+        where: { id: user_id },
+        include: { flashcards: true, quizzes: true, notes: true }
     })
 
     return user
@@ -22,7 +23,8 @@ export async function changeUserName(first_name: string, last_name: string, user
 }
 
 export async function toggleProfileVisibility(visibility: boolean, user_id: string) {
-    return db_client.user.update({
+
+    const update = await db_client.user.update({
         data: {
             is_public: visibility
         },
@@ -30,6 +32,8 @@ export async function toggleProfileVisibility(visibility: boolean, user_id: stri
             id: user_id
         }
     })
+
+    return update
 }
 
 export async function viewProfile(user_id: string) {

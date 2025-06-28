@@ -68,7 +68,10 @@ export async function toggle_user_visibility(request: FastifyRequest, reply: Fas
 }
 
 // Reserved for future implementation
-export async function request_email_change(request: FastifyRequest, reply: FastifyReply) { }
+export async function request_email_change(request: FastifyRequest, reply: FastifyReply) {
+
+
+}
 export async function request_change_password(request: FastifyRequest, reply: FastifyReply) { }
 export async function change_email(request: FastifyRequest, reply: FastifyReply) { }
 

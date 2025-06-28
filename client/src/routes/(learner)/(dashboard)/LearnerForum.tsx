@@ -1,16 +1,23 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import NotificationsDropdown from "@/components/(learner)/NotificationsDropdown";
 import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import CustomEditor from "@/components/Editor";
 import _API_INSTANCE from "@/utils/axios";
+import useAuth from "@/hooks/useAuth";
 import clsx from "clsx";
 import dayjs from "dayjs";
 
 import {
+  ArrowLeft,
+  Check,
   ChevronDown,
   ChevronUp,
   EllipsisVertical,
+  FileQuestion,
+  GalleryVertical,
   MessageCircle,
+  Notebook,
   Plus,
   Search,
   X,
@@ -30,8 +37,14 @@ type PostModalProps = {
 };
 
 const PostModal = ({ html, title, setTitle, editor }: PostModalProps) => {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const [tabIndex, setTabIndex] = useState(0);
+
+  const [selectedNotes, setSelectedNotes] = useState<any[]>([]);
+  const [selectedFlashcards, setSelectedFlashcards] = useState<any[]>([]);
+  const [selectedQuizzes, setSelectedQuizzes] = useState<any[]>([]);
+
   const [isSaving, setIsSaving] = useState(false);
 
   const closeModal = () => {
@@ -55,29 +68,55 @@ const PostModal = ({ html, title, setTitle, editor }: PostModalProps) => {
     setIsSaving(true);
 
     try {
-      const { status } = await _API_INSTANCE.post("/forum/post/create", {
-        body: html,
-        title,
-      });
+      const attachments = [
+        ...selectedNotes.map((n) => ({
+          resource_type: "NOTE" as const,
+          resource_id: n.id,
+        })),
+        ...selectedFlashcards.map((f) => ({
+          resource_type: "FLASHCARD" as const,
+          resource_id: f.id,
+        })),
+        ...selectedQuizzes.map((q) => ({
+          resource_type: "QUIZ" as const,
+          resource_id: q.id,
+        })),
+      ];
+
+      const { status } = await _API_INSTANCE.post(
+        "/forum/post/create",
+        {
+          body: html,
+          title,
+          attachments,
+        },
+        {
+          timeout: 10000,
+        }
+      );
 
       if (status === 200) {
         queryClient.invalidateQueries({ queryKey: ["recent-posts"] });
         toast.success("Post created successfully.");
         closeModal();
-        navigate(-1, { viewTransition: true });
       } else {
         toast.error("Failed to create post. Try again.");
       }
     } catch (err: any) {
+      console.error(err);
       toast.error(err?.response?.data?.message || "An error occurred.");
     } finally {
       setIsSaving(false);
     }
   };
 
-  return (
-    <dialog id="create-post-modal" className="modal">
-      <div className="modal-box bg-base-300 flex flex-col gap-4 max-w-xl max-h-[90vh] overflow-y-auto">
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
+  const tabs = [
+    <>
+      <div className="modal-box bg-base-300 flex flex-col gap-4 max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex flex-row items-center gap-4">
           <button
@@ -106,7 +145,55 @@ const PostModal = ({ html, title, setTitle, editor }: PostModalProps) => {
         </fieldset>
 
         {/* Rich Text Editor */}
-        <CustomEditor editor={editor} style="overflow-y-auto" />
+        <CustomEditor editor={editor!} style="overflow-y-auto" />
+        <div className="flex flex-row gap-4 items-center">
+          <button
+            className="btn btn-neutral btn-ghost flex-1"
+            onClick={() => setTabIndex(1)}
+          >
+            <Notebook />
+            <p>Attach notes</p>
+          </button>
+          <button
+            className="btn btn-neutral btn-ghost flex-1"
+            onClick={() => setTabIndex(2)}
+          >
+            <GalleryVertical />
+            <p>Attach flashcards</p>
+          </button>
+          <button
+            className="btn btn-neutral btn-ghost flex-1"
+            onClick={() => setTabIndex(3)}
+          >
+            <FileQuestion />
+            <p>Attach quizzes</p>
+          </button>
+        </div>
+
+        {(selectedNotes.length > 0 ||
+          selectedFlashcards.length > 0 ||
+          selectedQuizzes.length > 0) && (
+          <div className="flex flex-row items-center gap-4 overflow-x-auto">
+            {selectedNotes.map((n) => (
+              <div className="flex flex-row gap-4 items-center bg-base-200 rounded-3xl p-4 h-[5rem] w-[12rem] overflow-clip">
+                <Notebook className="shrink-0" />
+                {n.title}
+              </div>
+            ))}
+            {selectedFlashcards.map((f) => (
+              <div className="flex flex-row gap-4 items-center bg-base-200 rounded-3xl p-4 h-[5rem] w-[12rem] overflow-clip">
+                <GalleryVertical className="shrink-0" />
+                {f.title}
+              </div>
+            ))}
+            {selectedQuizzes.map((q) => (
+              <div className="flex flex-row gap-4 items-center bg-base-200 rounded-3xl p-4 h-[5rem] w-[12rem] overflow-clip">
+                <FileQuestion className="shrink-0" />
+                {q.title}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Submit Button */}
         <button
@@ -121,6 +208,155 @@ const PostModal = ({ html, title, setTitle, editor }: PostModalProps) => {
           )}
         </button>
       </div>
+    </>,
+    <>
+      <div className="modal-box bg-base-300 flex flex-col gap-4 max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex flex-row items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setTabIndex(0)}
+            className="p-1 rounded hover:bg-base-100"
+            aria-label="Close modal"
+          >
+            <ArrowLeft className="cursor-pointer" />
+          </button>
+          <h1 className="font-bold text-xl">Attach notes</h1>
+        </div>
+
+        {/* Notes */}
+        <div className="grid grid-cols-2 gap-4">
+          {user &&
+            user.notes.map((note) => {
+              const isSelected = selectedNotes.some((n) => n.id === note.id);
+              return (
+                <button
+                  key={note.id}
+                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-200 relative"
+                  onClick={() => {
+                    setSelectedNotes((prev) =>
+                      isSelected
+                        ? prev.filter((n) => n.id !== note.id)
+                        : [...prev, note]
+                    );
+                  }}
+                >
+                  {isSelected && (
+                    <Check size={16} className="absolute right-4" />
+                  )}
+                  <h1 className="font-bold text-2xl">{note.title}</h1>
+                </button>
+              );
+            })}
+        </div>
+
+        <button className="btn btn-success">
+          <Plus />
+          <p>Add</p>
+        </button>
+      </div>
+    </>,
+    <>
+      <div className="modal-box bg-base-300 flex flex-col gap-4 max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex flex-row items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setTabIndex(0)}
+            className="p-1 rounded hover:bg-base-100"
+            aria-label="Close modal"
+          >
+            <ArrowLeft className="cursor-pointer" />
+          </button>
+          <h1 className="font-bold text-xl">Attach flashcards</h1>
+        </div>
+
+        {/* Flashcards */}
+        <div className="grid grid-cols-2 gap-4">
+          {user &&
+            user.flashcards.map((flashcard) => {
+              const isSelected = selectedFlashcards.some(
+                (f) => f.id === flashcard.id
+              );
+              return (
+                <button
+                  key={flashcard.id}
+                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-200 relative"
+                  onClick={() => {
+                    setSelectedFlashcards((prev) =>
+                      isSelected
+                        ? prev.filter((f) => f.id !== flashcard.id)
+                        : [...prev, flashcard]
+                    );
+                  }}
+                >
+                  {isSelected && (
+                    <Check size={16} className="absolute right-4" />
+                  )}
+                  <h1 className="font-bold text-2xl">{flashcard.title}</h1>
+                </button>
+              );
+            })}
+        </div>
+
+        <button className="btn btn-success">
+          <Plus />
+          <p>Add</p>
+        </button>
+      </div>
+    </>,
+    <>
+      <div className="modal-box bg-base-300 flex flex-col gap-4 max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex flex-row items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setTabIndex(0)}
+            className="p-1 rounded hover:bg-base-100"
+            aria-label="Close modal"
+          >
+            <ArrowLeft className="cursor-pointer" />
+          </button>
+          <h1 className="font-bold text-xl">Attach quizzes</h1>
+        </div>
+
+        {/* Quizzes */}
+        <div className="grid grid-cols-2 gap-4">
+          {user &&
+            user.quizzes.map((quiz) => {
+              const isSelected = selectedQuizzes.some((q) => q.id === quiz.id);
+              return (
+                <button
+                  key={quiz.id}
+                  onClick={() => {
+                    setSelectedQuizzes((prev) =>
+                      isSelected
+                        ? prev.filter((q) => q.id !== quiz.id)
+                        : [...prev, quiz]
+                    );
+                  }}
+                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-200 relative"
+                >
+                  {isSelected && (
+                    <Check size={16} className="absolute right-4" />
+                  )}
+                  <h1 className="font-bold text-2xl">{quiz.title}</h1>
+                </button>
+              );
+            })}
+        </div>
+
+        <button className="btn btn-success">
+          <Plus />
+          <p>Add</p>
+        </button>
+      </div>
+    </>,
+  ];
+
+  return (
+    <dialog id="create-post-modal" className="modal">
+      {tabs[tabIndex]}
     </dialog>
   );
 };
@@ -261,8 +497,8 @@ export default function LearnerForumPage() {
       const { data: posts } = await _API_INSTANCE.get("/forum/posts/recent", {
         params: { cursor: pageParam, limit: 10 },
       });
-      console.log(posts);
 
+      console.log(posts);
       return posts;
     },
     initialPageParam: null,

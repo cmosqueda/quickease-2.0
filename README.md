@@ -42,4 +42,5 @@ Open the source code directory in your preferred IDE and open a new terminal ins
 - @fastify/jwt (fastify plugin for JWT)
 - @fastify/postgres (fastify plugin for PostgreSQL)
 - @fastify/multipart (fastify plugin for handling files)
+- @fastify/mailer (fastify plugin for handling mails)
 ```

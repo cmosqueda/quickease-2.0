@@ -12,13 +12,13 @@ import {
   ClipboardList,
   Delete,
   Save,
-  Share,
   X,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_GLOBAL";
 
 export default function LearnerCreateNotePage() {
   const { user } = useAuth();
@@ -155,9 +155,9 @@ export default function LearnerCreateNotePage() {
           </button>
         </div>
       </div>
-      <GenerateSummaryModal html={html} text={text} json={json} />
-      <GenerateFlashcardModal html={html} text={text} json={json} />
-      <GenerateQuizModal html={html} text={text} json={json} />
+      <GenerateSummaryModal text={text} json={json} />
+      <GenerateFlashcardModal text={text} json={json} />
+      <GenerateQuizModal text={text} json={json} />
     </div>
   );
 }

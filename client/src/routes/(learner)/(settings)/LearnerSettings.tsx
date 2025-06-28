@@ -1,13 +1,13 @@
 import clsx from "clsx";
-import useTheme from "@/hooks/useTheme";
 import ThemeBox from "@/components/ThemeBox";
+import _API_INSTANCE from "@/utils/axios";
+import useAuth from "@/hooks/useAuth";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, Lock, Mail, UserCircle } from "lucide-react";
+import { toast } from "sonner";
 
 const AppearanceSettings = () => {
-  const { setTheme } = useTheme();
-
   return (
     <div className="flex flex-col gap-2">
       <h1 className="text-xl">Themes</h1>
@@ -19,6 +19,36 @@ const AppearanceSettings = () => {
 };
 
 const AccountSettings = () => {
+  const { user, setUser } = useAuth();
+
+  const [visibility, setVisibility] = useState(false);
+
+  const handleProfileVisibility = async () => {
+    const newVisibility = !visibility;
+    setVisibility(newVisibility);
+
+    try {
+      const { data, status } = await _API_INSTANCE.put(
+        "/users/toggle-visibility",
+        {
+          visibility: newVisibility,
+        }
+      );
+
+      setUser(data.user);
+      toast.success("Profile privacy updated!");
+      return;
+    } catch (err) {
+      setVisibility((prev) => !prev);
+      console.error(err);
+      toast.error("Error updating profile privacy.");
+    }
+  };
+
+  useEffect(() => {
+    if (user) setVisibility(user.is_public);
+  }, [user]);
+
   return (
     <div className="flex flex-col gap-2">
       <h1 className="text-xl">General</h1>
@@ -47,7 +77,12 @@ const AccountSettings = () => {
             </p>
           </div>
         </div>
-        <input type="checkbox" defaultChecked className="toggle" />
+        <input
+          type="checkbox"
+          className="toggle"
+          checked={visibility}
+          onChange={handleProfileVisibility}
+        />
       </div>
     </div>
   );

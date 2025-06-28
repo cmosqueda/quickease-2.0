@@ -1,3 +1,4 @@
+import type { Flashcard, Note, Quiz } from "@/types/types";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -17,10 +18,14 @@ type AuthUserRecord = {
   is_public: boolean;
   created_at: string | Date;
   updated_at: string | Date;
+  notes: Note[];
+  quizzes: Quiz[];
+  flashcards: Flashcard[];
 };
 
 type AuthStore = {
   user?: AuthUserRecord;
+  token?: string;
   setUser: (user: AuthUserRecord) => void;
   setToken: (token: string) => void;
 };
@@ -28,6 +33,7 @@ type AuthStore = {
 const useAuth = create<AuthStore>()(
   immer((set, get) => ({
     user: undefined,
+    token: undefined,
     setUser: (user) => {
       set((state) => {
         state.user = user;

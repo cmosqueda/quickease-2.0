@@ -45,24 +45,25 @@ model Flashcard {
   title           String
   description     String?
   flashcards      Json
-  is_public       Boolean?
+  is_public       Boolean? @default(true)
   created_at      DateTime @default(now())
   updated_at      DateTime @default(now())
   is_ai_generated Boolean? @default(false)
 
-  attachments PostAttachment[]
+  post_attachments PostAttachment[]
 }
 
 model Note {
-  id              String   @id @default(uuid())
-  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id         String
-  title           String
-  notes_content   String
-  is_public       Boolean?
-  created_at      DateTime @default(now())
-  updated_at      DateTime @default(now())
-  is_ai_generated Boolean? @default(false)
+  id               String           @id @default(uuid())
+  user             User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id          String
+  title            String
+  notes_content    String
+  is_public        Boolean?         @default(true)
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @default(now())
+  is_ai_generated  Boolean?         @default(false)
+  post_attachments PostAttachment[]
 }
 
 model Quiz {
@@ -72,15 +73,15 @@ model Quiz {
   quiz_content    Json
   title           String
   description     String?
-  is_public       Boolean?
+  is_public       Boolean? @default(true)
   created_at      DateTime @default(now())
   updated_at      DateTime @default(now())
   is_ai_generated Boolean? @default(false)
   is_randomized   Boolean? @default(false)
   timed_quiz      Decimal?
 
-  attachments PostAttachment[]
-  attempts    QuizAttempt[]
+  post_attachments PostAttachment[]
+  attempts         QuizAttempt[]
 }
 
 model Tag {
@@ -156,17 +157,31 @@ model CommentVote {
   @@id([user_id, comment_id])
 }
 
+enum ResourceType {
+  NOTE
+  QUIZ
+  FLASHCARD
+}
+
 model PostAttachment {
-  id            String     @id @default(uuid())
-  post          Post       @relation(fields: [post_id], references: [id], onDelete: Cascade)
-  post_id       String
-  resource_type String
-  flashcard     Flashcard? @relation(fields: [flashcard_id], references: [id], onDelete: Cascade)
-  flashcard_id  String?
-  quiz          Quiz?      @relation(fields: [quizzes_id], references: [id], onDelete: Cascade)
-  quizzes_id    String?
-  created_at    DateTime   @default(now())
-  updated_at    DateTime   @default(now())
+  id      String @id @default(uuid())
+  post    Post   @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id String
+
+  resource_type ResourceType
+
+  note_id      String?
+  flashcard_id String?
+  quiz_id      String?
+
+  note      Note?      @relation(fields: [note_id], references: [id])
+  flashcard Flashcard? @relation(fields: [flashcard_id], references: [id])
+  quiz      Quiz?      @relation(fields: [quiz_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  @@index([resource_type])
 }
 
 model QuizAttempt {

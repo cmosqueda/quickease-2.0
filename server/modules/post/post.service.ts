@@ -4,6 +4,34 @@ import utc from 'dayjs/plugin/utc';
 import { FlatComment, NestedComment } from "../../utils/types";
 import { buildCommentTree } from "../../utils/tree";
 
+async function validateOwnership(
+    tx: typeof db_client,
+    user_id: string,
+    resource_type: "NOTE" | "QUIZ" | "FLASHCARD",
+    resource_id: string
+): Promise<boolean> {
+    switch (resource_type) {
+        case "NOTE":
+            return !!(await tx.note.findFirst({
+                where: { id: resource_id, user_id },
+                select: { id: true },
+            }));
+        case "FLASHCARD":
+            return !!(await tx.flashcard.findFirst({
+                where: { id: resource_id, user_id },
+                select: { id: true },
+            }));
+        case "QUIZ":
+            return !!(await tx.quiz.findFirst({
+                where: { id: resource_id, user_id },
+                select: { id: true },
+            }));
+        default:
+            return false;
+    }
+}
+
+
 export async function getUserPosts(user_id: string) {
     const posts = await db_client.post.findMany({
         where: { user_id: user_id }
@@ -41,6 +69,7 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
                 }
             },
             comments: {
+                where: { parent_comment: null },
                 select: {
                     parent_comment: true,
                     comment_body: true,
@@ -90,6 +119,13 @@ export async function getPost(post_id: string, user_id: string) {
     const post = await db_client.post.findFirst({
         where: { id: post_id }, orderBy: { 'created_at': 'desc' },
         include: {
+            attachments: {
+                include: {
+                    flashcard: true,
+                    note: true,
+                    quiz: true
+                }
+            },
             user: {
                 select: {
                     id: true,
@@ -164,32 +200,119 @@ export async function getComments(post_id: string) {
     return comments
 }
 
-export async function createPost(body: string, title: string, user_id: string) {
-    const post = await db_client.post.create({
-        data: {
-            title: title,
-            post_body: body,
-            user_id: user_id
-        }
-    })
+export async function createPost(
+    body: string,
+    title: string,
+    user_id: string,
+    attachments?: {
+        resource_type: "NOTE" | "QUIZ" | "FLASHCARD";
+        resource_id: string;
+    }[]
+) {
+    return await db_client.$transaction(async (tx) => {
+        const post = await tx.post.create({
+            data: {
+                title,
+                post_body: body,
+                user_id,
+                is_public: true
+            },
+        });
 
-    return post
+        if (attachments?.length) {
+            const attachmentData = [];
+
+            for (const { resource_type, resource_id } of attachments) {
+                const isOwner = await validateOwnership(tx, user_id, resource_type, resource_id);
+
+                if (!isOwner) {
+                    throw new Error(`Unauthorized or invalid ${resource_type} (ID: ${resource_id})`);
+                }
+
+                const base = {
+                    post_id: post.id,
+                    resource_type,
+                };
+
+                if (resource_type === "NOTE") {
+                    attachmentData.push({ ...base, note_id: resource_id });
+                } else if (resource_type === "FLASHCARD") {
+                    attachmentData.push({ ...base, flashcard_id: resource_id });
+                } else if (resource_type === "QUIZ") {
+                    attachmentData.push({ ...base, quiz_id: resource_id });
+                }
+            }
+
+            await tx.postAttachment.createMany({ data: attachmentData });
+        }
+
+        return post;
+    });
 }
 
-export async function updatePost(body: string, title: string, post_id: string) {
-    const post = await db_client.post.update({
-        data: {
-            title: title,
-            post_body: body,
-            updated_at: dayjs(new Date()).toISOString()
-        },
-        where: {
-            id: post_id
-        }
-    })
+export async function updatePost(
+    body: string,
+    title: string,
+    post_id: string,
+    user_id: string,
+    attachments?: {
+        resource_type: "NOTE" | "QUIZ" | "FLASHCARD";
+        resource_id: string;
+    }[]
+) {
+    return await db_client.$transaction(async (tx) => {
+        const existingPost = await tx.post.findUnique({
+            where: { id: post_id },
+            select: { user_id: true },
+        });
 
-    return post
+        if (!existingPost || existingPost.user_id !== user_id) {
+            throw new Error("Unauthorized or non-existent post.");
+        }
+
+        await tx.postAttachment.deleteMany({ where: { post_id } });
+
+        if (attachments?.length) {
+            const attachmentData = [];
+
+            for (const { resource_type, resource_id } of attachments) {
+                const isOwner = await validateOwnership(tx, user_id, resource_type, resource_id);
+
+                if (!isOwner) {
+                    throw new Error(`Unauthorized or invalid ${resource_type} (ID: ${resource_id})`);
+                }
+
+                const base = {
+                    post_id,
+                    resource_type,
+                };
+
+                if (resource_type === "NOTE") {
+                    attachmentData.push({ ...base, note_id: resource_id });
+                } else if (resource_type === "FLASHCARD") {
+                    attachmentData.push({ ...base, flashcard_id: resource_id });
+                } else if (resource_type === "QUIZ") {
+                    attachmentData.push({ ...base, quiz_id: resource_id });
+                }
+            }
+
+            await tx.postAttachment.createMany({ data: attachmentData });
+        }
+
+        const updatedPost = await tx.post.update({
+            where: { id: post_id },
+            data: {
+                title,
+                post_body: body,
+                updated_at: dayjs().toISOString(),
+            },
+        });
+
+        return updatedPost;
+    });
 }
+
+
 
 export async function commentOnPost(body: string, post_id: string, user_id: string) {
     const comment = await db_client.comment.create({

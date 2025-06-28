@@ -10,7 +10,9 @@ import {
   ChevronUp,
   Edit,
   EllipsisVertical,
+  GalleryVertical,
   MessageCircle,
+  Notebook,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
@@ -72,6 +74,55 @@ const PostCard = ({ data }: { data: any }) => {
           editable={false}
         />
       </div>
+      {data.attachments.length > 0 && (
+        <>
+          <h1 className="font-bold text-xl">Attachments</h1>
+          <div className="flex flex-row gap-4 items-center">
+            {data.attachments.map((attachment) => {
+              switch (attachment.resource_type) {
+                case "NOTE":
+                  return (
+                    <NavLink
+                      to={`/learner/note/${attachment.note_id}`}
+                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                    >
+                      <Notebook />
+                      <h1 className="text-2xl font-bold">
+                        {attachment.note.title}
+                      </h1>
+                    </NavLink>
+                  );
+                case "QUIZ":
+                  return (
+                    <NavLink
+                      to={`/learner/quizzes/${attachment.quiz_id}`}
+                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                    >
+                      <GalleryVertical />
+                      <h1 className="text-2xl font-bold">
+                        {attachment.quiz.title}
+                      </h1>
+                    </NavLink>
+                  );
+                case "FLASHCARD":
+                  return (
+                    <NavLink
+                      to={`/learner/flashcards/${attachment.flashcard_id}`}
+                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                    >
+                      <GalleryVertical />
+                      <h1 className="text-2xl font-bold">
+                        {attachment.flashcard.title}
+                      </h1>
+                    </NavLink>
+                  );
+                  break;
+              }
+            })}
+          </div>
+        </>
+      )}
+
       <div className="flex flex-row gap-2">
         <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-200">
           <ChevronUp
@@ -237,6 +288,7 @@ export default function LearnerPostPage() {
     queryKey: ["post", data?.id],
     queryFn: async () => {
       const response = await _API_INSTANCE.get(`/forum/post/${data?.id}`);
+      console.log(response.data);
       return response.data;
     },
     refetchOnWindowFocus: false,

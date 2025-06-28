@@ -132,6 +132,7 @@ export default function ThemeBox({ floating = true }: { floating?: boolean }) {
       <div className="rounded-box grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {lightThemes.map((theme) => (
           <div
+            key={theme}
             className="border-base-content/20 hover:border-base-content/40 overflow-hidden rounded-lg border outline-2 outline-offset-2 outline-transparent"
             data-act-classname="outline-base-content!"
             data-set-theme={theme}
@@ -178,6 +179,7 @@ export default function ThemeBox({ floating = true }: { floating?: boolean }) {
       <div className="rounded-box grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {darkThemes.map((theme) => (
           <div
+            key={theme}
             className="border-base-content/20 hover:border-base-content/40 overflow-hidden rounded-lg border outline-2 outline-offset-2 outline-transparent"
             data-act-classname="outline-base-content!"
             data-set-theme={theme}
