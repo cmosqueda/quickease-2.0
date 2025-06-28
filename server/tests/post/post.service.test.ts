@@ -14,6 +14,7 @@ jest.mock("../../utils/client", () => ({
     postVote: {
       count: jest.fn(),
       upsert: jest.fn(),
+      aggregate: jest.fn(),
     },
     comment: {
       findMany: jest.fn(),
@@ -22,6 +23,7 @@ jest.mock("../../utils/client", () => ({
     },
     commentVote: {
       upsert: jest.fn(),
+      aggregate: jest.fn(),
     },
     postTag: {
       upsert: jest.fn(),
@@ -42,33 +44,40 @@ describe("Post Service", () => {
   });
 
   test("getPost returns post with vote summary", async () => {
-    const mockPost = { id: "1", title: "Post", user: {}, comments: [] };
+    const mockPost = {
+      id: "1",
+      title: "Post",
+      votes: [{ vote_type: 1 }],
+      user: {},
+      attachments: [],
+    };
     (db_client.post.findFirst as jest.Mock).mockResolvedValue(mockPost);
+    (db_client.comment.findMany as jest.Mock).mockResolvedValue([]);
     (db_client.postVote.count as jest.Mock).mockResolvedValueOnce(5).mockResolvedValueOnce(2);
 
-    const result = await postService.getPost("1");
+    const result = await postService.getPost("1", "user-1");
 
-    expect(result).toEqual({
-      ...mockPost,
-      vote_summary: {
-        upvotes: 5,
-        downvotes: 2,
-      },
+    expect(result).toMatchObject({
+      id: "1",
+      vote_sum: 3,
+      user_vote: 1,
+      vote_summary: { upvotes: 5, downvotes: 2 },
+      comments: [],
     });
   });
 
   test("createPost creates and returns post", async () => {
     const mockCreated = { id: "1", title: "New Post" };
     (db_client.post.create as jest.Mock).mockResolvedValue(mockCreated);
+    (db_client.postAttachment?.createMany as jest.Mock)?.mockResolvedValue({});
 
     const result = await postService.createPost("body", "New Post", "user-1");
     expect(result).toEqual(mockCreated);
   });
 
-  test("commentOnPost creates comment and updates post", async () => {
+  test("commentOnPost creates comment", async () => {
     const mockComment = { id: "comment-1", comment_body: "Nice" };
     (db_client.comment.create as jest.Mock).mockResolvedValue(mockComment);
-    (db_client.post.update as jest.Mock).mockResolvedValue({});
 
     const result = await postService.commentOnPost("Nice", "post-1", "user-1");
     expect(result).toEqual(mockComment);
@@ -81,18 +90,22 @@ describe("Post Service", () => {
     expect(result).toEqual({ replied: true });
   });
 
-  test("voteOnPost upserts vote", async () => {
-    (db_client.postVote.upsert as jest.Mock).mockResolvedValue({});
+  test("voteOnPost upserts vote and returns vote sum", async () => {
+    const mockVote = { vote_type: 1 };
+    (db_client.postVote.upsert as jest.Mock).mockResolvedValue(mockVote);
+    (db_client.postVote.aggregate as jest.Mock).mockResolvedValue({ _sum: { vote_type: 3 } });
 
     const result = await postService.voteOnPost(1, "post-1", "user-1");
-    expect(result).toEqual({ voted: true });
+    expect(result).toEqual({ voted: true, vote: mockVote, vote_sum: 3 });
   });
 
-  test("voteOnComment upserts vote", async () => {
-    (db_client.commentVote.upsert as jest.Mock).mockResolvedValue({});
+  test("voteOnComment upserts vote and returns vote sum", async () => {
+    const mockVote = { vote_type: -1 };
+    (db_client.commentVote.upsert as jest.Mock).mockResolvedValue(mockVote);
+    (db_client.commentVote.aggregate as jest.Mock).mockResolvedValue({ _sum: { vote_type: -1 } });
 
     const result = await postService.voteOnComment(-1, "comment-1", "user-1");
-    expect(result).toEqual({ voted: true });
+    expect(result).toEqual({ voted: true, vote: mockVote, vote_sum: -1 });
   });
 
   test("addTagOnPost upserts tags", async () => {
