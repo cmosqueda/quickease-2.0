@@ -62,7 +62,7 @@ const ThemeGridSection = ({
           <div
             key={theme}
             className="border-base-content/20 hover:border-base-content/40 overflow-hidden rounded-lg border outline-2 outline-offset-2 outline-transparent cursor-pointer"
-            data-act-className="outline-base-content!"
+            data-act-classname="outline-base-content!"
             data-set-theme={theme}
             onClick={() => setTheme(theme)}
           >

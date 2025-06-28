@@ -8,6 +8,7 @@ import {
   ArrowLeft,
   ChevronDown,
   ChevronUp,
+  Edit,
   EllipsisVertical,
   MessageCircle,
 } from "lucide-react";
@@ -16,7 +17,9 @@ import { NavLink, useLoaderData, useNavigate } from "react-router";
 import { useVote, useVoteOnComment } from "@/hooks/useVote";
 import { toast } from "sonner";
 import { useComment } from "@/hooks/useComment";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
+import useAuth from "@/hooks/useAuth";
+import { useDeletePost } from "@/hooks/useDeletePost";
 
 type CommentCardProps = {
   id: string;
@@ -224,7 +227,9 @@ const CommentCard = ({
 };
 
 export default function LearnerPostPage() {
+  const { user } = useAuth();
   const { mutate: comment } = useComment();
+  const { mutate: deletePost } = useDeletePost();
   const data = useLoaderData();
   const navigate = useNavigate();
 
@@ -280,19 +285,47 @@ export default function LearnerPostPage() {
           className="cursor-pointer"
           onClick={() => navigate(-1, { viewTransition: true })}
         />
-        <details className="dropdown dropdown-end">
-          <summary className="list-none cursor-pointer">
-            <EllipsisVertical
-              className="rounded-full grow shrink-0 p-2 border border-base-200"
-              size={36}
-            />
-          </summary>
-          <ul className="menu dropdown-content bg-base-100 border border-base-300 rounded-box z-1 w-52 p-2 my-2 shadow-sm">
-            <li>
-              <a>Report</a>
-            </li>
-          </ul>
-        </details>
+        <div className="flex flex-row gap-4 items-center">
+          {postData.user_id == user?.id && (
+            <NavLink to={"edit"} viewTransition>
+              <Edit className="cursor-pointer" />
+            </NavLink>
+          )}
+
+          <details className="dropdown dropdown-end">
+            <summary className="list-none cursor-pointer">
+              <EllipsisVertical
+                className="rounded-full grow shrink-0 p-2 border border-base-200"
+                size={36}
+              />
+            </summary>
+            <ul className="menu dropdown-content bg-base-100 border border-base-300 rounded-box z-1 w-52 p-2 my-2 shadow-sm">
+              {postData.user_id == user?.id && (
+                <li>
+                  <button
+                    onClick={async () =>
+                      deletePost(
+                        { post_id: data.id },
+                        {
+                          onSuccess: async () => {
+                            toast.success("Post deleted.");
+                            navigate("/learner");
+                          },
+                        }
+                      )
+                    }
+                  >
+                    Delete
+                  </button>
+                </li>
+              )}
+
+              <li>
+                <a>Report</a>
+              </li>
+            </ul>
+          </details>
+        </div>
       </div>
       <PostCard data={postData} />
       <div className="flex flex-col gap-4 relative">

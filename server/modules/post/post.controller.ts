@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import {
     addTagOnPost, commentOnPost, createPost, deletePost, getComments,
     getPost, getRecentPosts, getUserPosts, replyOnComment, togglePostVisibility,
+    updatePost,
     voteOnComment, voteOnPost
 } from "./post.service";
 
@@ -64,7 +65,21 @@ export async function create_post(request: FastifyRequest, reply: FastifyReply) 
         reply.code(200).send(post)
     } catch (err) {
         reply.code(500).send({
-            message: "Error"
+            message: "Error posting."
+        })
+    }
+}
+
+export async function update_post(request: FastifyRequest, reply: FastifyReply) {
+    const { body, title, post_id } = request.body as { body: string, title: string, post_id: string }
+
+    try {
+        const post = await updatePost(body, title, post_id)
+
+        reply.code(200).send(post)
+    } catch (err) {
+        reply.code(500).send({
+            message: "Error editing post."
         })
     }
 }
@@ -78,7 +93,7 @@ export async function comment_on_post(request: FastifyRequest, reply: FastifyRep
         reply.code(200).send(comment)
     } catch (err) {
         reply.code(500).send({
-            message: "Error."
+            message: "Error commenting."
         })
     }
 }

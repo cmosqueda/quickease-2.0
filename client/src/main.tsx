@@ -31,6 +31,7 @@ import LearnerAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIFlas
 import LearnerEditFlashcardPage from "./routes/(learner)/(flashcard)/LearnerEditFlashcard";
 import LearnerEditAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIEditFlashcard";
 import LearnerAIEditQuizPage from "./routes/(learner)/(quiz)/LearnerAIEditQuiz";
+import LearnerEditPostPage from "./routes/(learner)/(post)/LearnerEditPost";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -52,6 +53,7 @@ import {
 } from "./utils/router";
 
 import "../global.css";
+import useAuth from "./hooks/useAuth";
 
 const client = new QueryClient();
 
@@ -91,29 +93,63 @@ const router = createBrowserRouter([
         Component: LearnerProfilePage,
         loader: async ({ params }) => {
           try {
-            const { data } = await _API_INSTANCE.get(`/users/view/${params.id}`);
+            const { data } = await _API_INSTANCE.get(
+              `/users/view/${params.id}`
+            );
 
             return data;
           } catch (err) {
-            console.log(err)
+            console.log(err);
             toast.error("Error viewing profile.");
             return redirect("/");
           }
         },
       },
+
       {
-        path: "post/:id",
-        Component: LearnerPostPage,
-        loader: async ({ params }) => {
-          try {
-            const { data } = await _API_INSTANCE.get(
-              `/forum/post/${params.id}`
-            );
-            return { id: data.id };
-          } catch {
-            return redirect("/learner");
-          }
-        },
+        path: "post",
+        children: [
+          {
+            path: ":id",
+            Component: LearnerPostPage,
+            index: true,
+            loader: async ({ params }) => {
+              try {
+                const { data } = await _API_INSTANCE.get(
+                  `/forum/post/${params.id}`
+                );
+                return { id: data.id };
+              } catch {
+                return redirect("/learner");
+              }
+            },
+          },
+          {
+            path: ":id/edit",
+            Component: LearnerEditPostPage,
+            index: true,
+            loader: async ({ params }) => {
+              try {
+                const { status, data } = await _API_INSTANCE.get(
+                  `/forum/post/${params.id}`
+                );
+
+                console.log(data);
+
+                if (status == 200) {
+                  if (data.user_id == useAuth.getState().user?.id) {
+                    return { id: data.id };
+                  } else {
+                    toast.error("You can't edit a post that's not yours! :)");
+                    return redirect(`/learner/post/${params.id}`);
+                  }
+                }
+              } catch {
+                return redirect("/learner");
+              }
+            },
+          },
+        ],
       },
       {
         path: "flashcards",

@@ -176,6 +176,21 @@ export async function createPost(body: string, title: string, user_id: string) {
     return post
 }
 
+export async function updatePost(body: string, title: string, post_id: string) {
+    const post = await db_client.post.update({
+        data: {
+            title: title,
+            post_body: body,
+            updated_at: dayjs(new Date()).toISOString()
+        },
+        where: {
+            id: post_id
+        }
+    })
+
+    return post
+}
+
 export async function commentOnPost(body: string, post_id: string, user_id: string) {
     const comment = await db_client.comment.create({
         data: {
