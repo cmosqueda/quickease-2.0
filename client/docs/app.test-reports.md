@@ -326,6 +326,13 @@ Feedback:
 
 ## SUMMARY
 
+- ✅ Register, Log-in, Learner Notes, Learner Quiz, Learner Library, AI-Generation, and Profile modules PASSED with all core features functioning as expected. Minor UX or logic refinements are suggested (e.g., better profile visibility handling, quiz item distinction).
+- 🟡 Learner Flashcards PARTIAL PASSED. Core features like creation, deletion, preview, and flipping work, but editing (manual & AI-generated) fails due to server-side error `(400 Bad Request)`.
+- 🟡 Learner Forums – Post, Comments, and Quiz Sharing PARTIAL PASSED. Posting, attaching content, and voting work, but post deletion, vote undo, and score-user mapping need implementation or fixing.
+- ❌ Learner Forums – Report NOT YET IMPLEMENTED. No functionality for reporting posts or comments is currently present.
+
+> Overall: Most major learning and interaction modules are functional. Focus is needed on enhancing content editing (Flashcards), accurate data attribution (Shared Quizzes), and adding missing moderation tools (Reports).
+
 </details>
 
 <details>
@@ -369,105 +376,160 @@ Feedback:
 
 Criterias and Success Rate:
 
-- **LN001** – % – User can create notes manually.
-- **LN002** – % – All implemented markdown functions work properly
-- **LN003** – % – User can edit the existing note inside text box
-- **LN004** – % – User can view saved notes
-- **LN005** – % – At notes page, an ellipsis icon is available and clickable for viewing additional notes options
-- **LN006** – % – User can save notes properly
-- **LN007** – % – When clicking the back button on the selected sumary notes, user should be redirected to Library Notes module
-- **LN008** – % – User can delete an existing note
-- **LN009** – % – Users can share a note either from Note Card or from Note Page, through "more options"
-- **LN010** – % – At notes card, an ellipsis icon is available and clickable for viewing additional notes options
+- **LN001** – 100% – User can create notes manually.
+- **LN002** – 100% – All implemented markdown functions work properly
+- **LN003** – 100% – User can edit the existing note inside text box
+- **LN004** – 100% – User can view saved notes
+- **LN005** – 80% – At notes page, a series of functional buttons for note options are present
+- **LN006** – 100% – User can save notes properly
+- **LN007** – 100% – When clicking the back button on the selected sumary notes, user should be redirected to Library Notes module
+- **LN008** – 100% – User can delete an existing note
+- **LN009** – - – Users can share a note either from Note Card or from Note Page, through "more options"
 
-Status:
+Status: ✅ **PASSED**
 
 Feedback:
+
+- All implemented modules work properly as expected.
+- Share button in note options not yet functional.
 
 ## Learner Flashcards
 
 Criterias and Success Rate:
 
-- **LFC001** – % – User can create flashcards manually
-- **LFC002** – % – User can preview front content and back content of flashcards.
-- **LFC003** – % – Front and back contents of flashcards must display accurately.
-- **LFC004** – % – User can review flashcards. When a user clicks on the card component, the UI must respond with a flip in no more than 0.8s.
-- **LFC005** – % – At flashcards page, an ellipsis icon is available and clickable for viewing additional flashcard set options at the flashcard set card component
-- **LFC006** – % – When clicking the back button on the selected flashcard, user should be redirected to Library Flashcards module
-- **LFC007** – % – User can edit the existing flashcard created manually
-- **LFC008** – % – User can edit the existing flashcard created from AI generation
-- **LFC009** – % – User can share a flashcard set either from Flashcard Set Card or from Flashcard Page, through "more options"
-- **LFC010** – % – User can delete an existing flashcard set
-- **LFC011** – % – At flashcards set card, an ellipsis icon is available and clickable for viewing additional flashcard set options at the flashcard set card component
+- **LFC001** – 100% – User can create flashcards manually
+- **LFC002** – 100% – User can preview front content and back content of flashcards.
+- **LFC003** – 100% – Front and back contents of flashcards must display accurately.
+- **LFC004** – 100% – User can review flashcards. When a user clicks on the card component, the UI must respond with a flip in no more than 0.8s.
+- **LFC005** – 100% – At flashcards page, an ellipsis icon is available and clickable for viewing additional flashcard set options at the flashcard set card component
+- **LFC006** – 100% – When clicking the back button on the selected flashcard, user should be redirected to Library Flashcards module
+- **LFC007** – 0% – User can edit the existing flashcard created manually
+- **LFC008** – 0% – User can edit the existing flashcard created from AI generation
+- **LFC009** – - – User can share a flashcard set either from Flashcard Set Card or from Flashcard Page, through "more options"
+- **LFC010** – 100% – User can delete an existing flashcard set
+- **LFC011** – 100% – At quiz page, an ellipsis icon is available and clickable for viewing additional quiz options
 
-Status:
+Status: ⚠️ **PARTIAL PASSED**
 
 Feedback:
+
+- All modules implemented work properly as expected, except editing flashcard sets.
+- Error in editing flashcards set persists at `client/src/routes/(learner)/(flashcard)/LearnerEditFlashcard.tsx`
+
+  ```
+  LearnerEditFlashcard.tsx:48
+  PUT http://localhost:3000/api/flashcard/update 400 (Bad Request)
+  handleSave	@	LearnerEditFlashcard.tsx:48
+  <button>
+  LearnerEditFlashcardPage	@	LearnerEditFlashcard.tsx:84
+  ```
 
 ## Learner Quiz
 
 Criterias and Success Rate:
 
-- **LQ001** – % – The UI and buttons respond in no more than 0.8s when clicked.
-- **LQ002** – % – User can create quizzes manually.
-- **LQ003** – % – User can edit the existing quiz created manually
-- **LQ004** – % – User can answer and review existing saved quiz.
-- **LQ005** – % – Correct answer(s) from multiple choice are displayed as expected.
-- **LQ006** – % – Exact scores are calculated and displayed as expected after answering the quiz/reviewing the quiz overview.
-- **LQ007** – % – After a quiz is answered, a quiz review is available for viewing.
-- **LQ008** – % – When clicking the back button on the selected quiz, user should be redirected to Library Quiz module
-- **LQ009** – % – User can delete an existing quiz
-- **LQ010** – % – User can edit the existing quiz created from AI generation
+- **LQ001** – 100% – The UI and buttons respond in no more than 0.8s when clicked.
+- **LQ002** – 100% – User can create quizzes manually.
+- **LQ003** – 100% – User can edit the existing quiz created manually
+- **LQ004** – 100% – User can answer and review existing saved quiz.
+- **LQ005** – 100% – Correct answer(s) from multiple choice are displayed as expected.
+- **LQ006** – 100% – Exact scores are calculated and displayed as expected after answering the quiz/reviewing the quiz overview.
+- **LQ007** – 100% – After a quiz is answered, a quiz review is available for viewing.
+- **LQ008** – 100% – When clicking the back button on the selected quiz, user should be redirected to Library Quiz module
+- **LQ009** – 100% – User can delete an existing quiz
+- **LQ010** – 100% – User can edit the existing quiz created from AI generation
 
-Status:
+Status: ✅ **PASSED WITH MINOR IMPROVEMENTS NEEDED**
 
 Feedback:
+
+- All modules implemented worked properly as expectde. Previous bugs addressed are also fixed.
+- Needs improvement only on the UX. Add visual distinction on answered items and unanswered items.
 
 ## Learner Library
 
 Criterias and Success Rate:
 
-- **LL001** – % – Search functionality returns accurate results.
-- **LL002** – % – All learner's materials data (notes, flashcards, quizzes) are fetched accordingly and displays as expected.
-- **LL003** – % – Filter `AI-Generated` or `From User` (manually created) materials.
+- **LL001** – 100% – Search functionality returns accurate results.
+- **LL002** – 100% – All learner's materials data (notes, flashcards, quizzes) are fetched accordingly and displays as expected.
+- **LL003** – 100% – Filter `AI-Generated` or `From User` (manually created) materials.
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- Fixes are now applied. Every module works as expected and intended.
+
+## AI-Generation
+
+Criterias and Success Rate:
+
+- **AI001** – 100% – User can generate summary note from input
+- **AI002** – - – User can generate summary note from uploaded document
+- **AI003** – - – User can generate summary note from uploaded image
+- **AI004** – 100% – User can generate flashcard sets from existing note
+- **AI005** – 100% – User can generate flashcard sets from text input prompted by user
+- **AI006** – - – User can generate flashcard sets from uploaded document
+- **AI007** – 100% – User can generate quiz from existing note
+- **AI008** – 100% – User can generate quiz from text input prompted by user
+- **AI009** – - – User can generate quiz from uploaded document
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- All modules implemented work properly as expected.
+- Generating from uploaded files or images not yet supported.
 
 ## Learner Forums - Post
 
 Criterias and Success Rate:
 
-- **LF001** – % – User(s) can create a post in forums
-- **LF002** – % – User can edit an existing post they owned
-- **LF003** – % – User can delete their existing post
-- **LF004** – % – User can select and attach summary notes to share in a post
-- **LF005** – % – User can select and attach flashcards to share in a post
-- **LF006** – % – User can select and attach quizzes to share in a post
-- **LF007** – % – User(s) can upvote or downvote an existing post
-- **LF0011** – % – User(s) can report a post
+- **LF001** – 100% – User(s) can create a post in forums
+- **LF002** – 100% – User can edit an existing post they owned
+- **LF003** – - – User can delete their existing post
+- **LF004** – 100% – User can select and attach summary notes to share in a post
+- **LF005** – 100% – User can select and attach flashcards to share in a post
+- **LF006** – 100% – User can select and attach quizzes to share in a post
+- **LF007** – 100% – User(s) can upvote or downvote an existing post
+- **LF0011** – - – User(s) can report a post
 
-Status:
+Status: ✅ **PASSED WITH MINOR IMPROVEMENTS NEEDED**
 
 Feedback:
+
+- Deleting a post not yet implemented
+- Votes module need improvement. A user can undo their vote if they want to.
+- Needs only improvement with the UX in selecting material attachments. If `add` button in `attachment selection modal` is clicked, it should go back to the main `create post modal`.
 
 ## Learner Forums - Comments
 
 Criterias and Success Rate:
 
-- **LF008** – % – User(s) can comment to a post
-- **LF009** – % – User(s) can reply to a comment (like threaded replies)
-- **LF010** – % – User(s) can upvote or downvote an existing comment
-- **LF012** – % – User(s) can report a comment
+- **LF008** – 100% – User(s) can comment to a post
+- **LF009** – 100% – User(s) can reply to a comment (like threaded replies)
+- **LF010** – 100% – User(s) can upvote or downvote an existing comment
+- **LF012** – - – User(s) can report a comment
 
-Status:
+Status: ✅ **PASSED WITH MINOR IMPROVEMENTS NEEDED**
 
 Feedback:
 
-## Learner Forums - Report Management
+- All implemented modules work properly as expected.
+- Votes module need improvement. A user can undo their vote if they want to.
+
+## Learner Forums - Report
 
 Criterias and Success Rate:
 
-Status:
+- **FR001** – - – If a user's post is reported, they can view the report submitted by the user who reported it.
+- **FR002** – - – If a user's comment is reported, they can view the report submitted by the user who reported it.
+
+Status: **NOT YET IMPLEMENTED**
 
 Feedback:
+
+- null
 
 ## Learner Forums - Quiz Sharing
 
@@ -485,5 +547,20 @@ Feedback:
 - Multiple users' attempts and scores are saved properly and can be viewed by other users but it doesn't show whose user owned which attempt/score. Accurate mapping of scores/attempts to corresponding users must be implemented.
 
 ## Profile
+
+Criterias and Success Rate:
+
+- **PR001** – 100% – User(s) can view their profile information
+- **PR002** – - – User(s) can edit their profile information
+- **PR003** – 100% – User(s) can toggle profile visibility (make profile public or not)
+
+Status: ✅ **PASSED WITH MINOR FIXES NEEDED**
+
+Feedback:
+
+- Implemented modules work properly as expected.
+- Editing profile information not yet implemented.
+- Users can toggle profile visibility and is properly filtered as public or not public in forums. The only issue is the logged in user can view their own profile as private when it is accessed in forums.
+  > Suggestion: When logged in user views their own profile, it should take them to their own account profile screen.
 
 </details>
