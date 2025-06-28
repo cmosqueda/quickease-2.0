@@ -8,6 +8,7 @@ import {
   update_user_quiz_visibility,
   delete_user_quiz,
   submit_quiz_attempt,
+  get_quiz_attempt,
 } from "../../modules/quiz/quiz.controller";
 
 jest.mock("../../modules/quiz/quiz.service");
@@ -44,6 +45,7 @@ describe("Quiz Controller", () => {
     app.patch("/quizzes/visibility", update_user_quiz_visibility);
     app.delete("/quizzes", delete_user_quiz);
     app.post("/quizzes/submit", submit_quiz_attempt);
+    app.get("/quizzes/attempt/:attempt_id", get_quiz_attempt);
   });
 
   afterEach(() => {
@@ -137,20 +139,22 @@ describe("Quiz Controller", () => {
   });
 
   test("submit_quiz_attempt should return 200 on success", async () => {
-    (quizService.submitQuizAttempt as jest.Mock).mockResolvedValue(true);
+    (quizService.submitQuizAttempt as jest.Mock).mockResolvedValue({ submitted: true, id: "attempt-123" });
 
     const res = await app.inject({
       method: "POST",
       url: "/quizzes/submit",
       payload: {
-        answer_data: {
-          question: {
-            question: "Sample question",
-            options: ["a", "b", "c", "d"],
-            correctAnswers: [2],
+        answer_data: [
+          {
+            question: {
+              question: "Sample question",
+              options: ["a", "b", "c", "d"],
+              correctAnswers: [2],
+            },
+            user_answer: [2],
           },
-          user_answer: [2],
-        },
+        ],
         started_at: "2025-06-24T10:00:00Z",
         completed_at: "2025-06-24T10:10:00Z",
         quiz_id: "quiz-1",
@@ -158,6 +162,27 @@ describe("Quiz Controller", () => {
     });
 
     expect(res.statusCode).toBe(200);
-    expect(JSON.parse(res.body).submitted).toBe(true);
+    expect(JSON.parse(res.body)).toEqual({ submitted: true, id: "attempt-123" });
+  });
+
+  test("get_quiz_attempt should return 200 with the attempt", async () => {
+    const mockAttempt = {
+      id: "attempt-123",
+      quiz_id: "quiz-1",
+      user_id: "user-1",
+      answer_data: [],
+      started_at: "2025-06-24T10:00:00Z",
+      completed_at: "2025-06-24T10:10:00Z",
+    };
+
+    (quizService.getQuizAttempt as jest.Mock).mockResolvedValue(mockAttempt);
+
+    const res = await app.inject({
+      method: "GET",
+      url: "/quizzes/attempt/attempt-123",
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.body)).toEqual(mockAttempt);
   });
 });

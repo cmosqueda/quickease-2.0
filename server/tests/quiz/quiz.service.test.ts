@@ -135,8 +135,8 @@ describe("Quiz Service", () => {
     });
   });
 
-  test("submitQuizAttempt should store attempt and return true", async () => {
-    (db_client.quizAttempt.create as jest.Mock).mockResolvedValue(true);
+  test("submitQuizAttempt should store attempt and return an object", async () => {
+    (db_client.quizAttempt.create as jest.Mock).mockResolvedValue({ id: "attempt-123" });
 
     const attemptData = {
       question: {
@@ -155,7 +155,7 @@ describe("Quiz Service", () => {
       "user-1"
     );
 
-    expect(result).toBe(true);
+    expect(result).toEqual({ submitted: true, id: "attempt-123" });
     expect(db_client.quizAttempt.create).toHaveBeenCalledWith({
       data: {
         user_id: "user-1",
