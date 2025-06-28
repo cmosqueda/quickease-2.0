@@ -1,18 +1,12 @@
 import CustomEditor from "@/components/Editor";
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
+import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_GLOBAL";
 import _API_INSTANCE from "@/utils/axios";
 import useAuth from "@/hooks/useAuth";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
-import {
-  ArrowLeft,
-  BookDown,
-  CalendarRange,
-  ClipboardList,
-  Save,
-  X,
-} from "lucide-react";
+import { ArrowLeft, BookDown, CalendarRange, ClipboardList, Save, X } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
 import { useEffect, useState } from "react";
@@ -77,9 +71,7 @@ export default function LearnerAICreateNotePage() {
       <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 lg:items-center border-b border-base-300 p-4 bg-base-100">
         <div className="flex flex-row items-center gap-4">
           <ArrowLeft
-            onClick={() =>
-              navigate("/learner/library?tab=notes", { viewTransition: true })
-            }
+            onClick={() => navigate("/learner/library?tab=notes", { viewTransition: true })}
             className="cursor-pointer lg:ml-6"
           />
           <h1 className="text-2xl font-bold">Create note</h1>
@@ -94,9 +86,7 @@ export default function LearnerAICreateNotePage() {
             <p>Save changes</p>
           </button>
           <button
-            onClick={() =>
-              navigate("/learner/library?tab=notes", { viewTransition: true })
-            }
+            onClick={() => navigate("/learner/library?tab=notes", { viewTransition: true })}
             className="btn btn-ghost btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
           >
             <X />
@@ -118,27 +108,21 @@ export default function LearnerAICreateNotePage() {
           <h1 className="font-bold text-xl">Study options</h1>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() =>
-              document.getElementById("generate-summary-modal").showModal()
-            }
+            onClick={() => document.getElementById("generate-summary-modal").showModal()}
           >
             <BookDown />
             <h1>Generate summary</h1>
           </button>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() =>
-              document.getElementById("generate-flashcard-modal").showModal()
-            }
+            onClick={() => document.getElementById("generate-flashcard-modal").showModal()}
           >
             <CalendarRange />
             <h1>Generate flashcards</h1>
           </button>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() =>
-              document.getElementById("generate-quiz-modal").showModal()
-            }
+            onClick={() => document.getElementById("generate-quiz-modal").showModal()}
           >
             <ClipboardList />
             <h1>Generate quiz</h1>
