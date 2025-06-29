@@ -407,7 +407,6 @@ Criterias and Success Rate:
 - **LFC008** – 0% – User can edit the existing flashcard created from AI generation
 - **LFC009** – - – User can share a flashcard set either from Flashcard Set Card or from Flashcard Page, through "more options"
 - **LFC010** – 100% – User can delete an existing flashcard set
-- **LFC011** – 100% – At quiz page, an ellipsis icon is available and clickable for viewing additional quiz options
 
 Status: ⚠️ **PARTIAL PASSED**
 
@@ -438,6 +437,7 @@ Criterias and Success Rate:
 - **LQ008** – 100% – When clicking the back button on the selected quiz, user should be redirected to Library Quiz module
 - **LQ009** – 100% – User can delete an existing quiz
 - **LQ010** – 100% – User can edit the existing quiz created from AI generation
+- **LQ011** – 100% – At quiz page, an ellipsis icon is available and clickable for viewing additional quiz options
 
 Status: ✅ **PASSED WITH MINOR IMPROVEMENTS NEEDED**
 
