@@ -4,7 +4,7 @@
     "slug": "quickease",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images-2/box-icon.png",
+    "icon": "./assets/images-2/icon.png",
     "scheme": "quickease",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images-2/box-icon.png",
+        "foregroundImage": "./assets/images-2/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
@@ -21,14 +21,14 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images-2/round-icon.png"
+      "favicon": "./assets/images-2/logo.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images-2/box-icon.png",
+          "image": "./assets/images-2/splash-icon.png",
           "imageWidth": 150,
           "resizeMode": "contain",
           "backgroundColor": "#FFFFFF"
