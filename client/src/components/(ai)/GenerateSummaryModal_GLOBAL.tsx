@@ -84,14 +84,6 @@ export default function GenerateSummaryModal() {
   const [index, setIndex] = useState(0);
 
   const _TABS = [
-    <GenerateFromText
-      setText={setText}
-      text={text}
-      setGeneratedContent={setGeneratedContent}
-      setIsGenerating={setIsGenerating}
-      isGenerating={isGenerating}
-      navigate={navigate}
-    />,
     <>
       <div className="flex items-center justify-center w-full">
         <label
@@ -182,7 +174,7 @@ export default function GenerateSummaryModal() {
 
   return (
     <dialog id="generate-summary-modal-global" className="modal">
-      <div className="modal-box max-w-5xl lg:max-h-[65vh] lg:rounded-3xl rounded-none w-full h-full flex flex-col gap-4">
+      <div className="modal-box max-w-5xl lg:max-h-[65vh] lg:rounded-3xl rounded-none w-full h-full lg:h-fit flex flex-col gap-4">
         {!generatedContent && (
           <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4">
             <div className="flex flex-row gap-4 items-center">
@@ -207,17 +199,6 @@ export default function GenerateSummaryModal() {
                 )}
                 onClick={() => setIndex(0)}
               >
-                <Text />
-                <h1>Input text</h1>
-              </a>
-              <a
-                role="tab"
-                className={clsx(
-                  "flex flex-row gap-4 tab grow lg:grow-0",
-                  index == 1 ? "tab-active" : null
-                )}
-                onClick={() => setIndex(1)}
-              >
                 <Paperclip />
                 <h1>Upload document</h1>
               </a>
@@ -225,9 +206,9 @@ export default function GenerateSummaryModal() {
                 role="tab"
                 className={clsx(
                   "flex flex-row gap-4 tab grow lg:flex",
-                  index == 2 ? "tab-active" : null
+                  index == 1 ? "tab-active" : null
                 )}
-                onClick={() => setIndex(2)}
+                onClick={() => setIndex(1)}
               >
                 <Image />
                 <h1>Upload image</h1>
