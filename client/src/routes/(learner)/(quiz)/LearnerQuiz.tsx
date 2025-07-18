@@ -10,12 +10,13 @@ import {
   EllipsisVertical,
   Info,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
 import _API_INSTANCE from "@/utils/axios";
 
 export default function LearnerQuizPage() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const data = useLoaderData() as {
     id: string;
@@ -50,9 +51,8 @@ export default function LearnerQuizPage() {
       completed_at: string;
     }[];
   };
-  const [tabIndex, setTabIndex] = useState(0);
 
-  const navigate = useNavigate();
+  const [tabIndex, setTabIndex] = useState(1);
 
   const handleAnswerQuiz = async () => {
     await localStorage.setItem("QUICKEASE_CURRENT_QUIZ", JSON.stringify(data));
@@ -74,7 +74,9 @@ export default function LearnerQuizPage() {
 
       if (status == 200) {
         toast.success("Quiz deleted.");
-        return navigate('/learner/library?tab=quizzes', { viewTransition: true });
+        return navigate("/learner/library?tab=quizzes", {
+          viewTransition: true,
+        });
       }
     } catch (err) {
       toast.error("Failed to delete.");
@@ -99,12 +101,20 @@ export default function LearnerQuizPage() {
     <></>,
   ];
 
+  useEffect(() => {
+    if (data.attempts.length > 0) {
+      setTabIndex(0);
+    }
+  }, [data.attempts.length]);
+
   return (
     <div className="flex flex-col w-full min-h-screen max-w-7xl mx-auto p-8 gap-4">
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate('/learner/library?tab=quizzes', { viewTransition: true })}
+          onClick={() =>
+            navigate(-1, { viewTransition: true })
+          }
         />
         <div className="flex flex-row gap-6 items-center">
           {data.user_id == user?.id && (
@@ -146,13 +156,15 @@ export default function LearnerQuizPage() {
         </p>
       </div>
       <div role="tablist" className="tabs tabs-border">
-        <a
-          role="tab"
-          className={clsx(tabIndex == 0 ? "tab tab-active" : "tab")}
-          onClick={() => setTabIndex(0)}
-        >
-          Your attempts
-        </a>
+        {data.attempts.length > 0 && (
+          <a
+            role="tab"
+            className={clsx(tabIndex == 0 ? "tab tab-active" : "tab")}
+            onClick={() => setTabIndex(0)}
+          >
+            Your attempts
+          </a>
+        )}
         <a
           role="tab"
           className={clsx(tabIndex == 1 ? "tab tab-active" : "tab")}

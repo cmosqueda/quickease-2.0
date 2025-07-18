@@ -9,13 +9,21 @@ export default function LearnerQuizAttemptPage() {
 
   const data = useLoaderData() as {
     id: string;
-    title: string;
-    description: string;
     quiz_id: string;
     user_id: string;
     started_at: string;
     completed_at: string;
     is_public: boolean;
+    quiz: {
+      id: string;
+      title: string;
+      description: string;
+      is_public: string;
+    };
+    user: {
+      first_name: string;
+      last_name: string;
+    };
     answer_data: {
       question: {
         question: string;
@@ -43,9 +51,7 @@ export default function LearnerQuizAttemptPage() {
       <div className="flex justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() =>
-            navigate("/learner/library?tab=quizzes", { viewTransition: true })
-          }
+          onClick={() => navigate(-1, { viewTransition: true })}
         />
         <div className="text-right">
           <p className="text-sm text-base-content/50">
@@ -53,6 +59,9 @@ export default function LearnerQuizAttemptPage() {
           </p>
           <p className="font-bold text-xl">
             Score: {correctCount}/{totalQuestions}
+          </p>
+          <p>
+            {data.user.first_name} {data.user.last_name}
           </p>
         </div>
       </div>
@@ -65,10 +74,10 @@ export default function LearnerQuizAttemptPage() {
           </div>
         )}
         <h1 className="font-bold text-3xl lg:text-6xl">
-          {data.title || "Untitled"}
+          {data.quiz.title || "Untitled"}
         </h1>
         <p className="text-lg text-base-content/50">
-          {data.description || "No description provided"}
+          {data.quiz.description || "No description provided"}
         </p>
       </div>
 
