@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
 import clsx from "clsx";
 
-import { EllipsisVertical } from "lucide-react";
 import { NavLink } from "react-router";
 
 type QuizCardProps = {

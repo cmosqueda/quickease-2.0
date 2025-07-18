@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useState } from "react";
 
 export default function FlippableCard({
   front,

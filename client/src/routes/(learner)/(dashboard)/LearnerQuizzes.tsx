@@ -1,11 +1,10 @@
 import NoteCard from "@/components/(learner)/NoteCard";
 import clsx from "clsx";
+
 import { SendHorizonal } from "lucide-react";
 import { useState } from "react";
-import { useLoaderData } from "react-router";
 
 export default function LearnerQuizzes() {
-  const data = useLoaderData();
   const [tabIndex, setTabIndex] = useState(0);
 
   const tabs = [

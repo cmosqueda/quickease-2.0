@@ -41,6 +41,7 @@ import AdminManageReportsPage from "./routes/(admin)/(dashboard)/AdminManageRepo
 import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
 
 import _API_INSTANCE from "./utils/axios";
+import useAuth from "./hooks/useAuth";
 
 import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
@@ -53,7 +54,6 @@ import {
 } from "./utils/router";
 
 import "../global.css";
-import useAuth from "./hooks/useAuth";
 
 const client = new QueryClient();
 

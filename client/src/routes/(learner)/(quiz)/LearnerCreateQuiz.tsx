@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _API_INSTANCE from "@/utils/axios";
-import { getUnitValue, handleTimeChange } from "@/utils/quiz";
 import clsx from "clsx";
 
 import { ArrowLeft, ArrowRightFromLine, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { getUnitValue, handleTimeChange } from "@/utils/quiz";
 
 interface Question {
   question: string;
@@ -116,7 +116,9 @@ export default function LearnerCreateQuizPage() {
 
       if (status == 201) {
         toast.success("Quiz created.");
-        return navigate("/learner/library?tab=quizzes", { viewTransition: true });
+        return navigate("/learner/library?tab=quizzes", {
+          viewTransition: true,
+        });
       }
     } catch (err) {
       toast.error("Error creating quiz.");

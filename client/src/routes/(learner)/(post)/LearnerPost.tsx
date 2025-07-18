@@ -73,47 +73,63 @@ const PostCard = ({ data }: { data: any }) => {
         <>
           <h1 className="font-bold text-xl">Attachments</h1>
           <div className="flex flex-row gap-4 items-center">
-            {data.attachments.map((attachment) => {
-              switch (attachment.resource_type) {
-                case "NOTE":
-                  return (
-                    <NavLink
-                      to={`/learner/note/${attachment.note_id}`}
-                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
-                    >
-                      <Notebook />
-                      <h1 className="text-2xl font-bold">
-                        {attachment.note.title}
-                      </h1>
-                    </NavLink>
-                  );
-                case "QUIZ":
-                  return (
-                    <NavLink
-                      to={`/learner/quizzes/${attachment.quiz_id}`}
-                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
-                    >
-                      <GalleryVertical />
-                      <h1 className="text-2xl font-bold">
-                        {attachment.quiz.title}
-                      </h1>
-                    </NavLink>
-                  );
-                case "FLASHCARD":
-                  return (
-                    <NavLink
-                      to={`/learner/flashcards/${attachment.flashcard_id}`}
-                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
-                    >
-                      <GalleryVertical />
-                      <h1 className="text-2xl font-bold">
-                        {attachment.flashcard.title}
-                      </h1>
-                    </NavLink>
-                  );
-                  break;
+            {data.attachments.map(
+              (attachment: {
+                resource_type: string;
+                note_id: string;
+                note: {
+                  title: string;
+                };
+                quiz_id: string;
+                quiz: {
+                  title: string;
+                };
+                flashcard_id: string;
+                flashcard: {
+                  title: string;
+                };
+              }) => {
+                switch (attachment.resource_type) {
+                  case "NOTE":
+                    return (
+                      <NavLink
+                        to={`/learner/note/${attachment.note_id}`}
+                        className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                      >
+                        <Notebook />
+                        <h1 className="text-2xl font-bold">
+                          {attachment.note.title}
+                        </h1>
+                      </NavLink>
+                    );
+                  case "QUIZ":
+                    return (
+                      <NavLink
+                        to={`/learner/quizzes/${attachment.quiz_id}`}
+                        className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                      >
+                        <GalleryVertical />
+                        <h1 className="text-2xl font-bold">
+                          {attachment.quiz.title}
+                        </h1>
+                      </NavLink>
+                    );
+                  case "FLASHCARD":
+                    return (
+                      <NavLink
+                        to={`/learner/flashcards/${attachment.flashcard_id}`}
+                        className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                      >
+                        <GalleryVertical />
+                        <h1 className="text-2xl font-bold">
+                          {attachment.flashcard.title}
+                        </h1>
+                      </NavLink>
+                    );
+                    break;
+                }
               }
-            })}
+            )}
           </div>
         </>
       )}
@@ -185,7 +201,7 @@ const CommentCard = ({
       });
       editor?.commands.clearContent();
       setReplyBoxVisibility(false);
-    } catch (error) {
+    } catch {
       toast.error("Failed to submit reply.");
     }
   };

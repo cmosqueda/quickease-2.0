@@ -148,7 +148,6 @@ const useTimer = create<TimerStore>()(
       },
       setSettings: async (study, short_break) => {
         set((state) => {
-
           state.settings = {
             study: study * 60,
             shortBreak: short_break * 60,

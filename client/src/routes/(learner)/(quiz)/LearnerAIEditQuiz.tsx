@@ -2,7 +2,7 @@ import _API_INSTANCE from "@/utils/axios";
 import clsx from "clsx";
 
 import { ArrowLeft, ArrowRightFromLine, Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { getUnitValue, handleTimeChange } from "@/utils/quiz";

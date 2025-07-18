@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import dayjs from "dayjs";
+
 import { NavLink } from "react-router";
 
 type NoteCardProps = {

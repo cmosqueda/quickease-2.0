@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import useAuth from "@/hooks/useAuth";
 import clsx from "clsx";
+import dayjs from "dayjs";
 
 import { ChevronRight, Crown, GalleryVertical } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useLoaderData } from "react-router";
 import { EditorProvider } from "@tiptap/react";
-import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
-import dayjs from "dayjs";
 
 const OtherUserPrivate = ({ user }: { user: any }) => {
   return (
