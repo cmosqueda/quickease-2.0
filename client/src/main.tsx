@@ -96,6 +96,14 @@ const router = createBrowserRouter([
         Component: LearnerProfilePage,
         loader: async ({ params }) => {
           try {
+            const currentUserID = await useAuth.getState().user?.id;
+
+            console.log(currentUserID);
+
+            if (params.id == currentUserID) {
+              return redirect("/learner/profile");
+            }
+
             const { data } = await _API_INSTANCE.get(
               `/users/view/${params.id}`
             );
