@@ -3,7 +3,7 @@ import useAuth from "@/hooks/useAuth";
 import clsx from "clsx";
 
 import { ChevronRight, Crown, GalleryVertical } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NavLink, useLoaderData } from "react-router";
 import { EditorProvider } from "@tiptap/react";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";

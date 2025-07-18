@@ -26,7 +26,7 @@ import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { Editor, EditorProvider, useEditor } from "@tiptap/react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useVote } from "@/hooks/useVote";
-import { NavLink, useNavigate } from "react-router";
+import { NavLink } from "react-router";
 import { toast } from "sonner";
 
 type PostModalProps = {
@@ -390,11 +390,6 @@ const Post = ({
     : "Unknown date";
 
   const handleVote = (vote_type: number) => {
-    if (post.user_vote === vote_type) {
-      toast("Already voted.");
-      return;
-    }
-
     vote({
       post_id: post.id,
       vote_type,

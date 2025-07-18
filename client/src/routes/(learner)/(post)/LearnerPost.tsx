@@ -2,6 +2,7 @@ import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
 import dayjs from "dayjs";
 import clsx from "clsx";
+import useAuth from "@/hooks/useAuth";
 
 import { EditorContent, EditorProvider, useEditor } from "@tiptap/react";
 import {
@@ -19,8 +20,7 @@ import { NavLink, useLoaderData, useNavigate } from "react-router";
 import { useVote, useVoteOnComment } from "@/hooks/useVote";
 import { toast } from "sonner";
 import { useComment } from "@/hooks/useComment";
-import { QueryClient, useQuery } from "@tanstack/react-query";
-import useAuth from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
 import { useDeletePost } from "@/hooks/useDeletePost";
 
 type CommentCardProps = {
@@ -42,11 +42,6 @@ const PostCard = ({ data }: { data: any }) => {
   const { mutate: vote } = useVote(["post"]);
 
   const handlePostVote = (vote_type: number) => {
-    if (data?.user_vote === vote_type) {
-      toast("Already voted.");
-      return;
-    }
-
     vote?.({
       post_id: data?.id,
       vote_type,
@@ -170,11 +165,6 @@ const CommentCard = ({
   });
 
   const handlePostVote = (vote_type: number) => {
-    if (comment?.user_vote === vote_type) {
-      toast("Already voted.");
-      return;
-    }
-
     vote?.({
       comment_id: comment?.id,
       vote_type,

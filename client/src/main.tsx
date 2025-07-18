@@ -90,7 +90,7 @@ const router = createBrowserRouter([
         loader: loadLearnerResources,
       },
       { path: "summarize", Component: LearnerSummarizePage },
-      { path: "profile", Component: LearnerProfilePage },
+      { path: "profile", Component: LearnerProfilePage, loader: () => {} },
       {
         path: "profile/:id",
         Component: LearnerProfilePage,
