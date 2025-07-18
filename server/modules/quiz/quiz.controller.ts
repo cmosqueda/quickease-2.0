@@ -216,20 +216,23 @@ export async function submit_quiz_attempt(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const { answer_data, started_at, completed_at, quiz_id } = request.body as {
-    answer_data: {
-      question: {
-        question: string;
-        description?: string;
-        options: string[];
-        correctAnswers: number[];
+  const { answer_data, started_at, completed_at, duration, score, quiz_id } =
+    request.body as {
+      answer_data: {
+        question: {
+          question: string;
+          description?: string;
+          options: string[];
+          correctAnswers: number[];
+        };
+        user_answer: number[];
       };
-      user_answer: number[];
+      started_at: string;
+      completed_at: string;
+      duration: number;
+      score: number;
+      quiz_id: string;
     };
-    started_at: string;
-    completed_at: string;
-    quiz_id: string;
-  };
 
   const schema = z.object({
     answer_data: z.array(
@@ -245,6 +248,8 @@ export async function submit_quiz_attempt(
     ),
     started_at: z.string(),
     completed_at: z.string(),
+    duration: z.number(),
+    score: z.number(),
     quiz_id: z.string().min(1),
   });
 
@@ -252,6 +257,8 @@ export async function submit_quiz_attempt(
     answer_data,
     started_at,
     completed_at,
+    duration,
+    score,
     quiz_id,
   });
 
@@ -267,6 +274,8 @@ export async function submit_quiz_attempt(
       answer_data,
       started_at,
       completed_at,
+      duration,
+      score,
       quiz_id,
       request.user.id
     );

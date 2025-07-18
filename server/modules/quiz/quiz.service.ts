@@ -10,16 +10,40 @@ export async function getUserQuizzes(user_id: string) {
 
 export async function getQuiz(quiz_id: string, user_id: string) {
   try {
-    return await db_client.quiz.findUnique({
+    // Fetch the quiz and the current user's attempts
+    const quiz = await db_client.quiz.findUnique({
       where: { id: quiz_id },
       include: {
         attempts: {
-          where: {
-            user_id: user_id,
+          where: { user_id },
+        },
+      },
+    });
+
+    const leaderboard = await db_client.quizAttempt.findMany({
+      where: {
+        quiz_id,
+        is_public: true,
+      },
+      orderBy: [
+        { score: "desc" },
+        {
+          duration: "asc",
+        },
+      ],
+      take: 10,
+      include: {
+        user: {
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
           },
         },
       },
     });
+
+    return { ...quiz, leaderboard };
   } catch (err) {
     throw err;
   }
@@ -120,6 +144,8 @@ export async function submitQuizAttempt(
   },
   started_at: string,
   completed_at: string,
+  duration: number,
+  score: number,
   quiz_id: string,
   user_id: string
 ) {
@@ -130,7 +156,10 @@ export async function submitQuizAttempt(
         started_at,
         completed_at,
         answer_data,
+        duration,
+        score,
         quiz_id,
+        is_public: true,
       },
     });
     return {

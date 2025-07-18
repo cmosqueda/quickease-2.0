@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "QuizAttempt" ADD COLUMN     "duration" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "score" INTEGER NOT NULL DEFAULT 0;
