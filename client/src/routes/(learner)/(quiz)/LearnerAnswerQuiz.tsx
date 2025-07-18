@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import _API_INSTANCE from "@/utils/axios";
+
 import {
   ArrowLeft,
   EllipsisVertical,
   ArrowRightFromLine,
   CheckCircle2,
+  Info,
 } from "lucide-react";
 import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
@@ -25,8 +27,8 @@ interface UserAnswer {
 export default function LearnerAnswerQuizPage() {
   const data = useLoaderData() as { id: string; quiz_content: QuizQuestion[] };
 
-  const [startTime] = useState(new Date());
-  const [endTime, setEndTime] = useState<Date | null>(null);
+  const [startTime, setStartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState<Date>();
 
   const [questionIndex, setQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>(
@@ -68,14 +70,29 @@ export default function LearnerAnswerQuizPage() {
     setIsSubmitting(true);
     setEndTime(completionTime);
 
+    const duration = Math.floor(
+      (completionTime.getTime() - startTime.getTime()) / 1000
+    ); // in seconds
+
+    const correctCount = userAnswers.reduce((acc, item) => {
+      const correct = item.question.correctAnswers;
+      const user = item.user_answer;
+      const isCorrect =
+        correct.length === user.length &&
+        correct.every((val) => user.includes(val));
+      return acc + (isCorrect ? 1 : 0);
+    }, 0);
+
     try {
       const { status, data: attempt_data } = await _API_INSTANCE.post(
         "/quiz/submit",
         {
           answer_data: userAnswers,
           started_at: startTime,
-          completed_at: new Date().toISOString(),
+          completed_at: completionTime.toISOString(),
           quiz_id: data.id,
+          duration: duration,
+          score: correctCount,
         }
       );
 
@@ -111,11 +128,20 @@ export default function LearnerAnswerQuizPage() {
         <ArrowLeft
           className="cursor-pointer"
           onClick={() =>
-            navigate("/learner/library?tab=quizzes", { viewTransition: true })
+            toast("Are you sure?", {
+              action: {
+                onClick: () =>
+                  navigate(-1, {
+                    viewTransition: true,
+                  }),
+                label: "Abandon attempt",
+              },
+              duration: 3000,
+            })
           }
         />
         <div className="flex flex-row gap-6 items-center">
-          <details className="dropdown dropdown-end cursor-pointer">
+          <details className="hidden dropdown dropdown-end cursor-pointer">
             <summary className="list-none">
               <EllipsisVertical />
             </summary>
@@ -127,12 +153,36 @@ export default function LearnerAnswerQuizPage() {
           </details>
           <button
             className="btn btn-primary btn-soft"
-            onClick={handleSubmit}
+            onClick={() =>
+              toast("Submit quiz?", {
+                action: { label: "Submit", onClick: handleSubmit },
+              })
+            }
             disabled={isSubmitting}
           >
             <h1>Submit quiz</h1>
             <ArrowRightFromLine />
           </button>
+        </div>
+      </div>
+      <div className="collapse collapse-arrow">
+        <input type="checkbox" />
+        <div className="collapse-title bg-base-100">
+          <h1>Quiz Details</h1>
+        </div>
+        <div className="collapse-content bg-base-100">
+          {data.is_ai_generated && (
+            <div className="flex flex-row items-center gap-2">
+              <Info size={16} className="text-sm text-base-content/50" />
+              <h1 className="text-sm text-base-content/50">AI-generated</h1>
+            </div>
+          )}
+          <h1 className="font-bold text-3xl lg:text-6xl">
+            {data.title || "Untitled"}
+          </h1>
+          <p className="text-lg text-base-content/50">
+            {data.description || "No description provided"}
+          </p>
         </div>
       </div>
 

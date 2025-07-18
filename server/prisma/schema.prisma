@@ -194,6 +194,8 @@ model QuizAttempt {
   completed_at DateTime?
   answer_data  Json
   is_public    Boolean   @default(false)
+  duration     Int       @default(0)
+  score        Int       @default(0)
 }
 
 model Report {

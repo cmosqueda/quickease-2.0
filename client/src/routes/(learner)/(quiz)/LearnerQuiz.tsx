@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import dayjs from "dayjs";
 import useAuth from "@/hooks/useAuth";
+import _API_INSTANCE from "@/utils/axios";
 
 import { calculateScore } from "@/utils/quiz";
 import {
@@ -10,12 +11,12 @@ import {
   EllipsisVertical,
   Info,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
-import _API_INSTANCE from "@/utils/axios";
 
 export default function LearnerQuizPage() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const data = useLoaderData() as {
     id: string;
@@ -49,10 +50,27 @@ export default function LearnerQuizPage() {
       started_at: string;
       completed_at: string;
     }[];
+    leaderboard: {
+      id: string;
+      duration: number;
+      score: number;
+      started_at: string;
+      completed_at: string;
+      user: {
+        id: string;
+        first_name: string;
+        last_name: string;
+      };
+      answer_data: {
+        question: {
+          correctAnswers: number[];
+        };
+        user_answer: number[];
+      }[];
+    }[];
   };
-  const [tabIndex, setTabIndex] = useState(0);
 
-  const navigate = useNavigate();
+  const [tabIndex, setTabIndex] = useState(1);
 
   const handleAnswerQuiz = async () => {
     await localStorage.setItem("QUICKEASE_CURRENT_QUIZ", JSON.stringify(data));
@@ -74,7 +92,9 @@ export default function LearnerQuizPage() {
 
       if (status == 200) {
         toast.success("Quiz deleted.");
-        return navigate('/learner/library?tab=quizzes', { viewTransition: true });
+        return navigate("/learner/library?tab=quizzes", {
+          viewTransition: true,
+        });
       }
     } catch (err) {
       toast.error("Failed to delete.");
@@ -82,32 +102,72 @@ export default function LearnerQuizPage() {
     }
   };
 
-  const tabs = [
-    <>
-      {data.attempts.map((attempt) => (
+  const renderAttempts = () => (
+    <div className="flex flex-row gap-4">
+      {data.attempts.map((attempt, index) => (
         <NavLink
+          key={attempt.id}
           to={`/learner/quizzes/${data.id}/attempt/${attempt.id}`}
           className="flex flex-col p-4 bg-base-100 rounded-3xl w-fit"
         >
-          {dayjs(attempt.started_at).format("MMMM DD, YYYY").toString()}
+          {dayjs(attempt.started_at).format("MMMM DD, YYYY")}
           <p className="font-bold text-4xl text-center">
             {calculateScore(attempt.answer_data)}/{attempt.answer_data.length}
           </p>
         </NavLink>
       ))}
-    </>,
-    <></>,
-  ];
+    </div>
+  );
+  const renderLeaderboard = () =>
+    data.leaderboard.map((entry, index) => {
+      const totalQuestions = entry.answer_data.length;
+      const correctCount = entry.answer_data.reduce((acc, item) => {
+        const { correctAnswers } = item.question;
+        const userAnswers = item.user_answer;
+        const isCorrect =
+          correctAnswers.length === userAnswers.length &&
+          correctAnswers.every((ans) => userAnswers.includes(ans));
+        return acc + (isCorrect ? 1 : 0);
+      }, 0);
+
+      return (
+        <div
+          key={entry.id}
+          className="flex flex-row justify-between items-center bg-base-100 p-4 rounded-2xl"
+        >
+          <div className="flex flex-row gap-4">
+            <p>{index + 1}</p>
+            <div>
+              <h1 className="text-xl font-bold">
+                {entry.user.first_name} {entry.user.last_name}
+              </h1>
+              <p>
+                {dayjs(entry.completed_at).format("MMMM DD YYYY / hh:mm A")}
+              </p>
+            </div>
+          </div>
+          <h1 className="font-bold text-xl">
+            {correctCount}/{totalQuestions}
+          </h1>
+        </div>
+      );
+    });
+
+  useEffect(() => {
+    if (data.attempts.length > 0) {
+      setTabIndex(0);
+    }
+  }, [data.attempts.length]);
 
   return (
     <div className="flex flex-col w-full min-h-screen max-w-7xl mx-auto p-8 gap-4">
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate('/learner/library?tab=quizzes', { viewTransition: true })}
+          onClick={() => navigate(-1, { viewTransition: true })}
         />
         <div className="flex flex-row gap-6 items-center">
-          {data.user_id == user?.id && (
+          {data.user_id === user?.id && (
             <>
               <Edit onClick={handleEditQuiz} className="cursor-pointer" />
               <details className="dropdown dropdown-end cursor-pointer">
@@ -131,6 +191,7 @@ export default function LearnerQuizPage() {
           </button>
         </div>
       </div>
+
       <div>
         {data.is_ai_generated && (
           <div className="flex flex-row items-center gap-2">
@@ -145,23 +206,29 @@ export default function LearnerQuizPage() {
           {data.description || "No description provided"}
         </p>
       </div>
+
       <div role="tablist" className="tabs tabs-border">
+        {data.attempts.length > 0 && (
+          <a
+            role="tab"
+            className={clsx("tab", { "tab-active": tabIndex === 0 })}
+            onClick={() => setTabIndex(0)}
+          >
+            Your attempts
+          </a>
+        )}
         <a
           role="tab"
-          className={clsx(tabIndex == 0 ? "tab tab-active" : "tab")}
-          onClick={() => setTabIndex(0)}
-        >
-          Your attempts
-        </a>
-        <a
-          role="tab"
-          className={clsx(tabIndex == 1 ? "tab tab-active" : "tab")}
+          className={clsx("tab", { "tab-active": tabIndex === 1 })}
           onClick={() => setTabIndex(1)}
         >
           Leaderboards
         </a>
       </div>
-      {tabs[tabIndex]}
+
+      <div className="flex flex-col gap-4">
+        {tabIndex === 0 ? renderAttempts() : renderLeaderboard()}
+      </div>
     </div>
   );
 }
