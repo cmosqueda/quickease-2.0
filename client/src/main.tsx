@@ -100,16 +100,20 @@ const router = createBrowserRouter([
           {
             path: ":query/:page?",
             Component: LearnerSearchPage,
-            loader: async ({ params }) => {
+            loader: async ({ params, request }) => {
               const query = params.query;
               const page = Number(params.page ?? 1);
               const limit = 10;
+
+              // Use searchParams to read ?sort=top
+              const searchParams = new URL(request.url).searchParams;
+              const sort = searchParams.get("sort") ?? "newest";
 
               if (!query) return redirect("/");
 
               try {
                 const { data } = await _API_INSTANCE.get("/forum/search", {
-                  params: { query, page, limit },
+                  params: { query, page, limit, sort },
                 });
 
                 return {
@@ -118,9 +122,9 @@ const router = createBrowserRouter([
                   query,
                   page,
                   limit,
+                  sort,
                 };
               } catch (err) {
-                console.error("Search loader failed:", err);
                 return redirect("/");
               }
             },

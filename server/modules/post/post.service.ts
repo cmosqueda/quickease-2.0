@@ -526,88 +526,88 @@ export async function voteOnComment(
   };
 }
 
-export async function searchPost(query: string, page = 1, limit = 10) {
-  try {
-    const skip = (page - 1) * limit;
+export async function searchPost(
+  query: string,
+  page = 1,
+  limit = 10,
+  sort: "newest" | "top" | "comments" = "newest"
+) {
+  const skip = (page - 1) * limit;
 
-    const [posts, total] = await db_client.$transaction([
-      db_client.post.findMany({
-        where: {
-          OR: [
-            {
-              title: {
+  // Base filter
+  const baseWhere = {
+    OR: [
+      {
+        title: {
+          contains: query,
+          mode: "insensitive",
+        },
+      },
+      {
+        tags: {
+          some: {
+            tag: {
+              tag_name: {
                 contains: query,
                 mode: "insensitive",
               },
             },
-            {
-              tags: {
-                some: {
-                  tag: {
-                    tag_name: {
-                      contains: query,
-                      mode: "insensitive",
-                    },
-                  },
-                },
-              },
-            },
-          ],
-          is_public: true,
+          },
         },
+      },
+    ],
+    is_public: true,
+  };
+
+  const posts = await db_client.post.findMany({
+    where: baseWhere,
+    include: {
+      user: {
+        select: {
+          first_name: true,
+          last_name: true,
+        },
+      },
+      tags: {
         include: {
-          user: {
-            select: {
-              first_name: true,
-              last_name: true,
-            },
-          },
-          tags: {
-            include: {
-              tag: {
-                select: { tag_name: true },
-              },
-            },
+          tag: {
+            select: { tag_name: true },
           },
         },
-        orderBy: {
-          created_at: "desc",
-        },
-        skip,
-        take: limit,
-      }),
-      db_client.post.count({
+      },
+      comments: true,
+      votes: {
         where: {
-          OR: [
-            {
-              title: {
-                contains: query,
-                mode: "insensitive",
-              },
-            },
-            {
-              tags: {
-                some: {
-                  tag: {
-                    tag_name: {
-                      contains: query,
-                      mode: "insensitive",
-                    },
-                  },
-                },
-              },
-            },
-          ],
-          is_public: true,
+          vote_type: 1,
         },
-      }),
-    ]);
+      },
+    },
+    orderBy:
+      sort === "comments"
+        ? {
+            comments: {
+              _count: "desc",
+            },
+          }
+        : sort === "top"
+        ? {
+            votes: {
+              _count: "desc",
+            },
+          }
+        : {
+            created_at: "desc",
+          },
+    skip,
+    take: limit,
+  });
 
-    return {
-      posts,
-      total,
-    };
-  } catch (err) {
-    throw err;
-  }
+  const total = await db_client.post.count({
+    where: baseWhere,
+  });
+
+  return {
+    posts,
+    total,
+  };
 }

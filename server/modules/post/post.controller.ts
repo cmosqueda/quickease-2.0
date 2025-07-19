@@ -278,7 +278,10 @@ export async function search_posts(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const { query } = request.query as { query: string };
+  const { query, sort } = request.query as {
+    query: string;
+    sort?: "newest" | "top" | "comments";
+  };
   const page = Number((request.query as any).page ?? 1);
   const limit = Number((request.query as any).limit ?? 10);
 
@@ -287,7 +290,7 @@ export async function search_posts(
   }
 
   try {
-    const result = await searchPost(query, page, limit);
+    const result = await searchPost(query, page, limit, sort ?? "newest");
     reply.code(200).send(result);
   } catch (err) {
     console.error("Search error:", err);
