@@ -62,6 +62,15 @@ const PostCard = ({ data }: { data: any }) => {
         </div>
       </div>
       <h1 className="text-4xl font-bold">{data?.title}</h1>
+      {data.tags.length > 0 && (
+        <div className="flex flex-row gap-2">
+          {data.tags.map((tag) => (
+            <div key={tag.tag.tag_name} className="badge badge-neutral">
+              {tag.tag.tag_name}
+            </div>
+          ))}
+        </div>
+      )}
       <div className="p-4 rounded-3xl bg-base-100 shadow border border-base-200">
         <EditorProvider
           content={data?.post_body || ""}

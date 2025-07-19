@@ -13,6 +13,7 @@ import {
   toggle_post_visibility,
   get_recent_posts,
   update_post,
+  search_posts,
 } from "./post.controller";
 
 export default async function postRoutes(fastify: FastifyInstance) {
@@ -79,5 +80,10 @@ export default async function postRoutes(fastify: FastifyInstance) {
   fastify.put("/post/toggle-visibility", {
     preHandler: [fastify.authenticate],
     handler: toggle_post_visibility,
+  });
+
+  fastify.get("/search", {
+    preHandler: [fastify.authenticate],
+    handler: search_posts,
   });
 }

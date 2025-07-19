@@ -9,6 +9,7 @@ import {
   getRecentPosts,
   getUserPosts,
   replyOnComment,
+  searchPost,
   togglePostVisibility,
   updatePost,
   voteOnComment,
@@ -81,17 +82,24 @@ export async function create_post(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const { body, title, attachments } = request.body as {
+  const { body, title, attachments, tags } = request.body as {
     body: string;
     title: string;
     attachments?: {
       resource_type: "NOTE" | "QUIZ" | "FLASHCARD";
       resource_id: string;
     }[];
+    tags?: string[];
   };
 
   try {
-    const post = await createPost(body, title, request.user.id, attachments);
+    const post = await createPost(
+      body,
+      title,
+      request.user.id,
+      attachments,
+      tags
+    );
     reply.code(200).send(post);
   } catch (err) {
     console.error("Error creating post:", err);
@@ -263,5 +271,26 @@ export async function toggle_post_visibility(
     reply.code(500).send({
       message: "Error updating post visibility.",
     });
+  }
+}
+
+export async function search_posts(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const { query } = request.query as { query: string };
+  const page = Number((request.query as any).page ?? 1);
+  const limit = Number((request.query as any).limit ?? 10);
+
+  if (!query || !query.trim()) {
+    return reply.code(400).send({ message: "Query is required." });
+  }
+
+  try {
+    const result = await searchPost(query, page, limit);
+    reply.code(200).send(result);
+  } catch (err) {
+    console.error("Search error:", err);
+    reply.code(500).send({ message: "Search failed.", err });
   }
 }

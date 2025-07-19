@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // landing page
 import LandingPage from "./routes/LandingPage";
 
@@ -32,6 +33,8 @@ import LearnerEditFlashcardPage from "./routes/(learner)/(flashcard)/LearnerEdit
 import LearnerEditAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIEditFlashcard";
 import LearnerAIEditQuizPage from "./routes/(learner)/(quiz)/LearnerAIEditQuiz";
 import LearnerEditPostPage from "./routes/(learner)/(post)/LearnerEditPost";
+import LearnerCreatePostPage from "./routes/(learner)/(post)/LearnerCreatePost";
+import LearnerSearchPage from "./routes/(learner)/(search)/LearnerSearch";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -92,6 +95,39 @@ const router = createBrowserRouter([
       { path: "summarize", Component: LearnerSummarizePage },
       { path: "profile", Component: LearnerProfilePage, loader: () => {} },
       {
+        path: "search",
+        children: [
+          {
+            path: ":query/:page?",
+            Component: LearnerSearchPage,
+            loader: async ({ params }) => {
+              const query = params.query;
+              const page = Number(params.page ?? 1);
+              const limit = 10;
+
+              if (!query) return redirect("/");
+
+              try {
+                const { data } = await _API_INSTANCE.get("/forum/search", {
+                  params: { query, page, limit },
+                });
+
+                return {
+                  posts: data.posts,
+                  total: data.total,
+                  query,
+                  page,
+                  limit,
+                };
+              } catch (err) {
+                console.error("Search loader failed:", err);
+                return redirect("/");
+              }
+            },
+          },
+        ],
+      },
+      {
         path: "profile/:id",
         Component: LearnerProfilePage,
         loader: async ({ params }) => {
@@ -116,14 +152,16 @@ const router = createBrowserRouter([
           }
         },
       },
-
       {
         path: "post",
         children: [
           {
+            Component: LearnerCreatePostPage,
+            index: true,
+          },
+          {
             path: ":id",
             Component: LearnerPostPage,
-            index: true,
             loader: async ({ params }) => {
               try {
                 const { data } = await _API_INSTANCE.get(

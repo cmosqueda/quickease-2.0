@@ -2,364 +2,23 @@
 import NotificationsDropdown from "@/components/(learner)/NotificationsDropdown";
 import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
-import CustomEditor from "@/components/Editor";
 import _API_INSTANCE from "@/utils/axios";
-import useAuth from "@/hooks/useAuth";
 import clsx from "clsx";
 import dayjs from "dayjs";
 
 import {
-  ArrowLeft,
-  Check,
   ChevronDown,
   ChevronUp,
   EllipsisVertical,
-  FileQuestion,
-  GalleryVertical,
   MessageCircle,
-  Notebook,
   Plus,
   Search,
-  X,
 } from "lucide-react";
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
-import { Editor, EditorProvider, useEditor } from "@tiptap/react";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { EditorProvider, useEditor } from "@tiptap/react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useVote } from "@/hooks/useVote";
-import { NavLink } from "react-router";
-import { toast } from "sonner";
-
-type PostModalProps = {
-  html: string;
-  title: string;
-  setTitle: Dispatch<SetStateAction<string>>;
-  editor?: Editor;
-};
-
-const PostModal = ({ html, title, setTitle, editor }: PostModalProps) => {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const [tabIndex, setTabIndex] = useState(0);
-
-  const [selectedNotes, setSelectedNotes] = useState<any[]>([]);
-  const [selectedFlashcards, setSelectedFlashcards] = useState<any[]>([]);
-  const [selectedQuizzes, setSelectedQuizzes] = useState<any[]>([]);
-
-  const [isSaving, setIsSaving] = useState(false);
-
-  const closeModal = () => {
-    const modal = document.getElementById(
-      "create-post-modal"
-    ) as HTMLDialogElement | null;
-    modal?.close();
-  };
-
-  const handleSave = async () => {
-    if (!title.trim()) {
-      toast.warning("Title is required.");
-      return;
-    }
-
-    if (!html.trim()) {
-      toast.warning("Post content is empty.");
-      return;
-    }
-
-    setIsSaving(true);
-
-    try {
-      const attachments = [
-        ...selectedNotes.map((n) => ({
-          resource_type: "NOTE" as const,
-          resource_id: n.id,
-        })),
-        ...selectedFlashcards.map((f) => ({
-          resource_type: "FLASHCARD" as const,
-          resource_id: f.id,
-        })),
-        ...selectedQuizzes.map((q) => ({
-          resource_type: "QUIZ" as const,
-          resource_id: q.id,
-        })),
-      ];
-
-      const { status } = await _API_INSTANCE.post(
-        "/forum/post/create",
-        {
-          body: html,
-          title,
-          attachments,
-        },
-        {
-          timeout: 10000,
-        }
-      );
-
-      if (status === 200) {
-        queryClient.invalidateQueries({ queryKey: ["recent-posts"] });
-        toast.success("Post created successfully.");
-        closeModal();
-      } else {
-        toast.error("Failed to create post. Try again.");
-      }
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err?.response?.data?.message || "An error occurred.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
-
-  const tabs = [
-    <>
-      <div className="modal-box bg-base-300 flex flex-col gap-4 max-w-2xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex flex-row items-center gap-4">
-          <button
-            type="button"
-            onClick={closeModal}
-            className="p-1 rounded hover:bg-base-100"
-            aria-label="Close modal"
-          >
-            <X className="cursor-pointer" />
-          </button>
-          <h1 className="font-bold text-xl">Create post</h1>
-        </div>
-
-        {/* Title Field */}
-        <fieldset className="fieldset">
-          <input
-            type="text"
-            className="input w-full"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            disabled={isSaving}
-          />
-          <p className="label text-sm text-gray-500">Required</p>
-        </fieldset>
-
-        {/* Rich Text Editor */}
-        <CustomEditor editor={editor!} style="overflow-y-auto" />
-        <div className="flex flex-row gap-4 items-center">
-          <button
-            className="btn btn-neutral btn-ghost flex-1"
-            onClick={() => setTabIndex(1)}
-          >
-            <Notebook />
-            <p>Attach notes</p>
-          </button>
-          <button
-            className="btn btn-neutral btn-ghost flex-1"
-            onClick={() => setTabIndex(2)}
-          >
-            <GalleryVertical />
-            <p>Attach flashcards</p>
-          </button>
-          <button
-            className="btn btn-neutral btn-ghost flex-1"
-            onClick={() => setTabIndex(3)}
-          >
-            <FileQuestion />
-            <p>Attach quizzes</p>
-          </button>
-        </div>
-
-        {(selectedNotes.length > 0 ||
-          selectedFlashcards.length > 0 ||
-          selectedQuizzes.length > 0) && (
-          <div className="flex flex-row items-center gap-4 overflow-x-auto">
-            {selectedNotes.map((n) => (
-              <div className="flex flex-row gap-4 items-center bg-base-200 rounded-3xl p-4 h-[5rem] w-[12rem] overflow-clip">
-                <Notebook className="shrink-0" />
-                {n.title}
-              </div>
-            ))}
-            {selectedFlashcards.map((f) => (
-              <div className="flex flex-row gap-4 items-center bg-base-200 rounded-3xl p-4 h-[5rem] w-[12rem] overflow-clip">
-                <GalleryVertical className="shrink-0" />
-                {f.title}
-              </div>
-            ))}
-            {selectedQuizzes.map((q) => (
-              <div className="flex flex-row gap-4 items-center bg-base-200 rounded-3xl p-4 h-[5rem] w-[12rem] overflow-clip">
-                <FileQuestion className="shrink-0" />
-                {q.title}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Submit Button */}
-        <button
-          className="btn btn-success mt-2"
-          disabled={isSaving}
-          onClick={handleSave}
-        >
-          {isSaving ? (
-            <span className="loading loading-spinner" />
-          ) : (
-            <p>Post</p>
-          )}
-        </button>
-      </div>
-    </>,
-    <>
-      <div className="modal-box bg-base-300 flex flex-col gap-4 max-w-2xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex flex-row items-center gap-4">
-          <button
-            type="button"
-            onClick={() => setTabIndex(0)}
-            className="p-1 rounded hover:bg-base-100"
-            aria-label="Close modal"
-          >
-            <ArrowLeft className="cursor-pointer" />
-          </button>
-          <h1 className="font-bold text-xl">Attach notes</h1>
-        </div>
-
-        {/* Notes */}
-        <div className="grid grid-cols-2 gap-4">
-          {user &&
-            user.notes.map((note) => {
-              const isSelected = selectedNotes.some((n) => n.id === note.id);
-              return (
-                <button
-                  key={note.id}
-                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-200 relative"
-                  onClick={() => {
-                    setSelectedNotes((prev) =>
-                      isSelected
-                        ? prev.filter((n) => n.id !== note.id)
-                        : [...prev, note]
-                    );
-                  }}
-                >
-                  {isSelected && (
-                    <Check size={16} className="absolute right-4" />
-                  )}
-                  <h1 className="font-bold text-2xl">{note.title}</h1>
-                </button>
-              );
-            })}
-        </div>
-
-        <button className="btn btn-success">
-          <Plus />
-          <p>Add</p>
-        </button>
-      </div>
-    </>,
-    <>
-      <div className="modal-box bg-base-300 flex flex-col gap-4 max-w-2xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex flex-row items-center gap-4">
-          <button
-            type="button"
-            onClick={() => setTabIndex(0)}
-            className="p-1 rounded hover:bg-base-100"
-            aria-label="Close modal"
-          >
-            <ArrowLeft className="cursor-pointer" />
-          </button>
-          <h1 className="font-bold text-xl">Attach flashcards</h1>
-        </div>
-
-        {/* Flashcards */}
-        <div className="grid grid-cols-2 gap-4">
-          {user &&
-            user.flashcards.map((flashcard) => {
-              const isSelected = selectedFlashcards.some(
-                (f) => f.id === flashcard.id
-              );
-              return (
-                <button
-                  key={flashcard.id}
-                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-200 relative"
-                  onClick={() => {
-                    setSelectedFlashcards((prev) =>
-                      isSelected
-                        ? prev.filter((f) => f.id !== flashcard.id)
-                        : [...prev, flashcard]
-                    );
-                  }}
-                >
-                  {isSelected && (
-                    <Check size={16} className="absolute right-4" />
-                  )}
-                  <h1 className="font-bold text-2xl">{flashcard.title}</h1>
-                </button>
-              );
-            })}
-        </div>
-
-        <button className="btn btn-success">
-          <Plus />
-          <p>Add</p>
-        </button>
-      </div>
-    </>,
-    <>
-      <div className="modal-box bg-base-300 flex flex-col gap-4 max-w-2xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex flex-row items-center gap-4">
-          <button
-            type="button"
-            onClick={() => setTabIndex(0)}
-            className="p-1 rounded hover:bg-base-100"
-            aria-label="Close modal"
-          >
-            <ArrowLeft className="cursor-pointer" />
-          </button>
-          <h1 className="font-bold text-xl">Attach quizzes</h1>
-        </div>
-
-        {/* Quizzes */}
-        <div className="grid grid-cols-2 gap-4">
-          {user &&
-            user.quizzes.map((quiz) => {
-              const isSelected = selectedQuizzes.some((q) => q.id === quiz.id);
-              return (
-                <button
-                  key={quiz.id}
-                  onClick={() => {
-                    setSelectedQuizzes((prev) =>
-                      isSelected
-                        ? prev.filter((q) => q.id !== quiz.id)
-                        : [...prev, quiz]
-                    );
-                  }}
-                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-200 relative"
-                >
-                  {isSelected && (
-                    <Check size={16} className="absolute right-4" />
-                  )}
-                  <h1 className="font-bold text-2xl">{quiz.title}</h1>
-                </button>
-              );
-            })}
-        </div>
-
-        <button className="btn btn-success">
-          <Plus />
-          <p>Add</p>
-        </button>
-      </div>
-    </>,
-  ];
-
-  return (
-    <dialog id="create-post-modal" className="modal">
-      {tabs[tabIndex]}
-    </dialog>
-  );
-};
+import { Link, NavLink, useNavigate } from "react-router";
 
 const Post = ({
   post,
@@ -376,6 +35,11 @@ const Post = ({
       first_name: string;
       last_name: string;
     };
+    tags: {
+      tag_id: string;
+      post_id: string;
+      tag: { id: string; tag_name: string };
+    }[];
     comments: { id: string }[];
   };
 }) => {
@@ -438,6 +102,15 @@ const Post = ({
           extensions={_TIPTAP_EXTENSIONS}
           editable={false}
         />
+        {post.tags.length > 0 && (
+          <div className="flex flex-row gap-2 mt-4">
+            {post.tags.map((tag) => (
+              <div key={tag.tag.tag_name} className="badge badge-neutral">
+                {tag.tag.tag_name}
+              </div>
+            ))}
+          </div>
+        )}
       </NavLink>
 
       {/* Footer */}
@@ -473,17 +146,13 @@ const Post = ({
 };
 
 export default function LearnerForumPage() {
-  const [title, setTitle] = useState("");
-  const [html, setHTML] = useState("");
-
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
   const editor = useEditor({
     editable: true,
     autofocus: true,
     extensions: _TIPTAP_EXTENSIONS,
     content: "",
-    onUpdate: ({ editor }) => {
-      setHTML(editor.getHTML());
-    },
   });
 
   const { data } = useInfiniteQuery({
@@ -512,18 +181,24 @@ export default function LearnerForumPage() {
       <div className="flex flex-row items-center justify-between gap-8">
         <label className="input w-full lg:w-fit">
           <Search size={24} />
-          <input type="search" className="lg:w-md" placeholder="Search" />
+          <input
+            type="search"
+            className="lg:w-md"
+            placeholder="Search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                navigate(`/learner/search/${query}`);
+              }
+            }}
+          />
         </label>
         <div className="hidden lg:flex flex-row gap-2">
-          <button
-            className="btn btn-neutral"
-            onClick={() => {
-              document.getElementById("create-post-modal").showModal();
-            }}
-          >
+          <Link to={"/learner/post/"} className="btn btn-neutral">
             <Plus />
             <p>Create</p>
-          </button>
+          </Link>
           <NotificationsDropdown />
           <ProfileDropdown />
         </div>
@@ -533,12 +208,6 @@ export default function LearnerForumPage() {
           page.posts.map((post) => <Post key={post.id} post={post} />)
         )}
       </div>
-      <PostModal
-        editor={editor!}
-        html={html}
-        setTitle={setTitle}
-        title={title}
-      />
     </div>
   );
 }

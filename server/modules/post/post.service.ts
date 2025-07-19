@@ -1,7 +1,6 @@
 import db_client from "../../utils/client";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { FlatComment, NestedComment } from "../../utils/types";
 import { buildCommentTree } from "../../utils/tree";
 
 async function validateOwnership(
@@ -67,6 +66,7 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
           user_id: true,
         },
       },
+      tags: { include: { tag: true } },
       comments: {
         where: { parent_comment: null },
         select: {
@@ -121,6 +121,7 @@ export async function getPost(post_id: string, user_id: string) {
     where: { id: post_id },
     orderBy: { created_at: "desc" },
     include: {
+      tags: { include: { tag: true } },
       attachments: {
         include: {
           flashcard: true,
@@ -209,7 +210,8 @@ export async function createPost(
   attachments?: {
     resource_type: "NOTE" | "QUIZ" | "FLASHCARD";
     resource_id: string;
-  }[]
+  }[],
+  tags?: string[] // Accept tags here
 ) {
   return await db_client.$transaction(async (tx) => {
     const post = await tx.post.create({
@@ -253,6 +255,25 @@ export async function createPost(
       }
 
       await tx.postAttachment.createMany({ data: attachmentData });
+    }
+
+    if (tags?.length) {
+      const tagRecords = [];
+
+      for (const tagName of tags) {
+        const tag = await tx.tag.upsert({
+          where: { tag_name: tagName },
+          update: {}, // no update needed
+          create: { tag_name: tagName },
+        });
+
+        tagRecords.push({
+          tag_id: tag.id,
+          post_id: post.id,
+        });
+      }
+
+      await tx.postTag.createMany({ data: tagRecords });
     }
 
     return post;
@@ -503,4 +524,90 @@ export async function voteOnComment(
     vote: result,
     vote_sum: totalVotes._sum.vote_type || 0,
   };
+}
+
+export async function searchPost(query: string, page = 1, limit = 10) {
+  try {
+    const skip = (page - 1) * limit;
+
+    const [posts, total] = await db_client.$transaction([
+      db_client.post.findMany({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: query,
+                mode: "insensitive",
+              },
+            },
+            {
+              tags: {
+                some: {
+                  tag: {
+                    tag_name: {
+                      contains: query,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+              },
+            },
+          ],
+          is_public: true,
+        },
+        include: {
+          user: {
+            select: {
+              first_name: true,
+              last_name: true,
+            },
+          },
+          tags: {
+            include: {
+              tag: {
+                select: { tag_name: true },
+              },
+            },
+          },
+        },
+        orderBy: {
+          created_at: "desc",
+        },
+        skip,
+        take: limit,
+      }),
+      db_client.post.count({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: query,
+                mode: "insensitive",
+              },
+            },
+            {
+              tags: {
+                some: {
+                  tag: {
+                    tag_name: {
+                      contains: query,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+              },
+            },
+          ],
+          is_public: true,
+        },
+      }),
+    ]);
+
+    return {
+      posts,
+      total,
+    };
+  } catch (err) {
+    throw err;
+  }
 }
