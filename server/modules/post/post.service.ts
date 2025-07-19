@@ -1,7 +1,9 @@
 import db_client from "../../utils/client";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+
 import { buildCommentTree } from "../../utils/tree";
+import { Prisma } from "../../prisma/client";
 
 async function validateOwnership(
   tx: typeof db_client,
@@ -535,7 +537,7 @@ export async function searchPost(
   const skip = (page - 1) * limit;
 
   // Base filter
-  const baseWhere = {
+  const baseWhere: Prisma.PostWhereInput = {
     OR: [
       {
         title: {

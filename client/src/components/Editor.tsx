@@ -95,14 +95,26 @@ type Props = {
   editor: Editor | null;
   style?: string;
   placeholder?: string;
+  isToolbarVisible?: boolean;
 };
 
-export default function CustomEditor({ editor, style, placeholder }: Props) {
+export default function CustomEditor({
+  editor,
+  style,
+  placeholder,
+  isToolbarVisible = true,
+}: Props) {
   if (!editor) return null;
 
   return (
     <>
-      <div className="flex flex-wrap gap-2 p-4 rounded-3xl bg-base-100 border border-base-300 w-fit mb-4">
+      <div
+        className={
+          isToolbarVisible
+            ? "flex flex-wrap gap-2 p-4 rounded-3xl bg-base-100 border border-base-300 w-fit mb-4"
+            : "hidden"
+        }
+      >
         {toolbarItems.map(
           ({ Icon, action, canExecute, isActive, label }, idx) => {
             const disabled = canExecute ? !canExecute(editor) : false;

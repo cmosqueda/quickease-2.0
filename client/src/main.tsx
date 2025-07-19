@@ -57,6 +57,8 @@ import {
 } from "./utils/router";
 
 import "../global.css";
+import LearnerViewNotePage from "./routes/(learner)/(note)/LearnerViewNote";
+import LearnerViewFlashcardPage from "./routes/(learner)/(flashcard)/LearnerViewFlashcard";
 
 const client = new QueryClient();
 
@@ -207,6 +209,30 @@ const router = createBrowserRouter([
         children: [
           { index: true, Component: LearnerFlashcardsPage },
           {
+            path: "view/:id",
+            Component: LearnerViewFlashcardPage,
+            loader: async ({ params }) => {
+              try {
+                const currentUserID = await useAuth.getState().user?.id;
+                const { data } = await _API_INSTANCE.get(
+                  `/flashcard/${params.id}`
+                );
+
+                if (!data.is_public && data.user_id !== currentUserID) {
+                  return { private: true };
+                }
+
+                if (data.user_id == currentUserID) {
+                  return redirect(`/learner/note/${params.id}`);
+                }
+
+                return data;
+              } catch {
+                return redirect("/learner/library?tab=flashcard");
+              }
+            },
+          },
+          {
             path: ":id",
             Component: LearnerFlashcardPage,
             loader: async ({ params }) => {
@@ -326,6 +352,28 @@ const router = createBrowserRouter([
       },
       { path: "settings", Component: LearnerSettingsPage },
       { path: "timer", Component: LearnerTimerPage },
+      {
+        path: "note/view/:id",
+        Component: LearnerViewNotePage,
+        loader: async ({ params }) => {
+          try {
+            const currentUserID = await useAuth.getState().user?.id;
+            const { data } = await _API_INSTANCE.get(`/notes/${params.id}`);
+
+            if (!data.is_public && data.user_id !== currentUserID) {
+              return { private: true };
+            }
+
+            if (data.user_id == currentUserID) {
+              return redirect(`/learner/note/${params.id}`);
+            }
+
+            return data;
+          } catch {
+            return redirect("/learner/library?tab=notes");
+          }
+        },
+      },
       {
         path: "note/:id",
         Component: LearnerNotePage,

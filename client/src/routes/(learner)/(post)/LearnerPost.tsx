@@ -102,7 +102,7 @@ const PostCard = ({ data }: { data: any }) => {
                   case "NOTE":
                     return (
                       <NavLink
-                        to={`/learner/note/${attachment.note_id}`}
+                        to={`/learner/note/view/${attachment.note_id}`}
                         className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
                       >
                         <Notebook />
@@ -126,7 +126,7 @@ const PostCard = ({ data }: { data: any }) => {
                   case "FLASHCARD":
                     return (
                       <NavLink
-                        to={`/learner/flashcards/${attachment.flashcard_id}`}
+                        to={`/learner/flashcards/view/${attachment.flashcard_id}`}
                         className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
                       >
                         <GalleryVertical />

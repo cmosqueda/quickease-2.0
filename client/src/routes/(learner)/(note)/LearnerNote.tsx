@@ -4,6 +4,7 @@ import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
 import _API_INSTANCE from "@/utils/axios";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import useAuth from "@/hooks/useAuth";
+import clsx from "clsx";
 
 import {
   ArrowLeft,
@@ -18,7 +19,6 @@ import { useLoaderData, useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import clsx from "clsx";
 
 export default function LearnerNotePage() {
   const { user } = useAuth();
