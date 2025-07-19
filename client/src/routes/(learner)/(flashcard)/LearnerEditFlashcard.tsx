@@ -54,7 +54,7 @@ export default function LearnerEditFlashcardPage() {
 
       if (status === 200) {
         toast.success("Flashcard updated.");
-        navigate('/learner/library?tab=flashcards', { viewTransition: true });
+        navigate("/learner/library?tab=flashcards", { viewTransition: true });
       }
     } catch (err) {
       toast.error(`Error updating flashcard: ${err.message}`);
@@ -77,7 +77,11 @@ export default function LearnerEditFlashcardPage() {
     <div className="flex flex-col w-full lg:min-h-screen max-w-4xl mx-auto p-8 gap-6">
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
-          onClick={() => navigate("/learner/library?tab=flashcards", { viewTransition: true })}
+          onClick={() =>
+            navigate("/learner/library?tab=flashcards", {
+              viewTransition: true,
+            })
+          }
           className="cursor-pointer"
         />
         <div className="flex flex-row gap-4 items-center">

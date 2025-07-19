@@ -1,7 +1,6 @@
 import db_client from "../../utils/client";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { FlatComment, NestedComment } from "../../utils/types";
 import { buildCommentTree } from "../../utils/tree";
 
 async function validateOwnership(
@@ -67,6 +66,7 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
           user_id: true,
         },
       },
+      tags: { include: { tag: true } },
       comments: {
         where: { parent_comment: null },
         select: {
@@ -118,6 +118,7 @@ export async function getPost(post_id: string, user_id: string) {
     where: { id: post_id },
     orderBy: { created_at: "desc" },
     include: {
+      tags: { include: { tag: true } },
       attachments: {
         include: {
           flashcard: true,
@@ -206,7 +207,8 @@ export async function createPost(
   attachments?: {
     resource_type: "NOTE" | "QUIZ" | "FLASHCARD";
     resource_id: string;
-  }[]
+  }[],
+  tags?: string[] // Accept tags here
 ) {
   return await db_client.$transaction(async (tx) => {
     const post = await tx.post.create({
@@ -243,6 +245,25 @@ export async function createPost(
       }
 
       await tx.postAttachment.createMany({ data: attachmentData });
+    }
+
+    if (tags?.length) {
+      const tagRecords = [];
+
+      for (const tagName of tags) {
+        const tag = await tx.tag.upsert({
+          where: { tag_name: tagName },
+          update: {}, // no update needed
+          create: { tag_name: tagName },
+        });
+
+        tagRecords.push({
+          tag_id: tag.id,
+          post_id: post.id,
+        });
+      }
+
+      await tx.postTag.createMany({ data: tagRecords });
     }
 
     return post;
@@ -382,20 +403,43 @@ export async function voteOnPost(vote_type: number, post_id: string, user_id: st
     throw new Error("Invalid vote type");
   }
 
-  const result = await db_client.postVote.upsert({
+  const existingVote = await db_client.postVote.findUnique({
     where: {
       user_id_post_id: { user_id, post_id },
     },
-    update: { vote_type },
-    create: { user_id, post_id, vote_type },
   });
+
+  let result;
+  if (existingVote?.vote_type === vote_type) {
+    await db_client.postVote.delete({
+      where: {
+        user_id_post_id: { user_id, post_id },
+      },
+    });
+    result = null;
+  } else if (existingVote) {
+    result = await db_client.postVote.update({
+      where: {
+        user_id_post_id: { user_id, post_id },
+      },
+      data: { vote_type },
+    });
+  } else {
+    result = await db_client.postVote.create({
+      data: { user_id, post_id, vote_type },
+    });
+  }
 
   const totalVotes = await db_client.postVote.aggregate({
     where: { post_id },
     _sum: { vote_type: true },
   });
 
-  return { voted: true, vote: result, vote_sum: totalVotes._sum.vote_type || 0 };
+  return {
+    voted: !!result,
+    vote: result,
+    vote_sum: totalVotes._sum.vote_type || 0,
+  };
 }
 
 export async function voteOnComment(vote_type: number, comment_id: string, user_id: string) {
@@ -403,18 +447,125 @@ export async function voteOnComment(vote_type: number, comment_id: string, user_
     throw new Error("Invalid vote type");
   }
 
-  const result = await db_client.commentVote.upsert({
+  const existingVote = await db_client.commentVote.findUnique({
     where: {
       user_id_comment_id: { user_id, comment_id },
     },
-    update: { vote_type },
-    create: { user_id, comment_id, vote_type },
   });
+
+  let result;
+  if (existingVote?.vote_type === vote_type) {
+    // User clicked same vote again, remove it
+    await db_client.commentVote.delete({
+      where: {
+        user_id_comment_id: { user_id, comment_id },
+      },
+    });
+    result = null;
+  } else if (existingVote) {
+    // Change vote
+    result = await db_client.commentVote.update({
+      where: {
+        user_id_comment_id: { user_id, comment_id },
+      },
+      data: { vote_type },
+    });
+  } else {
+    // New vote
+    result = await db_client.commentVote.create({
+      data: { user_id, comment_id, vote_type },
+    });
+  }
 
   const totalVotes = await db_client.commentVote.aggregate({
     where: { comment_id },
     _sum: { vote_type: true },
   });
 
-  return { voted: true, vote: result, vote_sum: totalVotes._sum.vote_type || 0 };
+  return {
+    voted: !!result,
+    vote: result,
+    vote_sum: totalVotes._sum.vote_type || 0,
+  };
+}
+
+export async function searchPost(query: string, page = 1, limit = 10, sort: "newest" | "top" | "comments" = "newest") {
+  const skip = (page - 1) * limit;
+
+  // Base filter
+  const baseWhere = {
+    OR: [
+      {
+        title: {
+          contains: query,
+          mode: "insensitive",
+        },
+      },
+      {
+        tags: {
+          some: {
+            tag: {
+              tag_name: {
+                contains: query,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+      },
+    ],
+    is_public: true,
+  };
+
+  const posts = await db_client.post.findMany({
+    where: baseWhere,
+    include: {
+      user: {
+        select: {
+          first_name: true,
+          last_name: true,
+        },
+      },
+      tags: {
+        include: {
+          tag: {
+            select: { tag_name: true },
+          },
+        },
+      },
+      comments: true,
+      votes: {
+        where: {
+          vote_type: 1,
+        },
+      },
+    },
+    orderBy:
+      sort === "comments"
+        ? {
+            comments: {
+              _count: "desc",
+            },
+          }
+        : sort === "top"
+        ? {
+            votes: {
+              _count: "desc",
+            },
+          }
+        : {
+            created_at: "desc",
+          },
+    skip,
+    take: limit,
+  });
+
+  const total = await db_client.post.count({
+    where: baseWhere,
+  });
+
+  return {
+    posts,
+    total,
+  };
 }

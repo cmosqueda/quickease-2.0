@@ -51,7 +51,9 @@ export default function LearnerQuizAttemptPage() {
       <div className="flex justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate("/learner/library?tab=quizzes", { viewTransition: true })}
+          onClick={() =>
+            navigate("/learner/library?tab=quizzes", { viewTransition: true })
+          }
         />
         <div className="text-right">
           <p className="text-sm text-base-content/50">

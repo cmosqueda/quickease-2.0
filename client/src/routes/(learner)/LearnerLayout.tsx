@@ -17,13 +17,19 @@ export default function LearnerLayout() {
     <>
       <Toaster position="top-right" />
       <main className="flex flex-col lg:flex-row min-h-screen bg-base-200">
-        {pathname.startsWith('/learner/quizzes/') ? null : <Sidebar tab={pathname} />}
+        {pathname.startsWith("/learner/quizzes/") ? null : (
+          <Sidebar tab={pathname} />
+        )}
         <Outlet />
       </main>
-      {isPopupEnabled && !pathname.startsWith('/learner/quizzes/') ? <TimerPopup /> : <></>}
+      {isPopupEnabled && !pathname.startsWith("/learner/quizzes/") ? (
+        <TimerPopup />
+      ) : (
+        <></>
+      )}
       <GenerateSummaryModal />
-      <GenerateFlashcardModal notes={data.notes}/>
-      <GenerateQuizModal notes={data.notes}/>
+      <GenerateFlashcardModal notes={data.notes} />
+      <GenerateQuizModal notes={data.notes} />
     </>
   );
 }

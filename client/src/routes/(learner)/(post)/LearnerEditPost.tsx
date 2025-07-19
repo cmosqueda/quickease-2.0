@@ -1,13 +1,12 @@
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
-import clsx from "clsx";
 import dayjs from "dayjs";
 
 import { useQuery } from "@tanstack/react-query";
-import { EditorContent, EditorProvider, useEditor } from "@tiptap/react";
-import { ArrowLeft, Edit, EllipsisVertical } from "lucide-react";
+import { EditorContent, useEditor } from "@tiptap/react";
+import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { NavLink, useLoaderData, useNavigate } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import { useEditPost } from "@/hooks/useEditPost";
 import { toast } from "sonner";
 
@@ -59,7 +58,6 @@ export default function LearnerEditPostPage() {
           onSuccess: () => {
             toast.success("Post updated.");
             navigate(`/learner/post/${data.id}`, { replace: true });
-            
           },
         }
       );

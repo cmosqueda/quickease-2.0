@@ -28,12 +28,9 @@ const AccountSettings = () => {
     setVisibility(newVisibility);
 
     try {
-      const { data, status } = await _API_INSTANCE.put(
-        "/users/toggle-visibility",
-        {
-          visibility: newVisibility,
-        }
-      );
+      const { data } = await _API_INSTANCE.put("/users/toggle-visibility", {
+        visibility: newVisibility,
+      });
 
       setUser(data.user);
       toast.success("Profile privacy updated!");

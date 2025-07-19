@@ -1,17 +1,17 @@
-import { FastifyInstance } from 'fastify';
-import { login_user, register_user, logout } from './auth.controller';
+import { FastifyInstance } from "fastify";
+import { login_user, register_user, logout } from "./auth.controller";
 
 export default async function authRoutes(fastify: FastifyInstance) {
-    fastify.post('/login', {
-        handler: login_user
-    });
+  fastify.post("/login", {
+    handler: login_user,
+  });
 
-    fastify.post('/register', {
-        handler: register_user
-    });
+  fastify.post("/register", {
+    handler: register_user,
+  });
 
-    fastify.post('/logout', {
-        preHandler: [fastify.authenticate],
-        handler: logout
-    });
+  fastify.post("/logout", {
+    preHandler: [fastify.authenticate],
+    handler: logout,
+  });
 }

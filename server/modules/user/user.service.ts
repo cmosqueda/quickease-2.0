@@ -1,66 +1,71 @@
-import db_client from "../../utils/client"
+import db_client from "../../utils/client";
 
 export async function getUser(user_id: string) {
+  const user = await db_client.user.findUnique({
+    where: { id: user_id },
+    include: { flashcards: true, quizzes: true, notes: true },
+  });
 
-    const user = await db_client.user.findUnique({
-        where: { id: user_id },
-        include: { flashcards: true, quizzes: true, notes: true }
-    })
-
-    return user
+  return user;
 }
 
-export async function changeUserName(first_name: string, last_name: string, user_id: string) {
-    return db_client.user.update({
-        data: {
-            first_name: first_name,
-            last_name: last_name
-        },
-        where: {
-            id: user_id
-        }
-    })
+export async function changeUserName(
+  first_name: string,
+  last_name: string,
+  user_id: string
+) {
+  return db_client.user.update({
+    data: {
+      first_name: first_name,
+      last_name: last_name,
+    },
+    where: {
+      id: user_id,
+    },
+  });
 }
 
-export async function toggleProfileVisibility(visibility: boolean, user_id: string) {
+export async function toggleProfileVisibility(
+  visibility: boolean,
+  user_id: string
+) {
+  const update = await db_client.user.update({
+    data: {
+      is_public: visibility,
+    },
+    where: {
+      id: user_id,
+    },
+  });
 
-    const update = await db_client.user.update({
-        data: {
-            is_public: visibility
-        },
-        where: {
-            id: user_id
-        }
-    })
-
-    return update
+  return update;
 }
 
 export async function viewProfile(user_id: string) {
-    const user = await db_client.user.findUnique({
-        where: {
-            id: user_id
-        },
-        select: {
-            first_name: true,
-            last_name: true,
-            comments: true,
-            badges: true,
-            gender: true,
-            posts: {
-                include: { user: true },
-            },
-            is_public: true,
-        }
-    })
+  const user = await db_client.user.findUnique({
+    where: {
+      id: user_id,
+    },
+    select: {
+      first_name: true,
+      last_name: true,
+      comments: true,
+      badges: true,
+      gender: true,
+      posts: {
+        include: { user: true },
+      },
+      is_public: true,
+    },
+  });
 
-    if (user?.is_public) {
-        return user
-    } else {
-        return {
-            first_name: user?.first_name,
-            last_name: user?.last_name,
-            is_public: false,
-        }
-    }
+  if (user?.is_public) {
+    return user;
+  } else {
+    return {
+      first_name: user?.first_name,
+      last_name: user?.last_name,
+      is_public: false,
+    };
+  }
 }

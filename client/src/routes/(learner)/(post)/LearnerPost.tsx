@@ -2,6 +2,7 @@ import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
 import dayjs from "dayjs";
 import clsx from "clsx";
+import useAuth from "@/hooks/useAuth";
 
 import { EditorContent, EditorProvider, useEditor } from "@tiptap/react";
 import {
@@ -19,8 +20,7 @@ import { NavLink, useLoaderData, useNavigate } from "react-router";
 import { useVote, useVoteOnComment } from "@/hooks/useVote";
 import { toast } from "sonner";
 import { useComment } from "@/hooks/useComment";
-import { QueryClient, useQuery } from "@tanstack/react-query";
-import useAuth from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
 import { useDeletePost } from "@/hooks/useDeletePost";
 
 type CommentCardProps = {
@@ -42,11 +42,6 @@ const PostCard = ({ data }: { data: any }) => {
   const { mutate: vote } = useVote(["post"]);
 
   const handlePostVote = (vote_type: number) => {
-    if (data?.user_vote === vote_type) {
-      toast("Already voted.");
-      return;
-    }
-
     vote?.({
       post_id: data?.id,
       vote_type,
@@ -67,6 +62,15 @@ const PostCard = ({ data }: { data: any }) => {
         </div>
       </div>
       <h1 className="text-4xl font-bold">{data?.title}</h1>
+      {data.tags.length > 0 && (
+        <div className="flex flex-row gap-2">
+          {data.tags.map((tag) => (
+            <div key={tag.tag.tag_name} className="badge badge-neutral">
+              {tag.tag.tag_name}
+            </div>
+          ))}
+        </div>
+      )}
       <div className="p-4 rounded-3xl bg-base-100 shadow border border-base-200">
         <EditorProvider
           content={data?.post_body || ""}
@@ -78,47 +82,63 @@ const PostCard = ({ data }: { data: any }) => {
         <>
           <h1 className="font-bold text-xl">Attachments</h1>
           <div className="flex flex-row gap-4 items-center">
-            {data.attachments.map((attachment) => {
-              switch (attachment.resource_type) {
-                case "NOTE":
-                  return (
-                    <NavLink
-                      to={`/learner/note/${attachment.note_id}`}
-                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
-                    >
-                      <Notebook />
-                      <h1 className="text-2xl font-bold">
-                        {attachment.note.title}
-                      </h1>
-                    </NavLink>
-                  );
-                case "QUIZ":
-                  return (
-                    <NavLink
-                      to={`/learner/quizzes/${attachment.quiz_id}`}
-                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
-                    >
-                      <GalleryVertical />
-                      <h1 className="text-2xl font-bold">
-                        {attachment.quiz.title}
-                      </h1>
-                    </NavLink>
-                  );
-                case "FLASHCARD":
-                  return (
-                    <NavLink
-                      to={`/learner/flashcards/${attachment.flashcard_id}`}
-                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
-                    >
-                      <GalleryVertical />
-                      <h1 className="text-2xl font-bold">
-                        {attachment.flashcard.title}
-                      </h1>
-                    </NavLink>
-                  );
-                  break;
+            {data.attachments.map(
+              (attachment: {
+                resource_type: string;
+                note_id: string;
+                note: {
+                  title: string;
+                };
+                quiz_id: string;
+                quiz: {
+                  title: string;
+                };
+                flashcard_id: string;
+                flashcard: {
+                  title: string;
+                };
+              }) => {
+                switch (attachment.resource_type) {
+                  case "NOTE":
+                    return (
+                      <NavLink
+                        to={`/learner/note/${attachment.note_id}`}
+                        className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                      >
+                        <Notebook />
+                        <h1 className="text-2xl font-bold">
+                          {attachment.note.title}
+                        </h1>
+                      </NavLink>
+                    );
+                  case "QUIZ":
+                    return (
+                      <NavLink
+                        to={`/learner/quizzes/${attachment.quiz_id}`}
+                        className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                      >
+                        <GalleryVertical />
+                        <h1 className="text-2xl font-bold">
+                          {attachment.quiz.title}
+                        </h1>
+                      </NavLink>
+                    );
+                  case "FLASHCARD":
+                    return (
+                      <NavLink
+                        to={`/learner/flashcards/${attachment.flashcard_id}`}
+                        className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                      >
+                        <GalleryVertical />
+                        <h1 className="text-2xl font-bold">
+                          {attachment.flashcard.title}
+                        </h1>
+                      </NavLink>
+                    );
+                    break;
+                }
               }
-            })}
+            )}
           </div>
         </>
       )}
@@ -170,11 +190,6 @@ const CommentCard = ({
   });
 
   const handlePostVote = (vote_type: number) => {
-    if (comment?.user_vote === vote_type) {
-      toast("Already voted.");
-      return;
-    }
-
     vote?.({
       comment_id: comment?.id,
       vote_type,
@@ -195,7 +210,7 @@ const CommentCard = ({
       });
       editor?.commands.clearContent();
       setReplyBoxVisibility(false);
-    } catch (error) {
+    } catch {
       toast.error("Failed to submit reply.");
     }
   };

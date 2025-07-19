@@ -1,98 +1,98 @@
 import db_client from "../../utils/client";
 
 export async function getUserFlashcards(user_id: string) {
-    try {
-        return await db_client.flashcard.findMany({
-            where: { user_id }
-        });
-    } catch (err) {
-        throw err;
-    }
+  try {
+    return await db_client.flashcard.findMany({
+      where: { user_id },
+    });
+  } catch (err) {
+    throw err;
+  }
 }
 
 export async function getUserFlashcard(flashcard_id: string) {
-    try {
-        return await db_client.flashcard.findFirst({
-            where: { id: flashcard_id }
-        });
-    } catch (err) {
-        throw err;
-    }
+  try {
+    return await db_client.flashcard.findFirst({
+      where: { id: flashcard_id },
+    });
+  } catch (err) {
+    throw err;
+  }
 }
 
 export async function createUserFlashcard(
-    title: string,
-    description: string,
-    flashcards: { front: string; back: string; }[],
-    is_ai_generated: boolean,
-    user_id: string
+  title: string,
+  description: string,
+  flashcards: { front: string; back: string }[],
+  is_ai_generated: boolean,
+  user_id: string
 ) {
-    try {
-        return await db_client.flashcard.create({
-            data: {
-                title,
-                description,
-                flashcards,
-                is_ai_generated,
-                user_id,
-            }
-        });
-    } catch (err) {
-        throw err;
-    }
+  try {
+    return await db_client.flashcard.create({
+      data: {
+        title,
+        description,
+        flashcards,
+        is_ai_generated,
+        user_id,
+      },
+    });
+  } catch (err) {
+    throw err;
+  }
 }
 
 export async function updateUserFlashcard(
-    title: string,
-    description: string,
-    flashcards: { front: string; back: string; }[],
-    user_id: string,
-    flashcard_id: string
+  title: string,
+  description: string,
+  flashcards: { front: string; back: string }[],
+  user_id: string,
+  flashcard_id: string
 ) {
-    try {
-        return await db_client.flashcard.update({
-            data: {
-                title,
-                description,
-                flashcards,
-                user_id
-            },
-            where: {
-                id: flashcard_id
-            }
-        });
-    } catch (err) {
-        throw err;
-    }
+  try {
+    return await db_client.flashcard.update({
+      data: {
+        title,
+        description,
+        flashcards,
+        user_id,
+      },
+      where: {
+        id: flashcard_id,
+      },
+    });
+  } catch (err) {
+    throw err;
+  }
 }
 
 export async function deleteUserFlashcard(flashcard_id: string) {
-    try {
-        await db_client.flashcard.delete({
-            where: { id: flashcard_id }
-        });
-        return true;
-    } catch (err) {
-        throw err;
-    }
+  try {
+    await db_client.flashcard.delete({
+      where: { id: flashcard_id },
+    });
+    return true;
+  } catch (err) {
+    throw err;
+  }
 }
 
 export async function toggleFlashcardVisibility(flashcard_id: string) {
-    try {
-        const current = await db_client.flashcard.findUnique({
-            where: { id: flashcard_id },
-            select: { is_public: true }
-        });
+  try {
+    const current = await db_client.flashcard.findUnique({
+      where: { id: flashcard_id },
+      select: { is_public: true },
+    });
 
-        const newVisibility = !current?.is_public;
+    const newVisibility = !current?.is_public;
 
-        await db_client.flashcard.update({
-            data: { is_public: newVisibility },
-            where: { id: flashcard_id }
-        });
+    await db_client.flashcard.update({
+      data: { is_public: newVisibility },
+      where: { id: flashcard_id },
+    });
 
-        return true;
-    } catch (err) {
-        throw err;
-    }
+    return true;
+  } catch (err) {
+    throw err;
+  }
 }

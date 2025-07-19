@@ -8,7 +8,6 @@ import {
   Notebook,
   Paperclip,
   SendHorizonal,
-  Text,
   X,
 } from "lucide-react";
 import { useState } from "react";

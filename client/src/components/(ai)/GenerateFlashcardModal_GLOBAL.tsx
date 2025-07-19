@@ -3,12 +3,10 @@ import NoteCard from "../(learner)/NoteCard";
 import _API_INSTANCE from "@/utils/axios";
 
 import {
-  ArrowRight,
   LoaderPinwheel,
   Notebook,
   Paperclip,
   SendHorizonal,
-  Text,
   X,
 } from "lucide-react";
 import { useState } from "react";

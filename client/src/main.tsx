@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // landing page
 import LandingPage from "./routes/LandingPage";
 
@@ -32,6 +33,8 @@ import LearnerEditFlashcardPage from "./routes/(learner)/(flashcard)/LearnerEdit
 import LearnerEditAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIEditFlashcard";
 import LearnerAIEditQuizPage from "./routes/(learner)/(quiz)/LearnerAIEditQuiz";
 import LearnerEditPostPage from "./routes/(learner)/(post)/LearnerEditPost";
+import LearnerCreatePostPage from "./routes/(learner)/(post)/LearnerCreatePost";
+import LearnerSearchPage from "./routes/(learner)/(search)/LearnerSearch";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -41,6 +44,7 @@ import AdminManageReportsPage from "./routes/(admin)/(dashboard)/AdminManageRepo
 import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
 
 import _API_INSTANCE from "./utils/axios";
+import useAuth from "./hooks/useAuth";
 
 import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import { createRoot } from "react-dom/client";
@@ -53,7 +57,6 @@ import {
 } from "./utils/router";
 
 import "../global.css";
-import useAuth from "./hooks/useAuth";
 
 const client = new QueryClient();
 
@@ -90,7 +93,44 @@ const router = createBrowserRouter([
         loader: loadLearnerResources,
       },
       { path: "summarize", Component: LearnerSummarizePage },
-      { path: "profile", Component: LearnerProfilePage },
+      { path: "profile", Component: LearnerProfilePage, loader: () => {} },
+      {
+        path: "search",
+        children: [
+          {
+            path: ":query/:page?",
+            Component: LearnerSearchPage,
+            loader: async ({ params, request }) => {
+              const query = params.query;
+              const page = Number(params.page ?? 1);
+              const limit = 10;
+
+              // Use searchParams to read ?sort=top
+              const searchParams = new URL(request.url).searchParams;
+              const sort = searchParams.get("sort") ?? "newest";
+
+              if (!query) return redirect("/");
+
+              try {
+                const { data } = await _API_INSTANCE.get("/forum/search", {
+                  params: { query, page, limit, sort },
+                });
+
+                return {
+                  posts: data.posts,
+                  total: data.total,
+                  query,
+                  page,
+                  limit,
+                  sort,
+                };
+              } catch (err) {
+                return redirect("/");
+              }
+            },
+          },
+        ],
+      },
       {
         path: "profile/:id",
         Component: LearnerProfilePage,
@@ -116,14 +156,16 @@ const router = createBrowserRouter([
           }
         },
       },
-
       {
         path: "post",
         children: [
           {
+            Component: LearnerCreatePostPage,
+            index: true,
+          },
+          {
             path: ":id",
             Component: LearnerPostPage,
-            index: true,
             loader: async ({ params }) => {
               try {
                 const { data } = await _API_INSTANCE.get(
