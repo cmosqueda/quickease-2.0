@@ -1,6 +1,4 @@
 import CustomEditor from "@/components/Editor";
-import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
-import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
 import { ArrowLeft, TriangleAlertIcon } from "lucide-react";
@@ -64,25 +62,19 @@ export default function LearnerViewNotePage() {
     <div className="flex flex-col min-h-screen w-full">
       <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 lg:items-center border-b border-base-300 p-4 bg-base-100">
         <ArrowLeft
-          onClick={() =>
-            navigate("/learner/library?tab=notes", { viewTransition: true })
-          }
+          onClick={() => navigate(-1, { viewTransition: true })}
           className="cursor-pointer lg:ml-6"
         />
       </div>
-      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_0.2fr] h-full">
-        <div className="flex flex-col gap-2 p-4 lg:p-8">
-          <input
-            placeholder="Title..."
-            value={title}
-            className="font-bold text-3xl input input-ghost w-full"
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <CustomEditor editor={editor} isToolbarVisible={false} />
-        </div>
+      <div className="flex flex-col gap-2 p-4 lg:p-8">
+        <input
+          placeholder="Title..."
+          value={title}
+          className="font-bold text-3xl input input-ghost w-full"
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <CustomEditor editor={editor} isToolbarVisible={false} />
       </div>
-      <GenerateFlashcardModal text={text} />
-      <GenerateQuizModal text={text} />
     </div>
   );
 }

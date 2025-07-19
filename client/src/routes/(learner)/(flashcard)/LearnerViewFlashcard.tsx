@@ -38,7 +38,7 @@ export default function LearnerViewFlashcardPage() {
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
           onClick={() =>
-            navigate("/learner/library?tab=flashcards", {
+            navigate(-1, {
               viewTransition: true,
             })
           }

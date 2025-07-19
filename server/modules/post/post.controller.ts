@@ -100,6 +100,15 @@ export async function create_post(
       attachments,
       tags
     );
+
+    if (post.toxic) {
+      return reply.code(400).send({
+        toxic: true,
+        message:
+          "Your post is toxic, as detected on our system. It might be falsely detected, please refrain on posting any offensive material.",
+      });
+    }
+
     reply.code(200).send(post);
   } catch (err) {
     console.error("Error creating post:", err);

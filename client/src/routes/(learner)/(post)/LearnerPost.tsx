@@ -14,6 +14,7 @@ import {
   GalleryVertical,
   MessageCircle,
   Notebook,
+  TriangleAlertIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
@@ -344,6 +345,22 @@ export default function LearnerPostPage() {
   };
 
   if (!isFetched || !postData) return null;
+
+  if (data.private) {
+    return (
+      <div className="flex flex-col min-h-screen max-w-7xl mx-auto w-full items-center justify-center gap-4">
+        <TriangleAlertIcon size={96} />
+        <div>
+          <h1 className="text-4xl font-bold text-center">
+            This post got flagged or deleted.
+          </h1>
+          <p className="text-base-content/50">
+            Sorry, we can't display this post.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">

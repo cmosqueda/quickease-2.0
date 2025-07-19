@@ -170,9 +170,15 @@ const router = createBrowserRouter([
             Component: LearnerPostPage,
             loader: async ({ params }) => {
               try {
+                const currentUserID = await useAuth.getState().user?.id;
                 const { data } = await _API_INSTANCE.get(
                   `/forum/post/${params.id}`
                 );
+
+                if (!data.is_public && data.user_id !== currentUserID) {
+                  return { private: true };
+                }
+
                 return { id: data.id };
               } catch {
                 return redirect("/learner");
@@ -223,7 +229,7 @@ const router = createBrowserRouter([
                 }
 
                 if (data.user_id == currentUserID) {
-                  return redirect(`/learner/note/${params.id}`);
+                  return redirect(`/learner/flashcards/${params.id}`);
                 }
 
                 return data;
