@@ -2,7 +2,7 @@
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import dayjs from "dayjs";
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash, TriangleAlert } from "lucide-react";
 import { Link, useLoaderData, useNavigate } from "react-router";
 import { EditorProvider } from "@tiptap/react";
 
@@ -25,6 +25,28 @@ export default function LearnerSearchPage() {
     navigate(`/search/${data.query}${pagePath}`);
   };
 
+  if (data.posts.length == 0) {
+    return (
+      <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
+        <ArrowLeft
+          onClick={() => navigate(-1, { viewTransition: false })}
+          className="cursor-pointer"
+        />
+        <div>
+          <p className="text-sm">Searched for</p>
+          <h1 className="font-bold text-4xl break-words">{data.query}</h1>
+        </div>
+        <div className="h-full flex flex-col gap-4 items-center justify-center">
+          <TriangleAlert size={48} />
+          <div>
+            <h1 className="font-bold text-4xl">It's empty?</h1>
+            <p>Your search has no results.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
       <ArrowLeft
@@ -34,24 +56,24 @@ export default function LearnerSearchPage() {
       <div>
         <p className="text-sm">Searched for</p>
         <h1 className="font-bold text-4xl break-words">{data.query}</h1>
-      </div>
-      <div className="flex flex-row gap-4 items-center">
-        <fieldset className="fieldset">
-          <legend className="fieldset-legend">Filter by relevancy</legend>
-          <select
-            value={data.sort}
-            onChange={(e) =>
-              navigate(
-                `/learner/search/${data.query}/${data.page}?sort=${e.target.value}`
-              )
-            }
-            className="select select-bordered max-w-xs"
-          >
-            <option value="newest">Newest</option>
-            <option value="top">Top votes</option>
-            <option value="comments">Most comments</option>
-          </select>
-        </fieldset>
+        <div className="flex flex-row gap-4 items-center">
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Filter by relevancy</legend>
+            <select
+              value={data.sort}
+              onChange={(e) =>
+                navigate(
+                  `/learner/search/${data.query}/${data.page}?sort=${e.target.value}`
+                )
+              }
+              className="select select-bordered max-w-xs"
+            >
+              <option value="newest">Newest</option>
+              <option value="top">Top votes</option>
+              <option value="comments">Most comments</option>
+            </select>
+          </fieldset>
+        </div>
       </div>
       <div className="flex flex-col gap-4">
         {data.posts.map((post) => (

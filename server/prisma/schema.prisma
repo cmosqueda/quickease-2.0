@@ -45,7 +45,7 @@ model Flashcard {
   title           String
   description     String?
   flashcards      Json
-  is_public       Boolean? @default(true)
+  is_public       Boolean? @default(false)
   created_at      DateTime @default(now())
   updated_at      DateTime @default(now())
   is_ai_generated Boolean? @default(false)
@@ -59,7 +59,7 @@ model Note {
   user_id          String
   title            String
   notes_content    String
-  is_public        Boolean?         @default(true)
+  is_public        Boolean?         @default(false)
   created_at       DateTime         @default(now())
   updated_at       DateTime         @default(now())
   is_ai_generated  Boolean?         @default(false)
@@ -73,7 +73,7 @@ model Quiz {
   quiz_content    Json
   title           String
   description     String?
-  is_public       Boolean? @default(true)
+  is_public       Boolean? @default(false)
   created_at      DateTime @default(now())
   updated_at      DateTime @default(now())
   is_ai_generated Boolean? @default(false)

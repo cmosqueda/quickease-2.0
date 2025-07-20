@@ -89,6 +89,8 @@ export default function LearnerCreatePostPage() {
         queryClient.invalidateQueries({ queryKey: ["recent-posts"] });
         toast.success("Post created successfully.");
         navigate(`/learner/post/${data.id}`);
+      } else if (status === 400 && data.toxic) {
+        toast.error(data.message);
       } else {
         toast.error("Failed to create post. Try again.");
       }

@@ -1,7 +1,10 @@
 import db_client from "../../utils/client";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+
 import { buildCommentTree } from "../../utils/tree";
+import { Prisma } from "../../prisma/client";
+import _AI from "../../utils/ai";
 
 async function validateOwnership(
   tx: typeof db_client,
@@ -210,6 +213,30 @@ export async function createPost(
   }[],
   tags?: string[] // Accept tags here
 ) {
+  const response = await _AI.models.generateContent({
+    model: "gemini-2.0-flash",
+    contents: `
+                Given the following post data, analyze whether it contains offensive, toxic, hateful, or inappropriate language.
+                Check if the post is toxic.
+                title: ${title}
+                body: ${body.trim()}
+
+                Return a JSON string in this format:
+                {
+                toxicity: number (0.0 to 1);
+                likely_to_reject: number (0.0 to 1);
+                }
+
+                Only output the JSON string.
+                `.trim(),
+  });
+
+  const result = JSON.parse(response.text!.replace(/```json|```/g, ""));
+
+  if (result.toxicity > 0.6 || result.likely_to_reject > 0.5) {
+    return { toxic: true };
+  }
+
   return await db_client.$transaction(async (tx) => {
     const post = await tx.post.create({
       data: {
@@ -493,7 +520,7 @@ export async function searchPost(query: string, page = 1, limit = 10, sort: "new
   const skip = (page - 1) * limit;
 
   // Base filter
-  const baseWhere = {
+  const baseWhere: Prisma.PostWhereInput = {
     OR: [
       {
         title: {

@@ -15,6 +15,7 @@ import userRoutes from "./modules/user/user.routes";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { server } from "./server";
 import { noteRoutes } from "./modules/note/note.route";
+import db_client from "./utils/client";
 
 export default async function initializeFastifyConfig() {
   /*
@@ -75,7 +76,6 @@ export default async function initializeFastifyConfig() {
     
     Max MB size = 15MB
     Max files length = 5
-
     */
   await server.register(fastifyMultipart, {
     limits: {
@@ -133,6 +133,7 @@ export default async function initializeFastifyConfig() {
   /*
     - API testing routes
     */
+
   server.get("/api/test", (req, res) => {
     try {
       res.code(200).send({
