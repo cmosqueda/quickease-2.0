@@ -157,7 +157,10 @@ describe("Quiz Controller", () => {
         ],
         started_at: "2025-06-24T10:00:00Z",
         completed_at: "2025-06-24T10:10:00Z",
+        duration: 600,
+        score: 1,
         quiz_id: "quiz-1",
+        user_id: "user-1",
       },
     });
 

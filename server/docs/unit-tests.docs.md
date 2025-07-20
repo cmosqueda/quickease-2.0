@@ -969,3 +969,347 @@ Ran all test suites matching tests/ai.
 ### `ai.controller.test.ts` - ✅ PASSED
 
 </details>
+
+---
+
+# July 21, 2025
+
+<details>
+<summary><strong>TL;DR</strong></summary>
+
+## SUMMARY
+
+✅ **Quiz Tests Passed:**
+All tests for `quiz.service` and `quiz.controller` passed successfully after syncing with updated modules. Leaderboard logic tested and verified.
+
+✅ **Other Modules:**
+The rest of the modules worked fine as intended, just like before.
+
+❌ **Post Tests Failed:**
+Both `post.service.test.ts` and `post.controller.test.ts` failed due to a type mismatch in tx parameter.
+The validateOwnership function expected a full PrismaClient, but was passed a transaction-scoped client (tx). This is a type-only issue — not a runtime bug — and can be resolved by updating the function signature to accept `Prisma.TransactionClient.`
+
+</details>
+
+<details>
+<summary><strong>FULL REPORT</strong></summary>
+
+## QUIZ - changes in tests applied according to updated modules
+
+### Result
+
+```
+ PASS  tests/quiz/quiz.service.test.ts
+  Quiz Service
+    √ getUserQuizzes should return quizzes by user ID (13 ms)
+    √ createUserQuiz should create and return a quiz (2 ms)
+    √ updateUserQuiz should update and return quiz (1 ms)
+    √ updateUserQuizVisibility should update and return quiz (2 ms)
+    √ deleteUserQuiz should delete quiz and return true (2 ms)
+    √ submitQuizAttempt should store attempt and return an object (3 ms)
+    √ getQuizAttempt should return attempt by ID (1 ms)
+    √ getQuiz should return leaderboard ranks (2 ms)
+
+ PASS  tests/quiz/quiz.controller.test.ts (5.447 s)
+  Quiz Controller
+    √ get_user_quizzes should return 200 with quizzes (91 ms)
+    √ get_quiz should return 200 with a quiz (4 ms)
+    √ create_user_quiz should return 201 with created quiz (11 ms)
+    √ update_user_quiz should return 200 on success (5 ms)
+    √ update_user_quiz_visibility should return 200 on success (4 ms)
+    √ delete_user_quiz should return 200 on success (2 ms)
+    √ submit_quiz_attempt should return 200 on success (4 ms)
+    √ get_quiz_attempt should return 200 with the attempt (2 ms)
+
+Test Suites: 2 passed, 2 total
+Tests:       16 passed, 16 total
+Snapshots:   0 total
+Time:        6.523 s, estimated 8 s
+Ran all test suites matching tests/quiz.
+```
+
+### `quiz.service.test.ts` - ✅ PASSED
+
+### `quiz.controller.test.ts` - ✅ PASSED
+
+## POST - changes in tests applied according to updated modules
+
+### Result
+
+```
+ FAIL  tests/post/post.controller.test.ts
+  ● Test suite failed to run
+
+    modules/post/post.service.ts:254:49 - error TS2345: Argument of type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is not assignable to parameter of type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+      Type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is missing the following properties from type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>': $on, $connect, $disconnect, $use, and 2 more.
+
+    254         const isOwner = await validateOwnership(tx, user_id, resource_type, resource_id);
+                                                        ~~
+    modules/post/post.service.ts:326:49 - error TS2345: Argument of type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is not assignable to parameter of type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+      Type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is missing the following properties from type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>': $on, $connect, $disconnect, $use, and 2 more.
+
+    326         const isOwner = await validateOwnership(tx, user_id, resource_type, resource_id);
+                                                        ~~
+
+ FAIL  tests/post/post.service.test.ts
+  ● Test suite failed to run
+
+    modules/post/post.service.ts:254:49 - error TS2345: Argument of type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is not assignable to parameter of type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+      Type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is missing the following properties from type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>': $on, $connect, $disconnect, $use, and 2 more.
+
+    254         const isOwner = await validateOwnership(tx, user_id, resource_type, resource_id);
+                                                        ~~
+    modules/post/post.service.ts:326:49 - error TS2345: Argument of type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is not assignable to parameter of type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+      Type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is missing the following properties from type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>': $on, $connect, $disconnect, $use, and 2 more.
+
+    326         const isOwner = await validateOwnership(tx, user_id, resource_type, resource_id);
+                                                        ~~
+
+Test Suites: 2 failed, 2 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        8.961 s
+Ran all test suites matching tests/post.
+```
+
+### `post.service.test.ts` - ❌ FAILED
+
+### `post.controller.test.ts` - ❌ FAILED
+
+Error in both service and controller, specifically in the `tx` parameter, but nothing serious. Just a prisma client type validation error.
+
+## Other Modules - works fine as before ✅
+
+- auth ✅
+- user ✅
+- ai ✅
+- flashcard ✅
+- note ✅
+
+### Overall Results
+
+```
+ PASS  tests/user/user.service.test.ts (15.697 s)
+  User Service
+    √ getUser should return the user with the given id (17 ms)
+    √ changeUserName should update and return the user (30 ms)
+    √ toggleProfileVisibility should update is_public field (3 ms)
+    √ viewProfile should return full data if is_public is true (3 ms)
+    √ viewProfile should return limited data if is_public is false (3 ms)
+
+  console.error
+    Register error: Error: DB Down
+        at Object.<anonymous> (C:\Users\mosqu\forked-quickease-2.0\server\tests\auth\auth.controller.test.ts:173:15)
+        at C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-mock\build\index.js:305:39
+        at Object.<anonymous> (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-mock\build\index.js:312:13)
+        at Object.mockConstructor [as findUnique] (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-mock\build\index.js:102:19)
+        at C:\Users\mosqu\forked-quickease-2.0\server\modules\auth\auth.controller.ts:74:42
+        at Generator.next (<anonymous>)
+        at C:\Users\mosqu\forked-quickease-2.0\server\modules\auth\auth.controller.ts:8:71
+        at new Promise (<anonymous>)
+        at __awaiter (C:\Users\mosqu\forked-quickease-2.0\server\modules\auth\auth.controller.ts:4:12)
+        at register_user (C:\Users\mosqu\forked-quickease-2.0\server\modules\auth\auth.controller.ts:56:12)
+        at C:\Users\mosqu\forked-quickease-2.0\server\tests\auth\auth.controller.test.ts:177:26
+        at Generator.next (<anonymous>)
+        at C:\Users\mosqu\forked-quickease-2.0\server\tests\auth\auth.controller.test.ts:41:71
+        at new Promise (<anonymous>)
+        at __awaiter (C:\Users\mosqu\forked-quickease-2.0\server\tests\auth\auth.controller.test.ts:37:12)
+        at Object.<anonymous> (C:\Users\mosqu\forked-quickease-2.0\server\tests\auth\auth.controller.test.ts:171:61)
+        at Promise.finally.completed (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+        at _callCircusTest (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+        at _runTestsForDescribeBlock (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+        at _runTestsForDescribeBlock (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+        at _runTestsForDescribeBlock (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+        at run (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+        at runAndTransformResultsToJestFormat (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+        at jestAdapter (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-runner\build\testWorker.js:272:16)
+        at runTest (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-runner\build\testWorker.js:340:7)
+        at Object.worker (C:\Users\mosqu\forked-quickease-2.0\server\node_modules\jest-runner\build\testWorker.js:494:12)
+
+       95 |       });
+       96 |   } catch (err) {
+    >  97 |     console.error("Register error:", err);
+          |             ^
+       98 |     reply.code(500).send({
+       99 |       message: "Internal server error. Could not register user.",
+      100 |     });
+
+      at modules/auth/auth.controller.ts:97:13
+      at modules/auth/auth.controller.ts:8:71
+      at __awaiter (modules/auth/auth.controller.ts:4:12)
+      at register_user (modules/auth/auth.controller.ts:56:12)
+      at tests/auth/auth.controller.test.ts:177:26
+      at tests/auth/auth.controller.test.ts:41:71
+      at __awaiter (tests/auth/auth.controller.test.ts:37:12)
+      at Object.<anonymous> (tests/auth/auth.controller.test.ts:171:61)
+
+ PASS  tests/auth/auth.controller.test.ts (15.984 s)
+  Auth Controller
+    login_user
+      √ should return 400 if email or password is missing (40 ms)
+      √ should return 400 if loginUser returns false (3 ms)
+      √ should return 200, set cookie, and return is_admin (3 ms)
+      √ should return 500 on internal error (4 ms)
+    register_user
+      √ should return 400 if any required field is missing (13 ms)
+      √ should return 406 if email is already taken (2 ms)
+      √ should create user and return token (4 ms)
+      √ should return 500 if error is thrown (251 ms)
+    logout
+      √ should clear cookie and return 200 (2 ms)
+      √ should return 500 if logout throws (2 ms)
+
+ PASS  tests/user/user.controller.test.ts (16.023 s)
+  User Controller
+    get_user
+      √ returns 200 with user if found (29 ms)
+      √ returns 404 if user not found (17 ms)
+      √ returns 500 on service error (9 ms)
+    edit_user_name
+      √ returns 200 on successful name update (11 ms)
+      √ returns 400 for invalid input (5 ms)
+      √ returns 500 on service error (2 ms)
+    toggle_user_visibility
+      √ returns 200 on successful visibility toggle (3 ms)
+      √ returns 400 for invalid visibility input (2 ms)
+      √ returns 500 on service error (8 ms)
+    view_profile
+      √ returns 200 with public user (4 ms)
+      √ returns 404 if user not found (3 ms)
+      √ returns 500 on service error (2 ms)
+
+ PASS  tests/auth/auth.service.test.ts (16.237 s)
+  Auth Service
+    loginUser
+      √ should return false if user is not found (22 ms)
+      √ should return false if password does not match (2 ms)
+      √ should return false if email or password is missing (2 ms)
+      √ should return user if credentials match (3 ms)
+    registerUser
+      √ should hash password and create user instance (5 ms)
+      √ should throw error if user creation fails (33 ms)
+
+ PASS  tests/quiz/quiz.service.test.ts
+  Quiz Service
+    √ getUserQuizzes should return quizzes by user ID (4 ms)
+    √ createUserQuiz should create and return a quiz (3 ms)
+    √ updateUserQuiz should update and return quiz (2 ms)
+    √ updateUserQuizVisibility should update and return quiz (1 ms)
+    √ deleteUserQuiz should delete quiz and return true (2 ms)
+    √ submitQuizAttempt should store attempt and return an object (5 ms)
+    √ getQuizAttempt should return attempt by ID (1 ms)
+    √ getQuiz should return leaderboard ranks (4 ms)
+
+ PASS  tests/ai/ai.service.test.ts
+  AI Service
+    generateQuizFromNote
+      √ should return AI response text when note exists (5 ms)
+      √ should return false if note not found (2 ms)
+    generateFlashcardFromNote
+      √ should return AI response text for flashcards (2 ms)
+    generateQuizFromPrompt
+      √ should return AI response text from prompt (1 ms)
+    generateFlashcardsFromPrompt
+      √ should return AI flashcard string from prompt (2 ms)
+    generateNotesFromPrompt
+      √ should return generated notes string from prompt (3 ms)
+
+ PASS  tests/flashcard/flashcard.service.test.ts
+  Flashcard Service
+    √ getUserFlashcards should return flashcards by user ID (8 ms)
+    √ getUserFlashcard should return a flashcard by ID (3 ms)
+    √ createUserFlashcard should create and return a flashcard (7 ms)
+    √ updateUserFlashcard should update and return a flashcard (5 ms)
+    √ deleteUserFlashcard should delete and return true (3 ms)
+    √ toggleFlashcardVisibility should update is_public and return true (8 ms)
+
+ PASS  tests/note/note.service.test.ts
+  Note Service
+    √ getUserNotes should return notes by user ID (8 ms)
+    √ getUserNote should return single note by ID (10 ms)
+    √ createUserNote should create and return a note (4 ms)
+    √ updateUserNote should update and return the note (1 ms)
+    √ deleteUserNote should delete note and return true (1 ms)
+    √ toggleNoteVisibility should update is_public and return true (1 ms)
+
+ PASS  tests/quiz/quiz.controller.test.ts
+  Quiz Controller
+    √ get_user_quizzes should return 200 with quizzes (106 ms)
+    √ get_quiz should return 200 with a quiz (12 ms)
+    √ create_user_quiz should return 201 with created quiz (42 ms)
+    √ update_user_quiz should return 200 on success (6 ms)
+    √ update_user_quiz_visibility should return 200 on success (5 ms)
+    √ delete_user_quiz should return 200 on success (3 ms)
+    √ submit_quiz_attempt should return 200 on success (6 ms)
+    √ get_quiz_attempt should return 200 with the attempt (7 ms)
+
+ PASS  tests/note/note.controller.test.ts (17.977 s)
+  Note Controller
+    √ get_user_notes should return 200 with notes (106 ms)
+    √ get_user_note should return 200 with single note (4 ms)
+    √ create_user_note should return 201 with created note (17 ms)
+    √ update_user_note should return 200 with updated note (8 ms)
+    √ delete_user_note should return 200 on success (9 ms)
+    √ toggle_user_note_visibility should return 200 on success (6 ms)
+    √ create_user_note should return 400 on invalid input (5 ms)
+
+ PASS  tests/flashcard/flashcard.controller.test.ts (18.284 s)
+  Flashcard Controller
+    √ get_user_flashcards should return 200 with flashcards (171 ms)
+    √ get_user_flashcard should return 200 with a flashcard (26 ms)
+    √ create_user_flashcard should return 201 on valid input (27 ms)
+    √ create_user_flashcard should return 400 on invalid input (17 ms)
+    √ update_user_flashcard should return 200 on valid input (14 ms)
+    √ update_user_flashcard should return 400 on invalid input (12 ms)
+    √ delete_user_flashcard should return 200 on success (13 ms)
+    √ toggle_flashcard_visibility should return 200 on success (15 ms)
+
+ PASS  tests/ai/ai.controller.test.ts (18.464 s)
+  AI Controller
+    √ generate_quiz_from_note should return 200 with content (135 ms)
+    √ generate_flashcards_from_note should return 200 with content (7 ms)
+    √ generate_quiz_from_prompt should return 200 with content (9 ms)
+    √ generate_flashcards_from_prompt should return 200 with content (4 ms)
+    √ generate_notes_from_prompt should return 200 with content (7 ms)
+
+ FAIL  tests/post/post.service.test.ts
+  ● Test suite failed to run
+
+    modules/post/post.service.ts:254:49 - error TS2345: Argument of type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is not assignable to parameter of type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+      Type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is missing the following properties from type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>': $on, $connect, $disconnect, $use, and 2 more.
+
+    254         const isOwner = await validateOwnership(tx, user_id, resource_type, resource_id);
+                                                        ~~
+    modules/post/post.service.ts:326:49 - error TS2345: Argument of type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is not assignable to parameter of type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+      Type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is missing the following properties from type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>': $on, $connect, $disconnect, $use, and 2 more.
+
+    326         const isOwner = await validateOwnership(tx, user_id, resource_type, resource_id);
+                                                        ~~
+
+ FAIL  tests/post/post.controller.test.ts
+  ● Test suite failed to run
+
+    modules/post/post.service.ts:254:49 - error TS2345: Argument of type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is not assignable to parameter of type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+      Type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is missing the following properties from type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>': $on, $connect, $disconnect, $use, and 2 more.
+
+    254         const isOwner = await validateOwnership(tx, user_id, resource_type, resource_id);
+                                                        ~~
+    modules/post/post.service.ts:326:49 - error TS2345: Argument of type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is not assignable to parameter of type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+      Type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">' is missing the following properties from type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>': $on, $connect, $disconnect, $use, and 2 more.
+
+    326         const isOwner = await validateOwnership(tx, user_id, resource_type, resource_id);
+                                                        ~~
+
+Test Suites: 2 failed, 12 passed, 14 total
+Tests:       87 passed, 87 total
+Snapshots:   0 total
+Time:        23.598 s
+Ran all test suites.
+```
+
+</details>

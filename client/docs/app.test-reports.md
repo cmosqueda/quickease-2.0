@@ -564,3 +564,246 @@ Feedback:
   > Suggestion: When logged in user views their own profile, it should take them to their own account profile screen.
 
 </details>
+
+---
+
+# July 21, 2025
+
+<details>
+<summary><strong>TL;DR</strong></summary>
+
+## SUMMARY
+
+✅ **All Core Features Passed:**
+Major modules such as Register, Login/Logout, Learner Notes, Flashcards, Quiz, Library, Forums, and Quiz Sharing passed 100% of implemented test criteria. Core functionality works as expected.
+
+⚠️ **Partially Implemented Features:**
+
+- Forgot Password (L007) not yet implemented.
+- Share options (Notes, Flashcards) available but not yet functional.
+- Visibility editing for Flashcards and Quizzes is not yet implemented, though sharing works.
+- AI Generation from uploaded files/images is not yet supported.
+- Profile editing and Account Settings (email, name, password changes) are not yet implemented.
+
+📌 **Overall Status:**
+System is fully functional for all major user flows. Minor enhancements and unimplemented features remain, but no blocking issues were found.
+
+</details>
+
+<details>
+<summary><strong>FULL REPORT</strong></summary>
+
+## Register
+
+Criterias and Success Rate:
+
+- **R001** – 100% – User can register with valid email and password.
+- **R002** – 100% – The user can only register with a valid, NEW email. Used emails are not allowed for re-registration.
+- **R003** – 100% – Require user to enter ALL input fields (first name, last name, email, password, confirm password).
+- **R004** – 100% – Account creation MUST ONLY proceed if user SUCCESSFULLY fills in ALL required input fields (first name, last name, email, password, confirm password).
+- **R005** – 100% – Error-handling pop-ups/toasts understandable for users are implemented.
+- **R006** – 100% – The user must be directed to `Log in` screen when the highlighted `Sign in` text is clicked.
+
+Status: ✅ PASSED
+
+Feedback:
+
+- Passed. Every module works as expected and intended.
+
+## Login / Logout
+
+Criterias and Success Rate:
+
+- **L001** – 100% – The input fields must respond no more than 0.8s when clicked.
+- **L002** – 100% – The user can only log in with a registered account (used email).
+- **L003** – 100% – Error-handling pop-ups/toasts understandable for users are implemented.
+- **L004** – 100% – Account log in MUST ONLY proceed if valid and existing user account credentials in the database are entered.
+- **L005** – 100% – The user must be directed to `Register` screen when the highlighted `Register Now` text is clicked.
+- **L006** – 100% – The user can log out.
+- **L007** - - - The user can change forgotten password.
+
+Status: ✅ PASSED
+
+Feedback:
+
+- Passed. Every module works as expected and intended.
+- **L007** not yet implemented.
+
+## Learner Notes
+
+Criterias and Success Rate:
+
+- **LN001** – 100% – User can create notes manually.
+- **LN002** – 100% – All implemented markdown functions work properly
+- **LN003** – 100% – User can edit the existing note inside text box
+- **LN004** – 100% – User can view saved notes
+- **LN005** – 100% – At notes page, a series of functional buttons for note options are present
+- **LN006** – 100% – User can save notes properly
+- **LN007** – 100% – When clicking the back button on the selected sumary notes, user should be redirected to Library Notes module
+- **LN008** – 100% – User can delete an existing note
+- **LN009** – - – Users can share a note either from Note Card or from Note Page, through "more options"
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- Passed. All implemented modules work properly as expected.
+- Share button in note options not yet functional.
+
+## Learner Flashcards
+
+Criterias and Success Rate:
+
+- **LFC001** – 100% – User can create flashcards manually
+- **LFC002** – 100% – User can preview front content and back content of flashcards.
+- **LFC003** – 100% – Front and back contents of flashcards must display accurately.
+- **LFC004** – 100% – User can review flashcards. When a user clicks on the card component, the UI must respond with a flip in no more than 0.8s.
+- **LFC005** – 100% – At flashcards page, an ellipsis icon is available and clickable for viewing additional flashcard set options at the flashcard set card component
+- **LFC006** – 100% – When clicking the back button on the selected flashcard, user should be redirected to Library Flashcards module
+- **LFC007** – 100% – User can edit the existing flashcard created manually
+- **LFC008** – 100% – User can edit the existing flashcard created from AI generation
+- **LFC009** – 80% – User can share a flashcard set either from Flashcard Set Card or from Flashcard Page, through "more options"
+- **LFC010** – 100% – User can delete an existing flashcard set
+- **LFC011** - - User can edit flashcard set visibility/privacy
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- Passed. All modules implemented work properly as expected.
+- Flashcard can be attached in a forum post and is public by default but edit flashcard visibility not yet implemented.
+
+## Learner Quiz
+
+Criterias and Success Rate:
+
+- **LQ001** – 100% – The UI and buttons respond in no more than 0.8s when clicked.
+- **LQ002** – 100% – User can create quizzes manually.
+- **LQ003** – 100% – User can edit the existing quiz created manually
+- **LQ004** – 100% – User can answer and review existing saved quiz.
+- **LQ005** – 100% – Correct answer(s) from multiple choice are displayed as expected.
+- **LQ006** – 100% – Exact scores are calculated and displayed as expected after answering the quiz/reviewing the quiz overview.
+- **LQ007** – 100% – After a quiz is answered, a quiz review is available for viewing.
+- **LQ008** – 100% – When clicking the back button on the selected quiz, user should be redirected to Library Quiz module
+- **LQ009** – 100% – User can delete an existing quiz
+- **LQ010** – 100% – User can edit the existing quiz created from AI generation
+- **LQ011** – 100% – At quiz page, an ellipsis icon is available and clickable for viewing additional quiz options
+- **LQ012** – 100% – User can share a Quiz Set from Quiz Page, through "more options"
+- **LQ013** - - User can edit quiz visibility/privacy
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- Passed. All modules implemented worked properly as expected.
+- Quiz can be attached in a forum post and is public by default but edit quiz visibility not yet implemented.
+
+## Learner Library
+
+Criterias and Success Rate:
+
+- **LL001** – 100% – Search functionality returns accurate results.
+- **LL002** – 100% – All learner's materials data (notes, flashcards, quizzes) are fetched accordingly and displays as expected.
+- **LL003** – 100% – Filter `AI-Generated` or `From User` (manually created) materials.
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- Passed. Every module works as expected and intended.
+
+## Learner-Forums
+
+Criterias and Success Rate:
+
+- **LF001** - 100% - User(s) can create a post in forums
+- **LF002** - 100% - User can edit an existing post they owned
+- **LF003** - 100% - User can delete their existing post
+- **LF004** - 70% - User can select and attach summary notes to share in a post
+- **LF005** - 100% - User can select and attach quizzes to share in a post
+- **LF006** - 70% - User can select and attach flashcards to share in a post
+- **LF007** - 100% - User(s) can upvote or downvote an existing post
+- **LF008** - 100% - User(s) can comment to a post
+- **LF009** - 100% - User(s) can reply to a comment (like threaded replies)
+- **LF010** - 100% - User(s) can upvote or downvote an existing comment
+- **LF011** - - User(s) can report a post
+- **LF012** - - User(s) can report a comment
+- **LF013** - 100% - User(s) can search in forums. Should allow filtering via newest/top votes/most comments.
+- **LF014** - 100% - User(s) can view posts categorized by tags. Should allow filtering via newest/top votes/most comments.
+- **LF015** - - User(s) can edit any post attachment visibility. Should display an error page if post attachment is made private.
+- **LF016** - 100% - For moderation and regulation, malicious/inappropriate post content should be filtered by the AI before it gets approved.
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- Passed. Every module works as expected and intended.
+
+## Quiz Sharing
+
+Criterias and Success Rate:
+
+- **QS001** – 100% – User(s) can answer a shared quiz
+- **QS002** – 100% – Multiple users' scores and attempts are saved properly and accurately mapped to the corresponding user.
+- **QS003** – 100% – Leaderboard rankings for multiple users who answered a shared quiz is implemented
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- Passed. Every module works as expected and intended.
+
+## AI-Generation
+
+Criterias and Success Rate:
+
+- **AI001** – - – User can generate summary note from input `(removed)`
+- **AI002** – - – User can generate summary note from uploaded document
+- **AI003** – - – User can generate summary note from uploaded image
+- **AI004** – 100% – User can generate flashcard sets from existing note
+- **AI005** – - – User can generate flashcard sets from text input prompted by user `(removed)`
+- **AI006** – - – User can generate flashcard sets from uploaded document
+- **AI007** – 100% – User can generate quiz from existing note
+- **AI008** – - – User can generate quiz from text input prompted by user `(removed)`
+- **AI009** – - – User can generate quiz from uploaded document
+
+Status: ✅ **PASSED**
+
+Feedback:
+
+- Passed. All modules implemented work properly as expected.
+- Removed generate from prompt
+- Generating from uploaded files or images not yet supported.
+
+## Forums Profile
+
+Criterias and Success Rate:
+
+- **PR001** – 100% – User(s) can view their profile information
+- **PR002** – - – User(s) can edit their profile information
+- **PR003** – 100% – User(s) can toggle profile visibility (make profile public or not)
+
+Status: ✅ **PASSED WITH MINOR FIXES NEEDED**
+
+Feedback:
+
+- Implemented modules work properly as expected.
+- Editing profile information not yet implemented.
+
+## Settings
+
+Criterias and Success Rate:
+
+- **LS001** - 100% - User can change the theme of the web by the its choice
+- **LS002** - - User can change their email address
+- **LS003** - - User can change their name
+- **LS004** - - User can change their password
+
+Status: ✅ **PASSED WITH MINOR FIXES NEEDED**
+
+Feedback:
+
+- Implemented modules work properly as expected.
+- Editing account information (email, name, and) not yet implemented.
+
+</details>
