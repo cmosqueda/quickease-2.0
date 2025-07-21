@@ -72,7 +72,7 @@ export default function LearnerPostPage() {
     }
   };
 
-  if (!isFetched || !postData) return null;
+  if (!isFetched) return null;
 
   if (data.private) {
     return (
@@ -156,7 +156,7 @@ export default function LearnerPostPage() {
         </button>
       </div>
       <div className="flex flex-col gap-2">
-        {postData?.comments?.map((comment: CommentCardProps) => (
+        {postData?.comments?.map((comment) => (
           <CommentCard comment={comment} key={comment.id} post_id={data?.id} />
         ))}
       </div>

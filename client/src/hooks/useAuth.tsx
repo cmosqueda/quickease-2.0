@@ -1,6 +1,7 @@
 import type { Flashcard, Note, Quiz } from "@/types/types";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { persist } from "zustand/middleware";
 
 type AuthUserRecord = {
   id: string;
@@ -31,20 +32,24 @@ type AuthStore = {
 };
 
 const useAuth = create<AuthStore>()(
-  immer((set, get) => ({
-    user: undefined,
-    token: undefined,
-    setUser: (user) => {
-      set((state) => {
-        state.user = user;
-      });
-    },
-    setToken: (token) => {
-      set((state) => {
-        state.token = token;
-      });
-    },
-  }))
+  persist(
+    immer((set) => ({
+      user: undefined,
+      token: undefined,
+      setUser: (user) =>
+        set((state) => {
+          state.user = user;
+        }),
+      setToken: (token) =>
+        set((state) => {
+          state.token = token;
+        }),
+    })),
+    {
+      name: "QUICKEASE_USER",
+      partialize: (state) => ({ user: state.user, token: state.token }),
+    }
+  )
 );
 
 export default useAuth;
