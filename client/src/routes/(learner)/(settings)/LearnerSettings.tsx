@@ -2,10 +2,16 @@ import clsx from "clsx";
 import ThemeBox from "@/components/ThemeBox";
 import _API_INSTANCE from "@/utils/axios";
 import useAuth from "@/hooks/useAuth";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
 import { useEffect, useState } from "react";
-import { Eye, Lock, Mail, UserCircle } from "lucide-react";
+import { Eye, Info, Lock, Mail, UserCircle, X } from "lucide-react";
 import { toast } from "sonner";
+
+dayjs.extend(duration);
+dayjs.extend(isSameOrAfter);
 
 const AppearanceSettings = () => {
   return (
@@ -54,10 +60,13 @@ const AccountSettings = () => {
         <Mail />
         <p>Change email address</p>
       </div>
-      <div className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all">
+      <button
+        onClick={() => document.getElementById("change-name-modal").showModal()}
+        className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all"
+      >
         <UserCircle />
         <p>Change name</p>
-      </div>
+      </button>
       <div className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all">
         <Lock />
         <p>Request to change password</p>
@@ -85,8 +94,119 @@ const AccountSettings = () => {
   );
 };
 
+const ChangeNameModal = () => {
+  const [firstName, setFirstName] = useState(
+    useAuth.getState().user?.first_name
+  );
+  const [lastName, setLastName] = useState(useAuth.getState().user?.last_name);
+  const [isSaving, setIsSaving] = useState(false);
+  const [canChangeName, setCanChangeName] = useState(true);
+
+  const handleUpdate = async () => {
+    setIsSaving(true);
+    const temp = useAuth.getState().user;
+
+    try {
+      const { data } = await _API_INSTANCE.put("/users/edit", {
+        firstName,
+        lastName,
+      });
+
+      useAuth.setState({
+        user: {
+          ...temp,
+          first_name: data.user.first_name,
+          last_name: data.user.last_name,
+        },
+      });
+
+      localStorage.setItem(
+        "QUICKEASE_CHANGE_NAME_EXPIRATION",
+        new Date().toISOString()
+      );
+      toast.success("Name updated!");
+    } catch (err) {
+      toast.error("Error updating name.");
+    } finally {
+      document.getElementById("change-name-modal").close();
+      setIsSaving(false);
+    }
+  };
+
+  useEffect(() => {
+    const lastChange = localStorage.getItem("QUICKEASE_CHANGE_NAME_EXPIRATION");
+
+    if (lastChange) {
+      const lastChangeDate = dayjs(lastChange);
+      const nextEligibleDate = lastChangeDate.add(7, "days");
+      const now = dayjs();
+
+      if (now.isBefore(nextEligibleDate)) {
+        setCanChangeName(false);
+      }
+    }
+  }, []);
+
+  return (
+    <dialog id="change-name-modal" className="modal">
+      <div className="modal-box flex flex-col">
+        <div className="flex flex-row gap-2 items-center">
+          <X
+            className="my-2 cursor-pointer"
+            onClick={() => document.getElementById("change-name-modal").close()}
+          />
+          <h3 className="font-bold text-lg">Change name</h3>
+        </div>
+        <p className="rounded-3xl text-xs text-base-content/50">
+          Note: You can only change your name every week!
+        </p>
+        <div className="grid grid-cols-2 gap-4 my-2">
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">First Name</legend>
+            <input
+              type="text"
+              className="input"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="Type here"
+              disabled={!canChangeName}
+            />
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Last Name</legend>
+            <input
+              type="text"
+              className="input"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Type here"
+              disabled={!canChangeName}
+            />
+          </fieldset>
+        </div>
+        {canChangeName && (
+          <button className="btn" onClick={handleUpdate} disabled={isSaving}>
+            Update
+          </button>
+        )}
+        {!canChangeName && (
+          <>
+            <button className="btn" onClick={handleUpdate} disabled={isSaving}>
+              Close
+            </button>
+            <p className="p-4 flex flex-row items-center gap-2 bg-warning mt-2 rounded-3xl text-warning-content">
+              <Info />
+              You can't change your name.
+            </p>
+          </>
+        )}
+      </div>
+    </dialog>
+  );
+};
+
 export default function LearnerSettingsPage() {
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState(1);
   const tabs = [<AppearanceSettings />, <AccountSettings />];
 
   return (
@@ -114,6 +234,7 @@ export default function LearnerSettingsPage() {
         </a>
       </div>
       {tabs[tabIndex]}
+      <ChangeNameModal />
     </div>
   );
 }

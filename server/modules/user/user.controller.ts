@@ -46,8 +46,8 @@ export async function edit_user_name(
   };
 
   const schema = z.object({
-    firstName: z.string().min(6),
-    lastName: z.string().min(2),
+    firstName: z.string(),
+    lastName: z.string(),
   });
 
   const result = schema.safeParse(request.body);
