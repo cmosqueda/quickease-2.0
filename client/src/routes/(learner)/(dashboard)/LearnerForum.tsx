@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronUp,
   EllipsisVertical,
+  LoaderPinwheel,
   MessageCircle,
   Plus,
   Search,
@@ -155,21 +156,21 @@ export default function LearnerForumPage() {
     content: "",
   });
 
-  const { data } = useInfiniteQuery({
+  const { data, isFetching } = useInfiniteQuery({
     queryKey: ["recent-posts"],
     queryFn: async ({ pageParam = null }) => {
       const { data: posts } = await _API_INSTANCE.get("/forum/posts/recent", {
         params: { cursor: pageParam, limit: 10 },
       });
 
-      console.log(posts);
       return posts;
     },
     initialPageParam: null,
     getNextPageParam: (lastPage) => {
       return lastPage?.nextCursor ?? null;
     },
-    retry: false,
+    retry: 3,
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -203,11 +204,17 @@ export default function LearnerForumPage() {
           <ProfileDropdown />
         </div>
       </div>
-      <div className="flex flex-col gap-4">
-        {data?.pages.flatMap((page) =>
-          page.posts.map((post) => <Post key={post.id} post={post} />)
-        )}
-      </div>
+      {isFetching ? (
+        <div className="max-w-7xl h-full w-full mx-auto flex items-center justify-center">
+          <LoaderPinwheel className="animate-spin" size={128} />
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {data?.pages.flatMap((page) =>
+            page.posts.map((post) => <Post key={post.id} post={post} />)
+          )}
+        </div>
+      )}
     </div>
   );
 }

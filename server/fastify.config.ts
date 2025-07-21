@@ -31,12 +31,14 @@ export default async function initializeFastifyConfig() {
         "COOKIE_SECRET_KEY",
         "DATABASE_URL",
         "GOOGLE_GEN_AI_API_KEY",
+        "CORS_FRONTEND_HOST",
       ],
       properties: {
         JWT_SECRET_KEY: { type: "string" },
         COOKIE_SECRET_KEY: { type: "string" },
         DATABASE_URL: { type: "string" },
         GOOGLE_GEN_AI_API_KEY: { type: "string" },
+        CORS_FRONTEND_HOST: { type: "string" },
       },
     },
   });
@@ -108,10 +110,6 @@ export default async function initializeFastifyConfig() {
         id: string;
         first_name: string;
         last_name: string;
-        email: string;
-        phone_number: string;
-        is_public: boolean;
-        [key: string]: any;
       }>(token);
 
       request.user = decoded;

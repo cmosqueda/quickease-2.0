@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import TermsAndPrivacyPolicyModal from "../../components/TermsAndPrivacyPolicyModal";
 import _API_INSTANCE from "@/utils/axios";
 
@@ -7,6 +8,7 @@ import { toast } from "sonner";
 
 export default function AuthLoginPage() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
@@ -25,10 +27,12 @@ export default function AuthLoginPage() {
       );
 
       if (status == 200 && data.is_admin == false) {
+        setUser(data);
         navigate("/learner", { viewTransition: true });
       }
 
       if (status == 200 && data.is_admin == true) {
+        setUser(data);
         navigate("/admin", { viewTransition: true });
       }
     } catch (err) {

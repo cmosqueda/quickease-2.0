@@ -9,6 +9,19 @@ export async function getUser(user_id: string) {
   return user;
 }
 
+export async function checkUser(user_id: string) {
+  const user = await db_client.user.findUnique({
+    where: { id: user_id },
+    select: {
+      first_name: true,
+      last_name: true,
+      is_admin: true,
+    },
+  });
+
+  return user;
+}
+
 export async function changeUserName(
   first_name: string,
   last_name: string,

@@ -9,7 +9,7 @@ import {
   SendHorizonal,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { toast } from "sonner";
 

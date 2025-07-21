@@ -1,4 +1,5 @@
 export type Flashcard = {
+  is_public: boolean;
   id: string;
   title: string;
   description: string;

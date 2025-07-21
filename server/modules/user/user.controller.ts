@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import {
   changeUserName,
+  checkUser,
   getUser,
   toggleProfileVisibility,
   viewProfile,
@@ -10,6 +11,20 @@ import { z } from "zod";
 export async function get_user(request: FastifyRequest, reply: FastifyReply) {
   try {
     const user = await getUser(request.user.id);
+
+    if (!user) {
+      return reply.code(404).send({ message: "User not found." });
+    }
+
+    reply.code(200).send(user);
+  } catch (err) {
+    reply.code(500).send({ message: "Error getting user's details." });
+  }
+}
+
+export async function check_user(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const user = await checkUser(request.user.id);
 
     if (!user) {
       return reply.code(404).send({ message: "User not found." });

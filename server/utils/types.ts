@@ -31,15 +31,12 @@ declare module "@fastify/jwt" {
       id: string;
       first_name: string;
       last_name: string;
-      email: string;
-      is_public: boolean;
       [key: string]: any;
     };
     user: {
       id: string;
       first_name: string;
       last_name: string;
-      email: string;
       [key: string]: any;
     };
   }
