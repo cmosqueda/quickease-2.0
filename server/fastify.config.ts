@@ -2,7 +2,6 @@ import fastifyCookie from "@fastify/cookie";
 import fastifyEnv from "@fastify/env";
 import fastifyJwt from "@fastify/jwt";
 import fastifyMultipart from "@fastify/multipart";
-import fastifyMailer from "fastify-mailer";
 import cors from "@fastify/cors";
 
 // routes modules
@@ -13,10 +12,10 @@ import aiRoutes from "./modules/ai/ai.routes";
 import userRoutes from "./modules/user/user.routes";
 import forumRoutes from "./modules/post/forum.routes";
 import noteRoutes from "./modules/note/note.route";
+import mailRoutes from "./modules/mail/mail.route";
 
 import { FastifyRequest, FastifyReply } from "fastify";
 import { server } from "./server";
-import mailRoutes from "./modules/mail/mail.route";
 
 export default async function initializeFastifyConfig() {
   /*
