@@ -20,9 +20,11 @@ import { toast } from "sonner";
 
 export default function LearnerCreatePostPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const queryClient = useQueryClient();
+
+  const { user } = useAuth();
   const [tabIndex, setTabIndex] = useState(0);
+
   const editor = useEditor({
     editable: true,
     autofocus: true,
@@ -243,31 +245,40 @@ export default function LearnerCreatePostPage() {
         >
           <ArrowLeft className="cursor-pointer" />
         </button>
-        <h1 className="font-bold text-xl">Attach notes</h1>
+        <div>
+          <h1 className="font-bold text-xl">Attach notes</h1>
+          <p className="text-sm text-base-content/50">
+            Only public notes are visible
+          </p>
+        </div>
       </div>
 
       {/* Notes */}
       <div className="grid grid-cols-2 gap-4">
         {user &&
-          user.notes.map((note) => {
-            const isSelected = selectedNotes.some((n) => n.id === note.id);
-            return (
-              <button
-                key={note.id}
-                className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative"
-                onClick={() => {
-                  setSelectedNotes((prev) =>
-                    isSelected
-                      ? prev.filter((n) => n.id !== note.id)
-                      : [...prev, note]
-                  );
-                }}
-              >
-                {isSelected && <Check size={16} className="absolute right-4" />}
-                <h1 className="font-bold text-2xl">{note.title}</h1>
-              </button>
-            );
-          })}
+          user.notes
+            .filter((n) => n.is_public == true)
+            .map((note) => {
+              const isSelected = selectedNotes.some((n) => n.id === note.id);
+              return (
+                <button
+                  key={note.id}
+                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative"
+                  onClick={() => {
+                    setSelectedNotes((prev) =>
+                      isSelected
+                        ? prev.filter((n) => n.id !== note.id)
+                        : [...prev, note]
+                    );
+                  }}
+                >
+                  {isSelected && (
+                    <Check size={16} className="absolute right-4" />
+                  )}
+                  <h1 className="font-bold text-2xl">{note.title}</h1>
+                </button>
+              );
+            })}
       </div>
     </>,
     <>
@@ -281,33 +292,42 @@ export default function LearnerCreatePostPage() {
         >
           <ArrowLeft className="cursor-pointer" />
         </button>
-        <h1 className="font-bold text-xl">Attach flashcards</h1>
+        <div>
+          <h1 className="font-bold text-xl">Attach flashcards</h1>
+          <p className="text-sm text-base-content/50">
+            Only public flashcards are visible
+          </p>
+        </div>
       </div>
 
       {/* Flashcards */}
       <div className="grid grid-cols-2 gap-4">
         {user &&
-          user.flashcards.map((flashcard) => {
-            const isSelected = selectedFlashcards.some(
-              (f) => f.id === flashcard.id
-            );
-            return (
-              <button
-                key={flashcard.id}
-                className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative"
-                onClick={() => {
-                  setSelectedFlashcards((prev) =>
-                    isSelected
-                      ? prev.filter((f) => f.id !== flashcard.id)
-                      : [...prev, flashcard]
-                  );
-                }}
-              >
-                {isSelected && <Check size={16} className="absolute right-4" />}
-                <h1 className="font-bold text-2xl">{flashcard.title}</h1>
-              </button>
-            );
-          })}
+          user.flashcards
+            .filter((f) => f.is_public == true)
+            .map((flashcard) => {
+              const isSelected = selectedFlashcards.some(
+                (f) => f.id === flashcard.id
+              );
+              return (
+                <button
+                  key={flashcard.id}
+                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative"
+                  onClick={() => {
+                    setSelectedFlashcards((prev) =>
+                      isSelected
+                        ? prev.filter((f) => f.id !== flashcard.id)
+                        : [...prev, flashcard]
+                    );
+                  }}
+                >
+                  {isSelected && (
+                    <Check size={16} className="absolute right-4" />
+                  )}
+                  <h1 className="font-bold text-2xl">{flashcard.title}</h1>
+                </button>
+              );
+            })}
       </div>
     </>,
     <>
@@ -321,31 +341,40 @@ export default function LearnerCreatePostPage() {
         >
           <ArrowLeft className="cursor-pointer" />
         </button>
-        <h1 className="font-bold text-xl">Attach quizzes</h1>
+        <div>
+          <h1 className="font-bold text-xl">Attach quizzes</h1>
+          <p className="text-sm text-base-content/50">
+            Only public quizzes are visible
+          </p>
+        </div>
       </div>
 
       {/* Quizzes */}
       <div className="grid grid-cols-2 gap-4">
         {user &&
-          user.quizzes.map((quiz) => {
-            const isSelected = selectedQuizzes.some((q) => q.id === quiz.id);
-            return (
-              <button
-                key={quiz.id}
-                onClick={() => {
-                  setSelectedQuizzes((prev) =>
-                    isSelected
-                      ? prev.filter((q) => q.id !== quiz.id)
-                      : [...prev, quiz]
-                  );
-                }}
-                className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative"
-              >
-                {isSelected && <Check size={16} className="absolute right-4" />}
-                <h1 className="font-bold text-2xl">{quiz.title}</h1>
-              </button>
-            );
-          })}
+          user.quizzes
+            .filter((q) => q.is_public == true)
+            .map((quiz) => {
+              const isSelected = selectedQuizzes.some((q) => q.id === quiz.id);
+              return (
+                <button
+                  key={quiz.id}
+                  onClick={() => {
+                    setSelectedQuizzes((prev) =>
+                      isSelected
+                        ? prev.filter((q) => q.id !== quiz.id)
+                        : [...prev, quiz]
+                    );
+                  }}
+                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative"
+                >
+                  {isSelected && (
+                    <Check size={16} className="absolute right-4" />
+                  )}
+                  <h1 className="font-bold text-2xl">{quiz.title}</h1>
+                </button>
+              );
+            })}
       </div>
     </>,
   ]; // 0 - Post | 1 - Notes | 2 - Flashcards | 3 - Quizzes

@@ -148,7 +148,7 @@ export async function toggle_user_note_visibility(
 
   const schema = z.object({
     visibility: z.boolean(),
-    note_id: z.string().min(1, "Note ID is required."),
+    note_id: z.string(),
   });
 
   const result = schema.safeParse({ visibility, note_id });

@@ -31,6 +31,7 @@ export default function LearnerNotePage() {
   const [json, setJSON] = useState({});
   const [title, setTitle] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isPublic, setIsPublic] = useState(data.is_public);
 
   const editor = useEditor({
     editable: true,
@@ -100,6 +101,17 @@ export default function LearnerNotePage() {
       throw err;
     }
   };
+  const handleVisibility = async (visibility: boolean) => {
+    try {
+      await _API_INSTANCE.patch("/notes/toggle-visibility", {
+        visibility: visibility,
+        note_id: data.id,
+      });
+      toast.success("Note visibility updated.");
+    } catch (err) {
+      toast.error("Error updating note visibility.");
+    }
+  };
 
   if (!editor) return;
 
@@ -150,23 +162,6 @@ export default function LearnerNotePage() {
           <CustomEditor editor={editor} />
         </div>
         <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
-          <h1 className="font-bold text-xl">Note options</h1>
-          <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={handleDelete}
-          >
-            <Delete />
-            <h1>Delete</h1>
-          </button>
-          <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() =>
-              navigate("/learner/library?tab=notes", { viewTransition: true })
-            }
-          >
-            <Share />
-            <h1>Share</h1>
-          </button>
           <h1 className="font-bold text-xl">Study options</h1>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
@@ -186,6 +181,33 @@ export default function LearnerNotePage() {
             <ClipboardList />
             <h1>Generate quiz</h1>
           </button>
+          <h1 className="font-bold text-xl">Other options</h1>
+          <button
+            className="rounded-3xl btn btn-soft gap-2 join-item"
+            onClick={handleDelete}
+          >
+            <Delete />
+            <h1>Delete</h1>
+          </button>
+          <div className="flex flex-row items-center justify-between rounded-3xl p-4 bg-base-200 gap-2 join-item">
+            <h1>Set to {isPublic ? "private" : "public"}</h1>
+            <input
+              type="checkbox"
+              checked={isPublic}
+              onChange={async () => {
+                const nextVisibility = !isPublic;
+                setIsPublic(nextVisibility);
+
+                try {
+                  await handleVisibility(nextVisibility);
+                } catch (err) {
+                  setIsPublic(isPublic);
+                  toast.error("Error updating note visibility.");
+                }
+              }}
+              className="toggle"
+            />
+          </div>
         </div>
       </div>
       <GenerateFlashcardModal text={text} />

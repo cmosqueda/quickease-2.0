@@ -66,7 +66,7 @@ export default async function initializeFastifyConfig() {
   await server.register(cors, {
     origin: process.env.CORS_FRONTEND_HOST,
     credentials: true,
-    methods: ["GET", "PUT", "POST", "DELETE"],
+    methods: ["GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["content-type", "accept", "content-type", "authorization"],
   });
 
