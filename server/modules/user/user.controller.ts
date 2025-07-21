@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import {
+  changeUserEmail,
   changeUserName,
   checkUser,
   getUser,
@@ -61,6 +62,33 @@ export async function edit_user_name(
     const update = await changeUserName(firstName, lastName, request.user.id);
     reply.code(200).send({
       message: "Name updated successfully.",
+      user: update,
+    });
+  } catch (err) {
+    reply.code(500).send({ message: "Error updating name." });
+  }
+}
+
+export async function edit_email(request: FastifyRequest, reply: FastifyReply) {
+  const { email } = request.body as {
+    email: string;
+  };
+
+  const schema = z.object({
+    email: z.string().email(),
+  });
+
+  const result = schema.safeParse(request.body);
+  if (!result.success) {
+    return reply
+      .code(400)
+      .send({ message: "Invalid input", errors: result.error.errors });
+  }
+
+  try {
+    const update = await changeUserEmail(email, request.user.id);
+    reply.code(200).send({
+      message: "Email updated successfully.",
       user: update,
     });
   } catch (err) {

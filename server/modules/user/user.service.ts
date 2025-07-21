@@ -27,10 +27,21 @@ export async function changeUserName(
   last_name: string,
   user_id: string
 ) {
-  return db_client.user.update({
+  return await db_client.user.update({
     data: {
       first_name: first_name,
       last_name: last_name,
+    },
+    where: {
+      id: user_id,
+    },
+  });
+}
+
+export async function changeUserEmail(email: string, user_id: string) {
+  return await db_client.user.update({
+    data: {
+      email: email,
     },
     where: {
       id: user_id,

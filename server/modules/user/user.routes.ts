@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import {
   check_user,
+  edit_email,
   edit_user_name,
   get_user,
   toggle_user_visibility,
@@ -23,9 +24,14 @@ export default async function userRoutes(fastify: FastifyInstance) {
     handler: view_profile,
   });
 
-  fastify.put("/edit", {
+  fastify.put("/edit-name", {
     preHandler: [fastify.authenticate],
     handler: edit_user_name,
+  });
+
+  fastify.put("/edit-email", {
+    preHandler: [fastify.authenticate],
+    handler: edit_email,
   });
 
   fastify.put("/toggle-visibility", {
