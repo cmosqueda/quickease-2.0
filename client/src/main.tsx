@@ -59,6 +59,7 @@ import {
 import "../global.css";
 import LearnerViewNotePage from "./routes/(learner)/(note)/LearnerViewNote";
 import LearnerViewFlashcardPage from "./routes/(learner)/(flashcard)/LearnerViewFlashcard";
+import LearnerHydrationFallback from "./routes/LearnerHydrationFallback";
 
 const client = new QueryClient();
 
@@ -84,6 +85,7 @@ const router = createBrowserRouter([
     path: "learner",
     Component: LearnerLayout,
     loader: loadLearnerResources,
+    HydrateFallback: LearnerHydrationFallback,
     children: [
       {
         index: true,
@@ -179,7 +181,7 @@ const router = createBrowserRouter([
                   return { private: true };
                 }
 
-                return { id: data.id };
+                return data;
               } catch {
                 return redirect("/learner");
               }

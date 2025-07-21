@@ -2,12 +2,7 @@ import { FastifyInstance } from "fastify";
 import {
   get_user_posts,
   get_post,
-  get_comments,
   create_post,
-  comment_on_post,
-  vote_on_post,
-  reply_on_comment,
-  vote_on_comment,
   add_tag_on_post,
   delete_post,
   toggle_post_visibility,
@@ -16,7 +11,17 @@ import {
   search_posts,
 } from "./post.controller";
 
-export default async function postRoutes(fastify: FastifyInstance) {
+import {
+  get_comments,
+  comment_on_post,
+  reply_on_comment,
+  delete_comment,
+  update_comment,
+} from "./comment.controller";
+
+import { vote_on_post, vote_on_comment } from "./vote.controller";
+
+export default async function forumRoutes(fastify: FastifyInstance) {
   fastify.get("/", {
     preHandler: [fastify.authenticate],
     handler: get_user_posts,
@@ -65,6 +70,16 @@ export default async function postRoutes(fastify: FastifyInstance) {
   fastify.post("/post/comment/vote", {
     preHandler: [fastify.authenticate],
     handler: vote_on_comment,
+  });
+
+  fastify.put("/post/comment/update", {
+    preHandler: [fastify.authenticate],
+    handler: update_comment,
+  });
+
+  fastify.delete("/post/comment/delete", {
+    preHandler: [fastify.authenticate],
+    handler: delete_comment,
   });
 
   fastify.post("/post/tag", {

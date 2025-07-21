@@ -8,7 +8,7 @@ import {
   get_user_note,
 } from "./note.controller";
 
-export async function noteRoutes(fastify: FastifyInstance) {
+export default async function noteRoutes(fastify: FastifyInstance) {
   fastify.get("/", {
     preHandler: [fastify.authenticate],
     handler: get_user_notes,
