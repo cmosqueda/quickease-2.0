@@ -23,6 +23,7 @@
     "bcrypt": "^6.0.0",
     "dayjs": "^1.11.13",
     "fastify": "^5",
+    "nodemailer": "^7.0.5",
     "pg": "^8.16.0",
     "zod": "^3.25.56",
     "zod-to-json-schema": "^3.24.5"
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.15.30",
+    "@types/nodemailer": "^6.4.17",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   }

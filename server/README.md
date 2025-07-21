@@ -28,6 +28,8 @@ COOKIE_SECRET_KEY: string
 DATABASE_URL : string -> example = "postgresql://postgres:dlord213@localhost:5432/postgres?schema=public"
 GOOGLE_GEN_AI_API_KEY: string
 CORS_FRONTEND_HOST: string -> (default) = "http://localhost:5173"
+NODEMAILER_GMAIL_APP_PASSWORD (for development only): string
+NODEMAILER_GMAIL_USER: string
 ```
 
 ```

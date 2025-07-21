@@ -48,6 +48,22 @@ const AccountSettings = () => {
     }
   };
 
+  const handleRequestMail = async () => {
+    try {
+      const { data } = await _API_INSTANCE.post(
+        "mail/request-change-email",
+        {},
+        { timeout: 10000 }
+      );
+
+      console.log(data);
+      toast.success("Mail sent!");
+    } catch (err) {
+      console.log(err);
+      toast.error("Mail failed to send.");
+    }
+  };
+
   useEffect(() => {
     if (user) setVisibility(user.is_public);
   }, [user]);
@@ -72,7 +88,10 @@ const AccountSettings = () => {
         <UserCircle />
         <p>Change name</p>
       </button>
-      <button className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all">
+      <button
+        onClick={handleRequestMail}
+        className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all"
+      >
         <Lock />
         <p>Request to change password</p>
       </button>

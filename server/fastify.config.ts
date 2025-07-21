@@ -2,6 +2,7 @@ import fastifyCookie from "@fastify/cookie";
 import fastifyEnv from "@fastify/env";
 import fastifyJwt from "@fastify/jwt";
 import fastifyMultipart from "@fastify/multipart";
+import fastifyMailer from "fastify-mailer";
 import cors from "@fastify/cors";
 
 // routes modules
@@ -15,6 +16,7 @@ import noteRoutes from "./modules/note/note.route";
 
 import { FastifyRequest, FastifyReply } from "fastify";
 import { server } from "./server";
+import mailRoutes from "./modules/mail/mail.route";
 
 export default async function initializeFastifyConfig() {
   /*
@@ -32,6 +34,8 @@ export default async function initializeFastifyConfig() {
         "DATABASE_URL",
         "GOOGLE_GEN_AI_API_KEY",
         "CORS_FRONTEND_HOST",
+        "NODEMAILER_GMAIL_APP_PASSWORD",
+        "NODEMAILER_GMAIL_USER",
       ],
       properties: {
         JWT_SECRET_KEY: { type: "string" },
@@ -39,6 +43,8 @@ export default async function initializeFastifyConfig() {
         DATABASE_URL: { type: "string" },
         GOOGLE_GEN_AI_API_KEY: { type: "string" },
         CORS_FRONTEND_HOST: { type: "string" },
+        NODEMAILER_GMAIL_APP_PASSWORD: { type: "string" },
+        NODEMAILER_GMAIL_USER: { type: "string" },
       },
     },
   });
@@ -126,6 +132,7 @@ export default async function initializeFastifyConfig() {
   await server.register(quizRoutes, { prefix: "api/quiz" });
   await server.register(forumRoutes, { prefix: "api/forum" });
   await server.register(aiRoutes, { prefix: "api/ai" });
+  await server.register(mailRoutes, { prefix: "api/mail" });
 
   /*
     - API testing routes
