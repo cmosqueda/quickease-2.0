@@ -8,14 +8,13 @@ import cors from "@fastify/cors";
 import authRoutes from "./modules/auth/auth.routes";
 import flashcardRoutes from "./modules/flashcard/flashcard.route";
 import quizRoutes from "./modules/quiz/quiz.routes";
-import postRoutes from "./modules/post/post.routes";
 import aiRoutes from "./modules/ai/ai.routes";
 import userRoutes from "./modules/user/user.routes";
+import forumRoutes from "./modules/post/forum.routes";
+import noteRoutes from "./modules/note/note.route";
 
 import { FastifyRequest, FastifyReply } from "fastify";
 import { server } from "./server";
-import { noteRoutes } from "./modules/note/note.route";
-import db_client from "./utils/client";
 
 export default async function initializeFastifyConfig() {
   /*
@@ -127,7 +126,7 @@ export default async function initializeFastifyConfig() {
   await server.register(noteRoutes, { prefix: "api/notes" });
   await server.register(flashcardRoutes, { prefix: "api/flashcard" });
   await server.register(quizRoutes, { prefix: "api/quiz" });
-  await server.register(postRoutes, { prefix: "api/forum" });
+  await server.register(forumRoutes, { prefix: "api/forum" });
   await server.register(aiRoutes, { prefix: "api/ai" });
 
   /*
