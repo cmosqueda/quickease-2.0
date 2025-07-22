@@ -813,14 +813,110 @@ Feedback:
 # July 22, 2025 - Quick Implementation
 
 <details>
-<summary><strong>AI002 - Generate Notes from PDF</strong></summary>
+<summary><strong>TL;DR</strong></summary>
 
-Success Rate: 50% ⚠️
+## Summary
+
+- All features (Notes, Flashcards, Quiz) had a 100% success rate during both generation and saving.
+
+- Noticeable delays were observed during generation, especially for Flashcards (43.91s).
+- Quiz generation was the fastest among the three (20.53s generation, 709ms saving).
+- All features successfully saved generated content with expected status codes (201).
+- Suggestion: Add a confirmation popup after saving notes to improve user feedback.
+
+</details>
+
+<details>
+<summary><strong>Full Report</strong></summary>
+
+## AI002 - Generate Notes from PDF
+
+Action: During generation
+
+Results (from network tab):
+
+- Name: generate-notes-from-pdf
+- Status: 200
+- Type: xhr
+- Initiator: GenerateSummaryModal_GLOBAL.tsx
+- Size: 6.4 kB
+- Time: 22.69 s
+
+Success Rate: 100% ✅
+
+Action: During saving
+
+Results (from network tab):
+
+- Name: create
+- Status: 201
+- Type: xhr
+- Initiator: LearnerAICreateNote.tsx
+- Size: 6.6 kB
+- Time: 1.68 s
 
 Feedback:
 
-> I tried generating a 2-page CV. It took approximately 5 secs to return a generated summary note and display it in client side. The only problem was the modal popup which stays in display even after generating summary, and it cannot be closed, preventing me to interact with the notes screen (in the background) and save it.
+> Noticeable delay but feature is functional. Can also save the note. I recommend adding a popup where it notifies user if it saves the created note.
 
-<img src="./img-report/jul-22-quick-report.png">
+## AI006 - Generate Flashcard sets from PDF
+
+Action performed: During generation
+
+Results (from network tab):
+
+- Name: generate-flashcards-from-pdf
+- Status: 200
+- Type: xhr
+- Initiator: GenerateFlashcardModal_GLOBAL.tsx
+- Size: 7.8 kB
+- Time: 43.91 s
+
+Action performed: During saving
+
+Results (from network tab):
+
+- Name: create
+- Status: 201
+- Type: xhr
+- Initiator: LearnerAIFlashcardPage.tsx
+- Size: 8 kB
+- Time: 1.35 s
+
+Success Rate: 100% ✅
+
+Feedback:
+
+> Noticeable delay but feature is functional.
+
+## AI009 - Generate Quiz from PDF
+
+Action performed: During generation
+
+Results (from network tab):
+
+- Name: generate-quiz-from-pdf
+- Status: 200
+- Type: xhr
+- Initiator: GenerateQuizModal_GLOBAL.tsx
+- Size: 3.7 kB
+- Time: 20.53 s
+
+Action performed: During saving
+
+Results (from network tab):
+
+- Name: create
+- Status: 201
+- Type: xhr
+- Initiator: LearnerAIEditQuiz.tsx
+- Size: 3.9 kB
+- Time: 709 ms
+
+Success Rate: 100% ✅
+
+Feedback:
+
+> The fastest response delay among the 3 AI generation features. Feature is functional from generation to saving.
 
 </details>
