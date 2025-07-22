@@ -272,12 +272,18 @@ const router = createBrowserRouter([
           {
             path: "ai",
             Component: LearnerAIFlashcardPage,
-            loader: () => getGeneratedContent() ?? redirect(-1),
+            loader: () => {
+              const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
+              return raw ? JSON.parse(raw) : "";
+            },
           },
           {
             path: "ai/edit",
             Component: LearnerEditAIFlashcardPage,
-            loader: () => getGeneratedContent() ?? redirect(-1),
+            loader: () => {
+              const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
+              return raw ? JSON.parse(raw) : "";
+            },
           },
           { path: "create", Component: LearnerCreateFlashcardPage },
         ],
@@ -349,12 +355,7 @@ const router = createBrowserRouter([
             Component: LearnerAIEditQuizPage,
             loader: () => {
               const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
-              if (!raw) return redirect(-1);
-              const parsed = JSON.parse(raw);
-              return {
-                title: parsed.content.title,
-                quiz_content: JSON.parse(parsed.content.content),
-              };
+              return raw ? JSON.parse(raw) : "";
             },
           },
         ],

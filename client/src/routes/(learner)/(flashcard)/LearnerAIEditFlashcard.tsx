@@ -10,15 +10,14 @@ import { toast } from "sonner";
 export default function LearnerEditAIFlashcardPage() {
   const { user } = useAuth();
   const data = useLoaderData() as {
-    id: string;
     title: string;
-    content: { front: string; back: string }[];
+    flashcards: { front: string; back: string }[];
   };
 
   const navigate = useNavigate();
   const [title, setTitle] = useState(data.title || "");
   const [description, setDescription] = useState("");
-  const [cards, setCards] = useState(data.content);
+  const [cards, setCards] = useState(data.flashcards);
 
   const handleCardChange = (
     index: number,

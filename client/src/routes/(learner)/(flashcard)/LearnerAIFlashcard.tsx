@@ -14,7 +14,7 @@ export default function LearnerAIFlashcardPage() {
   const [cardIndex, setCardIndex] = useState(0);
 
   const handleSave = async () => {
-    if (data.length < 2) {
+    if (data.flashcards.length < 2) {
       toast.info("The flashcards must contain atleast 2.");
       return;
     }
@@ -23,7 +23,7 @@ export default function LearnerAIFlashcardPage() {
       const { status } = await _API_INSTANCE.post("/flashcard/create", {
         title: `${data.title} Summary`,
         description: null,
-        flashcards: data.content,
+        flashcards: data.flashcards,
         user_id: user?.id,
         isAI: true,
       });
@@ -58,8 +58,8 @@ export default function LearnerAIFlashcardPage() {
         </div>
       </div>
       <FlippableCard
-        front={data.content[cardIndex].front}
-        back={data.content[cardIndex].back}
+        front={data.flashcards[cardIndex].front}
+        back={data.flashcards[cardIndex].back}
       />
       <div className="flex flex-row items-center justify-center gap-12">
         <ChevronLeft
@@ -72,14 +72,14 @@ export default function LearnerAIFlashcardPage() {
           }}
         />
         <p>
-          {cardIndex + 1}/{data.content.length}
+          {cardIndex + 1}/{data.flashcards.length}
         </p>
         <ChevronRight
           className="cursor-pointer p-1.5 delay-0 duration-300 transition-all hover:bg-base-100 rounded-full hover:shadow"
           size={36}
           onClick={() => {
             setCardIndex((prev) => {
-              if (prev + 1 < data.content.length) {
+              if (prev + 1 < data.flashcards.length) {
                 return prev + 1;
               }
               return prev;

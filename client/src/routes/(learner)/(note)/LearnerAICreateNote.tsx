@@ -28,7 +28,7 @@ export default function LearnerAICreateNotePage() {
   const [html, setHTML] = useState(data.content);
   const [text, setText] = useState("");
   const [json, setJSON] = useState({});
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(data.title);
 
   const editor = useEditor({
     editable: true,
