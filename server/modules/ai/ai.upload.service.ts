@@ -50,12 +50,12 @@ export async function generateQuizFromPDF(buffer: Buffer) {
   try {
     const contents = [
       {
-        text: `Generate quiz that has atleast 10 questions or more from this prompt: "${prompt}"
+        text: `Generate quiz from this document"
 
                 Return a JSON string in this format:
                 {
                 title: string,
-                quizzes: {
+                quiz_content: {
                 question: string;
                 description: string;
                 options: string[];
@@ -85,7 +85,7 @@ export async function generateQuizFromPDF(buffer: Buffer) {
 
     return {
       title: raw.title,
-      quizzes: raw.quizzes,
+      quiz_content: raw.quiz_content,
     };
   } catch (err) {
     console.error("Failed to generate quiz:", err);
@@ -97,7 +97,9 @@ export async function generateFlashcardsFromPDF(buffer: Buffer) {
   try {
     const contents = [
       {
-        text: `Return a JSON string in this format:
+        text: `
+        Generate atleast 10 flashcards from this document.
+        Return a JSON string in this format:
         {
         title: string;
         flashcards: { front: string; back: string; }[]

@@ -194,6 +194,7 @@ const GenerateFlashcardFromPDF = () => {
           "QUICKEASE_GENERATED_CONTENT",
           JSON.stringify(data)
         );
+        document.getElementById("generate-flashcard-modal-global").close();
         return navigate("/learner/flashcards/ai", { viewTransition: true });
       } else {
         console.error("Upload failed:", response.data.message);
