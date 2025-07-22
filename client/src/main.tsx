@@ -35,6 +35,9 @@ import LearnerAIEditQuizPage from "./routes/(learner)/(quiz)/LearnerAIEditQuiz";
 import LearnerEditPostPage from "./routes/(learner)/(post)/LearnerEditPost";
 import LearnerCreatePostPage from "./routes/(learner)/(post)/LearnerCreatePost";
 import LearnerSearchPage from "./routes/(learner)/(search)/LearnerSearch";
+import LearnerViewNotePage from "./routes/(learner)/(note)/LearnerViewNote";
+import LearnerViewFlashcardPage from "./routes/(learner)/(flashcard)/LearnerViewFlashcard";
+import LearnerHydrationFallback from "./routes/LearnerHydrationFallback";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -54,12 +57,10 @@ import {
   checkAuthAndRedirect,
   loadLearnerResources,
   getGeneratedContent,
+  loadUserNotes,
 } from "./utils/router";
 
 import "../global.css";
-import LearnerViewNotePage from "./routes/(learner)/(note)/LearnerViewNote";
-import LearnerViewFlashcardPage from "./routes/(learner)/(flashcard)/LearnerViewFlashcard";
-import LearnerHydrationFallback from "./routes/LearnerHydrationFallback";
 
 const client = new QueryClient();
 
@@ -84,7 +85,7 @@ const router = createBrowserRouter([
   {
     path: "learner",
     Component: LearnerLayout,
-    loader: loadLearnerResources,
+    loader: loadUserNotes,
     HydrateFallback: LearnerHydrationFallback,
     children: [
       {

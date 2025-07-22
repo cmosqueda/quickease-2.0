@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "./axios";
 import { redirect } from "react-router";
 
@@ -19,7 +20,7 @@ export const checkAuthAndRedirect = async () => {
   }
 };
 
-export const loadLearnerResources = async () => {
+export const loadUserNotes = async () => {
   try {
     const { status } = await _API_INSTANCE.get("/users/check", {
       withCredentials: true,
@@ -29,6 +30,29 @@ export const loadLearnerResources = async () => {
       const [notes] = await Promise.all([_API_INSTANCE.get("/notes")]);
       return {
         notes: notes.data,
+      };
+    }
+  } catch {
+    return redirect("/");
+  }
+};
+
+export const loadLearnerResources = async () => {
+  try {
+    const { status } = await _API_INSTANCE.get("/users/check", {
+      withCredentials: true,
+    });
+
+    if (status === 200) {
+      const [notes, flashcard, quiz] = await Promise.all([
+        _API_INSTANCE.get("/notes"),
+        _API_INSTANCE.get("/flashcard"),
+        _API_INSTANCE.get("/quiz"),
+      ]);
+      return {
+        notes: notes.data,
+        flashcards: flashcard.data,
+        quizzes: quiz.data,
       };
     }
   } catch {
