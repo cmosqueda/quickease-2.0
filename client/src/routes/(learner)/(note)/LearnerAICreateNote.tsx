@@ -145,9 +145,8 @@ export default function LearnerAICreateNotePage() {
           </button>
         </div>
       </div>
-      <GenerateSummaryModal html={html} text={text} json={json} />
-      <GenerateFlashcardModal html={html} text={text} json={json} />
-      <GenerateQuizModal html={html} text={text} json={json} />
+      <GenerateFlashcardModal text={text} />
+      <GenerateQuizModal text={text} />
     </div>
   );
 }

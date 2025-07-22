@@ -9,15 +9,39 @@ export async function getUser(user_id: string) {
   return user;
 }
 
+export async function checkUser(user_id: string) {
+  const user = await db_client.user.findUnique({
+    where: { id: user_id },
+    select: {
+      first_name: true,
+      last_name: true,
+      is_admin: true,
+    },
+  });
+
+  return user;
+}
+
 export async function changeUserName(
   first_name: string,
   last_name: string,
   user_id: string
 ) {
-  return db_client.user.update({
+  return await db_client.user.update({
     data: {
       first_name: first_name,
       last_name: last_name,
+    },
+    where: {
+      id: user_id,
+    },
+  });
+}
+
+export async function changeUserEmail(email: string, user_id: string) {
+  return await db_client.user.update({
+    data: {
+      email: email,
     },
     where: {
       id: user_id,

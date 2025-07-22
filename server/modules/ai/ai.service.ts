@@ -141,7 +141,97 @@ export async function generateNotesFromPrompt(prompt: string) {
   }
 }
 
-// TO:DO
-export async function generateQuizFromPDF() {}
-export async function generateFlashcardsFromPDF() {}
-export async function generateSummaryNotesFromPDF() {}
+export async function generateSummaryNotesFromPDF(buffer: Buffer) {
+  try {
+    const contents = [
+      {
+        text:
+          "Summarize this document in note form using the following styles:\n\n" +
+          "- Use <h1> for headings (class: text-4xl)\n" +
+          "- Use <ul> for bullet lists (class: list-disc pl-8 list-outside)\n" +
+          "- Use <ol> for numbered steps (class: list-decimal pl-8 list-outside)\n" +
+          "- Use <code> for inline code (class: bg-base-200)\n" +
+          "- Use <hr> for section breaks (class: border-t border-base-content/25)",
+      },
+      {
+        inlineData: {
+          mimeType: "application/pdf",
+          data: buffer.toString("base64"),
+        },
+      },
+    ];
+
+    const response = await _AI.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents,
+    });
+
+    return response.text!.replace(/^```html\s*/, "").replace(/```$/, "");
+  } catch (err) {
+    console.error("Failed to summarize:", err);
+    return false;
+  }
+}
+
+export async function generateQuizFromPDF(buffer: Buffer) {
+  try {
+    const contents = [
+      {
+        text:
+          "Create a 5-question multiple choice quiz from this document.\n\n" +
+          "- Format output in HTML.\n" +
+          "- Use <ol> for questions and <ul> for options.\n" +
+          "- Include an <hr> tag before the answer key.\n" +
+          "- Use <code> for correct answers in answer key.\n" +
+          "- Keep class names consistent with: text-4xl, list-disc pl-8 list-outside, etc.",
+      },
+      {
+        inlineData: {
+          mimeType: "application/pdf",
+          data: buffer.toString("base64"),
+        },
+      },
+    ];
+
+    const response = await _AI.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents,
+    });
+
+    return response.text!.replace(/^```html\s*/, "").replace(/```$/, "");
+  } catch (err) {
+    console.error("Failed to generate quiz:", err);
+    return false;
+  }
+}
+
+export async function generateFlashcardsFromPDF(buffer: Buffer) {
+  try {
+    const contents = [
+      {
+        text:
+          "Create 5–10 flashcards from this document.\n\n" +
+          "- Format output as HTML.\n" +
+          "- Use <ol> where each item is a Q&A.\n" +
+          "- Format questions with <strong> and answers with regular <p>.\n" +
+          "- Use classnames: list-decimal pl-8 list-outside, text-4xl for title, etc.",
+      },
+      {
+        inlineData: {
+          mimeType: "application/pdf",
+          data: buffer.toString("base64"),
+        },
+      },
+    ];
+
+    const response = await _AI.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents,
+    });
+
+    return response.text!.replace(/^```html\s*/, "").replace(/```$/, "");
+  } catch (err) {
+    console.error("Failed to generate flashcards:", err);
+    return false;
+  }
+}

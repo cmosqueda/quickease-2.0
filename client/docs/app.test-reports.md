@@ -807,3 +807,20 @@ Feedback:
 - Editing account information (email, name, and) not yet implemented.
 
 </details>
+
+---
+
+# July 22, 2025 - Quick Implementation
+
+<details>
+<summary><strong>AI002 - Generate Notes from PDF</strong></summary>
+
+Success Rate: 50% ⚠️
+
+Feedback:
+
+> I tried generating a 2-page CV. It took approximately 5 secs to return a generated summary note and display it in client side. The only problem was the modal popup which stays in display even after generating summary, and it cannot be closed, preventing me to interact with the notes screen (in the background) and save it.
+
+<img src="./img-report/jul-22-quick-report.png">
+
+</details>

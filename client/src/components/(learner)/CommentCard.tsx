@@ -5,8 +5,14 @@ import dayjs from "dayjs";
 import { useComment } from "@/hooks/useComment";
 import { useVoteOnComment } from "@/hooks/useVote";
 import { useEditor, EditorProvider, EditorContent } from "@tiptap/react";
-import { ChevronUp, ChevronDown, MessageCircle, Ellipsis } from "lucide-react";
-import { useState } from "react";
+import {
+  ChevronUp,
+  ChevronDown,
+  MessageCircle,
+  Ellipsis,
+  Edit,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import { toast } from "sonner";
 import _API_INSTANCE from "@/utils/axios";
@@ -40,6 +46,7 @@ const CommentCard = ({
   const { mutate: vote } = useVoteOnComment();
   const { mutate: reply } = useComment();
   const [isReplyBoxVisible, setReplyBoxVisibility] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState("");
 
   const editor = useEditor({
@@ -83,13 +90,37 @@ const CommentCard = ({
         },
       });
 
-      queryClient.invalidateQueries({ queryKey: ["post", post_id] });
+      await queryClient.invalidateQueries({ queryKey: ["post", post_id] });
 
       toast.success("Reply deleted.");
     } catch (err) {
       toast.error("Failed to delete reply.");
     }
   };
+
+  const handleEditComment = async () => {
+    try {
+      await _API_INSTANCE.put("/forum/post/comment/update", {
+        body: text,
+        comment_id: comment.id,
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ["post"] });
+
+      toast.success("Comment updated.");
+    } catch (err) {
+      toast.error("Error updating comment.");
+    } finally {
+      setIsEditing(false);
+      setReplyBoxVisibility(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isEditing) {
+      editor?.commands.setContent(comment.comment_body);
+    }
+  }, [editor, isEditing]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -137,6 +168,17 @@ const CommentCard = ({
               <MessageCircle />
               <p>{comment?.replies?.length ?? 0}</p>
             </button>
+            {comment.user.id == user!.id && (
+              <button
+                onClick={() => {
+                  setIsEditing(true);
+                  setReplyBoxVisibility((prev) => !prev);
+                }}
+                className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300"
+              >
+                <Edit />
+              </button>
+            )}
             <details className="dropdown dropdown-top">
               <summary className="py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer list-none">
                 <Ellipsis />
@@ -158,7 +200,10 @@ const CommentCard = ({
           </div>
 
           {isReplyBoxVisible && (
-            <div className="mt-4 relative">
+            <div className="flex flex-col gap-1 mt-4 relative">
+              <h1 className="text-lg text-base-content/50">
+                {!isEditing ? "Reply to comment" : "Edit comment"}
+              </h1>
               <EditorContent
                 editor={editor}
                 className={clsx(
@@ -168,9 +213,9 @@ const CommentCard = ({
               />
               <button
                 className="btn btn-success w-fit self-end absolute right-2 bottom-2"
-                onClick={handleSubmitReply}
+                onClick={!isEditing ? handleSubmitReply : handleEditComment}
               >
-                <p>Comment</p>
+                <p>{!isEditing ? "Reply" : "Save changes"}</p>
               </button>
             </div>
           )}

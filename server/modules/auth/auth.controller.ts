@@ -35,6 +35,8 @@ export async function login_user(request: FastifyRequest, reply: FastifyReply) {
       })
       .code(200)
       .send({
+        ...user,
+        password: null,
         is_admin: user.is_admin,
       });
   } catch (err) {
@@ -91,6 +93,8 @@ export async function register_user(
       })
       .code(201)
       .send({
+        ...user,
+        password: null,
         role: "user",
       });
   } catch (err) {

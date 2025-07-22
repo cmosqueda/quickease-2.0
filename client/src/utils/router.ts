@@ -5,12 +5,11 @@ import { redirect } from "react-router";
 // Shared Auth Redirect Logic
 export const checkAuthAndRedirect = async () => {
   try {
-    const { status, data } = await _API_INSTANCE.get("/users", {
+    const { status, data } = await _API_INSTANCE.get("/users/check", {
       withCredentials: true,
     });
 
     if (status === 200 && typeof data.is_admin === "boolean") {
-      useAuth.getState().setUser(data);
       return redirect(data.is_admin ? "/admin" : "/learner");
     }
 
@@ -21,14 +20,30 @@ export const checkAuthAndRedirect = async () => {
   }
 };
 
-// Shared loader for learner resources
-export const loadLearnerResources = async () => {
+export const loadUserNotes = async () => {
   try {
-    const { status, data } = await _API_INSTANCE.get("/users", {
+    const { status } = await _API_INSTANCE.get("/users/check", {
       withCredentials: true,
     });
+
     if (status === 200) {
-      useAuth.getState().setUser(data);
+      const [notes] = await Promise.all([_API_INSTANCE.get("/notes")]);
+      return {
+        notes: notes.data,
+      };
+    }
+  } catch {
+    return redirect("/");
+  }
+};
+
+export const loadLearnerResources = async () => {
+  try {
+    const { status } = await _API_INSTANCE.get("/users/check", {
+      withCredentials: true,
+    });
+
+    if (status === 200) {
       const [notes, flashcard, quiz] = await Promise.all([
         _API_INSTANCE.get("/notes"),
         _API_INSTANCE.get("/flashcard"),

@@ -1,4 +1,5 @@
 export type Flashcard = {
+  is_public: boolean;
   id: string;
   title: string;
   description: string;
@@ -8,6 +9,7 @@ export type Flashcard = {
 };
 
 export type Note = {
+  is_public: boolean;
   id: string;
   title: string;
   notes_content: string;

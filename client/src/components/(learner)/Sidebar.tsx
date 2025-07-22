@@ -122,6 +122,10 @@ const Mobile = ({
             className="btn btn-soft btn-accent self-end mt-auto"
             onClick={async () => {
               try {
+                localStorage.removeItem("QUICKEASE_CURRENT_QUIZ");
+                localStorage.removeItem("QUICKEASE_GENERATED_CONTENT");
+                localStorage.removeItem("QUICKEASE_USER");
+
                 await _API_INSTANCE.post("/auth/logout");
                 navigate("/", { viewTransition: true });
               } catch (err) {
@@ -257,6 +261,10 @@ const Floating = ({
               className="hidden lg:block p-2 border bg-base-100 border-base-300 rounded-full cursor-pointer hover:shadow"
               onClick={async () => {
                 try {
+                  localStorage.removeItem("QUICKEASE_CURRENT_QUIZ");
+                  localStorage.removeItem("QUICKEASE_GENERATED_CONTENT");
+                  localStorage.removeItem("QUICKEASE_USER");
+
                   await _API_INSTANCE.post("/auth/logout");
                   navigate("/", { viewTransition: true });
                 } catch (err) {

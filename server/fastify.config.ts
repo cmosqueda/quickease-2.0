@@ -12,6 +12,7 @@ import aiRoutes from "./modules/ai/ai.routes";
 import userRoutes from "./modules/user/user.routes";
 import forumRoutes from "./modules/post/forum.routes";
 import noteRoutes from "./modules/note/note.route";
+import mailRoutes from "./modules/mail/mail.route";
 
 import { FastifyRequest, FastifyReply } from "fastify";
 import { server } from "./server";
@@ -31,12 +32,18 @@ export default async function initializeFastifyConfig() {
         "COOKIE_SECRET_KEY",
         "DATABASE_URL",
         "GOOGLE_GEN_AI_API_KEY",
+        "CORS_FRONTEND_HOST",
+        "NODEMAILER_GMAIL_APP_PASSWORD",
+        "NODEMAILER_GMAIL_USER",
       ],
       properties: {
         JWT_SECRET_KEY: { type: "string" },
         COOKIE_SECRET_KEY: { type: "string" },
         DATABASE_URL: { type: "string" },
         GOOGLE_GEN_AI_API_KEY: { type: "string" },
+        CORS_FRONTEND_HOST: { type: "string" },
+        NODEMAILER_GMAIL_APP_PASSWORD: { type: "string" },
+        NODEMAILER_GMAIL_USER: { type: "string" },
       },
     },
   });
@@ -66,7 +73,7 @@ export default async function initializeFastifyConfig() {
   await server.register(cors, {
     origin: process.env.CORS_FRONTEND_HOST,
     credentials: true,
-    methods: ["GET", "PUT", "POST", "DELETE"],
+    methods: ["GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["content-type", "accept", "content-type", "authorization"],
   });
 
@@ -78,8 +85,8 @@ export default async function initializeFastifyConfig() {
     */
   await server.register(fastifyMultipart, {
     limits: {
-      fileSize: 15728640,
-      files: 5,
+      fileSize: 10485760,
+      files: 1,
     },
   });
 
@@ -108,10 +115,6 @@ export default async function initializeFastifyConfig() {
         id: string;
         first_name: string;
         last_name: string;
-        email: string;
-        phone_number: string;
-        is_public: boolean;
-        [key: string]: any;
       }>(token);
 
       request.user = decoded;
@@ -128,6 +131,7 @@ export default async function initializeFastifyConfig() {
   await server.register(quizRoutes, { prefix: "api/quiz" });
   await server.register(forumRoutes, { prefix: "api/forum" });
   await server.register(aiRoutes, { prefix: "api/ai" });
+  await server.register(mailRoutes, { prefix: "api/mail" });
 
   /*
     - API testing routes
