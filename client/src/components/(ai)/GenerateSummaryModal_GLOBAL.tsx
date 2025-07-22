@@ -130,6 +130,7 @@ export default function GenerateSummaryModal() {
           "QUICKEASE_GENERATED_CONTENT",
           JSON.stringify(data)
         );
+        document.getElementById("generate-summary-modal-global").close();
         return navigate("/learner/note/create/ai", { viewTransition: true });
       } else {
         console.error("Upload failed:", response.data.message);

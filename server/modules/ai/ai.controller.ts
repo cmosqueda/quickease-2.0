@@ -1,14 +1,18 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import {
+  generateQuizFromNote,
   generateFlashcardFromNote,
-  generateFlashcardsFromPDF,
+} from "./ai.note.service";
+import {
+  generateQuizFromPrompt,
   generateFlashcardsFromPrompt,
   generateNotesFromPrompt,
-  generateQuizFromNote,
-  generateQuizFromPDF,
-  generateQuizFromPrompt,
+} from "./ai.prompt.service";
+import {
   generateSummaryNotesFromPDF,
-} from "./ai.service";
+  generateQuizFromPDF,
+  generateFlashcardsFromPDF,
+} from "./ai.upload.service";
 
 export async function generate_quiz_from_note(
   request: FastifyRequest,
@@ -127,7 +131,7 @@ export async function generate_notes_from_pdf(
     const result = await generateSummaryNotesFromPDF(buffer!);
 
     reply.code(200).send({
-      content: result,
+      ...result,
     });
   } catch (err) {
     reply.code(500).send({
@@ -148,7 +152,7 @@ export async function generate_quiz_from_pdf(
     const result = await generateQuizFromPDF(buffer!);
 
     reply.code(200).send({
-      content: result,
+      ...result,
     });
   } catch (err) {
     reply.code(500).send({
@@ -169,7 +173,7 @@ export async function generate_flashcards_from_pdf(
     const result = await generateFlashcardsFromPDF(buffer!);
 
     reply.code(200).send({
-      content: result,
+      ...result,
     });
   } catch (err) {
     reply.code(500).send({

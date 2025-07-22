@@ -60,19 +60,28 @@ export const loadLearnerResources = async () => {
   }
 };
 
-// Parse localStorage generated content
-export const getGeneratedContent = (key = "QUICKEASE_GENERATED_CONTENT") => {
+export const getGeneratedContent = (
+  key = "QUICKEASE_GENERATED_CONTENT"
+): { title: string; content: any } | null => {
   const raw = localStorage.getItem(key);
   if (!raw) return null;
 
   try {
     const parsed = JSON.parse(raw);
-    return parsed.content?.title && parsed.content?.content
-      ? {
-          title: parsed.content.title,
-          content: JSON.parse(parsed.content.content),
-        }
-      : null;
+
+    if (!parsed?.content) return null;
+
+    const isJsonContent =
+      parsed.content.trim().startsWith("{") ||
+      parsed.content.trim().startsWith("[");
+    const parsedContent = isJsonContent
+      ? JSON.parse(parsed.content)
+      : parsed.content;
+
+    return {
+      title: parsed.title || "Generated Content",
+      content: parsedContent,
+    };
   } catch {
     return null;
   }
