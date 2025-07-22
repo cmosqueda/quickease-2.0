@@ -85,8 +85,8 @@ export default async function initializeFastifyConfig() {
     */
   await server.register(fastifyMultipart, {
     limits: {
-      fileSize: 15728640,
-      files: 5,
+      fileSize: 10485760,
+      files: 1,
     },
   });
 

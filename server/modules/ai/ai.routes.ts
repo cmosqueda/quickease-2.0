@@ -1,9 +1,12 @@
 import { FastifyInstance } from "fastify";
 import {
   generate_flashcards_from_note,
+  generate_flashcards_from_pdf,
   generate_flashcards_from_prompt,
+  generate_notes_from_pdf,
   generate_notes_from_prompt,
   generate_quiz_from_note,
+  generate_quiz_from_pdf,
   generate_quiz_from_prompt,
 } from "./ai.controller";
 
@@ -36,5 +39,23 @@ export default async function aiRoutes(fastify: FastifyInstance) {
     "/generate-notes-from-prompt",
     { preHandler: [fastify.authenticate] },
     generate_notes_from_prompt
+  );
+
+  fastify.post(
+    "/generate-notes-from-pdf",
+    { preHandler: [fastify.authenticate] },
+    generate_notes_from_pdf
+  );
+
+  fastify.post(
+    "/generate-quiz-from-pdf",
+    { preHandler: [fastify.authenticate] },
+    generate_quiz_from_pdf
+  );
+
+  fastify.post(
+    "/generate-flashcards-from-pdf",
+    { preHandler: [fastify.authenticate] },
+    generate_flashcards_from_pdf
   );
 }
