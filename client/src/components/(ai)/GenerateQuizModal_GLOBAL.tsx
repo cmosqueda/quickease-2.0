@@ -13,6 +13,7 @@ import {
 import { useState } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { toast } from "sonner";
+import dayjs from "dayjs";
 
 const GenerateQuizzesFromNotes = ({
   notes,
@@ -71,7 +72,7 @@ const GenerateQuizzesFromNotes = ({
   );
 };
 
-const GenerateQuizFromPrompt = ({
+const GenerateQuizzesFromPrompt = ({
   navigate,
 }: {
   navigate: NavigateFunction;
@@ -140,6 +141,139 @@ const GenerateQuizFromPrompt = ({
   );
 };
 
+const GenerateQuizzesFromPDF = () => {
+  const navigate = useNavigate();
+  const [file, setFile] = useState<File | null>(null);
+  const [generatedContent, setGeneratedContent] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    console.log(selectedFile);
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!file) return alert("Please select a file first.");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const mimeType = file.type;
+    let endpoint = "";
+
+    if (
+      mimeType.startsWith("application/pdf") ||
+      mimeType.includes("document")
+    ) {
+      endpoint = "ai/generate-quiz-from-pdf";
+    } else if (mimeType.startsWith("image/")) {
+      endpoint = "ai/upload-image";
+    } else {
+      return toast.error("File not supported.");
+    }
+
+    try {
+      setIsGenerating(true);
+
+      const response = await _API_INSTANCE.post(endpoint, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        timeout: 10 * 60 * 1000,
+      });
+
+      if (response.status === 200) {
+        const data = response.data;
+        setGeneratedContent(data.content);
+
+        await localStorage.setItem(
+          "QUICKEASE_GENERATED_CONTENT",
+          JSON.stringify(data)
+        );
+
+        document.getElementById("generate-quiz-modal-global").close();
+        return navigate("/learner/quizzes/ai");
+      } else {
+        console.error("Upload failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  return (
+    <>
+      {file ? (
+        <div className="flex flex-row gap-4 p-4 bg-base-200 rounded-3xl items-center">
+          <X className="cursor-pointer" onClick={() => setFile(null)} />
+          <Notebook />
+          <div>
+            <h1>{file.name}</h1>
+            <p className="text-xs text-base-content/50">
+              {dayjs(file.lastModified)
+                .format("MMMM DD, YYYY hh:mm A")
+                .toString()}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center w-full">
+          <label
+            htmlFor="dropzone-file"
+            className="flex flex-col items-center justify-center w-full h-64 border-2 border-base-content/10 border-dashed rounded-lg cursor-pointer bg-base-100 hover:bg-base-100"
+          >
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <svg
+                className="w-8 h-8 mb-4 text-base-content dark:text-base-content"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 16"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                />
+              </svg>
+              <p className="mb-2 text-sm text-base-content">
+                <span className="font-semibold">Click to upload</span> or drag
+                and drop
+              </p>
+              <p className="text-xs text-base-content/40">
+                DOCX, DOC, PDF, ODF (max 5MB)
+              </p>
+            </div>
+            <input
+              id="dropzone-file"
+              type="file"
+              className="hidden"
+              accept="application/pdf,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              onChange={handleFileChange}
+            />
+          </label>
+        </div>
+      )}
+
+      <button
+        className="btn btn-soft btn-success w-fit self-end"
+        onClick={handleSubmit}
+        disabled={isGenerating}
+      >
+        <h1>Summarize</h1>
+        <ArrowRight />
+      </button>
+    </>
+  );
+};
+
 export default function GenerateQuizModal({
   notes,
 }: {
@@ -156,49 +290,7 @@ export default function GenerateQuizModal({
 
   const tabs = [
     <GenerateQuizzesFromNotes navigate={navigate} notes={notes} />,
-    <>
-      <div className="flex items-center justify-center w-full">
-        <label
-          htmlFor="dropzone-file"
-          className="flex flex-col items-center justify-center w-full h-64 border-2 border-base-content/10 border-dashed rounded-lg cursor-pointer bg-base-100 hover:bg-base-100"
-        >
-          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            <svg
-              className="w-8 h-8 mb-4 text-base-content dark:text-base-content"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 16"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-              />
-            </svg>
-            <p className="mb-2 text-sm text-base-content">
-              <span className="font-semibold">Click to upload</span> or drag and
-              drop
-            </p>
-            <p className="text-xs text-base-content/40">
-              DOCX, DOC, PDF, ODF (max 5MB)
-            </p>
-          </div>
-          <input
-            id="dropzone-file"
-            type="file"
-            className="hidden"
-            accept="application/pdf,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          />
-        </label>
-      </div>
-      <button className="btn btn-soft btn-success w-fit self-end">
-        <h1>Summarize</h1>
-        <ArrowRight />
-      </button>
-    </>,
+    <GenerateQuizzesFromPDF />,
   ];
 
   return (

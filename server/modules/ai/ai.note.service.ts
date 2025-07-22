@@ -17,19 +17,26 @@ export async function generateQuizFromNote(note_id: string) {
 
                 Return a JSON string in this format:
                 {
+                title: string,
+                quiz_content: {
                 question: string;
                 description: string;
                 options: string[];
                 correctAnswers: number[];
                 }[]
+                }
 
                 Only output the JSON string.
                 `.trim(),
       });
 
+      const raw = JSON.parse(
+        response.text!.replace(/^```json\s*/, "").replace(/```$/, "")
+      );
+
       return {
-        title: note.title,
-        content: response.text!.replace(/```json|```/g, ""),
+        title: raw.title,
+        quiz_content: raw.quiz_content,
       };
     }
   } catch (err) {
@@ -51,16 +58,21 @@ export async function generateFlashcardFromNote(note_id: string) {
         contents: `
                 Generate atleast 10 flashcards or more from this note: "${note.notes_content}"
 
-                Return a JSON string in this format:
-                { front: string; back: string; }[]
-
-                Only output the JSON string.
+Return a JSON string in this format:
+        {
+        title: string;
+        flashcards: { front: string; back: string; }[]
+        }
                 `.trim(),
       });
 
+      const raw = JSON.parse(
+        response.text!.replace(/^```json\s*/, "").replace(/```$/, "")
+      );
+
       return {
-        title: note.title,
-        content: response.text!.replace(/```json|```/g, ""),
+        title: raw.title,
+        flashcards: raw.flashcards,
       };
     }
   } catch (err) {
