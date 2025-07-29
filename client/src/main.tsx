@@ -56,7 +56,6 @@ import { toast } from "sonner";
 import {
   checkAuthAndRedirect,
   loadLearnerResources,
-  getGeneratedContent,
   loadUserNotes,
 } from "./utils/router";
 
