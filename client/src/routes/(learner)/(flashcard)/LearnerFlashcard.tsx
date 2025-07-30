@@ -17,6 +17,7 @@ export default function LearnerFlashcardPage() {
   const data = useLoaderData();
   const navigate = useNavigate();
   const [cardIndex, setCardIndex] = useState(0);
+  const [isVisible, setVisibility] = useState(data.is_public);
 
   const handleDelete = async () => {
     try {
@@ -34,6 +35,21 @@ export default function LearnerFlashcardPage() {
       }
     } catch (err) {
       toast.error("Error deleting flashcard.");
+    }
+  };
+
+  const handleVisibility = async (visibility: boolean) => {
+    setVisibility((prev: boolean) => !prev);
+
+    try {
+      await _API_INSTANCE.put("/flashcard/toggle-visibility", {
+        visibility: visibility,
+        flashcard_id: data.id,
+      });
+      toast.success("Flashcard visibility updated.");
+    } catch (err) {
+      setVisibility((prev: boolean) => !prev);
+      toast.error("Error updating flashcard visibility.");
     }
   };
 
@@ -57,6 +73,19 @@ export default function LearnerFlashcardPage() {
             <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4">
               <li>
                 <button onClick={handleDelete}>Delete</button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    if (isVisible) {
+                      handleVisibility(false);
+                    } else {
+                      handleVisibility(true);
+                    }
+                  }}
+                >
+                  {isVisible ? "Set to private" : "Set to public"}
+                </button>
               </li>
             </ul>
           </details>

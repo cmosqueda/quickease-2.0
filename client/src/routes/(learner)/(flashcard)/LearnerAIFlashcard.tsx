@@ -3,7 +3,7 @@ import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "@/utils/axios";
 
 import { ArrowLeft, ChevronLeft, ChevronRight, Edit, Save } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
 
@@ -12,6 +12,10 @@ export default function LearnerAIFlashcardPage() {
   const data = useLoaderData();
   const navigate = useNavigate();
   const [cardIndex, setCardIndex] = useState(0);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   const handleSave = async () => {
     if (data.flashcards.length < 2) {
