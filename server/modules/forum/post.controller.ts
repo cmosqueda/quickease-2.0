@@ -10,6 +10,9 @@ import {
   togglePostVisibility,
   updatePost,
 } from "./post.service";
+import { Post } from "../../prisma/client";
+
+type CreatedPost = (Post & { toxic?: boolean }) | { toxic: boolean };
 
 export async function get_user_posts(
   request: FastifyRequest,
@@ -72,7 +75,7 @@ export async function create_post(
   };
 
   try {
-    const post = await createPost(
+    const post: CreatedPost = await createPost(
       body,
       title,
       request.user.id,
@@ -80,7 +83,7 @@ export async function create_post(
       tags
     );
 
-    if (post.toxic) {
+    if ("toxic" in post && post.toxic) {
       return reply.code(400).send({
         toxic: true,
         message:
