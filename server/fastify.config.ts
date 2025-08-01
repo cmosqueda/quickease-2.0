@@ -71,7 +71,22 @@ export default async function initializeFastifyConfig() {
    - Configuration for CORS
    */
   await server.register(cors, {
-    origin: process.env.CORS_FRONTEND_HOST,
+    origin: (origin, cb) => {
+      const allowedOrigins = [
+        process.env.CORS_FRONTEND_HOST,
+        "https://quickease.online",
+        "https://www.quickease.online",
+        "https://quickease-eight.vercel.app",
+        "http://localhost:19006", // Expo Web Dev
+        "http://127.0.0.1:19006", // Alternate localhost
+      ];
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        cb(null, true);
+      } else {
+        cb(new Error("Not allowed by CORS"), false);
+      }
+    },
     credentials: true,
     methods: ["GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["content-type", "accept", "content-type", "authorization"],
