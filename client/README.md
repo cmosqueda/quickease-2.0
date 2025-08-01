@@ -10,6 +10,9 @@ This directory serves the client-side of our study named `QuickEase 2.0`, rewrit
 2. When trying to run the `npm i` or `npm install` command, it throws an error that says something about package dependencies conflict on their versions.
    Solution is to install the modules by adding the `--force-legacy-deps` parameter, if it still won't install then contact the developer `(Jhon Lloyd Viernes)`
 
+3. .env file?
+   `SERVER_API_URL: string`
+
 ## Libraries Used
 
 ```
