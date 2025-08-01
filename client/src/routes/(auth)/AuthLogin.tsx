@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import useAuth from "@/hooks/useAuth";
 import TermsAndPrivacyPolicyModal from "../../components/TermsAndPrivacyPolicyModal";
 import _API_INSTANCE from "@/utils/axios";
@@ -35,13 +36,7 @@ export default function AuthLoginPage() {
         setUser(data);
         navigate("/admin", { viewTransition: true });
       }
-    } catch (err: {
-      response: {
-        data: {
-          message: string;
-        };
-      };
-    }) {
+    } catch (err: any) {
       toast.error(err.response.data.message);
       throw err;
     } finally {

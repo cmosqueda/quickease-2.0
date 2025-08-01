@@ -47,7 +47,10 @@ const GenerateQuizzesFromNotes = ({
         JSON.stringify(data)
       );
 
-      const modal = document.getElementById("generate-quiz-modal-global");
+      const modal = document.getElementById(
+        "generate-quiz-modal-global"
+      ) as HTMLDialogElement;
+      
       modal.close();
       return navigate("/learner/quizzes/ai");
     } catch (err) {

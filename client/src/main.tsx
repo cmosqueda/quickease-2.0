@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // landing page
 import LandingPage from "./routes/LandingPage";
@@ -86,7 +87,13 @@ const LearnerRoutes = {
         {
           path: ":query/:page?",
           Component: LearnerSearchPage,
-          loader: async ({ params, request }) => {
+          loader: async ({
+            params,
+            request,
+          }: {
+            params: any;
+            request: any;
+          }) => {
             const query = params.query;
             const page = Number(params.page ?? 1);
             const limit = 10;
@@ -120,7 +127,7 @@ const LearnerRoutes = {
     {
       path: "profile/:id",
       Component: LearnerProfilePage,
-      loader: async ({ params }) => {
+      loader: async ({ params }: { params: any }) => {
         try {
           const currentUserID = await useAuth.getState().user?.id;
 
@@ -155,7 +162,7 @@ const LearnerRoutes = {
         {
           path: ":id",
           Component: LearnerPostPage,
-          loader: async ({ params }) => {
+          loader: async ({ params }: { params: any }) => {
             try {
               const currentUserID = await useAuth.getState().user?.id;
               const { data } = await _API_INSTANCE.get(
@@ -176,7 +183,7 @@ const LearnerRoutes = {
           path: ":id/edit",
           Component: LearnerEditPostPage,
           index: true,
-          loader: async ({ params }) => {
+          loader: async ({ params }: { params: any }) => {
             try {
               const { status, data } = await _API_INSTANCE.get(
                 `/forum/post/${params.id}`
@@ -204,7 +211,7 @@ const LearnerRoutes = {
         {
           path: "view/:id",
           Component: LearnerViewFlashcardPage,
-          loader: async ({ params }) => {
+          loader: async ({ params }: { params: any }) => {
             try {
               const currentUserID = await useAuth.getState().user?.id;
               const { data } = await _API_INSTANCE.get(
@@ -228,7 +235,7 @@ const LearnerRoutes = {
         {
           path: ":id",
           Component: LearnerFlashcardPage,
-          loader: async ({ params }) => {
+          loader: async ({ params }: { params: any }) => {
             try {
               const { data } = await _API_INSTANCE.get(
                 `/flashcard/${params.id}`
@@ -242,7 +249,7 @@ const LearnerRoutes = {
         {
           path: ":id/edit",
           Component: LearnerEditFlashcardPage,
-          loader: async ({ params }) => {
+          loader: async ({ params }: { params: any }) => {
             try {
               const { data } = await _API_INSTANCE.get(
                 `/flashcard/${params.id}`
@@ -279,7 +286,7 @@ const LearnerRoutes = {
         {
           path: ":id",
           Component: LearnerQuizPage,
-          loader: async ({ params }) => {
+          loader: async ({ params }: { params: any }) => {
             try {
               const { data } = await _API_INSTANCE.get(`/quiz/${params.id}`);
               return data;
@@ -292,7 +299,7 @@ const LearnerRoutes = {
         {
           path: ":id/answer",
           Component: LearnerAnswerQuizPage,
-          loader: ({ params }) => {
+          loader: ({ params }: { params: any }) => {
             try {
               const raw = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
               const parsed = JSON.parse(raw!);
@@ -307,7 +314,7 @@ const LearnerRoutes = {
         {
           path: ":id/edit",
           Component: LearnerEditQuizPage,
-          loader: ({ params }) => {
+          loader: ({ params }: { params: any }) => {
             try {
               const raw = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
               const parsed = JSON.parse(raw!);
@@ -322,7 +329,7 @@ const LearnerRoutes = {
         {
           path: ":id/attempt/:attempt_id",
           Component: LearnerQuizAttemptPage,
-          loader: async ({ params }) => {
+          loader: async ({ params }: { params: any }) => {
             try {
               const { data } = await _API_INSTANCE.get(
                 `/quiz/attempt/${params.attempt_id}`
@@ -349,7 +356,7 @@ const LearnerRoutes = {
     {
       path: "note/view/:id",
       Component: LearnerViewNotePage,
-      loader: async ({ params }) => {
+      loader: async ({ params }: { params: any }) => {
         try {
           const currentUserID = await useAuth.getState().user?.id;
           const { data } = await _API_INSTANCE.get(`/notes/${params.id}`);
@@ -371,7 +378,7 @@ const LearnerRoutes = {
     {
       path: "note/:id",
       Component: LearnerNotePage,
-      loader: async ({ params }) => {
+      loader: async ({ params }: { params: any }) => {
         try {
           const { data } = await _API_INSTANCE.get(`/notes/${params.id}`);
           return data;

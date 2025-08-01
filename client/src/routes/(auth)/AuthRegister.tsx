@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import TermsAndPrivacyPolicyModal from "../../components/TermsAndPrivacyPolicyModal";
 import _API_INSTANCE from "@/utils/axios";
 
@@ -74,13 +75,7 @@ export default function AuthRegisterPage() {
       if (response.status == 201) {
         navigate("/learner", { viewTransition: true });
       }
-    } catch (err: {
-      response: {
-        data: {
-          message: string;
-        };
-      };
-    }) {
+    } catch (err: any) {
       console.log(err);
       toast.error(
         err.response.data.message || "Error registering, please try again."
