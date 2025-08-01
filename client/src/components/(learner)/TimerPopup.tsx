@@ -29,8 +29,8 @@ export default function TimerPopup() {
     startLongBreak,
   } = useTimer();
   const [isAlwaysOnTop, setAlwaysOnTop] = useState(false);
-  const startAudioRef = useRef(null);
-  const endAudioRef = useRef(null);
+  const startAudioRef = useRef<HTMLAudioElement>(null);
+  const endAudioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {

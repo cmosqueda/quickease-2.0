@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import clsx from "clsx";
 import ThemeBox from "../ThemeBox";
 import _API_INSTANCE from "@/utils/axios";
@@ -18,7 +19,19 @@ import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { NavLink, useNavigate, type NavigateFunction } from "react-router";
 import { toast } from "sonner";
 
-const _LINKS = [
+type NavLinkItem = {
+  title: string;
+  icon: React.ReactNode;
+  link: string;
+};
+
+type ModalLinkItem = {
+  title: string;
+  icon: React.ReactNode;
+  element: string;
+};
+
+const _LINKS: Array<NavLinkItem | ModalLinkItem> = [
   { title: "Forum", icon: <MessageCircle />, link: "/learner" },
   { title: "Library", icon: <BookUser />, link: "/learner/library" },
   {
@@ -67,10 +80,10 @@ const Mobile = ({
             {_LINKS.slice(0, 2).map((link) => (
               <NavLink
                 key={link.title}
-                to={link.link!}
+                to={(link as NavLinkItem).link}
                 className={clsx(
                   "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer",
-                  currentTab === link.link
+                  currentTab === (link as NavLinkItem).link
                     ? "bg-neutral text-white"
                     : "hover:bg-base-200",
                   isOpen ? "justify-start" : "justify-center"
@@ -85,12 +98,14 @@ const Mobile = ({
           <div className="divider">Quick Study Tools</div>
 
           <div className="flex flex-col gap-2">
-            {_LINKS.slice(2, 5).map((link) => (
+            {_LINKS.slice(2, 5).map((link: any) => (
               <button
                 key={link.title}
                 onClick={() => {
-                  const modal = document.getElementById(link.element!);
-                  if (modal && "showModal" in modal) modal.showModal();
+                  const modal = document.getElementById(link.element);
+                  if (modal instanceof HTMLDialogElement) {
+                    modal.showModal();
+                  }
                 }}
                 className={clsx(
                   "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer",
@@ -104,10 +119,10 @@ const Mobile = ({
             ))}
 
             <NavLink
-              to={_LINKS[5].link}
+              to={(_LINKS[5] as NavLinkItem).link}
               className={clsx(
-                "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer",
-                currentTab === _LINKS[5].link
+                "flex gap-4 items-center transition p-4 rounded-xl",
+                currentTab === (_LINKS[5] as NavLinkItem).link
                   ? "bg-neutral text-white"
                   : "hover:bg-base-200",
                 isOpen ? "justify-start" : "justify-center"
@@ -152,7 +167,7 @@ const Desktop = ({
 }) => {
   return (
     <div className="hidden relative lg:sticky lg:top-0 lg:flex flex-col gap-2 p-4">
-      {_LINKS.slice(0, 2).map((link) => (
+      {_LINKS.slice(0, 2).map((link: any) => (
         <NavLink
           key={link.title}
           to={link.link}
@@ -177,8 +192,10 @@ const Desktop = ({
         <button
           key={link.title}
           onClick={() => {
-            const modal = document.getElementById(link.element);
-            if (modal && "showModal" in modal) modal.showModal();
+            const modal = document.getElementById(
+              (link as ModalLinkItem).element
+            );
+            if (modal instanceof HTMLDialogElement) modal.showModal();
           }}
           className={clsx(
             "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer",
@@ -192,10 +209,10 @@ const Desktop = ({
       ))}
 
       <NavLink
-        to={_LINKS[5].link!}
+        to={(_LINKS[5] as NavLinkItem).link}
         className={clsx(
           "flex gap-4 items-center transition p-4 rounded-xl",
-          currentTab === _LINKS[5].link
+          currentTab === (_LINKS[5] as NavLinkItem).link
             ? "bg-neutral text-white"
             : "hover:bg-base-200",
           isOpen ? "justify-start" : "justify-center"

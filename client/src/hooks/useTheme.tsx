@@ -22,7 +22,7 @@ const useTheme = create<ThemeStore>()(
       },
     })),
     {
-      name: "QUICKEASE_STORED_THEME", // Key in localStorage
+      name: "QUICKEASE_STORED_THEME",
       partialize: (state) => ({ theme: state.theme }), // Only persist `theme`
       onRehydrateStorage: () => (state) => {
         // Sync theme to <html> on rehydrate

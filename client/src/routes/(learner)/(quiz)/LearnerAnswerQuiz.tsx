@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import _API_INSTANCE from "@/utils/axios";
 
@@ -25,7 +27,13 @@ interface UserAnswer {
 }
 
 export default function LearnerAnswerQuizPage() {
-  const data = useLoaderData() as { id: string; quiz_content: QuizQuestion[] };
+  const data = useLoaderData() as {
+    title: string;
+    description: string;
+    is_ai_generated: boolean;
+    id: string;
+    quiz_content: QuizQuestion[];
+  };
 
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState<Date>();
@@ -134,7 +142,7 @@ export default function LearnerAnswerQuizPage() {
             toast("Are you sure?", {
               action: {
                 onClick: () =>
-                  navigate(-1, {
+                  navigate(-1 as any, {
                     viewTransition: true,
                   }),
                 label: "Abandon attempt",

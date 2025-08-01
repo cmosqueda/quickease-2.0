@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import _API_INSTANCE from "@/utils/axios";
 import clsx from "clsx";
 import dayjs from "dayjs";
@@ -45,7 +46,11 @@ const GenerateFromText = ({
           "QUICKEASE_GENERATED_CONTENT",
           JSON.stringify(data)
         );
-        document.getElementById("generate-summary-modal-global").close();
+        const modal = document.getElementById(
+          "generate-summary-modal-global"
+        ) as HTMLDialogElement;
+
+        modal.close();
         navigate("/learner/note/create/ai", { viewTransition: true });
       }
     } catch (err) {
@@ -130,7 +135,11 @@ export default function GenerateSummaryModal() {
           "QUICKEASE_GENERATED_CONTENT",
           JSON.stringify(data)
         );
-        document.getElementById("generate-summary-modal-global").close();
+        const modal = document.getElementById(
+          "generate-summary-modal-global"
+        ) as HTMLDialogElement;
+
+        modal.close();
         return navigate("/learner/note/create/ai", { viewTransition: true });
       } else {
         console.error("Upload failed:", response.data.message);
@@ -264,9 +273,11 @@ export default function GenerateSummaryModal() {
             <div className="flex flex-row gap-4 items-center">
               <X
                 onClick={() => {
-                  document
-                    .getElementById("generate-summary-modal-global")
-                    .close();
+                  const modal = document.getElementById(
+                    "generate-summary-modal-global"
+                  ) as HTMLDialogElement;
+
+                  modal.close();
                 }}
                 className="cursor-pointer"
               />

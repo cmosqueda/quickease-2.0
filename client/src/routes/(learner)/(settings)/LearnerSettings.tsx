@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import ThemeBox from "@/components/ThemeBox";
 import _API_INSTANCE from "@/utils/axios";
-import useAuth from "@/hooks/useAuth";
+import useAuth, { type AuthUserRecord } from "@/hooks/useAuth";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -81,16 +81,24 @@ const AccountSettings = () => {
       <h1 className="text-xl">General</h1>
       <div className="divider my-1" />
       <button
-        onClick={() =>
-          document.getElementById("change-email-modal").showModal()
-        }
+        onClick={() => {
+          const modal = document.getElementById(
+            "change-email-modal"
+          ) as HTMLDialogElement;
+          modal.showModal();
+        }}
         className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all"
       >
         <Mail />
         <p>Change email address</p>
       </button>
       <button
-        onClick={() => document.getElementById("change-name-modal").showModal()}
+        onClick={() => {
+          const modal = document.getElementById(
+            "change-name-modal"
+          ) as HTMLDialogElement;
+          modal.showModal();
+        }}
         className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all"
       >
         <UserCircle />
@@ -136,7 +144,7 @@ const ChangeNameModal = () => {
 
   const handleUpdate = async () => {
     setIsSaving(true);
-    const temp = useAuth.getState().user;
+    const temp = useAuth.getState().user as AuthUserRecord;
 
     try {
       const { data } = await _API_INSTANCE.put(
@@ -163,10 +171,14 @@ const ChangeNameModal = () => {
         new Date().toISOString()
       );
       toast.success("Name updated!");
-    } catch (err) {
+    } catch {
       toast.error("Error updating name.");
     } finally {
-      document.getElementById("change-name-modal").close();
+      const modal = document.getElementById(
+        "change-name-modal"
+      ) as HTMLDialogElement;
+
+      modal.close();
       setIsSaving(false);
     }
   };
@@ -191,7 +203,13 @@ const ChangeNameModal = () => {
         <div className="flex flex-row gap-2 items-center">
           <X
             className="my-2 cursor-pointer"
-            onClick={() => document.getElementById("change-name-modal").close()}
+            onClick={() => {
+              const modal = document.getElementById(
+                "change-name-modal"
+              ) as HTMLDialogElement;
+
+              modal.close();
+            }}
           />
           <h3 className="font-bold text-lg">Change name</h3>
         </div>
@@ -231,9 +249,13 @@ const ChangeNameModal = () => {
           <>
             <button
               className="btn"
-              onClick={() =>
-                document.getElementById("change-name-modal").close()
-              }
+              onClick={() => {
+                const modal = document.getElementById(
+                  "change-name-modal"
+                ) as HTMLDialogElement;
+
+                modal.close();
+              }}
               disabled={isSaving}
             >
               Close
@@ -256,7 +278,7 @@ const ChangeEmailModal = () => {
 
   const handleUpdate = async () => {
     setIsSaving(true);
-    const temp = useAuth.getState().user;
+    const temp = useAuth.getState().user as AuthUserRecord;
 
     try {
       const { data } = await _API_INSTANCE.put(
@@ -281,10 +303,14 @@ const ChangeEmailModal = () => {
         new Date().toISOString()
       );
       toast.success("Email updated!");
-    } catch (err) {
+    } catch {
       toast.error("Error updating email.");
     } finally {
-      document.getElementById("change-email-modal").close();
+      const modal = document.getElementById(
+        "change-email-modal"
+      ) as HTMLDialogElement;
+
+      modal.close();
       setIsSaving(false);
     }
   };
@@ -305,9 +331,12 @@ const ChangeEmailModal = () => {
         <div className="flex flex-row gap-2 items-center">
           <X
             className="my-2 cursor-pointer"
-            onClick={() =>
-              document.getElementById("change-email-modal").close()
-            }
+            onClick={() => {
+              const modal = document.getElementById(
+                "change-email-modal"
+              ) as HTMLDialogElement;
+              modal.close();
+            }}
           />
           <h3 className="font-bold text-lg">Change email</h3>
         </div>
@@ -335,9 +364,12 @@ const ChangeEmailModal = () => {
           <>
             <button
               className="btn"
-              onClick={() =>
-                document.getElementById("change-name-modal").close()
-              }
+              onClick={() => {
+                const modal = document.getElementById(
+                  "change-name-modal"
+                ) as HTMLDialogElement;
+                modal.close();
+              }}
               disabled={isSaving}
             >
               Close

@@ -125,7 +125,7 @@ export default function LearnerAIEditQuizPage() {
         toast.success("Generated quiz saved.");
         navigate("/learner/library?tab=flashcards", { viewTransition: true });
       }
-    } catch (err) {
+    } catch {
       toast.error("Error saving quiz.");
     } finally {
       setIsSubmitting(false);

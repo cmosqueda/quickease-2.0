@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import clsx from "clsx";
 import NoteCard from "../(learner)/NoteCard";
 import _API_INSTANCE from "@/utils/axios";
@@ -47,7 +48,11 @@ const GenerateFlashcardFromNotes = ({
         JSON.stringify(data)
       );
 
-      document.getElementById("generate-flashcard-modal-global").close();
+      const modal = document.getElementById(
+        "generate-flashcard-modal-global"
+      ) as HTMLDialogElement;
+
+      modal.close();
       return navigate("/learner/flashcards/ai");
     } catch (err) {
       toast.error("Error generating content.");
@@ -103,7 +108,11 @@ const GenerateFlashcardFromPrompt = ({
         JSON.stringify(data)
       );
 
-      document.getElementById("generate-flashcard-modal-global").close();
+      const modal = document.getElementById(
+        "generate-flashcard-modal-global"
+      ) as HTMLDialogElement;
+
+      modal.close();
       return navigate("/learner/flashcards/ai");
     } catch (err) {
       toast.error("Error generating content.");
@@ -194,7 +203,12 @@ const GenerateFlashcardFromPDF = () => {
           "QUICKEASE_GENERATED_CONTENT",
           JSON.stringify(data)
         );
-        document.getElementById("generate-flashcard-modal-global").close();
+
+        const modal = document.getElementById(
+          "generate-flashcard-modal-global"
+        ) as HTMLDialogElement;
+
+        modal.close();
         return navigate("/learner/flashcards/ai", { viewTransition: true });
       } else {
         console.error("Upload failed:", response.data.message);
@@ -300,9 +314,11 @@ export default function GenerateFlashcardModal({
           <div className="flex flex-row gap-4 items-center">
             <X
               onClick={() => {
-                document
-                  .getElementById("generate-flashcard-modal-global")
-                  .close();
+                const modal = document.getElementById(
+                  "generate-flashcard-modal-global"
+                ) as HTMLDialogElement;
+
+                modal.close();
               }}
               className="cursor-pointer"
             />

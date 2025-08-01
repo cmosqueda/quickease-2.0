@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import _API_INSTANCE from "./axios";
 import { redirect } from "react-router";
 

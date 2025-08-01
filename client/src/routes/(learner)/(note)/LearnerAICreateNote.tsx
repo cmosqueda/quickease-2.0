@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import CustomEditor from "@/components/Editor";
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
@@ -70,7 +72,7 @@ export default function LearnerAICreateNotePage() {
         toast.success("Note created.");
         navigate("/learner/library?tab=notes");
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err.message);
       throw err;
     } finally {
@@ -124,27 +126,36 @@ export default function LearnerAICreateNotePage() {
           <h1 className="font-bold text-xl">Study options</h1>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() =>
-              document.getElementById("generate-summary-modal").showModal()
-            }
+            onClick={() => {
+              const modal = document.getElementById(
+                "generate-summary-modal"
+              ) as HTMLDialogElement;
+              modal.showModal();
+            }}
           >
             <BookDown />
             <h1>Generate summary</h1>
           </button>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() =>
-              document.getElementById("generate-flashcard-modal").showModal()
-            }
+            onClick={() => {
+              const modal = document.getElementById(
+                "generate-flashcard-modal"
+              ) as HTMLDialogElement;
+              modal.showModal();
+            }}
           >
             <CalendarRange />
             <h1>Generate flashcards</h1>
           </button>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() =>
-              document.getElementById("generate-quiz-modal").showModal()
-            }
+            onClick={() => {
+              const modal = document.getElementById(
+                "generate-quiz-modal"
+              ) as HTMLDialogElement;
+              modal.showModal();
+            }}
           >
             <ClipboardList />
             <h1>Generate quiz</h1>

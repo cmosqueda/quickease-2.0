@@ -63,354 +63,356 @@ import "../global.css";
 
 const client = new QueryClient();
 
+const LearnerRoutes = {
+  path: "learner",
+  Component: LearnerLayout,
+  loader: loadUserNotes,
+  HydrateFallback: LearnerHydrationFallback,
+  children: [
+    {
+      index: true,
+      Component: LearnerForumPage,
+    },
+    {
+      path: "library",
+      Component: LearnerLibraryPage,
+      loader: loadLearnerResources,
+    },
+    { path: "summarize", Component: LearnerSummarizePage },
+    { path: "profile", Component: LearnerProfilePage, loader: () => {} },
+    {
+      path: "search",
+      children: [
+        {
+          path: ":query/:page?",
+          Component: LearnerSearchPage,
+          loader: async ({ params, request }) => {
+            const query = params.query;
+            const page = Number(params.page ?? 1);
+            const limit = 10;
+
+            // Use searchParams to read ?sort=top
+            const searchParams = new URL(request.url).searchParams;
+            const sort = searchParams.get("sort") ?? "newest";
+
+            if (!query) return redirect("/");
+
+            try {
+              const { data } = await _API_INSTANCE.get("/forum/search", {
+                params: { query, page, limit, sort },
+              });
+
+              return {
+                posts: data.posts,
+                total: data.total,
+                query,
+                page,
+                limit,
+                sort,
+              };
+            } catch (err) {
+              return redirect("/");
+            }
+          },
+        },
+      ],
+    },
+    {
+      path: "profile/:id",
+      Component: LearnerProfilePage,
+      loader: async ({ params }) => {
+        try {
+          const currentUserID = await useAuth.getState().user?.id;
+
+          console.log(currentUserID);
+
+          if (params.id == currentUserID) {
+            return redirect("/learner/profile");
+          }
+
+          const { data } = await _API_INSTANCE.get(`/users/view/${params.id}`);
+
+          return data;
+        } catch (err) {
+          console.log(err);
+          toast.error("Error viewing profile.");
+          return redirect("/");
+        }
+      },
+    },
+    {
+      path: "post",
+      children: [
+        {
+          Component: LearnerCreatePostPage,
+          index: true,
+          loader: async () => {
+            const data = await loadLearnerResources();
+
+            return data;
+          },
+        },
+        {
+          path: ":id",
+          Component: LearnerPostPage,
+          loader: async ({ params }) => {
+            try {
+              const currentUserID = await useAuth.getState().user?.id;
+              const { data } = await _API_INSTANCE.get(
+                `/forum/post/${params.id}`
+              );
+
+              if (!data.is_public && data.user_id !== currentUserID) {
+                return { private: true };
+              }
+
+              return data;
+            } catch {
+              return redirect("/learner");
+            }
+          },
+        },
+        {
+          path: ":id/edit",
+          Component: LearnerEditPostPage,
+          index: true,
+          loader: async ({ params }) => {
+            try {
+              const { status, data } = await _API_INSTANCE.get(
+                `/forum/post/${params.id}`
+              );
+
+              if (status == 200) {
+                if (data.user_id == useAuth.getState().user?.id) {
+                  return { id: data.id };
+                } else {
+                  toast.error("You can't edit a post that's not yours! :)");
+                  return redirect(`/learner/post/${params.id}`);
+                }
+              }
+            } catch {
+              return redirect("/learner");
+            }
+          },
+        },
+      ],
+    },
+    {
+      path: "flashcards",
+      children: [
+        { index: true, Component: LearnerFlashcardsPage },
+        {
+          path: "view/:id",
+          Component: LearnerViewFlashcardPage,
+          loader: async ({ params }) => {
+            try {
+              const currentUserID = await useAuth.getState().user?.id;
+              const { data } = await _API_INSTANCE.get(
+                `/flashcard/${params.id}`
+              );
+
+              if (!data.is_public && data.user_id !== currentUserID) {
+                return { private: true };
+              }
+
+              if (data.user_id == currentUserID) {
+                return redirect(`/learner/flashcards/${params.id}`);
+              }
+
+              return data;
+            } catch {
+              return redirect("/learner/library?tab=flashcard");
+            }
+          },
+        },
+        {
+          path: ":id",
+          Component: LearnerFlashcardPage,
+          loader: async ({ params }) => {
+            try {
+              const { data } = await _API_INSTANCE.get(
+                `/flashcard/${params.id}`
+              );
+              return data;
+            } catch {
+              return redirect("/learner/library?tab=flashcard");
+            }
+          },
+        },
+        {
+          path: ":id/edit",
+          Component: LearnerEditFlashcardPage,
+          loader: async ({ params }) => {
+            try {
+              const { data } = await _API_INSTANCE.get(
+                `/flashcard/${params.id}`
+              );
+              return data;
+            } catch {
+              return redirect("/learner/library?tab=flashcard");
+            }
+          },
+        },
+        {
+          path: "ai",
+          Component: LearnerAIFlashcardPage,
+          loader: () => {
+            const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
+            return raw ? JSON.parse(raw) : "";
+          },
+        },
+        {
+          path: "ai/edit",
+          Component: LearnerEditAIFlashcardPage,
+          loader: () => {
+            const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
+            return raw ? JSON.parse(raw) : "";
+          },
+        },
+        { path: "create", Component: LearnerCreateFlashcardPage },
+      ],
+    },
+    {
+      path: "quizzes",
+      children: [
+        { index: true, Component: LearnerQuizzes },
+        {
+          path: ":id",
+          Component: LearnerQuizPage,
+          loader: async ({ params }) => {
+            try {
+              const { data } = await _API_INSTANCE.get(`/quiz/${params.id}`);
+              return data;
+            } catch {
+              toast.error("Error getting quiz data.");
+              return redirect("/learner/library?tab=quizzes");
+            }
+          },
+        },
+        {
+          path: ":id/answer",
+          Component: LearnerAnswerQuizPage,
+          loader: ({ params }) => {
+            try {
+              const raw = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
+              const parsed = JSON.parse(raw!);
+              return parsed?.id == params.id
+                ? parsed
+                : redirect("/learner/library?tab=quizzes");
+            } catch {
+              return redirect("/learner/library?tab=quizzes");
+            }
+          },
+        },
+        {
+          path: ":id/edit",
+          Component: LearnerEditQuizPage,
+          loader: ({ params }) => {
+            try {
+              const raw = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
+              const parsed = JSON.parse(raw!);
+              return parsed?.id == params.id
+                ? parsed
+                : redirect("/learner/library?tab=quizzes");
+            } catch {
+              return redirect("/learner/library?tab=quizzes");
+            }
+          },
+        },
+        {
+          path: ":id/attempt/:attempt_id",
+          Component: LearnerQuizAttemptPage,
+          loader: async ({ params }) => {
+            try {
+              const { data } = await _API_INSTANCE.get(
+                `/quiz/attempt/${params.attempt_id}`
+              );
+              return data;
+            } catch {
+              return redirect("/learner/library?tab=quizzes");
+            }
+          },
+        },
+        { path: "create", Component: LearnerCreateQuizPage },
+        {
+          path: "ai",
+          Component: LearnerAIEditQuizPage,
+          loader: () => {
+            const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
+            return raw ? JSON.parse(raw) : "";
+          },
+        },
+      ],
+    },
+    { path: "settings", Component: LearnerSettingsPage },
+    { path: "timer", Component: LearnerTimerPage },
+    {
+      path: "note/view/:id",
+      Component: LearnerViewNotePage,
+      loader: async ({ params }) => {
+        try {
+          const currentUserID = await useAuth.getState().user?.id;
+          const { data } = await _API_INSTANCE.get(`/notes/${params.id}`);
+
+          if (!data.is_public && data.user_id !== currentUserID) {
+            return { private: true };
+          }
+
+          if (data.user_id == currentUserID) {
+            return redirect(`/learner/note/${params.id}`);
+          }
+
+          return data;
+        } catch {
+          return redirect("/learner/library?tab=notes");
+        }
+      },
+    },
+    {
+      path: "note/:id",
+      Component: LearnerNotePage,
+      loader: async ({ params }) => {
+        try {
+          const { data } = await _API_INSTANCE.get(`/notes/${params.id}`);
+          return data;
+        } catch {
+          return redirect("/learner/library?tab=notes");
+        }
+      },
+    },
+    { path: "note/create", Component: LearnerCreateNotePage },
+    {
+      path: "note/create/ai",
+      Component: LearnerAICreateNotePage,
+      loader: () => {
+        const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
+        return raw ? JSON.parse(raw) : "";
+      },
+    },
+  ],
+};
+
+const AuthRoutes = {
+  path: "auth",
+  Component: AuthLayout,
+  children: [
+    { path: "login", Component: AuthLoginPage, loader: checkAuthAndRedirect },
+    {
+      path: "register",
+      Component: AuthRegisterPage,
+      loader: checkAuthAndRedirect,
+    },
+  ],
+};
+
 const router = createBrowserRouter([
   {
     path: "/",
     Component: LandingPage,
     loader: checkAuthAndRedirect,
   },
-  {
-    path: "auth",
-    Component: AuthLayout,
-    children: [
-      { path: "login", Component: AuthLoginPage, loader: checkAuthAndRedirect },
-      {
-        path: "register",
-        Component: AuthRegisterPage,
-        loader: checkAuthAndRedirect,
-      },
-    ],
-  },
-  {
-    path: "learner",
-    Component: LearnerLayout,
-    loader: loadUserNotes,
-    HydrateFallback: LearnerHydrationFallback,
-    children: [
-      {
-        index: true,
-        Component: LearnerForumPage,
-      },
-      {
-        path: "library",
-        Component: LearnerLibraryPage,
-        loader: loadLearnerResources,
-      },
-      { path: "summarize", Component: LearnerSummarizePage },
-      { path: "profile", Component: LearnerProfilePage, loader: () => {} },
-      {
-        path: "search",
-        children: [
-          {
-            path: ":query/:page?",
-            Component: LearnerSearchPage,
-            loader: async ({ params, request }) => {
-              const query = params.query;
-              const page = Number(params.page ?? 1);
-              const limit = 10;
-
-              // Use searchParams to read ?sort=top
-              const searchParams = new URL(request.url).searchParams;
-              const sort = searchParams.get("sort") ?? "newest";
-
-              if (!query) return redirect("/");
-
-              try {
-                const { data } = await _API_INSTANCE.get("/forum/search", {
-                  params: { query, page, limit, sort },
-                });
-
-                return {
-                  posts: data.posts,
-                  total: data.total,
-                  query,
-                  page,
-                  limit,
-                  sort,
-                };
-              } catch (err) {
-                return redirect("/");
-              }
-            },
-          },
-        ],
-      },
-      {
-        path: "profile/:id",
-        Component: LearnerProfilePage,
-        loader: async ({ params }) => {
-          try {
-            const currentUserID = await useAuth.getState().user?.id;
-
-            console.log(currentUserID);
-
-            if (params.id == currentUserID) {
-              return redirect("/learner/profile");
-            }
-
-            const { data } = await _API_INSTANCE.get(
-              `/users/view/${params.id}`
-            );
-
-            return data;
-          } catch (err) {
-            console.log(err);
-            toast.error("Error viewing profile.");
-            return redirect("/");
-          }
-        },
-      },
-      {
-        path: "post",
-        children: [
-          {
-            Component: LearnerCreatePostPage,
-            index: true,
-            loader: async () => {
-              const data = await loadLearnerResources();
-
-              return data;
-            },
-          },
-          {
-            path: ":id",
-            Component: LearnerPostPage,
-            loader: async ({ params }) => {
-              try {
-                const currentUserID = await useAuth.getState().user?.id;
-                const { data } = await _API_INSTANCE.get(
-                  `/forum/post/${params.id}`
-                );
-
-                if (!data.is_public && data.user_id !== currentUserID) {
-                  return { private: true };
-                }
-
-                return data;
-              } catch {
-                return redirect("/learner");
-              }
-            },
-          },
-          {
-            path: ":id/edit",
-            Component: LearnerEditPostPage,
-            index: true,
-            loader: async ({ params }) => {
-              try {
-                const { status, data } = await _API_INSTANCE.get(
-                  `/forum/post/${params.id}`
-                );
-
-                if (status == 200) {
-                  if (data.user_id == useAuth.getState().user?.id) {
-                    return { id: data.id };
-                  } else {
-                    toast.error("You can't edit a post that's not yours! :)");
-                    return redirect(`/learner/post/${params.id}`);
-                  }
-                }
-              } catch {
-                return redirect("/learner");
-              }
-            },
-          },
-        ],
-      },
-      {
-        path: "flashcards",
-        children: [
-          { index: true, Component: LearnerFlashcardsPage },
-          {
-            path: "view/:id",
-            Component: LearnerViewFlashcardPage,
-            loader: async ({ params }) => {
-              try {
-                const currentUserID = await useAuth.getState().user?.id;
-                const { data } = await _API_INSTANCE.get(
-                  `/flashcard/${params.id}`
-                );
-
-                if (!data.is_public && data.user_id !== currentUserID) {
-                  return { private: true };
-                }
-
-                if (data.user_id == currentUserID) {
-                  return redirect(`/learner/flashcards/${params.id}`);
-                }
-
-                return data;
-              } catch {
-                return redirect("/learner/library?tab=flashcard");
-              }
-            },
-          },
-          {
-            path: ":id",
-            Component: LearnerFlashcardPage,
-            loader: async ({ params }) => {
-              try {
-                const { data } = await _API_INSTANCE.get(
-                  `/flashcard/${params.id}`
-                );
-                return data;
-              } catch {
-                return redirect("/learner/library?tab=flashcard");
-              }
-            },
-          },
-          {
-            path: ":id/edit",
-            Component: LearnerEditFlashcardPage,
-            loader: async ({ params }) => {
-              try {
-                const { data } = await _API_INSTANCE.get(
-                  `/flashcard/${params.id}`
-                );
-                return data;
-              } catch {
-                return redirect("/learner/library?tab=flashcard");
-              }
-            },
-          },
-          {
-            path: "ai",
-            Component: LearnerAIFlashcardPage,
-            loader: () => {
-              const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
-              return raw ? JSON.parse(raw) : "";
-            },
-          },
-          {
-            path: "ai/edit",
-            Component: LearnerEditAIFlashcardPage,
-            loader: () => {
-              const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
-              return raw ? JSON.parse(raw) : "";
-            },
-          },
-          { path: "create", Component: LearnerCreateFlashcardPage },
-        ],
-      },
-      {
-        path: "quizzes",
-        children: [
-          { index: true, Component: LearnerQuizzes },
-          {
-            path: ":id",
-            Component: LearnerQuizPage,
-            loader: async ({ params }) => {
-              try {
-                const { data } = await _API_INSTANCE.get(`/quiz/${params.id}`);
-                return data;
-              } catch {
-                toast.error("Error getting quiz data.");
-                return redirect("/learner/library?tab=quizzes");
-              }
-            },
-          },
-          {
-            path: ":id/answer",
-            Component: LearnerAnswerQuizPage,
-            loader: ({ params }) => {
-              try {
-                const raw = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
-                const parsed = JSON.parse(raw!);
-                return parsed?.id == params.id
-                  ? parsed
-                  : redirect("/learner/library?tab=quizzes");
-              } catch {
-                return redirect("/learner/library?tab=quizzes");
-              }
-            },
-          },
-          {
-            path: ":id/edit",
-            Component: LearnerEditQuizPage,
-            loader: ({ params }) => {
-              try {
-                const raw = localStorage.getItem("QUICKEASE_CURRENT_QUIZ");
-                const parsed = JSON.parse(raw!);
-                return parsed?.id == params.id
-                  ? parsed
-                  : redirect("/learner/library?tab=quizzes");
-              } catch {
-                return redirect("/learner/library?tab=quizzes");
-              }
-            },
-          },
-          {
-            path: ":id/attempt/:attempt_id",
-            Component: LearnerQuizAttemptPage,
-            loader: async ({ params }) => {
-              try {
-                const { data } = await _API_INSTANCE.get(
-                  `/quiz/attempt/${params.attempt_id}`
-                );
-                return data;
-              } catch {
-                return redirect("/learner/library?tab=quizzes");
-              }
-            },
-          },
-          { path: "create", Component: LearnerCreateQuizPage },
-          {
-            path: "ai",
-            Component: LearnerAIEditQuizPage,
-            loader: () => {
-              const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
-              return raw ? JSON.parse(raw) : "";
-            },
-          },
-        ],
-      },
-      { path: "settings", Component: LearnerSettingsPage },
-      { path: "timer", Component: LearnerTimerPage },
-      {
-        path: "note/view/:id",
-        Component: LearnerViewNotePage,
-        loader: async ({ params }) => {
-          try {
-            const currentUserID = await useAuth.getState().user?.id;
-            const { data } = await _API_INSTANCE.get(`/notes/${params.id}`);
-
-            if (!data.is_public && data.user_id !== currentUserID) {
-              return { private: true };
-            }
-
-            if (data.user_id == currentUserID) {
-              return redirect(`/learner/note/${params.id}`);
-            }
-
-            return data;
-          } catch {
-            return redirect("/learner/library?tab=notes");
-          }
-        },
-      },
-      {
-        path: "note/:id",
-        Component: LearnerNotePage,
-        loader: async ({ params }) => {
-          try {
-            const { data } = await _API_INSTANCE.get(`/notes/${params.id}`);
-            return data;
-          } catch {
-            return redirect("/learner/library?tab=notes");
-          }
-        },
-      },
-      { path: "note/create", Component: LearnerCreateNotePage },
-      {
-        path: "note/create/ai",
-        Component: LearnerAICreateNotePage,
-        loader: () => {
-          const raw = localStorage.getItem("QUICKEASE_GENERATED_CONTENT");
-          return raw ? JSON.parse(raw) : "";
-        },
-      },
-    ],
-  },
+  AuthRoutes,
+  LearnerRoutes,
   {
     path: "admin",
     Component: AdminLayout,

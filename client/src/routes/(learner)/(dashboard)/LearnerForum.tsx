@@ -226,7 +226,7 @@ export default function LearnerForumPage() {
       ) : (
         <div className="flex flex-col gap-4">
           {data?.pages.flatMap((page) =>
-            page.posts.map((post) => <Post key={post.id} post={post} />)
+            page.posts.map((post: any) => <Post key={post.id} post={post} />)
           )}
         </div>
       )}

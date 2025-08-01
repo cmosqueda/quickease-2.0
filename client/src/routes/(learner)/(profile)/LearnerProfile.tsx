@@ -49,7 +49,7 @@ const OtherUser = ({ user }: { user: any }) => {
       </div>
     </>,
     <>
-      {user.posts.map((post) => (
+      {user.posts.map((post: any) => (
         <div className="flex flex-col gap-2">
           <div className="flex flex-row gap-2 items-center">
             <div className="w-[32px] h-[32px] rounded-full bg-base-100" />

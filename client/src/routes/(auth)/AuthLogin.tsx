@@ -35,7 +35,13 @@ export default function AuthLoginPage() {
         setUser(data);
         navigate("/admin", { viewTransition: true });
       }
-    } catch (err) {
+    } catch (err: {
+      response: {
+        data: {
+          message: string;
+        };
+      };
+    }) {
       toast.error(err.response.data.message);
       throw err;
     } finally {
@@ -104,9 +110,13 @@ export default function AuthLoginPage() {
         </p>
         <button
           className="transition-all delay-0 duration-300 hover:text-accent fixed bottom-8 cursor-pointer"
-          onClick={() =>
-            document.getElementById("terms-of-use-modal").showModal()
-          }
+          onClick={() => {
+            const modal = document.getElementById(
+              "terms-of-use-modal"
+            ) as HTMLDialogElement;
+
+            modal.showModal();
+          }}
         >
           Terms of use & Privacy policy
         </button>

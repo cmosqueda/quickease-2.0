@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import clsx from "clsx";
 import dayjs from "dayjs";

@@ -26,9 +26,13 @@ export default function ReportCommentModal() {
         { timeout: 8 * 60 * 1000 }
       );
 
-      document.getElementById("report-comment-modal").close();
+      const modal = document.getElementById(
+        "report-comment-modal"
+      ) as HTMLDialogElement;
+
+      modal.close();
       toast.success("Comment reported.");
-    } catch (err) {
+    } catch {
       toast.error("Error reporting comment.");
     } finally {
       setIsSubmitting(false);
@@ -42,9 +46,13 @@ export default function ReportCommentModal() {
           <div className="flex flex-row gap-4 items-center">
             <X
               className="cursor-pointer"
-              onClick={() =>
-                document.getElementById("report-post-modal").close()
-              }
+              onClick={() => {
+                const modal = document.getElementById(
+                  "report-comment-modal"
+                ) as HTMLDialogElement;
+
+                modal.close();
+              }}
             />
             <h1 className="font-bold text-2xl">
               Why are you reporting this comment?

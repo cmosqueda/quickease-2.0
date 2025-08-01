@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import clsx from "clsx";
 import NoteCard from "../(learner)/NoteCard";
 import _API_INSTANCE from "@/utils/axios";
+import dayjs from "dayjs";
 
 import {
   ArrowRight,
@@ -13,7 +15,6 @@ import {
 import { useState } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { toast } from "sonner";
-import dayjs from "dayjs";
 
 const GenerateQuizzesFromNotes = ({
   notes,
@@ -46,7 +47,8 @@ const GenerateQuizzesFromNotes = ({
         JSON.stringify(data)
       );
 
-      document.getElementById("generate-quiz-modal-global").close();
+      const modal = document.getElementById("generate-quiz-modal-global");
+      modal.close();
       return navigate("/learner/quizzes/ai");
     } catch (err) {
       toast.error("Error generating content.");
@@ -102,7 +104,11 @@ const GenerateQuizzesFromPrompt = ({
         JSON.stringify(data)
       );
 
-      document.getElementById("generate-quiz-modal-global").close();
+      const modal = document.getElementById(
+        "generate-quiz-modal-global"
+      ) as HTMLDialogElement;
+
+      modal.close();
       return navigate("/learner/quizzes/ai");
     } catch (err) {
       toast.error("Error generating content.");
@@ -194,7 +200,11 @@ const GenerateQuizzesFromPDF = () => {
           JSON.stringify(data)
         );
 
-        document.getElementById("generate-quiz-modal-global").close();
+        const modal = document.getElementById(
+          "generate-quiz-modal-global"
+        ) as HTMLDialogElement;
+
+        modal.close();
         return navigate("/learner/quizzes/ai");
       } else {
         console.error("Upload failed:", response.data.message);
@@ -300,7 +310,10 @@ export default function GenerateQuizModal({
           <div className="flex flex-row gap-4 items-center">
             <X
               onClick={() => {
-                document.getElementById("generate-quiz-modal-global").close();
+                const modal = document.getElementById(
+                  "generate-quiz-modal-global"
+                ) as HTMLDialogElement;
+                modal.close();
               }}
               className="cursor-pointer"
             />

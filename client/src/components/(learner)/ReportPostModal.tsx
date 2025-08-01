@@ -26,7 +26,11 @@ export default function ReportPostModal() {
         }
       );
 
-      document.getElementById("report-post-modal").close();
+      const modal = document.getElementById(
+        "report-post-modal"
+      ) as HTMLDialogElement;
+
+      modal.close();
       toast.success("Post reported.");
     } catch (err) {
       toast.error("Error reporting post.");
@@ -42,9 +46,12 @@ export default function ReportPostModal() {
           <div className="flex flex-row gap-4 items-center">
             <X
               className="cursor-pointer"
-              onClick={() =>
-                document.getElementById("report-post-modal").close()
-              }
+              onClick={() => {
+                const modal = document.getElementById(
+                  "report-post-modal"
+                ) as HTMLDialogElement;
+                modal.close();
+              }}
             />
             <h1 className="font-bold text-2xl">
               Why are you reporting this post?

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FlippableCard from "@/components/(learner)/FlippableCard";
 import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "@/utils/axios";
@@ -42,7 +43,7 @@ export default function LearnerAIFlashcardPage() {
         toast.success("Flashcard created.");
         navigate("/learner/library?tab=flashcards", { viewTransition: true });
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(`Error creating flashcard: ${err.message}`);
       return;
     }

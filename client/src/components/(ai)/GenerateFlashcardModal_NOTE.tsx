@@ -40,7 +40,11 @@ export default function GenerateFlashcardModal({ text }: { text: string }) {
         JSON.stringify(data)
       );
 
-      document.getElementById("generate-flashcard-modal").close();
+      const modal = document.getElementById(
+        "generate-flashcard-modal"
+      ) as HTMLDialogElement;
+      
+      modal.close();
       navigate("/learner/flashcards/ai");
     } catch (err) {
       toast.error("Error generating content.");

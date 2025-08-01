@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
 import CommentCard from "@/components/(learner)/CommentCard";
@@ -69,7 +70,7 @@ export default function LearnerPostPage() {
         body: html,
       });
       editor?.commands.clearContent();
-    } catch (error) {
+    } catch {
       toast.error("Failed to submit comment.");
     }
   };
@@ -107,7 +108,7 @@ export default function LearnerPostPage() {
       <div className="flex items-center justify-between">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate(-1, { viewTransition: true })}
+          onClick={() => navigate(-1 as any, { viewTransition: true })}
         />
         <div className="flex flex-row gap-4 items-center">
           {postData.user_id == user?.id && (
@@ -168,7 +169,7 @@ export default function LearnerPostPage() {
         </button>
       </div>
       <div className="flex flex-col gap-2">
-        {postData?.comments?.map((comment) => (
+        {postData?.comments?.map((comment: any) => (
           <CommentCard comment={comment} key={comment.id} post_id={data?.id} />
         ))}
       </div>

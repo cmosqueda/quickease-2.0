@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import clsx from "clsx";
 import dayjs from "dayjs";
@@ -39,7 +40,7 @@ const PostCard = ({ data }: { data: any }) => {
       <h1 className="text-4xl font-bold">{data?.title}</h1>
       {data.tags.length > 0 && (
         <div className="flex flex-row gap-2">
-          {data.tags.map((tag) => (
+          {data.tags.map((tag: { tag: { tag_name: string } }) => (
             <div key={tag.tag.tag_name} className="badge badge-neutral">
               {tag.tag.tag_name}
             </div>

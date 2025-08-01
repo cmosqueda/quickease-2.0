@@ -40,7 +40,11 @@ export default function GenerateQuizModal({ text }: { text: string }) {
         JSON.stringify(data)
       );
 
-      document.getElementById("generate-quiz-modal").close();
+      const modal = document.getElementById(
+        "generate-quiz-modal"
+      ) as HTMLDialogElement;
+
+      modal.close();
       navigate("/learner/quizzes/ai");
     } catch (err) {
       toast.error("Error generating content.");

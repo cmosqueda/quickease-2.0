@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FlippableCard from "@/components/(learner)/FlippableCard";
 
 import {
@@ -38,7 +39,7 @@ export default function LearnerViewFlashcardPage() {
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
           onClick={() =>
-            navigate(-1, {
+            navigate(-1 as any, {
               viewTransition: true,
             })
           }

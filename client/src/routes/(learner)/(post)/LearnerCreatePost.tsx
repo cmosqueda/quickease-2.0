@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import CustomEditor from "@/components/Editor";
-import useAuth from "@/hooks/useAuth";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
 
@@ -23,7 +22,6 @@ export default function LearnerCreatePostPage() {
   const queryClient = useQueryClient();
   const data = useLoaderData();
 
-  const { user } = useAuth();
   const [tabIndex, setTabIndex] = useState(0);
 
   const editor = useEditor({
@@ -259,8 +257,8 @@ export default function LearnerCreatePostPage() {
         {data &&
           data.notes &&
           data.notes
-            .filter((n) => n.is_public == true)
-            .map((note) => {
+            .filter((n: any) => n.is_public == true)
+            .map((note: any) => {
               const isSelected = selectedNotes.some((n) => n.id === note.id);
               return (
                 <button
@@ -307,8 +305,8 @@ export default function LearnerCreatePostPage() {
         {data &&
           data.flashcards &&
           data.flashcards
-            .filter((f) => f.is_public == true)
-            .map((flashcard) => {
+            .filter((f: any) => f.is_public == true)
+            .map((flashcard: any) => {
               const isSelected = selectedFlashcards.some(
                 (f) => f.id === flashcard.id
               );
@@ -357,8 +355,8 @@ export default function LearnerCreatePostPage() {
         {data &&
           data.quizzes &&
           data.quizzes
-            .filter((q) => q.is_public == true)
-            .map((quiz) => {
+            .filter((q: any) => q.is_public == true)
+            .map((quiz: any) => {
               const isSelected = selectedQuizzes.some((q) => q.id === quiz.id);
               return (
                 <button

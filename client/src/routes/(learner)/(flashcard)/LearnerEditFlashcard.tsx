@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FlippableCard from "@/components/(learner)/FlippableCard";
-import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "@/utils/axios";
 
 import { ArrowLeft, EllipsisVertical, Save } from "lucide-react";
@@ -8,7 +8,6 @@ import { useNavigate, useLoaderData } from "react-router";
 import { toast } from "sonner";
 
 export default function LearnerEditFlashcardPage() {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const data = useLoaderData() as {
     id: string;
@@ -62,7 +61,7 @@ export default function LearnerEditFlashcardPage() {
         toast.success("Flashcard updated.");
         navigate("/learner/library?tab=flashcards", { viewTransition: true });
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(`Error updating flashcard: ${err.message}`);
     } finally {
       setIsSaving(false);
