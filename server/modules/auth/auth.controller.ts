@@ -107,7 +107,12 @@ export async function register_user(
 
 export async function logout(request: FastifyRequest, reply: FastifyReply) {
   try {
-    reply.clearCookie("QUICKEASE_TOKEN");
+    reply.clearCookie("QUICKEASE_TOKEN", {
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
     return reply.code(200).send("Logout successfully.");
   } catch (err) {
     return reply.code(500).send("Error occurred while logging out.");

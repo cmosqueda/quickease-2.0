@@ -141,7 +141,11 @@ const Mobile = ({
                 localStorage.removeItem("QUICKEASE_GENERATED_CONTENT");
                 localStorage.removeItem("QUICKEASE_USER");
 
-                await _API_INSTANCE.post("/auth/logout");
+                await _API_INSTANCE.post(
+                  "/auth/logout",
+                  {},
+                  { withCredentials: true }
+                );
                 navigate("/", { viewTransition: true });
               } catch (err) {
                 toast.error("Logout error.");
@@ -282,7 +286,11 @@ const Floating = ({
                   localStorage.removeItem("QUICKEASE_GENERATED_CONTENT");
                   localStorage.removeItem("QUICKEASE_USER");
 
-                  await _API_INSTANCE.post("/auth/logout");
+                  await _API_INSTANCE.post(
+                    "/auth/logout",
+                    {},
+                    { withCredentials: true }
+                  );
                   navigate("/", { viewTransition: true });
                 } catch (err) {
                   toast.error("Logout error.");
