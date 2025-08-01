@@ -7,7 +7,11 @@
   "type": "commonjs",
   "main": "server.ts",
   "scripts": {
-    "dev": "tsnd --respawn --transpile-only --exit-child server.ts",
+    "dev": "npx prisma generate && tsnd --respawn --transpile-only --exit-child server.ts",
+    "build": "npx prisma generate && tsc",
+    "start": "npm run build && node dist/server.js",
+    "prisma:generate": "prisma generate",
+    "migrate:dev": "prisma migrate dev --name init",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

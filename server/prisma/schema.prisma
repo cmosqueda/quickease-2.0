@@ -2,8 +2,9 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "./client/"
+  provider   = "prisma-client-js"
+  engineType = "binary"
+  output     = "./client/"
 }
 
 datasource db {
@@ -25,17 +26,17 @@ model User {
   updated_at   DateTime @default(now())
   is_admin     Boolean  @default(false)
 
-  flashcards           Flashcard[]
-  notes                Note[]
-  quizzes              Quiz[]
-  posts                Post[]
-  comments             Comment[]
-  postVotes            PostVote[]
-  commentVotes         CommentVote[]
-  quizAttempts         QuizAttempt[]
-  activityLogsReceived UserActivityLog[] @relation("ReceivedLogs")
-  activityLogsSent     UserActivityLog[] @relation("SentLogs")
-  forumReports         Report[]          @relation("ReportsByUser")
+  flashcards             Flashcard[]
+  notes                  Note[]
+  quizzes                Quiz[]
+  posts                  Post[]
+  comments               Comment[]
+  postVotes              PostVote[]
+  commentVotes           CommentVote[]
+  quizAttempts           QuizAttempt[]
+  forumReports           Report[]       @relation("ReportsByUser")
+  notifications_received Notification[] @relation("UserNotificationsReceived")
+  notifications_sent     Notification[] @relation("UserNotificationsSent")
 }
 
 model Flashcard {
@@ -201,14 +202,12 @@ model QuizAttempt {
 }
 
 model Report {
-  id             String @id @default(uuid())
-  reported_by    User   @relation("ReportsByUser", fields: [reported_by_id], references: [id], onDelete: Cascade)
-  reported_by_id String
-
-  reported_post    Post?   @relation("ReportedPost", fields: [reported_post_id], references: [id], onDelete: Cascade)
-  reported_post_id String?
-
-  reported_comment    Comment? @relation("ReportedComment", fields: [reported_comment_id], references: [id], onDelete: Cascade)
+  id                  String   @id @default(uuid())
+  reported_by         User     @relation("ReportsByUser", fields: [reported_by_id], references: [id], onDelete: Cascade)
+  reported_by_id      String
+  reported_post       Post?    @relation("ReportedPost", fields: [reported_post_id], references: [id], onDelete: SetNull)
+  reported_post_id    String?
+  reported_comment    Comment? @relation("ReportedComment", fields: [reported_comment_id], references: [id], onDelete: SetNull)
   reported_comment_id String?
 
   description          String
@@ -235,9 +234,9 @@ enum NotificationType {
 
 model Notification {
   id            String           @id @default(uuid())
-  recipient     User             @relation(fields: [recipient_id], references: [id], onDelete: Cascade)
+  recipient     User             @relation("UserNotificationsReceived", fields: [recipient_id], references: [id], onDelete: Cascade)
   recipient_id  String
-  actor         User             @relation(fields: [actor_id], references: [id], onDelete: Cascade)
+  actor         User             @relation("UserNotificationsSent", fields: [actor_id], references: [id], onDelete: Cascade)
   actor_id      String
   type          NotificationType
   resource_id   String?
