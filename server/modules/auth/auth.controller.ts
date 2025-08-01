@@ -87,15 +87,15 @@ export async function register_user(
     reply
       .setCookie("QUICKEASE_TOKEN", token, {
         path: "/",
-        httpOnly: true,
         secure: true,
+        httpOnly: true,
         sameSite: "strict",
       })
       .code(201)
       .send({
         ...user,
         password: null,
-        role: "user",
+        is_admin: false,
       });
   } catch (err) {
     console.error("Register error:", err);

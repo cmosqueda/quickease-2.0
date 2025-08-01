@@ -106,6 +106,7 @@ model Post {
   comments    Comment[]
   votes       PostVote[]
   attachments PostAttachment[]
+  reports     Report[]         @relation("ReportedPost")
 }
 
 model PostTag {
@@ -132,7 +133,8 @@ model Comment {
   created_at   DateTime @default(now())
   updated_at   DateTime @default(now())
 
-  votes CommentVote[]
+  votes   CommentVote[]
+  reports Report[]      @relation("ReportedComment")
 }
 
 model PostVote {
@@ -199,13 +201,24 @@ model QuizAttempt {
 }
 
 model Report {
-  id                   String   @id @default(uuid())
-  reported_by          User     @relation("ReportsByUser", fields: [reported_by_id], references: [id], onDelete: Cascade)
-  reported_by_id       String
+  id             String @id @default(uuid())
+  reported_by    User   @relation("ReportsByUser", fields: [reported_by_id], references: [id], onDelete: Cascade)
+  reported_by_id String
+
+  reported_post    Post?   @relation("ReportedPost", fields: [reported_post_id], references: [id], onDelete: Cascade)
+  reported_post_id String?
+
+  reported_comment    Comment? @relation("ReportedComment", fields: [reported_comment_id], references: [id], onDelete: Cascade)
+  reported_comment_id String?
+
   description          String
-  reported_target_type String
-  reported_at          DateTime @default(now())
-  reported_target_id   String
+  reported_target_type ReportTargetType
+  reported_at          DateTime         @default(now())
+}
+
+enum ReportTargetType {
+  POST
+  COMMENT
 }
 
 model UserActivityLog {

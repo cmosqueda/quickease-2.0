@@ -55,7 +55,7 @@ export async function create_user_note(
   };
 
   const schema = z.object({
-    title: z.string().min(3, "Title must be at least 3 characters."),
+    title: z.string(),
     content: z.string().nullable(),
     user_id: z.string().min(1, "User ID is required."),
   });
@@ -73,7 +73,7 @@ export async function create_user_note(
     const note = await createUserNote(title, content, user_id);
     reply.code(201).send(note);
   } catch (err) {
-    reply.code(500).send({ message: "Error creating note." });
+    reply.code(500).send({ message: "Error creating note.", errors: err });
   }
 }
 
