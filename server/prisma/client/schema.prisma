@@ -1,0 +1,249 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+  output     = "./client/"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  password     String
+  first_name   String
+  last_name    String
+  email        String   @unique
+  gender       String?
+  phone_number String?
+  badges       Json?
+  is_public    Boolean  @default(true)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+  is_admin     Boolean  @default(false)
+
+  flashcards             Flashcard[]
+  notes                  Note[]
+  quizzes                Quiz[]
+  posts                  Post[]
+  comments               Comment[]
+  postVotes              PostVote[]
+  commentVotes           CommentVote[]
+  quizAttempts           QuizAttempt[]
+  forumReports           Report[]       @relation("ReportsByUser")
+  notifications_received Notification[] @relation("UserNotificationsReceived")
+  notifications_sent     Notification[] @relation("UserNotificationsSent")
+}
+
+model Flashcard {
+  id              String   @id @default(uuid())
+  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id         String
+  title           String
+  description     String?
+  flashcards      Json
+  is_public       Boolean? @default(false)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now())
+  is_ai_generated Boolean? @default(false)
+
+  post_attachments PostAttachment[]
+}
+
+model Note {
+  id               String           @id @default(uuid())
+  user             User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id          String
+  title            String
+  notes_content    String
+  is_public        Boolean?         @default(false)
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @default(now())
+  is_ai_generated  Boolean?         @default(false)
+  post_attachments PostAttachment[]
+}
+
+model Quiz {
+  id              String   @id @default(uuid())
+  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id         String
+  quiz_content    Json
+  title           String
+  description     String?
+  is_public       Boolean? @default(false)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now())
+  is_ai_generated Boolean? @default(false)
+  is_randomized   Boolean? @default(false)
+  timed_quiz      Decimal?
+
+  post_attachments PostAttachment[]
+  attempts         QuizAttempt[]
+}
+
+model Tag {
+  id         String   @id @default(uuid())
+  tag_name   String   @unique
+  created_at DateTime @default(now())
+
+  posts PostTag[]
+}
+
+model Post {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String
+  title      String
+  post_body  String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  is_public  Boolean  @default(true)
+
+  tags        PostTag[]
+  comments    Comment[]
+  votes       PostVote[]
+  attachments PostAttachment[]
+  reports     Report[]         @relation("ReportedPost")
+}
+
+model PostTag {
+  tag_id  String
+  post_id String
+
+  tag  Tag  @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
+
+  @@id([tag_id, post_id])
+}
+
+model Comment {
+  id                String    @id @default(uuid())
+  parent_comment_id String?
+  parent_comment    Comment?  @relation("CommentReplies", fields: [parent_comment_id], references: [id], onDelete: Cascade)
+  replies           Comment[] @relation("CommentReplies")
+
+  post         Post     @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id      String
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id      String
+  comment_body String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+
+  votes   CommentVote[]
+  reports Report[]      @relation("ReportedComment")
+}
+
+model PostVote {
+  user_id   String
+  post_id   String
+  vote_type Int
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, post_id])
+}
+
+model CommentVote {
+  user_id    String
+  comment_id String
+  vote_type  Int
+
+  user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, comment_id])
+}
+
+enum ResourceType {
+  NOTE
+  QUIZ
+  FLASHCARD
+}
+
+model PostAttachment {
+  id      String @id @default(uuid())
+  post    Post   @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id String
+
+  resource_type ResourceType
+
+  note_id      String?
+  flashcard_id String?
+  quiz_id      String?
+
+  note      Note?      @relation(fields: [note_id], references: [id])
+  flashcard Flashcard? @relation(fields: [flashcard_id], references: [id])
+  quiz      Quiz?      @relation(fields: [quiz_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  @@index([resource_type])
+}
+
+model QuizAttempt {
+  id           String    @id @default(uuid())
+  quiz         Quiz      @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+  quiz_id      String
+  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id      String
+  started_at   DateTime
+  completed_at DateTime?
+  answer_data  Json
+  is_public    Boolean   @default(false)
+  duration     Int       @default(0)
+  score        Int       @default(0)
+}
+
+model Report {
+  id                  String   @id @default(uuid())
+  reported_by         User     @relation("ReportsByUser", fields: [reported_by_id], references: [id], onDelete: Cascade)
+  reported_by_id      String
+  reported_post       Post?    @relation("ReportedPost", fields: [reported_post_id], references: [id], onDelete: SetNull)
+  reported_post_id    String?
+  reported_comment    Comment? @relation("ReportedComment", fields: [reported_comment_id], references: [id], onDelete: SetNull)
+  reported_comment_id String?
+
+  description          String
+  reported_target_type ReportTargetType
+  reported_at          DateTime         @default(now())
+}
+
+enum ReportTargetType {
+  POST
+  COMMENT
+}
+
+enum NotificationType {
+  COMMENTED
+  REPLIED
+  OBTAINED_BADGE
+  CHANGED_NAME
+  CHANGED_EMAIL
+  CHANGED_PASSWORD
+  REPORTED
+  DELETED_POST_BY_REPORT
+  DELETED_COMMENT_BY_REPORT
+}
+
+model Notification {
+  id            String           @id @default(uuid())
+  recipient     User             @relation("UserNotificationsReceived", fields: [recipient_id], references: [id], onDelete: Cascade)
+  recipient_id  String
+  actor         User             @relation("UserNotificationsSent", fields: [actor_id], references: [id], onDelete: Cascade)
+  actor_id      String
+  type          NotificationType
+  resource_id   String?
+  resource_type String?
+  message       String
+  is_read       Boolean          @default(false)
+  created_at    DateTime         @default(now())
+
+  @@index([recipient_id, is_read])
+}
