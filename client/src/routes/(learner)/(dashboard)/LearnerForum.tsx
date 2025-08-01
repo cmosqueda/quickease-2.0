@@ -21,11 +21,13 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useVote } from "@/hooks/useVote";
 import { Link, NavLink, useNavigate } from "react-router";
 import useReport from "@/hooks/useReport";
+import useAuth from "@/hooks/useAuth";
 
 const Post = ({
   post,
 }: {
   post: {
+    user_id: string;
     id: string;
     title: string;
     post_body: string;
@@ -47,6 +49,7 @@ const Post = ({
 }) => {
   const { mutate: vote } = useVote();
   const { setPost } = useReport();
+  const { user } = useAuth();
 
   const fullName = `${post?.user?.first_name ?? "Unknown"} ${
     post?.user?.last_name ?? "User"
@@ -88,21 +91,23 @@ const Post = ({
           <p className="text-sm text-gray-500">/ {formattedDate}</p>
         </div>
 
-        <details className="dropdown dropdown-end">
-          <summary className="list-none cursor-pointer">
-            <EllipsisVertical
-              className="rounded-full p-2 border border-base-200"
-              size={36}
-            />
-          </summary>
-          <ul className="menu dropdown-content bg-base-100 border border-base-300 rounded-box z-10 w-52 p-2 my-2 shadow-sm">
-            <li>
-              <button type="button" onClick={handleShowReport}>
-                Report
-              </button>
-            </li>
-          </ul>
-        </details>
+        {post.user_id != user?.id && (
+          <details className="dropdown dropdown-end">
+            <summary className="list-none cursor-pointer">
+              <EllipsisVertical
+                className="rounded-full p-2 border border-base-200"
+                size={36}
+              />
+            </summary>
+            <ul className="menu dropdown-content bg-base-100 border border-base-300 rounded-box z-10 w-52 p-2 my-2 shadow-sm">
+              <li>
+                <button type="button" onClick={handleShowReport}>
+                  Report
+                </button>
+              </li>
+            </ul>
+          </details>
+        )}
       </div>
 
       {/* Post body */}

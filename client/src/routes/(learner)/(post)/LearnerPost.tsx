@@ -145,9 +145,11 @@ export default function LearnerPostPage() {
                 </li>
               )}
 
-              <li>
-                <button onClick={handleShowPostReport}>Report</button>
-              </li>
+              {postData.user_id != user?.id && (
+                <li>
+                  <button onClick={handleShowPostReport}>Report</button>
+                </li>
+              )}
             </ul>
           </details>
         </div>
