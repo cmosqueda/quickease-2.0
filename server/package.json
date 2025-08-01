@@ -8,6 +8,7 @@
   "main": "server.ts",
   "scripts": {
     "dev": "npx prisma generate && tsnd --respawn --transpile-only --exit-child server.ts",
+    "server": "tsnd --respawn --transpile-only --exit-child server.ts",
     "build": "npx prisma generate && tsc",
     "start": "npm run build && node dist/server.js",
     "prisma:generate": "prisma generate",
