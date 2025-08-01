@@ -4,7 +4,7 @@ import utc from "dayjs/plugin/utc";
 import _AI from "../../utils/ai";
 
 import { buildCommentTree } from "../../utils/tree";
-import { Prisma } from "../../prisma/client";
+import { Prisma } from "@prisma/client";
 
 async function validateOwnership(
   tx: Prisma.TransactionClient,

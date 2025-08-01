@@ -10,7 +10,7 @@ import {
   togglePostVisibility,
   updatePost,
 } from "./post.service";
-import { Post } from "../../prisma/client";
+import { Post } from "@prisma/client";
 
 type CreatedPost = (Post & { toxic?: boolean }) | { toxic: boolean };
 
