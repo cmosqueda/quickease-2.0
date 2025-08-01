@@ -67,12 +67,18 @@ export default function LearnerNotePage() {
     setIsSaving(true);
 
     try {
-      const res = await _API_INSTANCE.put("/notes/update", {
-        title: title,
-        content: html,
-        note_id: data.id,
-        user_id: user?.id,
-      });
+      const res = await _API_INSTANCE.put(
+        "/notes/update",
+        {
+          title: title,
+          content: html,
+          note_id: data.id,
+          user_id: user?.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (res.status == 200) {
         toast.success("Note updated.");
@@ -103,10 +109,16 @@ export default function LearnerNotePage() {
   };
   const handleVisibility = async (visibility: boolean) => {
     try {
-      await _API_INSTANCE.patch("/notes/toggle-visibility", {
-        visibility: visibility,
-        note_id: data.id,
-      });
+      await _API_INSTANCE.patch(
+        "/notes/toggle-visibility",
+        {
+          visibility: visibility,
+          note_id: data.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
       toast.success("Note visibility updated.");
     } catch (err) {
       toast.error("Error updating note visibility.");

@@ -34,9 +34,15 @@ const AccountSettings = () => {
     setVisibility(newVisibility);
 
     try {
-      const { data } = await _API_INSTANCE.put("/users/toggle-visibility", {
-        visibility: newVisibility,
-      });
+      const { data } = await _API_INSTANCE.put(
+        "/users/toggle-visibility",
+        {
+          visibility: newVisibility,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       setUser(data.user);
       toast.success("Profile privacy updated!");
@@ -53,7 +59,9 @@ const AccountSettings = () => {
       const { data } = await _API_INSTANCE.post(
         "mail/request-change-email",
         {},
-        { timeout: 10000 }
+        {
+          timeout: 8 * 60 * 1000,
+        }
       );
 
       console.log(data);
@@ -131,10 +139,16 @@ const ChangeNameModal = () => {
     const temp = useAuth.getState().user;
 
     try {
-      const { data } = await _API_INSTANCE.put("/users/edit-name", {
-        firstName,
-        lastName,
-      });
+      const { data } = await _API_INSTANCE.put(
+        "/users/edit-name",
+        {
+          firstName,
+          lastName,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       useAuth.setState({
         user: {
@@ -245,9 +259,15 @@ const ChangeEmailModal = () => {
     const temp = useAuth.getState().user;
 
     try {
-      const { data } = await _API_INSTANCE.put("/users/edit-email", {
-        email,
-      });
+      const { data } = await _API_INSTANCE.put(
+        "/users/edit-email",
+        {
+          email,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       useAuth.setState({
         user: {

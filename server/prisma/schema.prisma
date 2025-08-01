@@ -221,15 +221,30 @@ enum ReportTargetType {
   COMMENT
 }
 
-model UserActivityLog {
-  id                String   @id @default(uuid())
-  recipient         User     @relation("ReceivedLogs", fields: [recipient_user_id], references: [id], onDelete: Cascade)
-  recipient_user_id String
-  actor             User     @relation("SentLogs", fields: [actor_user_id], references: [id], onDelete: Cascade)
-  actor_user_id     String
-  activity_type_id  String
-  activity_type     String
-  message           String
-  is_read           Boolean  @default(false)
-  created_at        DateTime @default(now())
+enum NotificationType {
+  COMMENTED
+  REPLIED
+  OBTAINED_BADGE
+  CHANGED_NAME
+  CHANGED_EMAIL
+  CHANGED_PASSWORD
+  REPORTED
+  DELETED_POST_BY_REPORT
+  DELETED_COMMENT_BY_REPORT
+}
+
+model Notification {
+  id            String           @id @default(uuid())
+  recipient     User             @relation(fields: [recipient_id], references: [id], onDelete: Cascade)
+  recipient_id  String
+  actor         User             @relation(fields: [actor_id], references: [id], onDelete: Cascade)
+  actor_id      String
+  type          NotificationType
+  resource_id   String?
+  resource_type String?
+  message       String
+  is_read       Boolean          @default(false)
+  created_at    DateTime         @default(now())
+
+  @@index([recipient_id, is_read])
 }

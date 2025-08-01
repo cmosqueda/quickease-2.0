@@ -39,7 +39,7 @@ const GenerateFlashcardFromNotes = ({
         {
           note_id: id,
         },
-        { timeout: 10000 }
+        { timeout: 8 * 60 * 1000 }
       );
 
       await localStorage.setItem(
@@ -95,7 +95,7 @@ const GenerateFlashcardFromPrompt = ({
         {
           prompt: text,
         },
-        { timeout: 10000 }
+        { timeout: 8 * 60 * 1000 }
       );
 
       await localStorage.setItem(

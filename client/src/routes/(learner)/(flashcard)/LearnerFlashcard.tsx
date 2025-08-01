@@ -42,10 +42,16 @@ export default function LearnerFlashcardPage() {
     setVisibility((prev: boolean) => !prev);
 
     try {
-      await _API_INSTANCE.put("/flashcard/toggle-visibility", {
-        visibility: visibility,
-        flashcard_id: data.id,
-      });
+      await _API_INSTANCE.put(
+        "/flashcard/toggle-visibility",
+        {
+          visibility: visibility,
+          flashcard_id: data.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
       toast.success("Flashcard visibility updated.");
     } catch (err) {
       setVisibility((prev: boolean) => !prev);

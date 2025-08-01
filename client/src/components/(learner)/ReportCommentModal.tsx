@@ -17,10 +17,14 @@ export default function ReportCommentModal() {
     setIsSubmitting(true);
 
     try {
-      await _API_INSTANCE.put("/forum/comment/report", {
-        description: description,
-        comment_id: comment?.id,
-      });
+      await _API_INSTANCE.put(
+        "/forum/comment/report",
+        {
+          description: description,
+          comment_id: comment?.id,
+        },
+        { timeout: 8 * 60 * 1000 }
+      );
 
       document.getElementById("report-comment-modal").close();
       toast.success("Comment reported.");
@@ -53,7 +57,10 @@ export default function ReportCommentModal() {
                 content={comment.comment_body}
                 extensions={_TIPTAP_EXTENSIONS}
                 editable={false}
-                editorContainerProps={{className: "p-4 bg-base-200 rounded-xl overflow-ellipsis max-h-[24rem]"}}
+                editorContainerProps={{
+                  className:
+                    "p-4 bg-base-200 rounded-xl overflow-ellipsis max-h-[24rem]",
+                }}
               />
             )}
           </div>

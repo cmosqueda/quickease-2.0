@@ -15,10 +15,16 @@ export default function ReportPostModal() {
     setIsSubmitting(true);
 
     try {
-      await _API_INSTANCE.put("/forum/post/report", {
-        description: description,
-        post_id: post?.id,
-      });
+      await _API_INSTANCE.put(
+        "/forum/post/report",
+        {
+          description: description,
+          post_id: post?.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       document.getElementById("report-post-modal").close();
       toast.success("Post reported.");

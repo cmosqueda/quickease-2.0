@@ -102,10 +102,16 @@ const CommentCard = ({
 
   const handleEditComment = async () => {
     try {
-      await _API_INSTANCE.put("/forum/post/comment/update", {
-        body: text,
-        comment_id: comment.id,
-      });
+      await _API_INSTANCE.put(
+        "/forum/post/comment/update",
+        {
+          body: text,
+          comment_id: comment.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       await queryClient.invalidateQueries({ queryKey: ["post"] });
 

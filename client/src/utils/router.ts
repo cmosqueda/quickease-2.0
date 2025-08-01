@@ -1,4 +1,3 @@
-import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "./axios";
 import { redirect } from "react-router";
 

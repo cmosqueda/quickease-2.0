@@ -106,14 +106,20 @@ export default function LearnerAIEditQuizPage() {
     setIsSubmitting(true);
 
     try {
-      const { status } = await _API_INSTANCE.post("/quiz/create", {
-        title: `${quizTitle.trim()}`,
-        description: quizDescription.trim(),
-        quiz_content: questions,
-        is_randomized: isRandomized,
-        timed_quiz: isTimedQuiz ? totalSeconds : 0,
-        isAI: true,
-      });
+      const { status } = await _API_INSTANCE.post(
+        "/quiz/create",
+        {
+          title: `${quizTitle.trim()}`,
+          description: quizDescription.trim(),
+          quiz_content: questions,
+          is_randomized: isRandomized,
+          timed_quiz: isTimedQuiz ? totalSeconds : 0,
+          isAI: true,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (status === 201) {
         toast.success("Generated quiz saved.");

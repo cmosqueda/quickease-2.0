@@ -106,13 +106,19 @@ export default function LearnerCreateQuizPage() {
     setIsSubmitting(true);
 
     try {
-      const { status } = await _API_INSTANCE.post("/quiz/create", {
-        title: quizTitle.trim(),
-        description: quizDescription.trim(),
-        quiz_content: questions,
-        is_randomized: isRandomized,
-        timed_quiz: isTimedQuiz ? totalSeconds : 0,
-      });
+      const { status } = await _API_INSTANCE.post(
+        "/quiz/create",
+        {
+          title: quizTitle.trim(),
+          description: quizDescription.trim(),
+          quiz_content: questions,
+          is_randomized: isRandomized,
+          timed_quiz: isTimedQuiz ? totalSeconds : 0,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (status == 201) {
         toast.success("Quiz created.");

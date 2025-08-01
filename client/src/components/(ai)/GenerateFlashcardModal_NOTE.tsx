@@ -32,7 +32,7 @@ export default function GenerateFlashcardModal({ text }: { text: string }) {
       const { data } = await _API_INSTANCE.post(
         "/ai/generate-flashcards-from-prompt",
         { prompt: text },
-        { timeout: 10000 }
+        { timeout: 8 * 60 * 1000 }
       );
 
       await localStorage.setItem(

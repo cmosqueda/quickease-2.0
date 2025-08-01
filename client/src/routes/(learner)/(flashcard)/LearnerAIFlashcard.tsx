@@ -24,13 +24,19 @@ export default function LearnerAIFlashcardPage() {
     }
 
     try {
-      const { status } = await _API_INSTANCE.post("/flashcard/create", {
-        title: `${data.title} Summary`,
-        description: null,
-        flashcards: data.flashcards,
-        user_id: user?.id,
-        isAI: true,
-      });
+      const { status } = await _API_INSTANCE.post(
+        "/flashcard/create",
+        {
+          title: `${data.title} Summary`,
+          description: null,
+          flashcards: data.flashcards,
+          user_id: user?.id,
+          isAI: true,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (status == 201) {
         toast.success("Flashcard created.");

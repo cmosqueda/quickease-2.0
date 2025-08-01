@@ -36,13 +36,17 @@ export default function LearnerEditAIFlashcardPage() {
     }
 
     try {
-      const { status } = await _API_INSTANCE.post("/flashcard/create", {
-        title: `${title} Flashcards`,
-        description: description,
-        flashcards: cards,
-        user_id: user?.id,
-        isAI: true,
-      });
+      const { status } = await _API_INSTANCE.post(
+        "/flashcard/create",
+        {
+          title: `${title} Flashcards`,
+          description: description,
+          flashcards: cards,
+          user_id: user?.id,
+          isAI: true,
+        },
+        { timeout: 8 * 60 * 1000 }
+      );
 
       if (status === 201) {
         toast.success("Flashcard saved to library.");

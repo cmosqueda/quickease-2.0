@@ -54,11 +54,17 @@ export default function LearnerCreateNotePage() {
     setIsSaving(true);
 
     try {
-      const res = await _API_INSTANCE.post("/notes/create", {
-        title: title,
-        content: html,
-        user_id: user?.id,
-      });
+      const res = await _API_INSTANCE.post(
+        "/notes/create",
+        {
+          title: title,
+          content: html,
+          user_id: user?.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (res.status == 201) {
         toast.success("Note created.");

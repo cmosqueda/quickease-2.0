@@ -38,7 +38,7 @@ const GenerateQuizzesFromNotes = ({
         {
           note_id: id,
         },
-        { timeout: 5 * 60 * 1000 }
+        { timeout: 8 * 60 * 1000 }
       );
 
       await localStorage.setItem(
@@ -94,7 +94,7 @@ const GenerateQuizzesFromPrompt = ({
         {
           prompt: text,
         },
-        { timeout: 10000 }
+        { timeout: 8 * 60 * 1000 }
       );
 
       await localStorage.setItem(

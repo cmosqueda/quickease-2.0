@@ -32,7 +32,7 @@ export default function GenerateQuizModal({ text }: { text: string }) {
       const { data } = await _API_INSTANCE.post(
         "/ai/generate-quiz-from-prompt",
         { prompt: text },
-        { timeout: 10000 }
+        { timeout: 8 * 60 * 1000 }
       );
 
       await localStorage.setItem(

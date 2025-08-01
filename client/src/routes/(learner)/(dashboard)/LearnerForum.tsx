@@ -175,6 +175,7 @@ export default function LearnerForumPage() {
     queryFn: async ({ pageParam = null }) => {
       const { data: posts } = await _API_INSTANCE.get("/forum/posts/recent", {
         params: { cursor: pageParam, limit: 10 },
+        timeout: 5 * 60 * 1000,
       });
 
       return posts;

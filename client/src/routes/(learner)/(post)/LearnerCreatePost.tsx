@@ -84,7 +84,7 @@ export default function LearnerCreatePostPage() {
           tags: selectedTags,
         },
         {
-          timeout: 10000,
+          timeout: 8 * 60 * 1000,
         }
       );
 

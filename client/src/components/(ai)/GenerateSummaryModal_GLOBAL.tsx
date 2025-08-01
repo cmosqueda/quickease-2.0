@@ -36,7 +36,7 @@ const GenerateFromText = ({
         {
           prompt: text,
         },
-        { timeout: 10000 }
+        { timeout: 8 * 60 * 1000 }
       );
 
       if (status == 200) {

@@ -42,12 +42,18 @@ export default function LearnerCreateFlashcardPage() {
     }
 
     try {
-      const { status } = await _API_INSTANCE.post("flashcard/create", {
-        title: title,
-        description: description,
-        flashcards: cards,
-        user_id: user?.id,
-      });
+      const { status } = await _API_INSTANCE.post(
+        "flashcard/create",
+        {
+          title: title,
+          description: description,
+          flashcards: cards,
+          user_id: user?.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (status == 201) {
         toast.success("Flashcard created.");

@@ -93,6 +93,9 @@ export default function LearnerAnswerQuizPage() {
           quiz_id: data.id,
           duration: duration,
           score: correctCount,
+        },
+        {
+          timeout: 8 * 60 * 1000,
         }
       );
 
