@@ -166,6 +166,11 @@ const router = createBrowserRouter([
           {
             Component: LearnerCreatePostPage,
             index: true,
+            loader: async () => {
+              const data = await loadLearnerResources();
+
+              return data;
+            },
           },
           {
             path: ":id",

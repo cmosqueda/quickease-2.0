@@ -15,12 +15,13 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 export default function LearnerCreatePostPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const data = useLoaderData();
 
   const { user } = useAuth();
   const [tabIndex, setTabIndex] = useState(0);
@@ -255,8 +256,9 @@ export default function LearnerCreatePostPage() {
 
       {/* Notes */}
       <div className="grid grid-cols-2 gap-4">
-        {user &&
-          user.notes
+        {data &&
+          data.notes &&
+          data.notes
             .filter((n) => n.is_public == true)
             .map((note) => {
               const isSelected = selectedNotes.some((n) => n.id === note.id);
@@ -302,8 +304,9 @@ export default function LearnerCreatePostPage() {
 
       {/* Flashcards */}
       <div className="grid grid-cols-2 gap-4">
-        {user &&
-          user.flashcards
+        {data &&
+          data.flashcards &&
+          data.flashcards
             .filter((f) => f.is_public == true)
             .map((flashcard) => {
               const isSelected = selectedFlashcards.some(
@@ -351,8 +354,9 @@ export default function LearnerCreatePostPage() {
 
       {/* Quizzes */}
       <div className="grid grid-cols-2 gap-4">
-        {user &&
-          user.quizzes
+        {data &&
+          data.quizzes &&
+          data.quizzes
             .filter((q) => q.is_public == true)
             .map((quiz) => {
               const isSelected = selectedQuizzes.some((q) => q.id === quiz.id);

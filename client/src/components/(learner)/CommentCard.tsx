@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import _API_INSTANCE from "@/utils/axios";
 import useAuth from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
+import useReport from "@/hooks/useReport";
 
 type CommentCardProps = {
   id: string;
@@ -42,6 +43,7 @@ const CommentCard = ({
   post_id: string;
 }) => {
   const queryClient = useQueryClient();
+  const { setComment, setPost } = useReport();
   const { user } = useAuth();
   const { mutate: vote } = useVoteOnComment();
   const { mutate: reply } = useComment();
@@ -114,6 +116,16 @@ const CommentCard = ({
       setIsEditing(false);
       setReplyBoxVisibility(false);
     }
+  };
+
+  const handleShowCommentReport = () => {
+    setComment(comment);
+
+    const modal = document.getElementById(
+      "report-comment-modal"
+    ) as HTMLDialogElement;
+
+    modal.showModal();
   };
 
   useEffect(() => {
@@ -193,7 +205,7 @@ const CommentCard = ({
                 )}
 
                 <li>
-                  <a>Report</a>
+                  <button onClick={handleShowCommentReport}>Report</button>
                 </li>
               </ul>
             </details>

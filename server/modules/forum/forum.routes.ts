@@ -20,6 +20,7 @@ import {
 } from "./comment.controller";
 
 import { vote_on_post, vote_on_comment } from "./vote.controller";
+import { report_comment, report_post } from "./report.controller";
 
 export default async function forumRoutes(fastify: FastifyInstance) {
   fastify.get("/", {
@@ -100,5 +101,15 @@ export default async function forumRoutes(fastify: FastifyInstance) {
   fastify.get("/search", {
     preHandler: [fastify.authenticate],
     handler: search_posts,
+  });
+
+  fastify.put("/post/report", {
+    preHandler: [fastify.authenticate],
+    handler: report_post,
+  });
+
+  fastify.put("/comment/report", {
+    preHandler: [fastify.authenticate],
+    handler: report_comment,
   });
 }

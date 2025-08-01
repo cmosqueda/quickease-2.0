@@ -10,7 +10,7 @@ import flashcardRoutes from "./modules/flashcard/flashcard.route";
 import quizRoutes from "./modules/quiz/quiz.routes";
 import aiRoutes from "./modules/ai/ai.routes";
 import userRoutes from "./modules/user/user.routes";
-import forumRoutes from "./modules/post/forum.routes";
+import forumRoutes from "./modules/forum/forum.routes";
 import noteRoutes from "./modules/note/note.route";
 import mailRoutes from "./modules/mail/mail.route";
 

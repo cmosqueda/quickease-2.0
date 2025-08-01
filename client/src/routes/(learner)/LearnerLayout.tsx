@@ -1,6 +1,8 @@
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_GLOBAL";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_GLOBAL";
 import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_GLOBAL";
+import ReportCommentModal from "@/components/(learner)/ReportCommentModal";
+import ReportPostModal from "@/components/(learner)/ReportPostModal";
 import Sidebar from "@/components/(learner)/Sidebar";
 import TimerPopup from "@/components/(learner)/TimerPopup";
 import useTimer from "@/hooks/useTimer";
@@ -30,6 +32,8 @@ export default function LearnerLayout() {
       <GenerateSummaryModal />
       <GenerateFlashcardModal notes={data.notes} />
       <GenerateQuizModal notes={data.notes} />
+      <ReportPostModal />
+      <ReportCommentModal />
     </>
   );
 }

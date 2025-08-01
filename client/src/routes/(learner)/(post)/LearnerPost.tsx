@@ -4,6 +4,7 @@ import CommentCard from "@/components/(learner)/CommentCard";
 import PostCard from "@/components/(learner)/PostCard";
 import useAuth from "@/hooks/useAuth";
 import clsx from "clsx";
+import useReport from "@/hooks/useReport";
 
 import { EditorContent, useEditor } from "@tiptap/react";
 import {
@@ -20,6 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useDeletePost } from "@/hooks/useDeletePost";
 
 export default function LearnerPostPage() {
+  const { setPost } = useReport();
   const { user } = useAuth();
   const { mutate: comment } = useComment();
   const { mutate: deletePost } = useDeletePost();
@@ -70,6 +72,16 @@ export default function LearnerPostPage() {
     } catch (error) {
       toast.error("Failed to submit comment.");
     }
+  };
+
+  const handleShowPostReport = () => {
+    setPost(data);
+
+    const modal = document.getElementById(
+      "report-post-modal"
+    ) as HTMLDialogElement;
+
+    modal.showModal();
   };
 
   if (!isFetched) return null;
@@ -133,7 +145,7 @@ export default function LearnerPostPage() {
               )}
 
               <li>
-                <a>Report</a>
+                <button onClick={handleShowPostReport}>Report</button>
               </li>
             </ul>
           </details>

@@ -20,6 +20,7 @@ import { EditorProvider, useEditor } from "@tiptap/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useVote } from "@/hooks/useVote";
 import { Link, NavLink, useNavigate } from "react-router";
+import useReport from "@/hooks/useReport";
 
 const Post = ({
   post,
@@ -45,6 +46,7 @@ const Post = ({
   };
 }) => {
   const { mutate: vote } = useVote();
+  const { setPost } = useReport();
 
   const fullName = `${post?.user?.first_name ?? "Unknown"} ${
     post?.user?.last_name ?? "User"
@@ -59,6 +61,16 @@ const Post = ({
       post_id: post.id,
       vote_type,
     });
+  };
+
+  const handleShowReport = () => {
+    setPost(post);
+
+    const modal = document.getElementById(
+      "report-post-modal"
+    ) as HTMLDialogElement;
+
+    modal.showModal();
   };
 
   return (
@@ -85,7 +97,9 @@ const Post = ({
           </summary>
           <ul className="menu dropdown-content bg-base-100 border border-base-300 rounded-box z-10 w-52 p-2 my-2 shadow-sm">
             <li>
-              <button type="button">Report</button>
+              <button type="button" onClick={handleShowReport}>
+                Report
+              </button>
             </li>
           </ul>
         </details>
