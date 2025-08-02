@@ -17,7 +17,7 @@ export async function test_email(request: FastifyRequest, reply: FastifyReply) {
 
     reply.code(200).send({ mail, message: "Mail sent." });
   } catch (err) {
-    reply.code(400).send({ message: "Mail failed to send." });
+    reply.code(400).send({ message: "Mail failed to send.", errors: err });
   }
 }
 
@@ -30,7 +30,7 @@ export async function request_to_change_email(
 
     reply.code(200).send({ mail, message: "Mail sent." });
   } catch (err) {
-    reply.code(400).send({ message: "Mail failed to send." });
+    reply.code(400).send({ message: "Mail failed to send.", errors: err });
   }
 }
 
@@ -43,6 +43,6 @@ export async function request_to_change_password(
 
     reply.code(200).send({ mail, message: "Mail sent." });
   } catch (err) {
-    reply.code(400).send({ message: "Mail failed to send." });
+    reply.code(400).send({ message: "Mail failed to send.", errors: err });
   }
 }
