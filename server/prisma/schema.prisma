@@ -36,6 +36,7 @@ model User {
   forumReports           Report[]       @relation("ReportsByUser")
   notifications_received Notification[] @relation("UserNotificationsReceived")
   notifications_sent     Notification[] @relation("UserNotificationsSent")
+  UserToken              UserToken[]
 }
 
 model Flashcard {
@@ -245,4 +246,20 @@ model Notification {
   created_at    DateTime         @default(now())
 
   @@index([recipient_id, is_read])
+}
+
+enum TokenType {
+  CHANGE_EMAIL
+  RESET_PASSWORD
+}
+
+model UserToken {
+  id         String    @id @default(uuid())
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String
+  token      String    @unique
+  type       TokenType
+  expires_at DateTime
+  created_at DateTime  @default(now())
+  used       Boolean   @default(false)
 }

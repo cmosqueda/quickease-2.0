@@ -19,6 +19,10 @@ This directory serves the mobile client-side of our study named `QuickEase 2.0`,
 Expo and its other modules, immer, NativeWind, prettier-plugin-tailwindcss, zod, zustand
 ```
 
+## Testing Rules
+
+1. Always use development build for manual testing or unit testing (if allowed)
+
 ## Coding rules
 
 1. Creating function/arrow functions

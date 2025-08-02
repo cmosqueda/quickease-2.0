@@ -43,3 +43,79 @@ export async function registerUser(
     throw new Error("User registration failed");
   }
 }
+
+export async function updateEmail(
+  email: string,
+  token: string,
+  new_email: string
+) {
+  try {
+    const userToken = await db_client.userToken.findFirst({
+      where: {
+        token,
+        type: "CHANGE_EMAIL",
+        used: false,
+        expires_at: { gt: new Date() },
+      },
+      include: { user: true },
+    });
+
+    if (!userToken || userToken.user.email !== email) {
+      throw new Error("Invalid or expired token");
+    }
+
+    await db_client.$transaction([
+      db_client.userToken.update({
+        where: { id: userToken.id },
+        data: { used: true },
+      }),
+      db_client.user.update({
+        where: { id: userToken.user.id },
+        data: { email: new_email },
+      }),
+    ]);
+
+    return true;
+  } catch (err) {
+    throw new Error("Invalid token or failed password update.");
+  }
+}
+
+export async function updatePassword(
+  email: string,
+  token: string,
+  new_password: string
+) {
+  try {
+    const userToken = await db_client.userToken.findFirst({
+      where: {
+        token,
+        type: "RESET_PASSWORD",
+        used: false,
+        expires_at: { gt: new Date() },
+      },
+      include: { user: true },
+    });
+
+    if (!userToken || userToken.user.email !== email) {
+      throw new Error("Invalid or expired token");
+    }
+
+    const hashedNewPassword = await hashPassword(new_password);
+
+    await db_client.$transaction([
+      db_client.userToken.update({
+        where: { id: userToken.id },
+        data: { used: true },
+      }),
+      db_client.user.update({
+        where: { id: userToken.user.id },
+        data: { password: hashedNewPassword },
+      }),
+    ]);
+
+    return true;
+  } catch (err) {
+    throw new Error("Invalid token or failed password update.");
+  }
+}

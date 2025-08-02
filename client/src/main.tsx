@@ -7,6 +7,8 @@ import LandingPage from "./routes/LandingPage";
 import AuthLayout from "./routes/(auth)/AuthLayout";
 import AuthLoginPage from "./routes/(auth)/AuthLogin";
 import AuthRegisterPage from "./routes/(auth)/AuthRegister";
+import AuthChangePasswordPage from "./routes/(auth)/AuthChangePassword";
+import AuthChangeEmailPage from "./routes/(auth)/AuthChangeEmail";
 
 // learner pages
 import LearnerForumPage from "./routes/(learner)/(dashboard)/LearnerForum";
@@ -50,7 +52,12 @@ import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
 import _API_INSTANCE from "./utils/axios";
 import useAuth from "./hooks/useAuth";
 
-import { createBrowserRouter, redirect, RouterProvider } from "react-router";
+import {
+  createBrowserRouter,
+  redirect,
+  RouterProvider,
+  type RouteObject,
+} from "react-router";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -64,7 +71,7 @@ import "../global.css";
 
 const client = new QueryClient();
 
-const LearnerRoutes = {
+const LearnerRoutes: RouteObject = {
   path: "learner",
   Component: LearnerLayout,
   loader: loadUserNotes,
@@ -399,7 +406,7 @@ const LearnerRoutes = {
   ],
 };
 
-const AuthRoutes = {
+const AuthRoutes: RouteObject = {
   path: "auth",
   Component: AuthLayout,
   children: [
@@ -408,6 +415,17 @@ const AuthRoutes = {
       path: "register",
       Component: AuthRegisterPage,
       loader: checkAuthAndRedirect,
+    },
+    {
+      path: "change",
+      loader: checkAuthAndRedirect,
+      children: [
+        { path: "password", Component: AuthChangePasswordPage },
+        {
+          path: "email",
+          Component: AuthChangeEmailPage,
+        },
+      ],
     },
   ],
 };

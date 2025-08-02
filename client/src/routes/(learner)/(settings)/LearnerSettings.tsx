@@ -28,6 +28,7 @@ const AccountSettings = () => {
   const { user, setUser } = useAuth();
 
   const [visibility, setVisibility] = useState(false);
+  const [canChangePassword, setCanChangePassword] = useState(false);
 
   const handleProfileVisibility = async () => {
     const newVisibility = !visibility;
@@ -54,14 +55,24 @@ const AccountSettings = () => {
     }
   };
 
-  const handleRequestMail = async () => {
+  const handleRequestChangePassword = async () => {
+    if (!canChangePassword) {
+      toast.success("You can only change your password after 7 days.");
+      return;
+    }
+
     try {
       const { data } = await _API_INSTANCE.post(
-        "mail/request-change-email",
+        "mail/request-change-password",
         {},
         {
           timeout: 8 * 60 * 1000,
         }
+      );
+
+      localStorage.setItem(
+        "QUICKEASE_CHANGE_PASSWORD_EXPIRATION",
+        new Date().toISOString()
       );
 
       console.log(data);
@@ -75,6 +86,22 @@ const AccountSettings = () => {
   useEffect(() => {
     if (user) setVisibility(user.is_public);
   }, [user]);
+
+  useEffect(() => {
+    const lastChange = localStorage.getItem(
+      "QUICKEASE_CHANGE_PASSWORD_EXPIRATION"
+    );
+
+    if (lastChange) {
+      const lastChangeDate = dayjs(lastChange);
+      const nextEligibleDate = lastChangeDate.add(7, "days");
+      const now = dayjs();
+
+      if (now.isBefore(nextEligibleDate)) {
+        setCanChangePassword(false);
+      }
+    }
+  }, []);
 
   return (
     <div className="flex flex-col gap-2">
@@ -105,7 +132,7 @@ const AccountSettings = () => {
         <p>Change name</p>
       </button>
       <button
-        onClick={handleRequestMail}
+        onClick={handleRequestChangePassword}
         className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all"
       >
         <Lock />

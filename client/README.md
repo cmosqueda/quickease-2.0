@@ -49,7 +49,6 @@ To create and integrate a new custom theme:
 
 2. Avoid modifying CSS `(@/global.css)` unless necessary
    Avoid directly modifying `@/global.css` unless absolutely necessary. The combination of Tailwind CSS and daisyUI is intended to eliminate most needs for custom CSS. Only modify this file for:
-
    - Custom media queries
    - Animations
    - Theme integrations (see above)
@@ -58,33 +57,33 @@ To create and integrate a new custom theme:
 3. Avoid modifying configuration files.
    Please contact your main developer `(Jhon Lloyd Viernes)` and let him handle it instead to avoid any conflicts on configurations to ensure anything's working fine.
 
-```
-   Files to be avoided
-   - @/vite.config.ts
-   - @/tsconfig.json
-   - @/tsconfig.app.json
-   - @/package.json
-   - @/global.css (If you're adding a custom theme, simply follow the steps above on Creating a custom theme section.)
-   - @/index.html
-   - @/eslint.config.js
-```
+   ```
+      Files to be avoided
+      - @/vite.config.ts
+      - @/tsconfig.json
+      - @/tsconfig.app.json
+      - @/package.json
+      - @/global.css (If you're adding a custom theme, simply follow the steps above on Creating a custom theme section.)
+      - @/index.html
+      - @/eslint.config.js
+   ```
 
 4. Please use Prettier or any other document-formatting extension to properly format the code.
    To ensure proper formatting on the client-side code, please install & use Prettier/ESLint plugin on VS Code.
 
-```
-  Plugins/extensions to install & use
+   ```
+   Plugins/extensions to install & use
 
-  - Prettier
-  - ESLint
-  - Trailing Spaces
-  - Indent Rainbow
-  - Color Highlight
-  - Auto Rename Tag
-  - Auto Close Tag
-  - Tailwind CSS IntelliSense
-  - Path IntelliSense
-```
+   - Prettier
+   - ESLint
+   - Trailing Spaces
+   - Indent Rainbow
+   - Color Highlight
+   - Auto Rename Tag
+   - Auto Close Tag
+   - Tailwind CSS IntelliSense
+   - Path IntelliSense
+   ```
 
 5. When creating components, make sure that you move it to a role directory in which it's used or belongs to.
    For easy editing and less hassle.

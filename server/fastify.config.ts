@@ -77,6 +77,7 @@ export default async function initializeFastifyConfig() {
         "https://quickease.online",
         "https://www.quickease.online",
         "https://quickease-eight.vercel.app",
+        "http://localhost:5173", // Vite Development Port
         "http://localhost:19006", // Expo Web Dev
         "http://127.0.0.1:19006", // Alternate localhost
       ];
