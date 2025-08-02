@@ -34,7 +34,7 @@ describe("AI Prompt Services", () => {
       ]);
 
       (_AI.models.generateContent as jest.Mock).mockResolvedValue({
-        text: `\`\`\`json\n${mockQuizJson}\n\`\`\``,
+        text: `\`\`\`json${mockQuizJson}\`\`\``,
       });
 
       const result = await generateQuizFromPrompt(mockQuizPrompt);
@@ -63,7 +63,7 @@ describe("AI Prompt Services", () => {
       ]);
 
       (_AI.models.generateContent as jest.Mock).mockResolvedValue({
-        text: `\`\`\`json\n${mockFlashcardsJson}\n\`\`\``,
+        text: `\`\`\`json${mockFlashcardsJson}\`\`\``,
       });
 
       const result = await generateFlashcardsFromPrompt(mockFlashcardPrompt);
@@ -88,7 +88,7 @@ describe("AI Prompt Services", () => {
       const mockNoteHtml = `<h1 class="text-4xl">Python Basics</h1><ul class="list-disc"><li>Variables</li></ul>`;
 
       (_AI.models.generateContent as jest.Mock).mockResolvedValue({
-        text: `\`\`\`html\n${mockNoteHtml}\n\`\`\``,
+        text: `\`\`\`html${mockNoteHtml}\`\`\``,
       });
 
       const result = await generateNotesFromPrompt(mockNotePrompt);

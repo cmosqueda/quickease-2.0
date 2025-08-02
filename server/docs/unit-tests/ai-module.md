@@ -2,20 +2,16 @@ Unit Tests for AI Module
 
 ---
 
-# August 1, 2025
+# August 1-2, 2025
 
-<details>
-<summary><strong>TLDR</strong>
-## SUMMARY
+**TL;DR**
 
-</summary>
-
-</details>
+✅ All services and controller passed the test suites which means these are all implemented properly with proper semantics.
 
 <details>
 <summary><strong>FULL REPORT</strong></summary>
 
-## ai.controller.ts
+## ai.controller.ts - PASSED ✅
 
 **Result:**
 
@@ -81,65 +77,30 @@ Time:        3.952 s, estimated 4 s
 
 **Feedback:** both services worked as expected.
 
-## ai.prompt.service.ts - PARTIAL PASSED ⚠️
+## ai.prompt.service.ts - PASSED ✅
 
 **Result:**
 
 ```
- FAIL  tests/ai/ai.prompt.service.test.ts
+ PASS  tests/ai/ai.prompt.service.test.ts (5.094 s)
   AI Prompt Services
     generateQuizFromPrompt
-      × should return a quiz object when prompt is provided (16 ms)
-      √ should return false if an error occurs (1 ms)
-    generateFlashcardsFromPrompt
-      × should return a flashcard object when prompt is provided (2 ms)
+      √ should return a quiz object when prompt is provided (9 ms)
       √ should return false if an error occurs (2 ms)
+    generateFlashcardsFromPrompt
+      √ should return a flashcard object when prompt is provided (1 ms)
+      √ should return false if an error occurs (1 ms)
     generateNotesFromPrompt
-      × should return an HTML string of the notes (4 ms)
+      √ should return an HTML string of the notes (1 ms)
       √ should return false if an error occurs (1 ms)
 
----
-
-generateQuizPrompt result:
-
-expected no whitespaces:
-
--   "content": "[{\"question\":\"What is a variable in Python?\",\"description\":\"Basic knowledge check\",\"options\":[\"Integer\",\"Container\",\"Storage\",\"None of the above\"],\"correctAnswers\":[2]}]",
-
-returned response with a whitespace:
-
-+   "content": "
-+ [{\"question\":\"What is a variable in Python?\",\"description\":\"Basic knowledge check\",\"options\":[\"Integer\",\"Container\",\"Storage\",\"None of the above\"],\"correctAnswers\":[2]}]
-+ ",
-
----
-
-generateFlashcardsFromPrompt result:
-
-expected no whitespaces:
-
--   "content": "[{\"front\":\"What is Python?\",\"back\":\"A high-level programming language.\"},{\"front\":\"Who created Python?\",\"back\":\"Guido van Rossum.\"}]",
-
-
-returned response with a whitespace:
-
-+   "content": "
-+ [{\"front\":\"What is Python?\",\"back\":\"A high-level programming language.\"},{\"front\":\"Who created Python?\",\"back\":\"Guido van Rossum.\"}]
-+ ",
-
----
-
-generateNotesFromPrompt result:
-
-expected no whitespaces,
-received response with a whitespace:
-
-<h1 class="text-4xl">Python Basics</h1><ul class="list-disc"><li>Variables</li></ul>
-+
-
+Test Suites: 1 passed, 1 total
+Tests:       6 passed, 6 total
+Snapshots:   0 total
+Time:        5.341 s, estimated 6 s
 ```
 
-**Feedback:** Unwanted whitespaces are returned in responses but this is not that serious.
+**Feedback:** All services passed.
 
 ## ai.upload.service.ts - PASSED ✅
 

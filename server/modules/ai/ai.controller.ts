@@ -1,23 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import {
-  generateQuizFromNote,
-  generateFlashcardFromNote,
-} from "./ai.note.service";
-import {
-  generateQuizFromPrompt,
-  generateFlashcardsFromPrompt,
-  generateNotesFromPrompt,
-} from "./ai.prompt.service";
-import {
-  generateSummaryNotesFromPDF,
-  generateQuizFromPDF,
-  generateFlashcardsFromPDF,
-} from "./ai.upload.service";
+import { generateQuizFromNote, generateFlashcardFromNote } from "./ai.note.service";
+import { generateQuizFromPrompt, generateFlashcardsFromPrompt, generateNotesFromPrompt } from "./ai.prompt.service";
+import { generateSummaryNotesFromPDF, generateQuizFromPDF, generateFlashcardsFromPDF } from "./ai.upload.service";
 
-export async function generate_quiz_from_note(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function generate_quiz_from_note(request: FastifyRequest, reply: FastifyReply) {
   const { note_id } = request.body as {
     note_id: string;
   };
@@ -35,10 +21,7 @@ export async function generate_quiz_from_note(
   }
 }
 
-export async function generate_flashcards_from_note(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function generate_flashcards_from_note(request: FastifyRequest, reply: FastifyReply) {
   const { note_id } = request.body as {
     note_id: string;
   };
@@ -56,10 +39,7 @@ export async function generate_flashcards_from_note(
   }
 }
 
-export async function generate_quiz_from_prompt(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function generate_quiz_from_prompt(request: FastifyRequest, reply: FastifyReply) {
   const { prompt } = request.body as {
     prompt: string;
   };
@@ -77,10 +57,7 @@ export async function generate_quiz_from_prompt(
   }
 }
 
-export async function generate_flashcards_from_prompt(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function generate_flashcards_from_prompt(request: FastifyRequest, reply: FastifyReply) {
   const { prompt } = request.body as {
     prompt: string;
   };
@@ -98,10 +75,7 @@ export async function generate_flashcards_from_prompt(
   }
 }
 
-export async function generate_notes_from_prompt(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function generate_notes_from_prompt(request: FastifyRequest, reply: FastifyReply) {
   const { prompt } = request.body as {
     prompt: string;
   };
@@ -119,10 +93,7 @@ export async function generate_notes_from_prompt(
   }
 }
 
-export async function generate_notes_from_pdf(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function generate_notes_from_pdf(request: FastifyRequest, reply: FastifyReply) {
   const pdf = await request.file();
 
   const buffer = await pdf?.toBuffer();
@@ -140,10 +111,7 @@ export async function generate_notes_from_pdf(
   }
 }
 
-export async function generate_quiz_from_pdf(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function generate_quiz_from_pdf(request: FastifyRequest, reply: FastifyReply) {
   const pdf = await request.file();
 
   const buffer = await pdf?.toBuffer();
@@ -161,10 +129,7 @@ export async function generate_quiz_from_pdf(
   }
 }
 
-export async function generate_flashcards_from_pdf(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function generate_flashcards_from_pdf(request: FastifyRequest, reply: FastifyReply) {
   const pdf = await request.file();
 
   const buffer = await pdf?.toBuffer();
