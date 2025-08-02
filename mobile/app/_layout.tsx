@@ -3,6 +3,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Gabarito_400Regular,
   Gabarito_500Medium,
@@ -14,6 +15,8 @@ import {
 } from "@expo-google-fonts/gabarito";
 
 import "../globals.css";
+
+const client = new QueryClient();
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,9 +41,11 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <StatusBar style="auto" />
-    </Stack>
+    <QueryClientProvider client={client}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <StatusBar style="auto" />
+      </Stack>
+    </QueryClientProvider>
   );
 }

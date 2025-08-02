@@ -1,50 +1,90 @@
-# Welcome to your Expo app 👋
+# QuickEase 2.0 (Mobile)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This directory serves the mobile client-side of our study named `QuickEase 2.0`, rewritten from scratch using Expo with other libraries.
 
-## Get started
+## FAQs
 
-1. Install dependencies
+1. Why did you rewrite the entire mobile front-end?
+   Kay kapoy mu-basa og laing source code nga walay halos documentations and di ko ganahan sa design atong front-end sa 1.0 version.
 
-   ```bash
-   npm install
-   ```
+2. When trying to run the `npm i` or `npm install` command, it throws an error that says something about package dependencies conflict on their versions.
+   Solution is to install the modules by adding the `--force-legacy-deps` parameter, if it still won't install then contact the developer `(Jhon Lloyd Viernes)`
 
-2. Start the app
+3. .env file?
+   `EXPO_PUBLIC_SERVER_API_URL: string`
 
-   ```bash
-   npx expo start
-   ```
+## Libraries Used
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+Expo and its other modules, immer, NativeWind, prettier-plugin-tailwindcss, zod, zustand
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Coding rules
 
-## Learn more
+1. Creating function/arrow functions
+   Always define types for function arguments to ensure proper data typing and use snake_case.
 
-To learn more about developing your project with Expo, look at the following resources:
+   ```
+   Example:
+   type A = {
+   user: string;
+   created_at: string | Date;
+   }
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+   function createA({user} : A) {}
+   function createA({user, created_at} : {user: string, created_at: string | Date}) {}
 
-## Join the community
+   const createB = ({user} : A) => {}
+   const createB = ({user, created_at} : {user: string, created_at: string | Date}) => {}
+   ```
 
-Join our community of developers creating universal apps.
+2. Avoid modifying CSS `(@/globals.css)` unless necessary
+   Avoid directly modifying `@/globals.css` unless absolutely necessary. The use of NativeWind is intended to never use `stylesheet`. Only modify this file for:
+   - Custom media queries
+   - Animations
+   - Theme integrations (see above)
+     If you're unfamiliar with Tailwind CSS or daisyUI, please refer to their documentation before attempting to write custom styles.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+3. Avoid modifying configuration files.
+   Please contact your main developer `(Jhon Lloyd Viernes)` and let him handle it instead to avoid any conflicts on configurations to ensure anything's working fine.
+
+   ```
+      Files to be avoided
+      - @/app.json
+      - @/babel.config.js
+      - @/eslint.config.js
+      - @/metro.config.js
+      - @/tailwind.config.js
+      - @/tsconfig.json
+      - @/tsconfig.app.json
+      - @/package.json
+   ```
+
+4. Please use Prettier or any other document-formatting extension to properly format the code.
+   To ensure proper formatting on the client-side code, please install & use Prettier/ESLint plugin on VS Code.
+
+   ```
+   Plugins/extensions to install & use
+
+   - Prettier
+   - ESLint
+   - Trailing Spaces
+   - Indent Rainbow
+   - Color Highlight
+   - Auto Rename Tag
+   - Auto Close Tag
+   - Tailwind CSS IntelliSense
+   - Path IntelliSense
+   ```
+
+5. When creating components, make sure that you move it to a role directory in which it's used or belongs to.
+   For easy editing and less hassle.
+
+   ```
+   Example:
+   There are two sidebar, one is for the (admin) and (user).
+   If you're creating a component for the Users, then make sure the said component is at the @/components/(user) folder.
+   ```
+
+6. When creating global state managements using Zustand, make sure it always uses `persist` and `immer` plugin.
+   This is necessary. Especially for nested arrays.
