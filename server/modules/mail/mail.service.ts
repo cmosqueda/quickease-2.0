@@ -294,7 +294,7 @@ export async function requestChangePassword(user_id: string) {
     `;
 
   let options = {
-    from: process.env.NODEMAILER_GMAIL_USER,
+    from: `"QuickEase" <${process.env.NODEMAILER_GMAIL_USER}>`,
     to: user?.email,
     subject: "Request to change password",
     html: body,
