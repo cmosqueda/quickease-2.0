@@ -4,24 +4,6 @@ import dayjs from "dayjs";
 
 import { randomBytes } from "crypto";
 
-async function createToken(
-  userId: string,
-  type: "CHANGE_EMAIL" | "RESET_PASSWORD"
-) {
-  const token = randomBytes(32).toString("hex");
-
-  await prisma.userToken.create({
-    data: {
-      user_id: userId,
-      token,
-      type,
-      expires_at: addHours(new Date(), 1), // token valid for 1 hour
-    },
-  });
-
-  return token;
-}
-
 export async function testEmail(to: string, subject: string, body: string) {
   let options = {
     from: process.env.NODEMAILER_GMAIL_USER,
