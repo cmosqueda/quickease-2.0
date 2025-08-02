@@ -28,7 +28,7 @@ const AccountSettings = () => {
   const { user, setUser } = useAuth();
 
   const [visibility, setVisibility] = useState(false);
-  const [canChangePassword, setCanChangePassword] = useState(false);
+  const [canChangePassword, setCanChangePassword] = useState(true);
 
   const handleProfileVisibility = async () => {
     const newVisibility = !visibility;
