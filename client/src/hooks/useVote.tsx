@@ -23,10 +23,16 @@ export function useVote(keysToInvalidate: string[] = ["recent-posts"]) {
     }
 
     try {
-      const { status, data } = await _API_INSTANCE.post("/forum/post/vote", {
-        post_id,
-        vote_type,
-      });
+      const { status, data } = await _API_INSTANCE.post(
+        "/forum/post/vote",
+        {
+          post_id,
+          vote_type,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (status !== 200) throw new Error("Non-200 response from server.");
       return data;
@@ -61,7 +67,10 @@ export function useVoteOnComment() {
     try {
       const { status, data } = await _API_INSTANCE.post(
         "/forum/post/comment/vote",
-        { comment_id, vote_type }
+        { comment_id, vote_type },
+        {
+          timeout: 8 * 60 * 1000,
+        }
       );
 
       if (status !== 200) throw new Error("Non-200 response from server.");

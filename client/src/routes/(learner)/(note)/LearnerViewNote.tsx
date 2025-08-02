@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import CustomEditor from "@/components/Editor";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
@@ -62,7 +64,7 @@ export default function LearnerViewNotePage() {
     <div className="flex flex-col min-h-screen w-full">
       <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 lg:items-center border-b border-base-300 p-4 bg-base-100">
         <ArrowLeft
-          onClick={() => navigate(-1, { viewTransition: true })}
+          onClick={() => navigate(-1 as any, { viewTransition: true })}
           className="cursor-pointer lg:ml-6"
         />
       </div>

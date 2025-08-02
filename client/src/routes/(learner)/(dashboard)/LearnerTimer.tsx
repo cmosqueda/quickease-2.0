@@ -88,7 +88,7 @@ export default function LearnerTimerPage() {
                 className="input w-full"
                 placeholder="Type here"
                 value={studyMinutes}
-                onChange={(e) => setStudyMinutes(e.target.value)}
+                onChange={(e) => setStudyMinutes(parseInt(e.target.value))}
               />
               <p className="label">Minutes</p>
             </fieldset>
@@ -108,7 +108,7 @@ export default function LearnerTimerPage() {
                 className="input w-full"
                 placeholder="Type here"
                 value={shortBreakMinutes}
-                onChange={(e) => setShortBreakMinutes(e.target.value)}
+                onChange={(e) => setShortBreakMinutes(parseInt(e.target.value))}
               />
               <p className="label">Minutes</p>
             </fieldset>

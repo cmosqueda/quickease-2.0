@@ -2,7 +2,7 @@
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import dayjs from "dayjs";
 
-import { ArrowLeft, Trash, TriangleAlert } from "lucide-react";
+import { ArrowLeft, TriangleAlert } from "lucide-react";
 import { Link, useLoaderData, useNavigate } from "react-router";
 import { EditorProvider } from "@tiptap/react";
 
@@ -29,7 +29,7 @@ export default function LearnerSearchPage() {
     return (
       <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
         <ArrowLeft
-          onClick={() => navigate(-1, { viewTransition: false })}
+          onClick={() => navigate(-1 as any, { viewTransition: false })}
           className="cursor-pointer"
         />
         <div>
@@ -50,7 +50,7 @@ export default function LearnerSearchPage() {
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
       <ArrowLeft
-        onClick={() => navigate(-1, { viewTransition: false })}
+        onClick={() => navigate(-1 as any, { viewTransition: false })}
         className="cursor-pointer"
       />
       <div>
@@ -98,7 +98,7 @@ export default function LearnerSearchPage() {
 
             {post.tags.length > 0 && (
               <div className="flex flex-row flex-wrap gap-2">
-                {post.tags.map((tag) => (
+                {post.tags.map((tag: any) => (
                   <div key={tag.tag.tag_name} className="badge badge-neutral">
                     {tag.tag.tag_name}
                   </div>

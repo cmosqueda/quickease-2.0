@@ -98,18 +98,26 @@ export default function LearnerEditQuizPage() {
     setIsSubmitting(true);
 
     try {
-      const { status } = await _API_INSTANCE.put(`/quiz/update`, {
-        title: quizTitle.trim(),
-        description: quizDescription.trim(),
-        quiz_content: questions,
-        is_randomized: isRandomized,
-        timed_quiz: isTimedQuiz ? totalSeconds : 0,
-        quiz_id: data.id,
-      });
+      const { status } = await _API_INSTANCE.put(
+        `/quiz/update`,
+        {
+          title: quizTitle.trim(),
+          description: quizDescription.trim(),
+          quiz_content: questions,
+          is_randomized: isRandomized,
+          timed_quiz: isTimedQuiz ? totalSeconds : 0,
+          quiz_id: data.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (status === 200) {
         toast.success("Quiz updated.");
-        return navigate('/learner/library?tab=quizzes', { viewTransition: true });
+        return navigate("/learner/library?tab=quizzes", {
+          viewTransition: true,
+        });
       }
     } catch (err) {
       toast.error("Error updating quiz.");
@@ -124,7 +132,9 @@ export default function LearnerEditQuizPage() {
       <div className="flex justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate('/learner/library?tab=quizzes', { viewTransition: true })}
+          onClick={() =>
+            navigate("/learner/library?tab=quizzes", { viewTransition: true })
+          }
         />
         <button
           className="btn btn-primary flex gap-2"

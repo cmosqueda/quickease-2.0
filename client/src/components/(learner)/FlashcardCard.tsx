@@ -1,12 +1,11 @@
 import dayjs from "dayjs";
 import clsx from "clsx";
-
-import { NavLink } from "react-router";
+import { NavLink, type NavLinkProps } from "react-router";
 
 type FlashcardCardProps = {
   title: string;
   term?: number;
-  date?: string;
+  date?: string | Date;
   link?: string;
   onClick?: () => void;
   className?: string;
@@ -25,8 +24,9 @@ export default function FlashcardCard({
       ? dayjs(date).format("MMMM DD, YYYY")
       : "Unknown date";
 
-  const Wrapper = link ? NavLink : "div";
-  const wrapperProps = link
+  const Wrapper: React.ElementType = link ? NavLink : "div";
+  const wrapperProps: Partial<NavLinkProps> &
+    React.HTMLAttributes<HTMLElement> = link
     ? { to: `/learner/flashcards/${link}` }
     : { onClick };
 
@@ -44,7 +44,7 @@ export default function FlashcardCard({
         </h1>
       </div>
       <p className="text-sm text-gray-500">
-        {term} Terms / {formattedDate}
+        {term} Term{term !== 1 && "s"} / {formattedDate}
       </p>
     </Wrapper>
   );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FlippableCard from "@/components/(learner)/FlippableCard";
 import _API_INSTANCE from "@/utils/axios";
 
@@ -33,7 +34,7 @@ export default function LearnerFlashcardPage() {
           viewTransition: true,
         });
       }
-    } catch (err) {
+    } catch {
       toast.error("Error deleting flashcard.");
     }
   };
@@ -42,12 +43,18 @@ export default function LearnerFlashcardPage() {
     setVisibility((prev: boolean) => !prev);
 
     try {
-      await _API_INSTANCE.put("/flashcard/toggle-visibility", {
-        visibility: visibility,
-        flashcard_id: data.id,
-      });
+      await _API_INSTANCE.put(
+        "/flashcard/toggle-visibility",
+        {
+          visibility: visibility,
+          flashcard_id: data.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
       toast.success("Flashcard visibility updated.");
-    } catch (err) {
+    } catch {
       setVisibility((prev: boolean) => !prev);
       toast.error("Error updating flashcard visibility.");
     }

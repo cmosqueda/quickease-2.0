@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FlippableCard from "@/components/(learner)/FlippableCard";
 import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "@/utils/axios";
@@ -41,21 +42,31 @@ export default function LearnerCreateFlashcardPage() {
       return;
     }
 
+    setIsSaving(true);
+
     try {
-      const { status } = await _API_INSTANCE.post("flashcard/create", {
-        title: title,
-        description: description,
-        flashcards: cards,
-        user_id: user?.id,
-      });
+      const { status } = await _API_INSTANCE.post(
+        "flashcard/create",
+        {
+          title: title,
+          description: description,
+          flashcards: cards,
+          user_id: user?.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (status == 201) {
         toast.success("Flashcard created.");
         navigate("/learner/library?tab=flashcards", { viewTransition: true });
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(`Error creating flashcard: ${err.message}`);
       return;
+    } finally {
+      setIsSaving(false);
     }
   };
 

@@ -32,7 +32,7 @@ export default function GenerateFlashcardModal({ text }: { text: string }) {
       const { data } = await _API_INSTANCE.post(
         "/ai/generate-flashcards-from-prompt",
         { prompt: text },
-        { timeout: 10000 }
+        { timeout: 8 * 60 * 1000 }
       );
 
       await localStorage.setItem(
@@ -40,7 +40,11 @@ export default function GenerateFlashcardModal({ text }: { text: string }) {
         JSON.stringify(data)
       );
 
-      document.getElementById("generate-flashcard-modal").close();
+      const modal = document.getElementById(
+        "generate-flashcard-modal"
+      ) as HTMLDialogElement;
+      
+      modal.close();
       navigate("/learner/flashcards/ai");
     } catch (err) {
       toast.error("Error generating content.");

@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { persist } from "zustand/middleware";
 
-type AuthUserRecord = {
+export type AuthUserRecord = {
   id: string;
   username: string;
   first_name: string;

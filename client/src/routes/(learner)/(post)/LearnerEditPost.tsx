@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
 import dayjs from "dayjs";
@@ -72,7 +73,7 @@ export default function LearnerEditPostPage() {
       <div className="flex items-center justify-between">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate(-1, { viewTransition: true })}
+          onClick={() => navigate(-1 as any, { viewTransition: true })}
         />
       </div>
       <div className="flex flex-row items-center gap-3">

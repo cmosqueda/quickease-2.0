@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import _API_INSTANCE from "@/utils/axios";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -29,7 +31,9 @@ export function useComment() {
         ? { comment_id: parent_comment_id, post_id, body }
         : { post_id, body };
 
-      const { data, status } = await _API_INSTANCE.post(endpoint, payload);
+      const { data, status } = await _API_INSTANCE.post(endpoint, payload, {
+        timeout: 8 * 60 * 1000,
+      });
 
       if (status !== 200) {
         throw new Error("Non-200 response from server.");

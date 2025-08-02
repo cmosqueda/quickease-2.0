@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import useAuth from "@/hooks/useAuth";
 import TermsAndPrivacyPolicyModal from "../../components/TermsAndPrivacyPolicyModal";
 import _API_INSTANCE from "@/utils/axios";
@@ -35,7 +36,7 @@ export default function AuthLoginPage() {
         setUser(data);
         navigate("/admin", { viewTransition: true });
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err.response.data.message);
       throw err;
     } finally {
@@ -104,9 +105,13 @@ export default function AuthLoginPage() {
         </p>
         <button
           className="transition-all delay-0 duration-300 hover:text-accent fixed bottom-8 cursor-pointer"
-          onClick={() =>
-            document.getElementById("terms-of-use-modal").showModal()
-          }
+          onClick={() => {
+            const modal = document.getElementById(
+              "terms-of-use-modal"
+            ) as HTMLDialogElement;
+
+            modal.showModal();
+          }}
         >
           Terms of use & Privacy policy
         </button>

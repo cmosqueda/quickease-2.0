@@ -32,7 +32,7 @@ export default function GenerateQuizModal({ text }: { text: string }) {
       const { data } = await _API_INSTANCE.post(
         "/ai/generate-quiz-from-prompt",
         { prompt: text },
-        { timeout: 10000 }
+        { timeout: 8 * 60 * 1000 }
       );
 
       await localStorage.setItem(
@@ -40,7 +40,11 @@ export default function GenerateQuizModal({ text }: { text: string }) {
         JSON.stringify(data)
       );
 
-      document.getElementById("generate-quiz-modal").close();
+      const modal = document.getElementById(
+        "generate-quiz-modal"
+      ) as HTMLDialogElement;
+
+      modal.close();
       navigate("/learner/quizzes/ai");
     } catch (err) {
       toast.error("Error generating content.");

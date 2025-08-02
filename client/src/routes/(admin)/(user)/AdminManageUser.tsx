@@ -5,10 +5,9 @@ import {
   EllipsisVertical,
   GalleryVertical,
 } from "lucide-react";
-import { useLoaderData, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 export default function AdminManageUserPage() {
-  const data = useLoaderData();
   const navigate = useNavigate();
 
   return (

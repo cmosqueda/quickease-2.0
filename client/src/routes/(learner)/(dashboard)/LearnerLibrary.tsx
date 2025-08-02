@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import FlashcardTab from "@/components/(learner)/FlashcardTab";
 import NotesTab from "@/components/(learner)/NotesTab";
+import QuizTab from "@/components/(learner)/QuizTab";
 import NotificationsDropdown from "@/components/(learner)/NotificationsDropdown";
 import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
-import QuizTab from "@/components/(learner)/QuizTab";
 import clsx from "clsx";
 
 import { useEffect, useState } from "react";

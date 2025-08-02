@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import TermsAndPrivacyPolicyModal from "../../components/TermsAndPrivacyPolicyModal";
 import _API_INSTANCE from "@/utils/axios";
 
@@ -15,7 +16,7 @@ export default function AuthRegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+  const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(false);
 
   const [isRegistering, setIsRegistering] = useState(false);
 
@@ -74,7 +75,7 @@ export default function AuthRegisterPage() {
       if (response.status == 201) {
         navigate("/learner", { viewTransition: true });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
       toast.error(
         err.response.data.message || "Error registering, please try again."
@@ -155,16 +156,20 @@ export default function AuthRegisterPage() {
         <label className="label">
           <input
             type="checkbox"
-            value={isTermsAccepted}
+            checked={isTermsAccepted}
             onChange={() => setIsTermsAccepted((prev) => !prev)}
             className="checkbox"
           />
           I accept the{" "}
           <button
             className="text--500 cursor-pointer"
-            onClick={() =>
-              document.getElementById("terms-of-use-modal").showModal()
-            }
+            onClick={() => {
+              const modal = document.getElementById(
+                "terms-of-use-modal"
+              ) as HTMLDialogElement;
+
+              modal.showModal();
+            }}
           >
             terms of use and privacy policy
           </button>

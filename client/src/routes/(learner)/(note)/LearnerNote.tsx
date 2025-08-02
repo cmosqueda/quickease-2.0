@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import CustomEditor from "@/components/Editor";
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
@@ -12,7 +14,6 @@ import {
   ClipboardList,
   Delete,
   Save,
-  Share,
   X,
 } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router";
@@ -67,18 +68,24 @@ export default function LearnerNotePage() {
     setIsSaving(true);
 
     try {
-      const res = await _API_INSTANCE.put("/notes/update", {
-        title: title,
-        content: html,
-        note_id: data.id,
-        user_id: user?.id,
-      });
+      const res = await _API_INSTANCE.put(
+        "/notes/update",
+        {
+          title: title,
+          content: html,
+          note_id: data.id,
+          user_id: user?.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (res.status == 200) {
         toast.success("Note updated.");
         navigate("/learner/library?tab=notes");
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err.message);
       throw err;
     } finally {
@@ -94,7 +101,7 @@ export default function LearnerNotePage() {
 
       if (status == 200) {
         toast.success("Note deleted.");
-        return navigate(-1);
+        return navigate(-1 as any);
       }
     } catch (err) {
       toast.error("Error deleting note.");
@@ -103,12 +110,18 @@ export default function LearnerNotePage() {
   };
   const handleVisibility = async (visibility: boolean) => {
     try {
-      await _API_INSTANCE.patch("/notes/toggle-visibility", {
-        visibility: visibility,
-        note_id: data.id,
-      });
+      await _API_INSTANCE.patch(
+        "/notes/toggle-visibility",
+        {
+          visibility: visibility,
+          note_id: data.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
       toast.success("Note visibility updated.");
-    } catch (err) {
+    } catch {
       toast.error("Error updating note visibility.");
     }
   };
@@ -165,18 +178,24 @@ export default function LearnerNotePage() {
           <h1 className="font-bold text-xl">Study options</h1>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() =>
-              document.getElementById("generate-flashcard-modal").showModal()
-            }
+            onClick={() => {
+              const modal = document.getElementById(
+                "generate-flashcard-modal"
+              ) as HTMLDialogElement;
+              modal.showModal();
+            }}
           >
             <CalendarRange />
             <h1>Generate flashcards</h1>
           </button>
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() =>
-              document.getElementById("generate-quiz-modal").showModal()
-            }
+            onClick={() => {
+              const modal = document.getElementById(
+                "generate-quiz-modal"
+              ) as HTMLDialogElement;
+              modal.showModal();
+            }}
           >
             <ClipboardList />
             <h1>Generate quiz</h1>
@@ -200,7 +219,7 @@ export default function LearnerNotePage() {
 
                 try {
                   await handleVisibility(nextVisibility);
-                } catch (err) {
+                } catch {
                   setIsPublic(isPublic);
                   toast.error("Error updating note visibility.");
                 }

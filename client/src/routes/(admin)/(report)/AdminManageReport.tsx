@@ -1,8 +1,7 @@
 import { ArrowLeft, Clock, EllipsisVertical, Megaphone } from "lucide-react";
-import { useLoaderData, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 export default function AdminManagePostPage() {
-  const data = useLoaderData();
   const navigate = useNavigate();
 
   return (

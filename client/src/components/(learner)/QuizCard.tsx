@@ -2,14 +2,23 @@ import dayjs from "dayjs";
 import clsx from "clsx";
 
 import { NavLink } from "react-router";
-
-type QuizCardProps = {
+type BaseProps = {
   title: string;
   term: number;
   date: string;
-  link?: string;
-  onClick?: () => void;
 };
+
+type LinkProps = {
+  link: string;
+  onClick?: never;
+};
+
+type ClickableDivProps = {
+  link?: undefined;
+  onClick: () => void;
+};
+
+type QuizCardProps = BaseProps & (LinkProps | ClickableDivProps);
 
 export default function QuizCard({
   title,
@@ -18,19 +27,34 @@ export default function QuizCard({
   link,
   onClick,
 }: QuizCardProps) {
-  const Wrapper = link ? NavLink : "div";
-  const wrapperProps = link ? { to: `/learner/quizzes/${link}` } : { onClick };
-
   const formattedDate = dayjs(date).isValid()
     ? dayjs(date).format("MMMM DD, YYYY")
     : "Unknown date";
 
+  if (link) {
+    return (
+      <NavLink
+        to={`/learner/quizzes/${link}`}
+        className={clsx(
+          "flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 cursor-pointer"
+        )}
+      >
+        <div className="flex flex-row justify-between items-center">
+          <h1 className="font-bold text-xl truncate">{title}</h1>
+        </div>
+        <p className="text-sm text-gray-500">
+          {term} item{term !== 1 && "s"} / {formattedDate}
+        </p>
+      </NavLink>
+    );
+  }
+
   return (
-    <Wrapper
-      {...wrapperProps}
+    <div
+      onClick={onClick}
       className={clsx(
         "flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 cursor-pointer",
-        !link && onClick && "hover:bg-base-200 transition"
+        "hover:bg-base-200 transition"
       )}
     >
       <div className="flex flex-row justify-between items-center">
@@ -39,6 +63,6 @@ export default function QuizCard({
       <p className="text-sm text-gray-500">
         {term} item{term !== 1 && "s"} / {formattedDate}
       </p>
-    </Wrapper>
+    </div>
   );
 }

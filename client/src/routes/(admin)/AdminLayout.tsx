@@ -1,9 +1,8 @@
 import Sidebar from "@/components/(admin)/Sidebar";
-import { Outlet, useLoaderData, useLocation } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import { Toaster } from "sonner";
 
 export default function AdminLayout() {
-  const data = useLoaderData();
   const { pathname } = useLocation();
 
   return (

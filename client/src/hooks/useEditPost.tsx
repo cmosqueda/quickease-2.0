@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import _API_INSTANCE from "@/utils/axios";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -16,11 +17,17 @@ export function useEditPost() {
     post_id: string;
   }) => {
     try {
-      const { status, data } = await _API_INSTANCE.put("/forum/post/update", {
-        body,
-        title,
-        post_id,
-      });
+      const { status, data } = await _API_INSTANCE.put(
+        "/forum/post/update",
+        {
+          body,
+          title,
+          post_id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (status !== 200) {
         throw new Error("Non-200 response from server.");

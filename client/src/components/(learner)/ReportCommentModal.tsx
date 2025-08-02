@@ -17,14 +17,22 @@ export default function ReportCommentModal() {
     setIsSubmitting(true);
 
     try {
-      await _API_INSTANCE.put("/forum/comment/report", {
-        description: description,
-        comment_id: comment?.id,
-      });
+      await _API_INSTANCE.put(
+        "/forum/comment/report",
+        {
+          description: description,
+          comment_id: comment?.id,
+        },
+        { timeout: 8 * 60 * 1000 }
+      );
 
-      document.getElementById("report-comment-modal").close();
+      const modal = document.getElementById(
+        "report-comment-modal"
+      ) as HTMLDialogElement;
+
+      modal.close();
       toast.success("Comment reported.");
-    } catch (err) {
+    } catch {
       toast.error("Error reporting comment.");
     } finally {
       setIsSubmitting(false);
@@ -38,9 +46,13 @@ export default function ReportCommentModal() {
           <div className="flex flex-row gap-4 items-center">
             <X
               className="cursor-pointer"
-              onClick={() =>
-                document.getElementById("report-post-modal").close()
-              }
+              onClick={() => {
+                const modal = document.getElementById(
+                  "report-comment-modal"
+                ) as HTMLDialogElement;
+
+                modal.close();
+              }}
             />
             <h1 className="font-bold text-2xl">
               Why are you reporting this comment?
@@ -53,7 +65,10 @@ export default function ReportCommentModal() {
                 content={comment.comment_body}
                 extensions={_TIPTAP_EXTENSIONS}
                 editable={false}
-                editorContainerProps={{className: "p-4 bg-base-200 rounded-xl overflow-ellipsis max-h-[24rem]"}}
+                editorContainerProps={{
+                  className:
+                    "p-4 bg-base-200 rounded-xl overflow-ellipsis max-h-[24rem]",
+                }}
               />
             )}
           </div>

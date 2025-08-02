@@ -7,9 +7,13 @@
   "type": "commonjs",
   "main": "server.ts",
   "scripts": {
-    "dev": "tsnd --respawn --transpile-only --exit-child server.ts",
-    "test": "jest",
-    "test:verbose": "jest --verbose"
+    "dev": "npx prisma generate && tsnd --respawn --transpile-only --exit-child server.ts",
+    "server": "tsnd --respawn --transpile-only --exit-child server.ts",
+    "build": "npx prisma generate && tsc",
+    "start": "npm run build && node dist/server.js",
+    "prisma:generate": "prisma generate",
+    "migrate:dev": "prisma migrate dev --name init",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",

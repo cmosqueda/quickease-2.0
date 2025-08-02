@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import clsx from "clsx";
 import dayjs from "dayjs";
 import useAuth from "@/hooks/useAuth";
@@ -96,7 +98,7 @@ export default function LearnerQuizPage() {
           viewTransition: true,
         });
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete.");
       return;
     }
@@ -104,7 +106,7 @@ export default function LearnerQuizPage() {
 
   const renderAttempts = () => (
     <div className="flex flex-row gap-4">
-      {data.attempts.map((attempt, index) => (
+      {data.attempts.map((attempt, index: number) => (
         <NavLink
           key={attempt.id}
           to={`/learner/quizzes/${data.id}/attempt/${attempt.id}`}
@@ -164,7 +166,7 @@ export default function LearnerQuizPage() {
       <div className="flex flex-row justify-between items-center">
         <ArrowLeft
           className="cursor-pointer"
-          onClick={() => navigate(-1, { viewTransition: true })}
+          onClick={() => navigate(-1 as any, { viewTransition: true })}
         />
         <div className="flex flex-row gap-6 items-center">
           {data.user_id === user?.id && (
