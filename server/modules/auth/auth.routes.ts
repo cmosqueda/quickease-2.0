@@ -25,7 +25,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
     handler: update_password,
   });
 
-  fastify.put("/update-password", {
+  fastify.put("/update-email", {
     handler: update_email,
   });
 }
