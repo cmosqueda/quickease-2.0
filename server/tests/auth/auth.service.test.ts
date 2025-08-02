@@ -2,7 +2,6 @@ import db_client from "../../utils/client";
 import { hashPassword } from "../../utils/hash";
 import bcrypt from "bcrypt";
 import { loginUser, registerUser } from "../../modules/auth/auth.service";
-import { Prisma } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 jest.mock("../../utils/client", () => ({
