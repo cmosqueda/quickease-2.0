@@ -1,4 +1,4 @@
-interface Theme {
+export interface Theme {
   name: string;
   prefersdark: boolean;
   colorscheme: "light" | "dark";
@@ -37,7 +37,7 @@ interface Theme {
   border: string;
 }
 
-interface Themes {
+export interface Themes {
   light: Theme;
   dark: Theme;
   cupcake: Theme;

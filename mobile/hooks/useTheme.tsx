@@ -1,24 +1,30 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import _THEMES, { Theme } from "@/types/theme/Themes";
+
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { persist, createJSONStorage } from "zustand/middleware";
 
-type useTheme = {
-  currentScheme?: "light" | "dark";
-  toggleColorScheme: () => void;
+type _useTheme = {
+  currentScheme?: Theme;
+  setCurrentScheme: (theme: Theme) => void;
 };
 
-const useTheme = create<useTheme>()(
-  immer((set, get) => ({
-    currentScheme: undefined,
-    toggleColorScheme: () => {
-      set((state) => {
-        if (state.currentScheme === "light") {
-          state.currentScheme = "light";
-        } else {
-          state.currentScheme = "dark";
-        }
-      });
-    },
-  }))
+const useTheme = create<_useTheme>()(
+  persist(
+    immer((set) => ({
+      currentScheme: _THEMES.light,
+      setCurrentScheme: (theme: Theme) => {
+        set((state) => {
+          state.currentScheme = theme;
+        });
+      },
+    })),
+    {
+      name: "theme-storage",
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
 );
 
 export default useTheme;
