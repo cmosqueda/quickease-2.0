@@ -155,21 +155,23 @@ export default function LearnerPostPage() {
         </div>
       </div>
       <PostCard data={postData} />
-      <div className="flex flex-col gap-4 relative">
-        <EditorContent
-          editor={editor}
-          className={clsx(
-            "prose bg-base-100 rounded-xl p-4 border focus:outline-none outline-none border-transparent focus:border-transparent focus:ring-0"
-          )}
-          placeholder="Comment"
-        />
-        <button
-          className="btn btn-success w-fit self-end absolute right-2 bottom-2"
-          onClick={handleSubmitComment}
-        >
-          <p>Comment</p>
-        </button>
-      </div>
+      {user?.is_verified && (
+        <div className="flex flex-col gap-4 relative">
+          <EditorContent
+            editor={editor}
+            className={clsx(
+              "prose bg-base-100 rounded-xl p-4 border focus:outline-none outline-none border-transparent focus:border-transparent focus:ring-0"
+            )}
+            placeholder="Comment"
+          />
+          <button
+            className="btn btn-success w-fit self-end absolute right-2 bottom-2"
+            onClick={handleSubmitComment}
+          >
+            <p>Comment</p>
+          </button>
+        </div>
+      )}
       <div className="flex flex-col gap-2">
         {postData?.comments?.map((comment: any) => (
           <CommentCard comment={comment} key={comment.id} post_id={data?.id} />

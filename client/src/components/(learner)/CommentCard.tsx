@@ -44,7 +44,7 @@ const CommentCard = ({
   post_id: string;
 }) => {
   const queryClient = useQueryClient();
-  const { setComment, setPost } = useReport();
+  const { setComment } = useReport();
   const { user } = useAuth();
   const { mutate: vote } = useVoteOnComment();
   const { mutate: reply } = useComment();
@@ -181,13 +181,16 @@ const CommentCard = ({
                   onClick={() => handlePostVote(-1)}
                 />
               </div>
-              <button
-                onClick={() => setReplyBoxVisibility((prev) => !prev)}
-                className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300"
-              >
-                <MessageCircle />
-                <p>{comment?.replies?.length ?? 0}</p>
-              </button>
+              {user.is_verified && (
+                <button
+                  onClick={() => setReplyBoxVisibility((prev) => !prev)}
+                  className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300"
+                >
+                  <MessageCircle />
+                  <p>{comment?.replies?.length ?? 0}</p>
+                </button>
+              )}
+
               {comment.user.id == user!.id && (
                 <button
                   onClick={() => {
