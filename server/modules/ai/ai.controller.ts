@@ -12,6 +12,7 @@ import {
   generateSummaryNotesFromPDF,
   generateQuizFromPDF,
   generateFlashcardsFromPDF,
+  generateSummaryNotesFromImage,
 } from "./ai.upload.service";
 
 export async function generate_quiz_from_note(
@@ -171,6 +172,27 @@ export async function generate_flashcards_from_pdf(
 
   try {
     const result = await generateFlashcardsFromPDF(buffer!);
+
+    reply.code(200).send({
+      ...result,
+    });
+  } catch (err) {
+    reply.code(500).send({
+      message: "Error generating summary from PDF.",
+    });
+  }
+}
+
+export async function generate_notes_from_image(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const image = await request.file();
+
+  const buffer = await image?.toBuffer();
+
+  try {
+    const result = await generateSummaryNotesFromImage(buffer!);
 
     reply.code(200).send({
       ...result,

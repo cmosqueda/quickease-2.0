@@ -3,6 +3,7 @@ import {
   generate_flashcards_from_note,
   generate_flashcards_from_pdf,
   generate_flashcards_from_prompt,
+  generate_notes_from_image,
   generate_notes_from_pdf,
   generate_notes_from_prompt,
   generate_quiz_from_note,
@@ -57,5 +58,11 @@ export default async function aiRoutes(fastify: FastifyInstance) {
     "/generate-flashcards-from-pdf",
     { preHandler: [fastify.authenticate] },
     generate_flashcards_from_pdf
+  );
+
+  fastify.post(
+    "/generate-notes-from-image",
+    { preHandler: [fastify.authenticate] },
+    generate_notes_from_image
   );
 }
