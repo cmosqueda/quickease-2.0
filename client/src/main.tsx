@@ -80,6 +80,12 @@ const LearnerRoutes: RouteObject = {
     {
       index: true,
       Component: LearnerForumPage,
+      loader: async () => {
+        const { data: notifications } =
+          await _API_INSTANCE.get("notifications");
+
+        return notifications;
+      },
     },
     {
       path: "library",

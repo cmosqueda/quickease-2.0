@@ -1,3 +1,4 @@
+// plugins
 import fastifyCookie from "@fastify/cookie";
 import fastifyEnv from "@fastify/env";
 import fastifyJwt from "@fastify/jwt";
@@ -13,6 +14,7 @@ import userRoutes from "./modules/user/user.routes";
 import forumRoutes from "./modules/forum/forum.routes";
 import noteRoutes from "./modules/note/note.route";
 import mailRoutes from "./modules/mail/mail.route";
+import notificationRoutes from "./modules/notification/notification.route";
 
 import { FastifyRequest, FastifyReply } from "fastify";
 import { server } from "./server";
@@ -148,6 +150,7 @@ export default async function initializeFastifyConfig() {
   await server.register(forumRoutes, { prefix: "api/forum" });
   await server.register(aiRoutes, { prefix: "api/ai" });
   await server.register(mailRoutes, { prefix: "api/mail" });
+  await server.register(notificationRoutes, { prefix: "api/notifications" });
 
   /*
     - API testing routes

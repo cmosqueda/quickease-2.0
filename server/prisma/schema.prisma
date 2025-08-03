@@ -246,6 +246,7 @@ model Notification {
   created_at    DateTime         @default(now())
 
   @@index([recipient_id, is_read])
+  @@unique([recipient_id, actor_id, type, resource_id])
 }
 
 enum TokenType {

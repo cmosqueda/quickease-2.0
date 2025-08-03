@@ -3,6 +3,8 @@ import NotificationsDropdown from "@/components/(learner)/NotificationsDropdown"
 import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
+import useReport from "@/hooks/useReport";
+import useAuth from "@/hooks/useAuth";
 import clsx from "clsx";
 import dayjs from "dayjs";
 
@@ -19,9 +21,7 @@ import { useEffect, useState } from "react";
 import { EditorProvider, useEditor } from "@tiptap/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useVote } from "@/hooks/useVote";
-import { Link, NavLink, useNavigate } from "react-router";
-import useReport from "@/hooks/useReport";
-import useAuth from "@/hooks/useAuth";
+import { Link, NavLink, useLoaderData, useNavigate } from "react-router";
 
 const Post = ({
   post,
@@ -167,6 +167,8 @@ const Post = ({
 
 export default function LearnerForumPage() {
   const navigate = useNavigate();
+  const notifications = useLoaderData();
+
   const [query, setQuery] = useState("");
   const editor = useEditor({
     editable: true,
@@ -220,7 +222,7 @@ export default function LearnerForumPage() {
             <Plus />
             <p>Create</p>
           </Link>
-          <NotificationsDropdown />
+          <NotificationsDropdown notifications={notifications} />
           <ProfileDropdown />
         </div>
       </div>
