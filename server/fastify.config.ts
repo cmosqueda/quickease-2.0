@@ -122,22 +122,37 @@ export default async function initializeFastifyConfig() {
     - 'onRequest' hook that verifies JWT tokens for every route that requires JWT token
     The token/cookie is stored on a key named 'QUICKEASE_TOKEN'.
     */
+
   server.decorate(
     "authenticate",
     async (request: FastifyRequest, reply: FastifyReply) => {
       const token = request.cookies.QUICKEASE_TOKEN;
 
       if (!token) {
-        return reply.status(401).send({ message: "Authentication required" });
+        return reply.code(401).send({ message: "authentication_required" });
       }
 
-      const decoded = request.jwt.verify<{
-        id: string;
-        first_name: string;
-        last_name: string;
-      }>(token);
+      try {
+        const decoded = request.jwt.verify(token) as {
+          id: string;
+          first_name: string;
+          last_name: string;
+          is_admin: boolean;
+        };
 
-      request.user = decoded;
+        if (
+          !decoded.id ||
+          !decoded.first_name ||
+          !decoded.last_name ||
+          typeof decoded.is_admin !== "boolean"
+        ) {
+          return reply.code(401).send({ message: "invalid_token_payload" });
+        }
+
+        request.user = decoded;
+      } catch (err) {
+        return reply.code(401).send({ message: "invalid_token" });
+      }
     }
   );
 
@@ -153,19 +168,33 @@ export default async function initializeFastifyConfig() {
       const token = request.cookies.QUICKEASE_TOKEN;
 
       if (!token) {
-        return reply.code(401).send({ message: "Authentication required" });
+        return reply.code(401).send({ message: "authentication_required" });
       }
 
-      const decoded = request.jwt.verify<{
-        id: string;
-        first_name: string;
-        last_name: string;
-      }>(token);
+      try {
+        const decoded = request.jwt.verify(token) as {
+          id: string;
+          first_name: string;
+          last_name: string;
+          is_admin: boolean;
+        };
 
-      if (!request.user?.is_admin) {
-        return reply
-          .code(403)
-          .send({ message: "Admin can only access this APIs." });
+        if (
+          !decoded.id ||
+          !decoded.first_name ||
+          !decoded.last_name ||
+          typeof decoded.is_admin !== "boolean"
+        ) {
+          return reply.code(401).send({ message: "invalid_token_payload" });
+        }
+
+        request.user = decoded;
+
+        if (!decoded.is_admin) {
+          return reply.code(403).send({ message: "admin_only_access" });
+        }
+      } catch (err) {
+        return reply.code(401).send({ message: "invalid_token" });
       }
     }
   );

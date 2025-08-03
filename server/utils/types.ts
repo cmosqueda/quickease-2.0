@@ -31,12 +31,14 @@ declare module "@fastify/jwt" {
       id: string;
       first_name: string;
       last_name: string;
+      is_admin: boolean;
       [key: string]: any;
     };
     user: {
       id: string;
       first_name: string;
       last_name: string;
+      is_admin: boolean;
       [key: string]: any;
     };
   }
@@ -49,7 +51,7 @@ declare module "fastify" {
 
   interface FastifyInstance {
     authenticate: any;
-    admin_authenticate: any;
+    authenticate_admin: any;
     config: {
       JWT_SECRET_KEY: string;
       COOKIE_SECRET_KEY: string;
