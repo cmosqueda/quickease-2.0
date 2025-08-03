@@ -49,6 +49,7 @@ declare module "fastify" {
 
   interface FastifyInstance {
     authenticate: any;
+    admin_authenticate: any;
     config: {
       JWT_SECRET_KEY: string;
       COOKIE_SECRET_KEY: string;

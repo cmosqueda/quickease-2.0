@@ -18,6 +18,8 @@ import notificationRoutes from "./modules/notification/notification.route";
 
 import { FastifyRequest, FastifyReply } from "fastify";
 import { server } from "./server";
+import adminAuthRoutes from "./modules/admin/admin.auth.route";
+import adminForumRoutes from "./modules/admin/admin.forum.route";
 
 export default async function initializeFastifyConfig() {
   /*
@@ -140,7 +142,36 @@ export default async function initializeFastifyConfig() {
   );
 
   /*
-    - Registering routes for each modules
+    - 'onRequest' hook that verifies JWT tokens for every route that requires JWT token
+    The token/cookie is stored on a key named 'QUICKEASE_TOKEN'.
+
+    (FOR ADMIN API ROUTES)
+    */
+  server.decorate(
+    "authenticate_admin",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const token = request.cookies.QUICKEASE_TOKEN;
+
+      if (!token) {
+        return reply.code(401).send({ message: "Authentication required" });
+      }
+
+      const decoded = request.jwt.verify<{
+        id: string;
+        first_name: string;
+        last_name: string;
+      }>(token);
+
+      if (!request.user?.is_admin) {
+        return reply
+          .code(403)
+          .send({ message: "Admin can only access this APIs." });
+      }
+    }
+  );
+
+  /*
+    - Registering routes for each modules (Users)
     */
   await server.register(userRoutes, { prefix: "api/users" });
   await server.register(authRoutes, { prefix: "api/auth" });
@@ -153,9 +184,14 @@ export default async function initializeFastifyConfig() {
   await server.register(notificationRoutes, { prefix: "api/notifications" });
 
   /*
+    - Registering routes for each modules (Admin)
+    */
+  await server.register(adminAuthRoutes, { prefix: "api/admin/auth" });
+  await server.register(adminForumRoutes, { prefix: "api/admin/forum" });
+
+  /*
     - API testing routes
     */
-
   server.get("/api/test", (req, res) => {
     try {
       res.code(200).send({

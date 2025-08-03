@@ -1,0 +1,109 @@
+import { FastifyRequest, FastifyReply } from "fastify";
+import {
+  getUsers,
+  searchUsers,
+  updateUserEmail,
+  updateUserPassword,
+  updateUserFullName,
+  updateUserVisibility,
+  deleteUser,
+} from "./admin.auth.service";
+
+export async function get_users(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const users = await getUsers();
+    return reply.code(200).send(users);
+  } catch {
+    return reply.code(500).send({ error: "failed_to_fetch_users" });
+  }
+}
+
+export async function search_users(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const { q } = request.query as { q: string };
+    const users = await searchUsers(q);
+    return reply.code(200).send(users);
+  } catch {
+    return reply.code(500).send({ error: "failed_to_search_users" });
+  }
+}
+
+export async function update_user_email(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const { new_email } = request.body as { new_email: string };
+    const { user_id } = request.params as { user_id: string };
+
+    await updateUserEmail(new_email, user_id);
+    return reply.code(200).send({ success: true });
+  } catch {
+    return reply.code(500).send({ error: "failed_to_update_email" });
+  }
+}
+
+export async function update_user_password(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const { new_password } = request.body as { new_password: string };
+    const { user_id } = request.params as { user_id: string };
+
+    await updateUserPassword(new_password, user_id);
+    return reply.code(200).send({ success: true });
+  } catch {
+    return reply.code(500).send({ error: "failed_to_update_password" });
+  }
+}
+
+export async function update_user_full_name(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const { first_name, last_name } = request.body as {
+      first_name: string;
+      last_name: string;
+    };
+    const { user_id } = request.params as { user_id: string };
+
+    await updateUserFullName(first_name, last_name, user_id);
+    return reply.code(200).send({ success: true });
+  } catch {
+    return reply.code(500).send({ error: "failed_to_update_full_name" });
+  }
+}
+
+export async function update_user_visibility(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const { visibility } = request.body as { visibility: boolean };
+    const { user_id } = request.params as { user_id: string };
+
+    await updateUserVisibility(visibility, user_id);
+    return reply.code(200).send({ success: true });
+  } catch {
+    return reply.code(500).send({ error: "failed_to_update_visibility" });
+  }
+}
+
+export async function delete_user(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const { user_id } = request.params as { user_id: string };
+
+    await deleteUser(user_id);
+    return reply.code(200).send({ success: true });
+  } catch {
+    return reply.code(500).send({ error: "failed_to_delete_user" });
+  }
+}
