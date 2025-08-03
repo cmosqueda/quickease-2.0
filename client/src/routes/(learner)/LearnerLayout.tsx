@@ -17,7 +17,6 @@ export default function LearnerLayout() {
 
   return (
     <>
-      <Toaster position="top-right" />
       <main className="flex flex-col lg:flex-row min-h-screen bg-base-200">
         {pathname.startsWith("/learner/quizzes/") ? null : (
           <Sidebar tab={pathname} />

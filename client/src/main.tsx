@@ -40,7 +40,7 @@ import LearnerCreatePostPage from "./routes/(learner)/(post)/LearnerCreatePost";
 import LearnerSearchPage from "./routes/(learner)/(search)/LearnerSearch";
 import LearnerViewNotePage from "./routes/(learner)/(note)/LearnerViewNote";
 import LearnerViewFlashcardPage from "./routes/(learner)/(flashcard)/LearnerViewFlashcard";
-import LearnerHydrationFallback from "./routes/LearnerHydrationFallback";
+import LearnerHydrationFallback from "./routes/(learner)/LearnerHydrationFallback";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -60,7 +60,7 @@ import {
 } from "react-router";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import {
   checkAuthAndRedirect,
   loadLearnerResources,
@@ -68,6 +68,7 @@ import {
 } from "./utils/router";
 
 import "../global.css";
+import LearnerErrorFallback from "./routes/(learner)/LearnerErrorFallback";
 
 const client = new QueryClient();
 
@@ -441,6 +442,7 @@ const router = createBrowserRouter([
     path: "/",
     Component: LandingPage,
     loader: checkAuthAndRedirect,
+    ErrorBoundary: LearnerErrorFallback,
   },
   AuthRoutes,
   LearnerRoutes,
@@ -458,6 +460,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={client}>
+    <Toaster position="top-right" />
     <RouterProvider router={router} />
   </QueryClientProvider>
 );
