@@ -5,6 +5,7 @@ import {
   logout,
   update_password,
   update_email,
+  verify_email,
 } from "./auth.controller";
 
 export default async function authRoutes(fastify: FastifyInstance) {
@@ -27,5 +28,9 @@ export default async function authRoutes(fastify: FastifyInstance) {
 
   fastify.put("/update-email", {
     handler: update_email,
+  });
+
+  fastify.put("/verify-email", {
+    handler: verify_email,
   });
 }

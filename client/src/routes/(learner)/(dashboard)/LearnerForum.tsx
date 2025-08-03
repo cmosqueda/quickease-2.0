@@ -168,6 +168,7 @@ const Post = ({
 export default function LearnerForumPage() {
   const navigate = useNavigate();
   const notifications = useLoaderData();
+  const { user } = useAuth();
 
   const [query, setQuery] = useState("");
   const editor = useEditor({
@@ -218,11 +219,22 @@ export default function LearnerForumPage() {
           />
         </label>
         <div className="hidden lg:flex flex-row gap-2">
-          <Link to={"/learner/post/"} className="btn btn-neutral">
+          <button
+            onClick={() => {
+              navigate("/learner/post/");
+            }}
+            className="btn btn-neutral"
+            disabled={!user?.is_verified}
+          >
             <Plus />
-            <p>Create</p>
-          </Link>
-          <NotificationsDropdown notifications={notifications} />
+            <div className="flex flex-col items-start">
+              {user?.is_verified && <p>Create</p>}
+              {!user?.is_verified && <p>Email not verified</p>}
+            </div>
+          </button>
+          {user?.is_verified && (
+            <NotificationsDropdown notifications={notifications} />
+          )}
           <ProfileDropdown />
         </div>
       </div>

@@ -7,6 +7,7 @@ import {
   registerUser,
   updateEmail,
   updatePassword,
+  verifyEmail,
 } from "./auth.service";
 
 export async function login_user(request: FastifyRequest, reply: FastifyReply) {
@@ -179,6 +180,36 @@ export async function update_email(
     const result = await updateEmail(email, token, new_email);
 
     reply.code(200).send({ updated: result, message: "Email updated" });
+  } catch (err) {
+    reply.code(500).send({
+      message: "Error updating email",
+      errors: err instanceof Error ? err.message : err,
+    });
+  }
+}
+
+export async function verify_email(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const updateEmailSchema = z.object({
+    email: z.string().email(),
+    token: z.string().min(1),
+  });
+
+  try {
+    const parseResult = updateEmailSchema.safeParse(request.body);
+    if (!parseResult.success) {
+      return reply.code(400).send({
+        message: "Invalid request body",
+        errors: parseResult.error.flatten(),
+      });
+    }
+
+    const { email, token } = parseResult.data;
+    const result = await verifyEmail(email, token);
+
+    reply.code(200).send({ updated: result, message: "Verification success." });
   } catch (err) {
     reply.code(500).send({
       message: "Error updating email",

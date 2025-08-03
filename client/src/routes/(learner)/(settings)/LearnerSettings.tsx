@@ -7,7 +7,7 @@ import duration from "dayjs/plugin/duration";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
 import { useEffect, useState } from "react";
-import { Eye, Info, Lock, Mail, UserCircle, X } from "lucide-react";
+import { Eye, Info, Lock, Mail, MailCheck, UserCircle, X } from "lucide-react";
 import { toast } from "sonner";
 
 dayjs.extend(duration);
@@ -83,6 +83,24 @@ const AccountSettings = () => {
     }
   };
 
+  const handleRequestVerification = async () => {
+    try {
+      const { data } = await _API_INSTANCE.post(
+        "mail/request-verify-email",
+        {},
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
+
+      console.log(data);
+      toast.success("Mail sent!");
+    } catch (err) {
+      console.log(err);
+      toast.error("Mail failed to send.");
+    }
+  };
+
   useEffect(() => {
     if (user) setVisibility(user.is_public);
   }, [user]);
@@ -138,6 +156,18 @@ const AccountSettings = () => {
         <Lock />
         <p>Request to change password</p>
       </button>
+      <button
+        onClick={handleRequestVerification}
+        className="flex flex-row items-center gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all disabled:bg-base-300/50 disabled:cursor-not-allowed"
+        disabled={user?.is_verified}
+      >
+        <MailCheck />
+        <div className="flex flex-col items-start">
+          <p>Verify email</p>
+          {user?.is_verified && <p className="text-sm text-base-content/30">Email verified.</p>}
+        </div>
+      </button>
+
       <h1 className="text-xl mt-4">Privacy</h1>
       <div className="divider my-1" />
       <div className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all items-center justify-between">

@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
+import _API_INSTANCE from "@/utils/axios";
+import { toast } from "sonner";
 
 export default function Sidebar({ tab }: { tab: string }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -179,7 +181,23 @@ export default function Sidebar({ tab }: { tab: string }) {
                 "p-2 rounded-full shrink-0 border border-base-300 bg-base-100 transition-all delay-0 duration-300 cursor-pointer hover:shadow",
                 isOpen ? "rotate-180" : "rotate-0"
               )}
-              onClick={() => navigate("/", { viewTransition: true })}
+              onClick={async () => {
+                try {
+                  localStorage.removeItem("QUICKEASE_CURRENT_QUIZ");
+                  localStorage.removeItem("QUICKEASE_GENERATED_CONTENT");
+                  localStorage.removeItem("QUICKEASE_USER");
+
+                  await _API_INSTANCE.post(
+                    "/auth/logout",
+                    {},
+                    { withCredentials: true }
+                  );
+                  navigate("/", { viewTransition: true });
+                } catch (err) {
+                  toast.error("Logout error.");
+                  throw err;
+                }
+              }}
             />
           </div>
         </>

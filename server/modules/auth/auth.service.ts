@@ -119,3 +119,36 @@ export async function updatePassword(
     throw new Error("Invalid token or failed password update.");
   }
 }
+
+export async function verifyEmail(email: string, token: string) {
+  try {
+    const userToken = await db_client.userToken.findFirst({
+      where: {
+        token,
+        type: "VERIFY_EMAIL",
+        used: false,
+        expires_at: { gt: new Date() },
+      },
+      include: { user: true },
+    });
+
+    if (!userToken || userToken.user.email !== email) {
+      throw new Error("Invalid or expired token");
+    }
+
+    await db_client.$transaction([
+      db_client.userToken.update({
+        where: { id: userToken.id },
+        data: { used: true },
+      }),
+      db_client.user.update({
+        where: { id: userToken.user.id },
+        data: { is_verified: true },
+      }),
+    ]);
+
+    return true;
+  } catch (err) {
+    throw new Error("Invalid token or verification failed.");
+  }
+}

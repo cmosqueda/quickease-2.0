@@ -69,6 +69,7 @@ import {
 
 import "../global.css";
 import LearnerErrorFallback from "./routes/(learner)/LearnerErrorFallback";
+import AuthVerifyEmailPage from "./routes/(auth)/AuthVerifyEmail";
 
 const client = new QueryClient();
 
@@ -433,6 +434,10 @@ const AuthRoutes: RouteObject = {
           Component: AuthChangeEmailPage,
         },
       ],
+    },
+    {
+      path: "verify",
+      Component: AuthVerifyEmailPage,
     },
   ],
 };

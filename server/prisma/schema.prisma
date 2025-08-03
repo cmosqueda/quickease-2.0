@@ -24,6 +24,7 @@ model User {
   created_at   DateTime @default(now())
   updated_at   DateTime @default(now())
   is_admin     Boolean  @default(false)
+  is_verified  Boolean  @default(false)
 
   flashcards             Flashcard[]
   notes                  Note[]
@@ -245,13 +246,14 @@ model Notification {
   is_read       Boolean          @default(false)
   created_at    DateTime         @default(now())
 
-  @@index([recipient_id, is_read])
   @@unique([recipient_id, actor_id, type, resource_id])
+  @@index([recipient_id, is_read])
 }
 
 enum TokenType {
   CHANGE_EMAIL
   RESET_PASSWORD
+  VERIFY_EMAIL
 }
 
 model UserToken {

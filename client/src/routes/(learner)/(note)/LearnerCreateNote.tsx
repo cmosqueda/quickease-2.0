@@ -132,46 +132,50 @@ export default function LearnerCreateNotePage() {
             <Delete />
             <h1>Delete</h1>
           </button>
-          <h1 className="font-bold text-xl">Study options</h1>
-          <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() => {
-              const modal = document.getElementById(
-                "generate-summary-modal"
-              ) as HTMLDialogElement;
+          {user?.is_verified && (
+            <>
+              <h1 className="font-bold text-xl">Study options</h1>
+              <button
+                className="rounded-3xl btn btn-soft gap-2 join-item"
+                onClick={() => {
+                  const modal = document.getElementById(
+                    "generate-summary-modal"
+                  ) as HTMLDialogElement;
 
-              modal.showModal();
-            }}
-          >
-            <BookDown />
-            <h1>Generate summary</h1>
-          </button>
-          <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() => {
-              const modal = document.getElementById(
-                "generate-flashcard-modal"
-              ) as HTMLDialogElement;
+                  modal.showModal();
+                }}
+              >
+                <BookDown />
+                <h1>Generate summary</h1>
+              </button>
+              <button
+                className="rounded-3xl btn btn-soft gap-2 join-item"
+                onClick={() => {
+                  const modal = document.getElementById(
+                    "generate-flashcard-modal"
+                  ) as HTMLDialogElement;
 
-              modal.showModal();
-            }}
-          >
-            <CalendarRange />
-            <h1>Generate flashcards</h1>
-          </button>
-          <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() => {
-              const modal = document.getElementById(
-                "generate-quiz-modal"
-              ) as HTMLDialogElement;
+                  modal.showModal();
+                }}
+              >
+                <CalendarRange />
+                <h1>Generate flashcards</h1>
+              </button>
+              <button
+                className="rounded-3xl btn btn-soft gap-2 join-item"
+                onClick={() => {
+                  const modal = document.getElementById(
+                    "generate-quiz-modal"
+                  ) as HTMLDialogElement;
 
-              modal.showModal();
-            }}
-          >
-            <ClipboardList />
-            <h1>Generate quiz</h1>
-          </button>
+                  modal.showModal();
+                }}
+              >
+                <ClipboardList />
+                <h1>Generate quiz</h1>
+              </button>
+            </>
+          )}
         </div>
       </div>
       <GenerateSummaryModal />
