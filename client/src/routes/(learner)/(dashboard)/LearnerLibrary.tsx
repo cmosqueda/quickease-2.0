@@ -42,7 +42,6 @@ export default function LearnerLibraryPage() {
       <div className="flex flex-row items-center justify-between">
         <h1 className="font-bold lg:text-4xl text-3xl">Library</h1>
         <div className="lg:flex flex-row items-center gap-2 hidden">
-          <NotificationsDropdown />
           <ProfileDropdown />
         </div>
       </div>
