@@ -20,6 +20,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { server } from "./server";
 import adminAuthRoutes from "./modules/admin/admin.auth.route";
 import adminForumRoutes from "./modules/admin/admin.forum.route";
+import adminMailRoutes from "./modules/admin/admin.mail.route";
 
 export default async function initializeFastifyConfig() {
   /*
@@ -217,6 +218,7 @@ export default async function initializeFastifyConfig() {
     */
   await server.register(adminAuthRoutes, { prefix: "api/admin/auth" });
   await server.register(adminForumRoutes, { prefix: "api/admin/forum" });
+  await server.register(adminMailRoutes, { prefix: "api/admin/mail" });
 
   /*
     - API testing routes

@@ -9,6 +9,7 @@ import AuthLoginPage from "./routes/(auth)/AuthLogin";
 import AuthRegisterPage from "./routes/(auth)/AuthRegister";
 import AuthChangePasswordPage from "./routes/(auth)/AuthChangePassword";
 import AuthChangeEmailPage from "./routes/(auth)/AuthChangeEmail";
+import AuthVerifyEmailPage from "./routes/(auth)/AuthVerifyEmail";
 
 // learner pages
 import LearnerForumPage from "./routes/(learner)/(dashboard)/LearnerForum";
@@ -41,6 +42,7 @@ import LearnerSearchPage from "./routes/(learner)/(search)/LearnerSearch";
 import LearnerViewNotePage from "./routes/(learner)/(note)/LearnerViewNote";
 import LearnerViewFlashcardPage from "./routes/(learner)/(flashcard)/LearnerViewFlashcard";
 import LearnerHydrationFallback from "./routes/(learner)/LearnerHydrationFallback";
+import LearnerErrorFallback from "./routes/(learner)/LearnerErrorFallback";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -68,8 +70,6 @@ import {
 } from "./utils/router";
 
 import "../global.css";
-import LearnerErrorFallback from "./routes/(learner)/LearnerErrorFallback";
-import AuthVerifyEmailPage from "./routes/(auth)/AuthVerifyEmail";
 
 const client = new QueryClient();
 
@@ -455,10 +455,32 @@ const router = createBrowserRouter([
     path: "admin",
     Component: AdminLayout,
     children: [
-      { index: true, Component: AdminManageUsersPage },
+      {
+        index: true,
+        Component: AdminManageUsersPage,
+        loader: async () => {
+          const { data } = await _API_INSTANCE.get("admin/auth/users");
+
+          return data;
+        },
+      },
       { path: "reports", Component: AdminManageReportsPage },
-      { path: "user/:userId", Component: AdminManageUserPage },
-      { path: "report/:reportId", Component: AdminManagePostPage },
+      {
+        path: "user/:id",
+        Component: AdminManageUserPage,
+        loader: async ({ params }) => {
+          try {
+            const { data } = await _API_INSTANCE.get(
+              `admin/auth/user/${params.id}`
+            );
+
+            return data;
+          } catch (err) {
+            redirect(-1 as any);
+          }
+        },
+      },
+      { path: "report/:id", Component: AdminManagePostPage },
     ],
   },
 ]);

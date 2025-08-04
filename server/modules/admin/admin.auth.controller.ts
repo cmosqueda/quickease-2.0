@@ -7,12 +7,26 @@ import {
   updateUserFullName,
   updateUserVisibility,
   deleteUser,
+  getUser,
 } from "./admin.auth.service";
 
 export async function get_users(request: FastifyRequest, reply: FastifyReply) {
   try {
     const users = await getUsers();
     return reply.code(200).send(users);
+  } catch {
+    return reply.code(500).send({ error: "failed_to_fetch_users" });
+  }
+}
+
+export async function get_user(request: FastifyRequest, reply: FastifyReply) {
+  const { user_id } = request.params as {
+    user_id: string;
+  };
+
+  try {
+    const user = await getUser(user_id);
+    return reply.code(200).send(user);
   } catch {
     return reply.code(500).send({ error: "failed_to_fetch_users" });
   }

@@ -7,12 +7,18 @@ import {
   update_user_full_name,
   update_user_visibility,
   delete_user,
+  get_user,
 } from "./admin.auth.controller";
 
 export default async function adminAuthRoutes(fastify: FastifyInstance) {
   fastify.get("/users", {
     preHandler: [fastify.authenticate_admin],
     handler: get_users,
+  });
+
+  fastify.get("/user/:user_id", {
+    preHandler: [fastify.authenticate_admin],
+    handler: get_user,
   });
 
   fastify.get("/users/search", {

@@ -4,31 +4,6 @@ import dayjs from "dayjs";
 
 import { randomBytes } from "crypto";
 
-export async function testEmail(to: string, subject: string, body: string) {
-  let options = {
-    from: process.env.NODEMAILER_GMAIL_USER,
-    to: to,
-    subject: subject,
-    html: body,
-  };
-
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.NODEMAILER_GMAIL_USER,
-      pass: process.env.NODEMAILER_GMAIL_APP_PASSWORD,
-    },
-  });
-
-  try {
-    const info = await transporter.sendMail(options);
-
-    return info;
-  } catch (err) {
-    return false;
-  }
-}
-
 export async function requestChangeEmail(user_id: string) {
   const user = await db_client.user.findUnique({
     where: { id: user_id },

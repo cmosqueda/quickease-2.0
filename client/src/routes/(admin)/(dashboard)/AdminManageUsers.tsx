@@ -1,6 +1,17 @@
-import { Clock, Search } from "lucide-react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import dayjs from "dayjs";
+
+import { Check, Clock, Search, X } from "lucide-react";
+import { useEffect } from "react";
+import { Link, useLoaderData } from "react-router";
 
 export default function AdminManageUsersPage() {
+  const data = useLoaderData();
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto min-h-screen">
       <h1 className="font-bold lg:text-4xl text-3xl">Manage users</h1>
@@ -9,103 +20,33 @@ export default function AdminManageUsersPage() {
           <Search size={24} />
           <input type="search" className="lg:w-md" placeholder="Search" />
         </label>
-        <div className="flex flex-row gap-4">
-          <div className="filter">
-            <input
-              className="btn filter-reset"
-              type="radio"
-              name="metaframeworks"
-              aria-label="All"
-            />
-            <input
-              className="btn"
-              type="radio"
-              name="metaframeworks"
-              aria-label="Unverified"
-            />
-            <input
-              className="btn"
-              type="radio"
-              name="metaframeworks"
-              aria-label="Verified"
-            />
-          </div>
-        </div>
       </div>
 
       <div className="grid lg:grid-cols-2 2xl:grid-cols-3 gap-4">
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
-          <div>
-            <h1 className="font-bold text-xl">Name</h1>
-            <div className="flex flex-row gap-2 items-center">
-              <Clock size={16} />
-              <p>Date created</p>
+        {data.map((user: any) => (
+          <Link
+            to={`user/${user.id}`}
+            className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer"
+          >
+            <div>
+              <h1 className="font-bold text-xl">
+                {user.first_name} {user.last_name}
+              </h1>
+              <div className="flex flex-row gap-2 items-center">
+                <Clock size={16} />
+                <p>
+                  {dayjs(user.created_at)
+                    .format("MMMM DD, YYYY hh:mm A")
+                    .toString()}
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="px-4 py-1 rounded-3xl bg-base-200 bg-soft w-fit">
-            <h1>Unverified</h1>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
-          <div>
-            <h1 className="font-bold text-xl">Name</h1>
-            <div className="flex flex-row gap-2 items-center">
-              <Clock size={16} />
-              <p>Date created</p>
+            <div className="px-4 py-1 rounded-3xl bg-base-200 bg-soft w-fit flex flex-row gap-2 items-center">
+              {user.is_verified ? <Check /> : <X />}
+              {user.is_verified ? <h1>Verified</h1> : <h1>Unverified</h1>}
             </div>
-          </div>
-          <div className="px-4 py-1 rounded-3xl bg-base-200 bg-soft w-fit">
-            <h1>Unverified</h1>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
-          <div>
-            <h1 className="font-bold text-xl">Name</h1>
-            <div className="flex flex-row gap-2 items-center">
-              <Clock size={16} />
-              <p>Date created</p>
-            </div>
-          </div>
-          <div className="px-4 py-1 rounded-3xl bg-base-200 bg-soft w-fit">
-            <h1>Unverified</h1>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
-          <div>
-            <h1 className="font-bold text-xl">Name</h1>
-            <div className="flex flex-row gap-2 items-center">
-              <Clock size={16} />
-              <p>Date created</p>
-            </div>
-          </div>
-          <div className="px-4 py-1 rounded-3xl bg-base-200 bg-soft w-fit">
-            <h1>Unverified</h1>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
-          <div>
-            <h1 className="font-bold text-xl">Name</h1>
-            <div className="flex flex-row gap-2 items-center">
-              <Clock size={16} />
-              <p>Date created</p>
-            </div>
-          </div>
-          <div className="px-4 py-1 rounded-3xl bg-base-200 bg-soft w-fit">
-            <h1>Unverified</h1>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer">
-          <div>
-            <h1 className="font-bold text-xl">Name</h1>
-            <div className="flex flex-row gap-2 items-center">
-              <Clock size={16} />
-              <p>Date created</p>
-            </div>
-          </div>
-          <div className="px-4 py-1 rounded-3xl bg-base-200 bg-soft w-fit">
-            <h1>Unverified</h1>
-          </div>
-        </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

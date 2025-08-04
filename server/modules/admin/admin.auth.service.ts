@@ -11,6 +11,16 @@ export async function getUsers() {
   return users;
 }
 
+export async function getUser(user_id: string) {
+  const user = await db_client.user.findFirst({
+    where: {
+      id: user_id,
+    },
+  });
+
+  return user;
+}
+
 export async function searchUsers(query: string) {
   const users = await db_client.user.findMany({
     where: {
