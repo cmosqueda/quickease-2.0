@@ -2,8 +2,11 @@ import db_client from "../../utils/client";
 
 import { sendNotification } from "../../utils/notification";
 
-export async function getReportedPosts() {
-  const reportedPosts = await db_client.post.findMany({
+export async function getReportedPosts(page = 1) {
+  const pageSize = 20;
+  const offset = (page - 1) * pageSize;
+
+  const posts = await db_client.post.findMany({
     where: {
       reports: {
         some: {},
@@ -11,6 +14,7 @@ export async function getReportedPosts() {
     },
     include: {
       reports: {
+        take: 5,
         include: {
           reported_by: {
             select: {
@@ -22,14 +26,26 @@ export async function getReportedPosts() {
           },
         },
       },
-      user: { select: { first_name: true, last_name: true } },
+      user: {
+        select: {
+          first_name: true,
+          last_name: true,
+        },
+      },
     },
+    orderBy: {
+      reports: {
+        _count: "desc",
+      },
+    },
+    take: pageSize,
+    skip: offset,
   });
 
-  return reportedPosts.sort((a, b) => b.reports.length - a.reports.length);
+  return posts;
 }
 
-export async function getReportsByPosts(post_id: string) {
+export async function getReportsByPost(post_id: string) {
   const reports = await db_client.report.findMany({
     where: {
       reported_post_id: post_id,
@@ -46,7 +62,24 @@ export async function getReportsByPosts(post_id: string) {
     },
   });
 
-  return reports;
+  const post = await db_client.post.findFirst({
+    where: {
+      id: post_id,
+    },
+    select: {
+      title: true,
+      post_body: true,
+      created_at: true,
+      user: {
+        select: {
+          first_name: true,
+          last_name: true,
+        },
+      },
+    },
+  });
+
+  return { reports, post };
 }
 
 export async function deletePost(

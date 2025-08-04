@@ -464,7 +464,10 @@ const router = createBrowserRouter([
           return data;
         },
       },
-      { path: "reports", Component: AdminManageReportsPage },
+      {
+        path: "reports",
+        Component: AdminManageReportsPage,
+      },
       {
         path: "user/:id",
         Component: AdminManageUserPage,
@@ -480,7 +483,21 @@ const router = createBrowserRouter([
           }
         },
       },
-      { path: "report/:id", Component: AdminManagePostPage },
+      {
+        path: "report/:id",
+        Component: AdminManagePostPage,
+        loader: async ({ params }) => {
+          try {
+            const { data } = await _API_INSTANCE.get(
+              `admin/forum/report/${params.id}`
+            );
+
+            return data;
+          } catch (err) {
+            redirect(-1 as any);
+          }
+        },
+      },
     ],
   },
 ]);

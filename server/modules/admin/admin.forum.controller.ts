@@ -1,6 +1,6 @@
 import {
   getReportedPosts,
-  getReportsByPosts,
+  getReportsByPost,
   deletePost,
   deleteComment,
 } from "./admin.forum.service";
@@ -11,20 +11,22 @@ export async function get_reported_posts(
   reply: FastifyReply
 ) {
   try {
-    const posts = await getReportedPosts();
+    const page = Number((request.query as any).page) || 1;
+
+    const posts = await getReportedPosts(page);
     return reply.code(200).send(posts);
-  } catch {
+  } catch (err) {
     return reply.code(500).send({ error: "failed_to_get_reported_posts" });
   }
 }
 
-export async function get_reports_by_posts(
+export async function get_reports_by_post(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
   try {
     const { post_id } = request.params as { post_id: string };
-    const reports = await getReportsByPosts(post_id);
+    const reports = await getReportsByPost(post_id);
     return reply.code(200).send(reports);
   } catch {
     return reply.code(500).send({ error: "failed_to_get_reports" });
