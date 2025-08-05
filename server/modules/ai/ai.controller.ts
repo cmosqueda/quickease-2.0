@@ -71,7 +71,7 @@ export async function generate_quiz_from_prompt(
     const generatedContent = await generateQuizFromPrompt(prompt);
 
     reply.code(200).send({
-      content: generatedContent,
+      ...generatedContent,
     });
   } catch (err) {
     reply.code(500).send({
@@ -92,7 +92,7 @@ export async function generate_flashcards_from_prompt(
     const generatedContent = await generateFlashcardsFromPrompt(prompt);
 
     reply.code(200).send({
-      content: generatedContent,
+      ...generatedContent,
     });
   } catch (err) {
     reply.code(500).send({
@@ -113,7 +113,7 @@ export async function generate_notes_from_prompt(
     const generatedContent = await generateNotesFromPrompt(prompt);
 
     reply.code(200).send({
-      content: generatedContent,
+      generatedContent,
     });
   } catch (err) {
     reply.code(500).send({

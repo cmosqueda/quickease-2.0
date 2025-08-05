@@ -3,25 +3,32 @@ import _AI from "../../utils/ai";
 export async function generateQuizFromPrompt(prompt: string) {
   try {
     const response = await _AI.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       contents: `
                 Generate quiz that has atleast 10 questions or more from this prompt: "${prompt}"
 
                 Return a JSON string in this format:
                 {
+                title: string,
+                quiz_content: {
                 question: string;
                 description: string;
                 options: string[];
                 correctAnswers: number[];
                 }[]
+                }
 
                 Only output the JSON string.
                 `.trim(),
     });
 
+    const raw = JSON.parse(
+      response.text!.replace(/^```json\s*/, "").replace(/```$/, "")
+    );
+
     return {
-      title: prompt,
-      content: response.text!.replace(/```json|```/g, ""),
+      title: raw.title,
+      quiz_content: raw.quiz_content,
     };
   } catch (err) {
     return false;
@@ -31,20 +38,25 @@ export async function generateQuizFromPrompt(prompt: string) {
 export async function generateFlashcardsFromPrompt(prompt: string) {
   try {
     const response = await _AI.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       contents: `
-                Return a JSON string in this format:
-                { front: string; back: string; }[]
+              Return a JSON string in this format:
+              {
+              title: string;
+              flashcards: { front: string; back: string; }[]
+              }
 
-                Only output the JSON string or return { malicious: true } if it's a malicious prompt.
-
-                Generate atleast 10 flashcards or more from this prompt: "${prompt}"
+              Generate atleast 10 flashcards or more from this prompt: "${prompt}"
                 `.trim(),
     });
 
+    const raw = JSON.parse(
+      response.text!.replace(/^```json\s*/, "").replace(/```$/, "")
+    );
+
     return {
-      title: prompt,
-      content: response.text!.replace(/```json|```/g, ""),
+      title: raw.title,
+      flashcards: raw.flashcards,
     };
   } catch (err) {
     return false;
