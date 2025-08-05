@@ -71,6 +71,8 @@ import {
 
 import "../global.css";
 import AuthForgotPasswordPage from "./routes/(auth)/AuthForgotPassword";
+import AdminSearchUsersPage from "./routes/(admin)/(search)/AdminSearchUsers";
+import AdminSearchReportsPage from "./routes/(admin)/(search)/AdminSearchPosts";
 
 const client = new QueryClient();
 
@@ -467,6 +469,10 @@ const router = createBrowserRouter([
         Component: AdminManageReportsPage,
       },
       {
+        path: "reports/search",
+        Component: AdminSearchReportsPage,
+      },
+      {
         path: "user/:id",
         Component: AdminManageUserPage,
         loader: async ({ params }) => {
@@ -480,6 +486,10 @@ const router = createBrowserRouter([
             redirect(-1 as any);
           }
         },
+      },
+      {
+        path: "users/search",
+        Component: AdminSearchUsersPage,
       },
       {
         path: "report/:id",

@@ -38,45 +38,82 @@ export async function getUser(user_id: string) {
   return user;
 }
 
-export async function searchUsers(query: string) {
-  const users = await db_client.user.findMany({
-    where: {
-      is_admin: false,
-      OR: [
-        {
-          first_name: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-        {
-          last_name: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-        {
-          email: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-      ],
-    },
-    select: {
-      id: true,
-      first_name: true,
-      last_name: true,
-      email: true,
-      is_verified: true,
-      created_at: true,
-    },
-    orderBy: {
-      created_at: "desc",
-    },
-  });
+export async function searchUsers(query: string, page = 1, limit = 10) {
+  const skip = (page - 1) * limit;
 
-  return users;
+  const [users, total] = await Promise.all([
+    db_client.user.findMany({
+      where: {
+        is_admin: false,
+        OR: [
+          {
+            first_name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            last_name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        first_name: true,
+        last_name: true,
+        email: true,
+        is_verified: true,
+        created_at: true,
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+      skip,
+      take: limit,
+    }),
+
+    db_client.user.count({
+      where: {
+        is_admin: false,
+        OR: [
+          {
+            first_name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            last_name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+    }),
+  ]);
+
+  return {
+    users,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
 }
 
 export async function updateUserEmail(new_email: string, user_id: string) {

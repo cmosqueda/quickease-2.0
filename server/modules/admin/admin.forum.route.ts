@@ -4,12 +4,18 @@ import {
   get_reports_by_post,
   delete_post,
   delete_comment,
+  search_reported_posts,
 } from "./admin.forum.controller";
 
 export default async function adminForumRoutes(fastify: FastifyInstance) {
   fastify.get("/reports", {
     preHandler: [fastify.authenticate_admin],
     handler: get_reported_posts,
+  });
+
+  fastify.get("/reports/search", {
+    preHandler: [fastify.authenticate_admin],
+    handler: search_reported_posts,
   });
 
   fastify.get("/report/:post_id", {

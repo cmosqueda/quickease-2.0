@@ -45,6 +45,71 @@ export async function getReportedPosts(page = 1) {
   return posts;
 }
 
+export async function searchReportedPosts(page = 1, query = "") {
+  const pageSize = 20;
+  const skip = (page - 1) * pageSize;
+
+  const [posts, total] = await Promise.all([
+    db_client.post.findMany({
+      where: {
+        reports: {
+          some: {},
+        },
+        title: {
+          contains: query,
+          mode: "insensitive",
+        },
+      },
+      include: {
+        reports: {
+          take: 5,
+          include: {
+            reported_by: {
+              select: {
+                id: true,
+                first_name: true,
+                last_name: true,
+                email: true,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            first_name: true,
+            last_name: true,
+          },
+        },
+      },
+      orderBy: {
+        reports: {
+          _count: "desc",
+        },
+      },
+      skip,
+      take: pageSize,
+    }),
+    db_client.post.count({
+      where: {
+        reports: {
+          some: {},
+        },
+        title: {
+          contains: query,
+          mode: "insensitive",
+        },
+      },
+    }),
+  ]);
+
+  return {
+    posts,
+    total,
+    page,
+    totalPages: Math.ceil(total / pageSize),
+  };
+}
+
 export async function getReportsByPost(post_id: string) {
   const reports = await db_client.report.findMany({
     where: {

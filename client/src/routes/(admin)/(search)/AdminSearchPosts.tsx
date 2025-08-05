@@ -4,21 +4,21 @@ import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
 import { Clock, MessageCircle, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditorProvider } from "@tiptap/react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 
-export default function AdminManageReportsPage() {
+export default function AdminSearchReportsPage() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const [query, setQuery] = useState("");
+  const [params] = useSearchParams();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["reported-posts", page],
+    queryKey: ["search-reports", page],
     queryFn: async () => {
       try {
         const { data } = await _API_INSTANCE.get(
-          `admin/forum/reports?page=${page}`
+          `admin/forum/reports/search?page=${page}&q=${params.get("query")}`
         );
 
         return data;
@@ -30,33 +30,26 @@ export default function AdminManageReportsPage() {
     refetchOnWindowFocus: false,
   });
 
+  useEffect(() => {
+    if (!params.get("query")) {
+      navigate(-1 as any, { viewTransition: true });
+    }
+  }, [params]);
+
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto min-h-screen">
       <h1 className="font-bold lg:text-4xl text-3xl">Manage reports</h1>
 
       <label className="input w-full lg:w-fit">
         <Search size={24} />
-        <input
-          type="search"
-          className="lg:w-md"
-          placeholder="Search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key == "Enter") {
-              navigate(`/admin/reports/search?query=${query}`, {
-                viewTransition: true,
-              });
-            }
-          }}
-        />
+        <input type="search" className="lg:w-md" placeholder="Search" />
       </label>
 
       {isLoading && <p>Loading reports...</p>}
       {isError && <p className="text-red-500">Failed to load reports.</p>}
 
       <div className="grid lg:grid-cols-2 gap-4">
-        {data?.map((post: any) => (
+        {data.posts.map((post: any) => (
           <div
             key={post.id}
             className="flex flex-col gap-4 p-4 rounded-3xl bg-base-100 border border-base-200 shadow"

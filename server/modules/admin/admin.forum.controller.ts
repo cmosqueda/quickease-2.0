@@ -3,6 +3,7 @@ import {
   getReportsByPost,
   deletePost,
   deleteComment,
+  searchReportedPosts,
 } from "./admin.forum.service";
 import { FastifyRequest, FastifyReply } from "fastify";
 
@@ -16,6 +17,29 @@ export async function get_reported_posts(
     const posts = await getReportedPosts(page);
     return reply.code(200).send(posts);
   } catch (err) {
+    return reply.code(500).send({ error: "failed_to_get_reported_posts" });
+  }
+}
+
+export async function search_reported_posts(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const { page = "1", q = "" } = request.query as {
+      page?: string;
+      q?: string;
+    };
+
+    const pageNum = parseInt(page, 10);
+    if (isNaN(pageNum) || pageNum < 1) {
+      return reply.code(400).send({ error: "invalid_page_param" });
+    }
+
+    const result = await searchReportedPosts(pageNum, q);
+    return reply.code(200).send(result);
+  } catch (err) {
+    console.error(err);
     return reply.code(500).send({ error: "failed_to_get_reported_posts" });
   }
 }
