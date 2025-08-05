@@ -70,6 +70,7 @@ import {
 } from "./utils/router";
 
 import "../global.css";
+import AuthForgotPasswordPage from "./routes/(auth)/AuthForgotPassword";
 
 const client = new QueryClient();
 
@@ -83,8 +84,9 @@ const LearnerRoutes: RouteObject = {
       index: true,
       Component: LearnerForumPage,
       loader: async () => {
-        const { data: notifications } =
-          await _API_INSTANCE.get("notifications");
+        const { data: notifications } = await _API_INSTANCE.get(
+          "notifications"
+        );
 
         return notifications;
       },
@@ -435,6 +437,7 @@ const AuthRoutes: RouteObject = {
         },
       ],
     },
+    { path: "forgot-password", Component: AuthForgotPasswordPage },
     {
       path: "verify",
       Component: AuthVerifyEmailPage,

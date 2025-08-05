@@ -49,6 +49,7 @@ export async function login_user(request: FastifyRequest, reply: FastifyReply) {
   } catch (err) {
     reply.code(500).send({
       message: "Internal server error. Please try again later.",
+      errors: err,
     });
   }
 }
@@ -108,6 +109,7 @@ export async function register_user(
     console.error("Register error:", err);
     reply.code(500).send({
       message: "Internal server error. Could not register user.",
+      errors: err,
     });
   }
 }
