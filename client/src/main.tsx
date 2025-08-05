@@ -43,6 +43,7 @@ import LearnerViewNotePage from "./routes/(learner)/(note)/LearnerViewNote";
 import LearnerViewFlashcardPage from "./routes/(learner)/(flashcard)/LearnerViewFlashcard";
 import LearnerHydrationFallback from "./routes/(learner)/LearnerHydrationFallback";
 import LearnerErrorFallback from "./routes/(learner)/LearnerErrorFallback";
+import LearnerViewProfilePage from "./routes/(learner)/(profile)/LearnerViewProfile";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -50,6 +51,9 @@ import AdminManageUserPage from "./routes/(admin)/(user)/AdminManageUser";
 import AdminManageUsersPage from "./routes/(admin)/(dashboard)/AdminManageUsers";
 import AdminManageReportsPage from "./routes/(admin)/(dashboard)/AdminManageReports";
 import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
+import AuthForgotPasswordPage from "./routes/(auth)/AuthForgotPassword";
+import AdminSearchUsersPage from "./routes/(admin)/(search)/AdminSearchUsers";
+import AdminSearchReportsPage from "./routes/(admin)/(search)/AdminSearchPosts";
 
 import _API_INSTANCE from "./utils/axios";
 import useAuth from "./hooks/useAuth";
@@ -70,9 +74,6 @@ import {
 } from "./utils/router";
 
 import "../global.css";
-import AuthForgotPasswordPage from "./routes/(auth)/AuthForgotPassword";
-import AdminSearchUsersPage from "./routes/(admin)/(search)/AdminSearchUsers";
-import AdminSearchReportsPage from "./routes/(admin)/(search)/AdminSearchPosts";
 
 const client = new QueryClient();
 
@@ -99,7 +100,19 @@ const LearnerRoutes: RouteObject = {
       loader: loadLearnerResources,
     },
     { path: "summarize", Component: LearnerSummarizePage },
-    { path: "profile", Component: LearnerProfilePage, loader: () => {} },
+    {
+      path: "profile",
+      Component: LearnerProfilePage,
+      loader: async () => {
+        try {
+          const { data } = await _API_INSTANCE.get("users/");
+
+          return data;
+        } catch (err) {
+          redirect(-1 as any);
+        }
+      },
+    },
     {
       path: "search",
       children: [
@@ -145,7 +158,7 @@ const LearnerRoutes: RouteObject = {
     },
     {
       path: "profile/:id",
-      Component: LearnerProfilePage,
+      Component: LearnerViewProfilePage,
       loader: async ({ params }: { params: any }) => {
         try {
           const currentUserID = await useAuth.getState().user?.id;
@@ -512,7 +525,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={client}>
-    <Toaster position="top-right" />
+    <Toaster position="top-right" expand={true} />
     <RouterProvider router={router} />
   </QueryClientProvider>
 );
