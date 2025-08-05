@@ -46,7 +46,7 @@ export default async function adminAuthRoutes(fastify: FastifyInstance) {
     handler: update_user_visibility,
   });
 
-  fastify.delete("/users/:user_id", {
+  fastify.delete("/users/:user_id/delete", {
     preHandler: [fastify.authenticate_admin],
     handler: delete_user,
   });

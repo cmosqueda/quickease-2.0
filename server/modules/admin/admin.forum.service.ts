@@ -67,11 +67,13 @@ export async function getReportsByPost(post_id: string) {
       id: post_id,
     },
     select: {
+      id: true,
       title: true,
       post_body: true,
       created_at: true,
       user: {
         select: {
+          id: true,
           first_name: true,
           last_name: true,
         },

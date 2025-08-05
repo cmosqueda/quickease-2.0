@@ -461,11 +461,6 @@ const router = createBrowserRouter([
       {
         index: true,
         Component: AdminManageUsersPage,
-        loader: async () => {
-          const { data } = await _API_INSTANCE.get("admin/auth/users");
-
-          return data;
-        },
       },
       {
         path: "reports",

@@ -12,7 +12,13 @@ import {
 
 export async function get_users(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const users = await getUsers();
+    const query = request.query as { page?: string; limit?: string };
+
+    const page = parseInt(query.page || "1", 10);
+    const limit = parseInt(query.limit || "10", 10);
+
+    const users = await getUsers(page, limit);
+
     return reply.code(200).send(users);
   } catch {
     return reply.code(500).send({ error: "failed_to_fetch_users" });

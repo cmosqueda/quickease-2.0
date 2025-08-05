@@ -1,51 +1,59 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
-import { EditorProvider } from "@tiptap/react";
+import _API_INSTANCE from "@/utils/axios";
 import dayjs from "dayjs";
-import {
-  ArrowLeft,
-  Delete,
-  EllipsisVertical,
-  Key,
-  MailCheck,
-  MessageCircle,
-  Trash,
-} from "lucide-react";
-import { useEffect } from "react";
+
+import { EditorProvider } from "@tiptap/react";
+import { ArrowLeft, Delete, MessageCircle, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function AdminManagePostPage() {
   const data = useLoaderData();
   const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  const handleDeletePost = async () => {
+    setIsDeleting(true);
+
+    try {
+      await _API_INSTANCE.delete(`admin/forum/post/delete/${data.post.id}`, {
+        data: {
+          user_id: data.post.user.id,
+        },
+      });
+
+      toast.success("Post deleted.");
+      navigate(-1 as any, { viewTransition: true });
+    } catch (err) {
+      toast.error("Error deleting post, try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    setIsDeleting(true);
+
+    try {
+      await _API_INSTANCE.delete(`/users/${data.post.user.id}/delete`);
+
+      toast.success("Post deleted.");
+      navigate(-1 as any, { viewTransition: true });
+    } catch (err) {
+      toast.error("Error deleting post, try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto min-h-screen">
-      <div className="flex flex-row justify-between items-center">
-        <ArrowLeft
-          onClick={() => navigate("/admin/", { viewTransition: true })}
-          className="cursor-pointer"
-        />
-        <details className="dropdown dropdown-end">
-          <summary className="list-none cursor-pointer">
-            <EllipsisVertical />
-          </summary>
-          <ul className="menu dropdown-content bg-base-100 border border-base-300 rounded-box z-1 w-52 my-2 p-2 shadow-sm">
-            <li>
-              <a>Delete post</a>
-            </li>
-            <li>
-              <a>Suspend user</a>
-            </li>
-            <li>
-              <a>Ban user</a>
-            </li>
-          </ul>
-        </details>
-      </div>
+      <ArrowLeft
+        onClick={() => navigate("/admin/", { viewTransition: true })}
+        className="cursor-pointer"
+      />
 
       <div className="flex flex-row items-center gap-3">
         <div className="bg-base-300 rounded-3xl shadow w-[3rem] h-[3rem] aspect-square" />
@@ -88,7 +96,7 @@ export default function AdminManagePostPage() {
                   {report.reported_by?.last_name}
                 </p>
               </div>
-              <p>{report.reason ?? "No reason provided."}</p>
+              <p>{report.description ?? "No reason provided."}</p>
             </div>
           ))}
         </div>
@@ -99,11 +107,19 @@ export default function AdminManagePostPage() {
         <div className="collapse-title font-semibold">Other options</div>
         <div className="flex flex-col gap-2 collapse-content text-sm">
           <div className="grid grid-cols-2 gap-4">
-            <button className="btn" disabled={data.is_verified}>
+            <button
+              className="btn"
+              disabled={isDeleting}
+              onClick={handleDeletePost}
+            >
               <Delete size={16} />
               <h1>Delete post</h1>
             </button>
-            <button className="btn">
+            <button
+              className="btn"
+              disabled={isDeleting}
+              onClick={handleDeleteUser}
+            >
               <Trash size={16} />
               <h1>Delete user's account</h1>
             </button>

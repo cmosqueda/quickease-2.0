@@ -1,14 +1,31 @@
 import db_client from "../../utils/client";
+
 import { hashPassword } from "../../utils/hash";
 
-export async function getUsers() {
-  const users = await db_client.user.findMany({
-    where: {
-      is_admin: false,
-    },
-  });
+export async function getUsers(page = 1, limit = 10) {
+  const skip = (page - 1) * limit;
 
-  return users;
+  const [users, total] = await Promise.all([
+    db_client.user.findMany({
+      skip,
+      take: limit,
+      where: {
+        is_admin: false,
+      },
+    }),
+    db_client.user.count({
+      where: {
+        is_admin: false,
+      },
+    }),
+  ]);
+
+  return {
+    users,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
 }
 
 export async function getUser(user_id: string) {

@@ -89,7 +89,7 @@ export default function AdminManageReportsPage() {
                         {report.reported_by?.last_name}
                       </p>
                     </div>
-                    <p>{report.reason ?? "No reason provided."}</p>
+                    <p>{report.description ?? "No reason provided."}</p>
                   </div>
                 ))}
               </div>
