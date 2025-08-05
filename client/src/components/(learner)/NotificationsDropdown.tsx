@@ -59,23 +59,44 @@ export default function NotificationsDropdown({
         </div>
 
         <div className="flex flex-col gap-2">
-          {notifications.map((notification: Notification) => (
-            <Link
-              key={notification.id}
-              className="relative flex flex-row gap-2 items-center rounded-xl p-4 bg-base-100/70 cursor-pointer delay-0 duration-300 hover:bg-base-200"
-              to={`post/${notification.resource_id}`}
-              onClick={async () => handleMarkAsRead(notification.id)}
-            >
-              <div className="relative">
-                {!notification.is_read ? (
-                  <span className="w-[8px] h-[8px] rounded-full bg-error top-0 left-1 absolute" />
-                ) : null}
+          {notifications.map((notification: Notification) => {
+            if (!notification.resource_id) {
+              return (
+                <div
+                  key={notification.id}
+                  className="relative flex flex-row gap-2 items-center rounded-xl p-4 bg-base-100/70 cursor-pointer delay-0 duration-300 hover:bg-base-200"
+                  onClick={async () => handleMarkAsRead(notification.id)}
+                >
+                  <div className="relative">
+                    {!notification.is_read ? (
+                      <span className="w-[8px] h-[8px] rounded-full bg-error top-0 left-1 absolute" />
+                    ) : null}
 
-                <Bell size={28} />
-              </div>
-              <h1>{notification.message}</h1>
-            </Link>
-          ))}
+                    <Bell size={28} />
+                  </div>
+                  <h1>{notification.message}</h1>
+                </div>
+              );
+            } else {
+              return (
+                <Link
+                  key={notification.id}
+                  className="relative flex flex-row gap-2 items-center rounded-xl p-4 bg-base-100/70 cursor-pointer delay-0 duration-300 hover:bg-base-200"
+                  to={`post/${notification.resource_id}`}
+                  onClick={async () => handleMarkAsRead(notification.id)}
+                >
+                  <div className="relative">
+                    {!notification.is_read ? (
+                      <span className="w-[8px] h-[8px] rounded-full bg-error top-0 left-1 absolute" />
+                    ) : null}
+
+                    <Bell size={28} />
+                  </div>
+                  <h1>{notification.message}</h1>
+                </Link>
+              );
+            }
+          })}
         </div>
       </ul>
     </details>
