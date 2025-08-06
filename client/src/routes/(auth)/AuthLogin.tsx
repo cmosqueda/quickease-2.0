@@ -80,7 +80,7 @@ export default function AuthLoginPage() {
           </label>
         </div>
         <NavLink
-          to="forgot-password"
+          to="/auth/forgot-password"
           className="text-right text-sm text-gray-400"
           viewTransition
         >

@@ -94,6 +94,7 @@ export default function GenerateSummaryModal() {
     const selectedFile = event.target.files?.[0];
     console.log(selectedFile);
     if (selectedFile) {
+      console.log(selectedFile.name);
       setFile(selectedFile);
     }
   };
@@ -104,20 +105,18 @@ export default function GenerateSummaryModal() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const mimeType = file.type;
+    const extension = file.name.split(".").pop()?.toLowerCase();
     let endpoint = "";
 
-    if (mimeType === "application/pdf") {
-      endpoint = "ai/generate-notes-from-image";
+    if (index === 0 && extension === "pdf") {
+      endpoint = "ai/generate-notes-from-pdf";
     } else if (
-      mimeType === "image/jpeg" ||
-      mimeType === "image/jpg" ||
-      mimeType === "image/png"
+      index === 1 &&
+      ["jpg", "jpeg", "png"].includes(extension || "")
     ) {
       endpoint = "ai/generate-notes-from-image";
     } else {
-      console.log("Unsupported MIME type:", mimeType);
-      return toast.error("File not supported.");
+      return toast.error("File not supported or doesn't match selected tab.");
     }
 
     try {
@@ -154,7 +153,6 @@ export default function GenerateSummaryModal() {
       setIsGenerating(false);
     }
   };
-
   const _TABS = [
     <>
       {file ? (
@@ -204,7 +202,7 @@ export default function GenerateSummaryModal() {
               id="dropzone-file"
               type="file"
               className="hidden"
-              accept="application/pdf,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              accept="application/pdf"
               onChange={handleFileChange}
             />
           </label>

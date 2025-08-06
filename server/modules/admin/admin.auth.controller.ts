@@ -12,7 +12,13 @@ import {
 
 export async function get_users(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const users = await getUsers();
+    const query = request.query as { page?: string; limit?: string };
+
+    const page = parseInt(query.page || "1", 10);
+    const limit = parseInt(query.limit || "10", 10);
+
+    const users = await getUsers(page, limit);
+
     return reply.code(200).send(users);
   } catch {
     return reply.code(500).send({ error: "failed_to_fetch_users" });
@@ -37,10 +43,23 @@ export async function search_users(
   reply: FastifyReply
 ) {
   try {
-    const { q } = request.query as { q: string };
-    const users = await searchUsers(q);
-    return reply.code(200).send(users);
-  } catch {
+    const {
+      q = "",
+      page = "1",
+      limit = "10",
+    } = request.query as {
+      q?: string;
+      page?: string;
+      limit?: string;
+    };
+
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+
+    const result = await searchUsers(q, pageNum, limitNum);
+    return reply.code(200).send(result);
+  } catch (err) {
+    console.error(err);
     return reply.code(500).send({ error: "failed_to_search_users" });
   }
 }

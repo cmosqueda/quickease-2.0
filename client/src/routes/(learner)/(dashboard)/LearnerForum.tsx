@@ -22,6 +22,7 @@ import { EditorProvider, useEditor } from "@tiptap/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useVote } from "@/hooks/useVote";
 import { Link, NavLink, useLoaderData, useNavigate } from "react-router";
+import { checkBadges, testNotificationBadge } from "@/utils/badges";
 
 const Post = ({
   post,

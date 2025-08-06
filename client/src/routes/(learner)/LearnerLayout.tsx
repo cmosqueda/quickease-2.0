@@ -8,7 +8,6 @@ import TimerPopup from "@/components/(learner)/TimerPopup";
 import useTimer from "@/hooks/useTimer";
 
 import { Outlet, useLoaderData, useLocation } from "react-router";
-import { Toaster } from "sonner";
 
 export default function LearnerLayout() {
   const data = useLoaderData();

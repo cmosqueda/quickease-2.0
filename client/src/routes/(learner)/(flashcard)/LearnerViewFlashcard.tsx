@@ -3,19 +3,45 @@ import FlippableCard from "@/components/(learner)/FlippableCard";
 
 import {
   ArrowLeft,
+  ArrowRight,
   ChevronLeft,
   ChevronRight,
   EllipsisVertical,
   Info,
   TriangleAlertIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 
 export default function LearnerViewFlashcardPage() {
   const data = useLoaderData();
   const navigate = useNavigate();
   const [cardIndex, setCardIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch (e.code) {
+        case "Space":
+          e.preventDefault();
+          setIsFlipped((prev) => !prev);
+          break;
+        case "ArrowLeft":
+          setCardIndex((prev) => (prev > 0 ? prev - 1 : prev));
+          setIsFlipped(false);
+          break;
+        case "ArrowRight":
+          setCardIndex((prev) =>
+            prev < data.flashcards.length - 1 ? prev + 1 : prev
+          );
+          setIsFlipped(false);
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [data.flashcards.length]);
 
   if (data.private) {
     return (
@@ -58,19 +84,49 @@ export default function LearnerViewFlashcardPage() {
           </details>
         </div>
       </div>
-      <div>
-        {data.is_ai_generated && (
-          <div className="flex flex-row items-center gap-2">
-            <Info size={16} className="text-sm text-base-content/50" />
-            <h1 className="text-sm text-base-content/50">AI-generated</h1>
+      <div className="collapse bg-base-100 border-base-300 border collapse-arrow">
+        <input type="checkbox" />
+        <div className="collapse-title font-semibold ">
+          {data.is_ai_generated && (
+            <div className="flex flex-row items-center gap-2">
+              <Info size={16} className="text-sm text-base-content/50" />
+              <h1 className="text-sm text-base-content/50">AI-generated</h1>
+            </div>
+          )}
+          <h1 className="text-4xl font-bold">{data.title}</h1>
+        </div>
+        <div className="collapse-content text-sm">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-sm text-base-content/50">Keyboard shortcuts</h1>
+            <div className="flex flex-row gap-2 items-center">
+              <kbd className="kbd">
+                <ArrowLeft size={13} />
+              </kbd>
+              <h1>Navigate to left card</h1>
+            </div>
+            <div className="flex flex-row gap-2 items-center">
+              <kbd className="kbd">
+                <ArrowRight size={13} />
+              </kbd>
+              <h1>Navigate to right card</h1>
+            </div>
+            <div className="flex flex-row gap-2 items-center">
+              <kbd className="kbd">Space</kbd>
+              <h1>Flip card</h1>
+            </div>
           </div>
-        )}
-        <h1 className="text-4xl font-bold">{data.title}</h1>
-        {data.description && <p>{data.description}</p>}
+
+          {data.description && <p>{data.description}</p>}
+        </div>
       </div>
+
       <FlippableCard
         front={data.flashcards[cardIndex].front}
         back={data.flashcards[cardIndex].back}
+        isFlipped={isFlipped}
+        onFlip={() => setIsFlipped((prev) => !prev)}
+        hasMargin={false}
+        style="self-center"
       />
       <div className="flex flex-row items-center justify-center gap-12">
         <ChevronLeft

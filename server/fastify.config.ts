@@ -5,7 +5,7 @@ import fastifyJwt from "@fastify/jwt";
 import fastifyMultipart from "@fastify/multipart";
 import cors from "@fastify/cors";
 
-// routes modules
+// users routes
 import authRoutes from "./modules/auth/auth.routes";
 import flashcardRoutes from "./modules/flashcard/flashcard.route";
 import quizRoutes from "./modules/quiz/quiz.routes";
@@ -15,12 +15,15 @@ import forumRoutes from "./modules/forum/forum.routes";
 import noteRoutes from "./modules/note/note.route";
 import mailRoutes from "./modules/mail/mail.route";
 import notificationRoutes from "./modules/notification/notification.route";
+import badgeRoutes from "./modules/badges/badges.route";
 
-import { FastifyRequest, FastifyReply } from "fastify";
-import { server } from "./server";
+// admin routes
 import adminAuthRoutes from "./modules/admin/admin.auth.route";
 import adminForumRoutes from "./modules/admin/admin.forum.route";
 import adminMailRoutes from "./modules/admin/admin.mail.route";
+
+import { FastifyRequest, FastifyReply } from "fastify";
+import { server } from "./server";
 
 export default async function initializeFastifyConfig() {
   /*
@@ -212,6 +215,7 @@ export default async function initializeFastifyConfig() {
   await server.register(aiRoutes, { prefix: "api/ai" });
   await server.register(mailRoutes, { prefix: "api/mail" });
   await server.register(notificationRoutes, { prefix: "api/notifications" });
+  await server.register(badgeRoutes, {prefix: "api/badges"});
 
   /*
     - Registering routes for each modules (Admin)

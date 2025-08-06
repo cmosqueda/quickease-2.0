@@ -43,6 +43,7 @@ import LearnerViewNotePage from "./routes/(learner)/(note)/LearnerViewNote";
 import LearnerViewFlashcardPage from "./routes/(learner)/(flashcard)/LearnerViewFlashcard";
 import LearnerHydrationFallback from "./routes/(learner)/LearnerHydrationFallback";
 import LearnerErrorFallback from "./routes/(learner)/LearnerErrorFallback";
+import LearnerViewProfilePage from "./routes/(learner)/(profile)/LearnerViewProfile";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -50,6 +51,9 @@ import AdminManageUserPage from "./routes/(admin)/(user)/AdminManageUser";
 import AdminManageUsersPage from "./routes/(admin)/(dashboard)/AdminManageUsers";
 import AdminManageReportsPage from "./routes/(admin)/(dashboard)/AdminManageReports";
 import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
+import AuthForgotPasswordPage from "./routes/(auth)/AuthForgotPassword";
+import AdminSearchUsersPage from "./routes/(admin)/(search)/AdminSearchUsers";
+import AdminSearchReportsPage from "./routes/(admin)/(search)/AdminSearchPosts";
 
 import _API_INSTANCE from "./utils/axios";
 import useAuth from "./hooks/useAuth";
@@ -83,8 +87,9 @@ const LearnerRoutes: RouteObject = {
       index: true,
       Component: LearnerForumPage,
       loader: async () => {
-        const { data: notifications } =
-          await _API_INSTANCE.get("notifications");
+        const { data: notifications } = await _API_INSTANCE.get(
+          "notifications"
+        );
 
         return notifications;
       },
@@ -95,7 +100,19 @@ const LearnerRoutes: RouteObject = {
       loader: loadLearnerResources,
     },
     { path: "summarize", Component: LearnerSummarizePage },
-    { path: "profile", Component: LearnerProfilePage, loader: () => {} },
+    {
+      path: "profile",
+      Component: LearnerProfilePage,
+      loader: async () => {
+        try {
+          const { data } = await _API_INSTANCE.get("users/");
+
+          return data;
+        } catch (err) {
+          redirect(-1 as any);
+        }
+      },
+    },
     {
       path: "search",
       children: [
@@ -141,7 +158,7 @@ const LearnerRoutes: RouteObject = {
     },
     {
       path: "profile/:id",
-      Component: LearnerProfilePage,
+      Component: LearnerViewProfilePage,
       loader: async ({ params }: { params: any }) => {
         try {
           const currentUserID = await useAuth.getState().user?.id;
@@ -435,6 +452,7 @@ const AuthRoutes: RouteObject = {
         },
       ],
     },
+    { path: "forgot-password", Component: AuthForgotPasswordPage },
     {
       path: "verify",
       Component: AuthVerifyEmailPage,
@@ -458,15 +476,14 @@ const router = createBrowserRouter([
       {
         index: true,
         Component: AdminManageUsersPage,
-        loader: async () => {
-          const { data } = await _API_INSTANCE.get("admin/auth/users");
-
-          return data;
-        },
       },
       {
         path: "reports",
         Component: AdminManageReportsPage,
+      },
+      {
+        path: "reports/search",
+        Component: AdminSearchReportsPage,
       },
       {
         path: "user/:id",
@@ -482,6 +499,10 @@ const router = createBrowserRouter([
             redirect(-1 as any);
           }
         },
+      },
+      {
+        path: "users/search",
+        Component: AdminSearchUsersPage,
       },
       {
         path: "report/:id",
@@ -504,7 +525,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={client}>
-    <Toaster position="top-right" />
+    <Toaster position="top-right" expand={true} />
     <RouterProvider router={router} />
   </QueryClientProvider>
 );

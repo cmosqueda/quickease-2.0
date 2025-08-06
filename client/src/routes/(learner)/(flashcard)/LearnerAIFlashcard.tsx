@@ -13,10 +13,35 @@ export default function LearnerAIFlashcardPage() {
   const data = useLoaderData();
   const navigate = useNavigate();
   const [cardIndex, setCardIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     console.log(data);
   }, [data]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch (e.code) {
+        case "Space":
+          e.preventDefault();
+          setIsFlipped((prev) => !prev);
+          break;
+        case "ArrowLeft":
+          setCardIndex((prev) => (prev > 0 ? prev - 1 : prev));
+          setIsFlipped(false);
+          break;
+        case "ArrowRight":
+          setCardIndex((prev) =>
+            prev < data.flashcards.length - 1 ? prev + 1 : prev
+          );
+          setIsFlipped(false);
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [data.flashcards.length]);
 
   const handleSave = async () => {
     if (data.flashcards.length < 2) {
@@ -71,6 +96,8 @@ export default function LearnerAIFlashcardPage() {
       <FlippableCard
         front={data.flashcards[cardIndex].front}
         back={data.flashcards[cardIndex].back}
+        isFlipped={isFlipped}
+        onFlip={() => setIsFlipped((prev) => !prev)}
       />
       <div className="flex flex-row items-center justify-center gap-12">
         <ChevronLeft
