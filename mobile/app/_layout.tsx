@@ -15,12 +15,14 @@ import {
 } from "@expo-google-fonts/gabarito";
 
 import "../globals.css";
+import useTheme from "@/hooks/useTheme";
 
 const client = new QueryClient();
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { currentScheme } = useTheme();
   const [loaded, error] = useFonts({
     Gabarito_400Regular,
     Gabarito_500Medium,
@@ -44,7 +46,7 @@ export default function RootLayout() {
     <QueryClientProvider client={client}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
-        <StatusBar style="auto" />
+        <StatusBar style="auto" translucent animated />
       </Stack>
     </QueryClientProvider>
   );
