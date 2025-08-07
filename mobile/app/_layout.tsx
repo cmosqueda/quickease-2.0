@@ -44,10 +44,14 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={client}>
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack
+        screenOptions={{ headerShown: false }}
+        initialRouteName="(learner)"
+      >
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)/login" />
         <Stack.Screen name="(auth)/register" />
+        <Stack.Screen name="(learner)" />
         <StatusBar style="auto" translucent animated />
       </Stack>
     </QueryClientProvider>

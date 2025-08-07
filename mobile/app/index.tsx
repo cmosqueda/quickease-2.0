@@ -54,7 +54,7 @@ export default function Index() {
 
   return (
     <SafeAreaView
-      className="flex flex-1 px-6 py-4 gap-2"
+      className="flex flex-1 px-6 py-4 gap-6"
       style={{
         backgroundColor: currentScheme?.colorBase100,
       }}
