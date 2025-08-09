@@ -3,7 +3,14 @@ import _API_INSTANCE from "@/utils/axios";
 import clsx from "clsx";
 import dayjs from "dayjs";
 
-import { ArrowRight, Image, Notebook, Paperclip, X } from "lucide-react";
+import {
+  ArrowRight,
+  Image,
+  LoaderPinwheel,
+  Notebook,
+  Paperclip,
+  X,
+} from "lucide-react";
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { toast } from "sonner";
@@ -92,13 +99,14 @@ export default function GenerateSummaryModal() {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
-    console.log(selectedFile);
     if (selectedFile) {
-      console.log(selectedFile.name);
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        toast.error("File size exceeds 5MB limit.");
+        return;
+      }
       setFile(selectedFile);
     }
   };
-
   const handleSubmit = async () => {
     if (!file) return alert("Please select a file first.");
 
@@ -150,6 +158,9 @@ export default function GenerateSummaryModal() {
     } catch (error) {
       console.error("Upload error:", error);
     } finally {
+      setGeneratedContent("");
+      setFile(null);
+      setIndex(0);
       setIsGenerating(false);
     }
   };
@@ -282,6 +293,17 @@ export default function GenerateSummaryModal() {
       </button>
     </>,
   ];
+
+  if (isGenerating) {
+    return (
+      <dialog id="generate-summary-modal-global" className="modal">
+        <div className="modal-box items-center justify-center flex flex-col gap-4 w-fit">
+          <LoaderPinwheel className="animate-spin" size={64} />
+          <h3 className="font-bold text-2xl text-center">Generating...</h3>
+        </div>
+      </dialog>
+    );
+  }
 
   return (
     <dialog id="generate-summary-modal-global" className="modal">

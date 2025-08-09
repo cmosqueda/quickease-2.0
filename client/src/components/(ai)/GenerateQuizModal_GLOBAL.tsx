@@ -12,13 +12,14 @@ import {
   SendHorizonal,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { toast } from "sonner";
 
 const GenerateQuizzesFromNotes = ({
   notes,
   navigate,
+  setIsGenerating,
 }: {
   notes: {
     id: string;
@@ -28,10 +29,12 @@ const GenerateQuizzesFromNotes = ({
     created_at: string;
   }[];
   navigate: NavigateFunction;
+  setIsGenerating: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const handleGenerate = async (id: string) => {
     setIsDisabled(true);
+    setIsGenerating(true);
 
     try {
       const { data } = await _API_INSTANCE.post(
@@ -50,7 +53,7 @@ const GenerateQuizzesFromNotes = ({
       const modal = document.getElementById(
         "generate-quiz-modal-global"
       ) as HTMLDialogElement;
-      
+
       modal.close();
       return navigate("/learner/quizzes/ai");
     } catch (err) {
@@ -58,6 +61,7 @@ const GenerateQuizzesFromNotes = ({
       throw err;
     } finally {
       setIsDisabled(false);
+      setIsGenerating(false);
     }
   };
 
@@ -150,16 +154,24 @@ const GenerateQuizzesFromPrompt = ({
   );
 };
 
-const GenerateQuizzesFromPDF = () => {
+const GenerateQuizzesFromPDF = ({
+  isGenerating,
+  setIsGenerating,
+}: {
+  isGenerating: boolean;
+  setIsGenerating: Dispatch<SetStateAction<boolean>>;
+}) => {
   const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [generatedContent, setGeneratedContent] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
-    console.log(selectedFile);
     if (selectedFile) {
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        toast.error("File size exceeds 5MB limit.");
+        return;
+      }
       setFile(selectedFile);
     }
   };
@@ -215,6 +227,8 @@ const GenerateQuizzesFromPDF = () => {
     } catch (error) {
       console.error("Upload error:", error);
     } finally {
+      setGeneratedContent("");
+      setFile(null);
       setIsGenerating(false);
     }
   };
@@ -300,11 +314,30 @@ export default function GenerateQuizModal({
 }) {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const tabs = [
-    <GenerateQuizzesFromNotes navigate={navigate} notes={notes} />,
-    <GenerateQuizzesFromPDF />,
+    <GenerateQuizzesFromNotes
+      navigate={navigate}
+      notes={notes}
+      setIsGenerating={setIsGenerating}
+    />,
+    <GenerateQuizzesFromPDF
+      isGenerating={isGenerating}
+      setIsGenerating={setIsGenerating}
+    />,
   ];
+
+  if (isGenerating) {
+    return (
+      <dialog id="generate-quiz-modal-global" className="modal">
+        <div className="modal-box items-center justify-center flex flex-col gap-4 w-fit">
+          <LoaderPinwheel className="animate-spin" size={64} />
+          <h3 className="font-bold text-2xl text-center">Generating...</h3>
+        </div>
+      </dialog>
+    );
+  }
 
   return (
     <dialog id="generate-quiz-modal-global" className="modal">
