@@ -113,6 +113,11 @@ export default function AuthRegisterPage() {
               className="input input-md w-full"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key == "Enter") {
+                  handleRegister();
+                }
+              }}
             />
           </label>
           <label className="floating-label">
@@ -123,6 +128,11 @@ export default function AuthRegisterPage() {
               className="input input-md w-full"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key == "Enter") {
+                  handleRegister();
+                }
+              }}
             />
           </label>
         </div>
@@ -134,6 +144,11 @@ export default function AuthRegisterPage() {
             className="input input-md w-full"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                handleRegister();
+              }
+            }}
           />
         </label>
         <label className="floating-label">
@@ -144,6 +159,11 @@ export default function AuthRegisterPage() {
             className="input input-md w-full"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                handleRegister();
+              }
+            }}
           />
         </label>
         <label className="floating-label">
@@ -154,6 +174,11 @@ export default function AuthRegisterPage() {
             className="input input-md w-full"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                handleRegister();
+              }
+            }}
           />
         </label>
         <label className="label">

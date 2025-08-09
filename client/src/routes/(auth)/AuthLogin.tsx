@@ -6,15 +6,44 @@ import _API_INSTANCE from "@/utils/axios";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { toast } from "sonner";
+import { z } from "zod";
 
 export default function AuthLoginPage() {
   const navigate = useNavigate();
   const { setUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isRegistering, setIsRegistering] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const schema = z.object({
+    email: z.string().email(),
+    password: z.string(),
+  });
 
   const handleLogin = async () => {
+    const result = schema.safeParse({
+      email,
+      password,
+    });
+
+    if (!email) {
+      toast.error("Email required.");
+    }
+
+    if (!password) {
+      toast.error("Password required.");
+    }
+
+    if (!result.success) {
+      result.error.errors.map((m) => {
+        toast.error(`Error: ${m.message.toString()}`);
+      });
+      setIsLoggingIn(false);
+      return;
+    }
+
+    setIsLoggingIn(true);
+
     try {
       const { data, status } = await _API_INSTANCE.post(
         "auth/login",
@@ -40,7 +69,7 @@ export default function AuthLoginPage() {
       toast.error(err.response.data.message);
       throw err;
     } finally {
-      setIsRegistering(false);
+      setIsLoggingIn(false);
     }
   };
 
@@ -66,6 +95,11 @@ export default function AuthLoginPage() {
               className="input input-lg w-full"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key == "Enter") {
+                  handleLogin();
+                }
+              }}
             />
           </label>
           <label className="floating-label">
@@ -76,6 +110,11 @@ export default function AuthLoginPage() {
               className="input input-lg w-full"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key == "Enter") {
+                  handleLogin();
+                }
+              }}
             />
           </label>
         </div>
@@ -88,7 +127,7 @@ export default function AuthLoginPage() {
         </NavLink>
         <button
           className="btn btn-soft btn-success w-full btn-lg"
-          disabled={isRegistering}
+          disabled={isLoggingIn}
           onClick={handleLogin}
         >
           Login
