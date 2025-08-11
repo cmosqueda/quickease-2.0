@@ -21,8 +21,7 @@ import { useEffect, useState } from "react";
 import { EditorProvider, useEditor } from "@tiptap/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useVote } from "@/hooks/useVote";
-import { Link, NavLink, useLoaderData, useNavigate } from "react-router";
-import { checkBadges, testNotificationBadge } from "@/utils/badges";
+import { NavLink, useLoaderData, useNavigate } from "react-router";
 
 const Post = ({
   post,
@@ -179,23 +178,36 @@ export default function LearnerForumPage() {
     content: "",
   });
 
-  const { data, isFetching } = useInfiniteQuery({
-    queryKey: ["recent-posts"],
-    queryFn: async ({ pageParam = null }) => {
-      const { data: posts } = await _API_INSTANCE.get("/forum/posts/recent", {
-        params: { cursor: pageParam, limit: 10 },
-        timeout: 5 * 60 * 1000,
-      });
+  const { data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["recent-posts"],
+      queryFn: async ({ pageParam = null }) => {
+        const { data: posts } = await _API_INSTANCE.get("/forum/posts/recent", {
+          params: { cursor: pageParam, limit: 6 },
+          timeout: 5 * 60 * 1000,
+        });
+        return posts;
+      },
+      initialPageParam: null,
+      getNextPageParam: (lastPage) => lastPage?.nextCursor ?? null,
+      retry: 3,
+      refetchOnWindowFocus: false,
+    });
 
-      return posts;
-    },
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => {
-      return lastPage?.nextCursor ?? null;
-    },
-    retry: 3,
-    refetchOnWindowFocus: false,
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+          document.body.offsetHeight - 200 &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
+        fetchNextPage();
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   useEffect(() => {
     return () => editor?.destroy();
@@ -239,7 +251,7 @@ export default function LearnerForumPage() {
           <ProfileDropdown />
         </div>
       </div>
-      {isFetching ? (
+      {isFetching && !isFetchingNextPage ? (
         <div className="max-w-7xl h-full w-full mx-auto flex items-center justify-center">
           <LoaderPinwheel className="animate-spin" size={128} />
         </div>
@@ -248,6 +260,11 @@ export default function LearnerForumPage() {
           {data?.pages.flatMap((page) =>
             page.posts.map((post: any) => <Post key={post.id} post={post} />)
           )}
+        </div>
+      )}
+      {isFetchingNextPage && (
+        <div className="flex justify-center p-4">
+          <LoaderPinwheel className="animate-spin" size={48} />
         </div>
       )}
     </div>
