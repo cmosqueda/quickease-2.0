@@ -20,6 +20,7 @@ import { useEditor } from "@tiptap/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_GLOBAL";
+import { checkBadges } from "@/utils/badges";
 
 export default function LearnerCreateNotePage() {
   const { user } = useAuth();
@@ -68,6 +69,7 @@ export default function LearnerCreateNotePage() {
       );
 
       if (res.status == 201) {
+        await checkBadges();
         toast.success("Note created.");
         navigate("/learner/library?tab=notes");
       }

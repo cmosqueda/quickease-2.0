@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { getUnitValue, handleTimeChange } from "@/utils/quiz";
+import { checkBadges } from "@/utils/badges";
 
 interface Question {
   question: string;
@@ -114,6 +115,8 @@ export default function LearnerEditQuizPage() {
       );
 
       if (status === 200) {
+        await checkBadges();
+
         toast.success("Quiz updated.");
         return navigate("/learner/library?tab=quizzes", {
           viewTransition: true,

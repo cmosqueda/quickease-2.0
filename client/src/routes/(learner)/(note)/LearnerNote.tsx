@@ -13,6 +13,7 @@ import {
   CalendarRange,
   ClipboardList,
   Delete,
+  Forward,
   Save,
   X,
 } from "lucide-react";
@@ -206,6 +207,25 @@ export default function LearnerNotePage() {
           )}
 
           <h1 className="font-bold text-xl">Other options</h1>
+          <div className="flex flex-col gap-1">
+            <button
+              className="rounded-3xl btn btn-soft gap-2 join-item w-full"
+              onClick={async () => {
+                await navigator.clipboard.writeText(
+                  `https://quickease.online/learner/note/view/${data.id}`
+                );
+                toast.success("Link copied to clipboard.");
+              }}
+              disabled={isPublic}
+            >
+              <Forward />
+              <h1>Share (Copy Link)</h1>
+            </button>
+            <p className="text-xs text-base-content/50">
+              To share, you must set note to public.
+            </p>
+          </div>
+
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
             onClick={handleDelete}

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { getUnitValue, handleTimeChange } from "@/utils/quiz";
+import { checkBadges } from "@/utils/badges";
 
 interface Question {
   question: string;
@@ -122,6 +123,8 @@ export default function LearnerAIEditQuizPage() {
       );
 
       if (status === 201) {
+        await checkBadges();
+
         toast.success("Generated quiz saved.");
         navigate("/learner/library?tab=flashcards", { viewTransition: true });
       }

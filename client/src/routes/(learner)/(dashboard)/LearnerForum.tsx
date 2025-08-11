@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ChevronUp,
   EllipsisVertical,
+  Forward,
   LoaderPinwheel,
   MessageCircle,
   Plus,
@@ -22,6 +23,7 @@ import { EditorProvider, useEditor } from "@tiptap/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useVote } from "@/hooks/useVote";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
+import { toast } from "sonner";
 
 const Post = ({
   post,
@@ -81,14 +83,13 @@ const Post = ({
       {/* Header */}
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row gap-2 items-center">
-          <div className="w-[32px] h-[32px] rounded-full bg-base-100" />
           <NavLink
             to={`/learner/profile/${post.user.id}`}
             className="font-semibold"
           >
             {fullName}
           </NavLink>
-          <p className="text-sm text-gray-500">/ {formattedDate}</p>
+          <p className="text-sm text-gray-500">• {formattedDate}</p>
         </div>
 
         {post.user_id != user?.id && (
@@ -134,7 +135,7 @@ const Post = ({
       </NavLink>
 
       {/* Footer */}
-      <div className="flex flex-row gap-4 mt-2">
+      <div className="flex flex-row gap-2">
         <div className="flex flex-row items-center gap-2 p-3 rounded-3xl bg-base-100 border border-base-200">
           <ChevronUp
             className={clsx(
@@ -160,6 +161,18 @@ const Post = ({
           <MessageCircle />
           <p className="text-sm">{post.comments?.length ?? 0}</p>
         </NavLink>
+        <button
+          className="flex flex-row items-center gap-2 px-6 py-3 rounded-3xl bg-base-100 border border-base-200 cursor-pointer hover:bg-base-300 transition"
+          onClick={async () => {
+            await navigator.clipboard.writeText(
+              `https://quickease.online/learner/post/${post.id}`
+            );
+
+            toast.success("Link copied to clipboard.");
+          }}
+        >
+          <Forward />
+        </button>
       </div>
     </div>
   );
