@@ -105,9 +105,18 @@ const LearnerRoutes: RouteObject = {
       Component: LearnerProfilePage,
       loader: async () => {
         try {
-          const { data } = await _API_INSTANCE.get("users/");
+          const { data: user } = await _API_INSTANCE.get("users/");
+          const { data: posts } = await _API_INSTANCE.get("forum/");
 
-          return data;
+          console.log({
+            user,
+            posts,
+          });
+
+          return {
+            user,
+            posts,
+          };
         } catch (err) {
           redirect(-1 as any);
         }

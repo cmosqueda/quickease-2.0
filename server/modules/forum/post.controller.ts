@@ -19,7 +19,7 @@ export async function get_user_posts(
   reply: FastifyReply
 ) {
   try {
-    const posts = getUserPosts(request.user.id);
+    const posts = await getUserPosts(request.user.id);
 
     reply.code(200).send(posts);
   } catch (err) {

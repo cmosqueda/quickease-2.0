@@ -141,8 +141,10 @@ export async function checkAndAwardBadges(user_id: string) {
     forumVeteran: forumActivityCount >= 100,
   };
 
+  const currentBadgeIds = currentBadges.map((b: any) => b.id);
+
   for (const badgeId in badgeConditions) {
-    if (badgeConditions[badgeId] && !currentBadges.includes(badgeId)) {
+    if (badgeConditions[badgeId] && !currentBadgeIds.includes(badgeId)) {
       newBadges.push(badgeId);
     }
   }
