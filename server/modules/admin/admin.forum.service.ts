@@ -210,3 +210,36 @@ export async function deleteComment(
 
   return true;
 }
+
+export async function resolvePost(
+  post_id: string,
+  admin_id: string,
+  user_id: string
+) {
+  const post = await db_client.post.findFirst({
+    where: {
+      id: post_id,
+    },
+    select: {
+      title: true,
+    },
+  });
+
+  await db_client.post.update({
+    data: {
+      is_resolved: "IS_DELETED",
+    },
+    where: {
+      id: post_id,
+    },
+  });
+
+  await sendNotification({
+    actorId: admin_id,
+    recipientId: user_id,
+    message: `Your post named ${post.title} has been deleted due to many reports.`,
+    type: "DELETED_POST_BY_REPORT",
+  });
+
+  return true;
+}

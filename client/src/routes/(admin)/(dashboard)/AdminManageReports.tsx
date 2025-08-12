@@ -2,7 +2,7 @@
 import _API_INSTANCE from "@/utils/axios";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
-import { Clock, MessageCircle, Search } from "lucide-react";
+import { Check, Clock, MessageCircle, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { EditorProvider } from "@tiptap/react";
@@ -110,9 +110,20 @@ export default function AdminManageReportsPage() {
               </div>
             </div>
 
-            <div className="px-4 py-1 rounded-3xl bg-base-200 w-fit flex flex-row gap-2 items-center">
-              <Clock size={16} />
-              <h1>{new Date(post.created_at).toLocaleDateString()}</h1>
+            <div className="flex flex-row gap-2 items-center">
+              <div className="px-4 py-1 rounded-3xl bg-base-200 w-fit flex flex-row gap-2 items-center">
+                <Clock size={16} />
+                <h1>{new Date(post.created_at).toLocaleDateString()}</h1>
+              </div>
+              {post.is_resolved && (
+                <div className="px-4 py-1 rounded-3xl bg-base-200 w-fit flex flex-row gap-2 items-center">
+                  <Check size={16} />
+                  <h1>
+                    Resolved -{" "}
+                    {post.is_resolved == "IS_DELETED" ? "Deleted" : "Hidden"}
+                  </h1>
+                </div>
+              )}
             </div>
           </div>
         ))}

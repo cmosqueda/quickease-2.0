@@ -5,6 +5,7 @@ import {
   delete_post,
   delete_comment,
   search_reported_posts,
+  resolve_post,
 } from "./admin.forum.controller";
 
 export default async function adminForumRoutes(fastify: FastifyInstance) {
@@ -26,6 +27,11 @@ export default async function adminForumRoutes(fastify: FastifyInstance) {
   fastify.delete("/post/delete/:post_id", {
     preHandler: [fastify.authenticate_admin],
     handler: delete_post,
+  });
+
+  fastify.post("/post/resolve/:post_id", {
+    preHandler: [fastify.authenticate_admin],
+    handler: resolve_post,
   });
 
   fastify.delete("/comment/delete/:comment_id", {

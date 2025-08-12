@@ -4,6 +4,7 @@ import {
   deletePost,
   deleteComment,
   searchReportedPosts,
+  resolvePost,
 } from "./admin.forum.service";
 import { FastifyRequest, FastifyReply } from "fastify";
 
@@ -88,5 +89,22 @@ export async function delete_comment(
     return reply.code(200).send({ success: true });
   } catch {
     return reply.code(500).send({ error: "failed_to_delete_comment" });
+  }
+}
+
+export async function resolve_post(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const { post_id } = request.params as { post_id: string };
+    const { user_id } = request.body as { user_id: string };
+
+    const admin_id = request.user.id;
+
+    await resolvePost(post_id, admin_id, user_id);
+    return reply.code(200).send({ success: true });
+  } catch {
+    return reply.code(500).send({ error: "failed_to_delete_post" });
   }
 }

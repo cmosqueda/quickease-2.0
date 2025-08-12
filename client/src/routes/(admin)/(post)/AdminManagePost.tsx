@@ -18,7 +18,7 @@ export default function AdminManagePostPage() {
     setIsDeleting(true);
 
     try {
-      await _API_INSTANCE.delete(`admin/forum/post/delete/${data.post.id}`, {
+      await _API_INSTANCE.post(`admin/forum/post/resolve/${data.post.id}`, {
         data: {
           user_id: data.post.user.id,
         },
@@ -26,7 +26,7 @@ export default function AdminManagePostPage() {
 
       toast.success("Post deleted.");
       navigate(-1 as any, { viewTransition: true });
-    } catch (err) {
+    } catch {
       toast.error("Error deleting post, try again.");
     } finally {
       setIsDeleting(false);
@@ -41,7 +41,7 @@ export default function AdminManagePostPage() {
 
       toast.success("Post deleted.");
       navigate(-1 as any, { viewTransition: true });
-    } catch (err) {
+    } catch {
       toast.error("Error deleting post, try again.");
     } finally {
       setIsDeleting(false);

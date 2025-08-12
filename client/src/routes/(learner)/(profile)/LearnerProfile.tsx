@@ -4,7 +4,7 @@ import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import { EditorProvider } from "@tiptap/react";
 import clsx from "clsx";
 import dayjs from "dayjs";
-import { ChevronRight, Crown, GalleryVertical } from "lucide-react";
+import { ChevronRight, Crown, GalleryVertical, Info } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useLoaderData } from "react-router";
 
@@ -68,13 +68,19 @@ const User = ({ user, posts }: { user: any; posts: any }) => {
             <NavLink
               to={`/learner/post/${post.id}`}
               viewTransition
-              className="transition-all duration-300 p-4 rounded-3xl bg-base-100 hover:bg-base-300 border border-base-200 hover:shadow"
+              className="transition-all duration-300 p-4 rounded-3xl bg-base-100 hover:bg-base-300 border border-base-200 hover:shadow flex flex-col gap-4"
             >
               <EditorProvider
                 content={post.post_body}
                 editable={false}
                 extensions={_TIPTAP_EXTENSIONS}
               />
+              {post.is_resolved && (
+                <div className="flex flex-row gap-4 p-4 rounded-2xl bg-base-300">
+                  <Info />
+                  <p>This post has been deleted due to many reports.</p>
+                </div>
+              )}
             </NavLink>
           </div>
         ))}
@@ -98,7 +104,7 @@ const User = ({ user, posts }: { user: any; posts: any }) => {
         </div>
       </div>
     </>,
-  ]; // 0 - Badges | 1 -  | 2 - Stats
+  ]; // 0 - Badges | 1 - Posts | 2 - Stats
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">

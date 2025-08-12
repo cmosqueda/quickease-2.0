@@ -50,7 +50,7 @@ import AdminLayout from "./routes/(admin)/AdminLayout";
 import AdminManageUserPage from "./routes/(admin)/(user)/AdminManageUser";
 import AdminManageUsersPage from "./routes/(admin)/(dashboard)/AdminManageUsers";
 import AdminManageReportsPage from "./routes/(admin)/(dashboard)/AdminManageReports";
-import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
+import AdminManagePostPage from "./routes/(admin)/(post)/AdminManagePost";
 import AuthForgotPasswordPage from "./routes/(auth)/AuthForgotPassword";
 import AdminSearchUsersPage from "./routes/(admin)/(search)/AdminSearchUsers";
 import AdminSearchReportsPage from "./routes/(admin)/(search)/AdminSearchPosts";
