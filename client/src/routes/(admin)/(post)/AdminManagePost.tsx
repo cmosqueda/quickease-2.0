@@ -4,7 +4,13 @@ import _API_INSTANCE from "@/utils/axios";
 import dayjs from "dayjs";
 
 import { EditorProvider } from "@tiptap/react";
-import { ArrowLeft, Delete, MessageCircle, Trash } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Delete,
+  MessageCircle,
+  Trash,
+} from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -33,16 +39,18 @@ export default function AdminManagePostPage() {
     }
   };
 
-  const handleDeleteUser = async () => {
+  const handleDeleteAccount = async () => {
     setIsDeleting(true);
 
     try {
-      await _API_INSTANCE.delete(`/users/${data.post.user.id}/delete`);
+      await _API_INSTANCE.delete(
+        `admin/auth/users/${data.post.user.id}/delete`
+      );
 
-      toast.success("Post deleted.");
+      toast.success("Account deleted.");
       navigate(-1 as any, { viewTransition: true });
     } catch {
-      toast.error("Error deleting post, try again.");
+      toast.error("Failed to delete account.");
     } finally {
       setIsDeleting(false);
     }
@@ -118,7 +126,13 @@ export default function AdminManagePostPage() {
             <button
               className="btn"
               disabled={isDeleting}
-              onClick={handleDeleteUser}
+              onClick={() => {
+                const modal = document.getElementById(
+                  "delete-account-modal"
+                ) as HTMLDialogElement;
+
+                modal.show();
+              }}
             >
               <Trash size={16} />
               <h1>Delete user's account</h1>
@@ -126,6 +140,38 @@ export default function AdminManagePostPage() {
           </div>
         </div>
       </div>
+      <dialog id="delete-account-modal" className="modal">
+        <div className="modal-box flex flex-row gap-8 items-center justify-center">
+          <AlertTriangle size={128} className="self-center" />
+          <div className="flex flex-col gap-2">
+            <div>
+              <h1 className="font-bold text-3xl">Delete account?</h1>
+              <p className="text-base-content/60">
+                This is a destructive action, are you sure you wanna delete this
+                user's account?
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 justify-end">
+              <button className="btn" onClick={handleDeleteAccount}>
+                Yes
+              </button>
+              <button
+                className="btn btn-neutral"
+                onClick={() => {
+                  const modal = document.getElementById(
+                    "delete-account-modal"
+                  ) as HTMLDialogElement;
+
+                  modal.close();
+                }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 }
