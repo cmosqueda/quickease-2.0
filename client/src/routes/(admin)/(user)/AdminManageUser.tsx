@@ -2,7 +2,7 @@
 
 import _API_INSTANCE from "@/utils/axios";
 
-import { ArrowLeft, Key, MailCheck, Trash } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Key, MailCheck, Trash } from "lucide-react";
 import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -70,6 +70,17 @@ export default function AdminManageUserPage() {
     } catch (err) {
       console.error(err);
       toast.error("Failed to send verification email.");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await _API_INSTANCE.delete(`/admin/auth/users/${data.id}/delete`);
+      toast.success("Account deleted.");
+      navigate(-1 as any, { viewTransition: true });
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete account.");
     }
   };
 
@@ -247,13 +258,54 @@ export default function AdminManageUserPage() {
               <MailCheck size={16} />
               <h1>Send an email to verify user</h1>
             </button>
-            <button className="btn">
+            <button
+              className="btn"
+              onClick={() => {
+                const modal = document.getElementById(
+                  "delete-account-modal"
+                ) as HTMLDialogElement;
+
+                modal.show();
+              }}
+            >
               <Trash size={16} />
               <h1>Delete account</h1>
             </button>
           </div>
         </div>
       </div>
+      <dialog id="delete-account-modal" className="modal">
+        <div className="modal-box flex flex-row gap-8 items-center justify-center">
+          <AlertTriangle size={128} className="self-center" />
+          <div className="flex flex-col gap-2">
+            <div>
+              <h1 className="font-bold text-3xl">Delete account?</h1>
+              <p className="text-base-content/60">
+                This is a destructive action, are you sure you wanna delete this
+                user's account?
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 justify-end">
+              <button className="btn" onClick={handleDeleteAccount}>
+                Yes
+              </button>
+              <button
+                className="btn btn-neutral"
+                onClick={() => {
+                  const modal = document.getElementById(
+                    "delete-account-modal"
+                  ) as HTMLDialogElement;
+
+                  modal.close();
+                }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 }
