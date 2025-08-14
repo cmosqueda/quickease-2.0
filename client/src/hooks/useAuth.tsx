@@ -18,6 +18,7 @@ export type AuthUserRecord = {
   };
   is_public: boolean;
   is_verified: boolean;
+  is_admin: true;
   created_at: string | Date;
   updated_at: string | Date;
   notes: Note[];

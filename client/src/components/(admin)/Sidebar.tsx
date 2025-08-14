@@ -105,8 +105,9 @@ export default function Sidebar({ tab }: { tab: string }) {
               <h1 className="font-bold text-3xl">QuickEase</h1>
             </div>
             <div className="flex flex-col gap-2">
-              {links.slice(0, 2).map((link) => (
+              {links.slice(0, 2).map((link, index) => (
                 <NavLink
+                  key={index}
                   to={link.link}
                   className={clsx(
                     "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",
@@ -130,8 +131,9 @@ export default function Sidebar({ tab }: { tab: string }) {
 
       {/* desktop sidebar */}
       <div className="hidden relative lg:sticky lg:top-0 lg:flex flex-col gap-2 p-4">
-        {links.slice(0, 2).map((link) => (
+        {links.slice(0, 2).map((link, index) => (
           <NavLink
+            key={index}
             to={link.link}
             className={clsx(
               "flex flex-row gap-4 items-center cursor-pointer transition-all delay-0 duration-300 p-4 rounded-xl",

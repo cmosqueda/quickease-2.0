@@ -71,7 +71,7 @@ export default async function initializeFastifyConfig() {
     secret: server.config.JWT_SECRET_KEY,
     cookie: {
       cookieName: "QUICKEASE_TOKEN",
-      signed: false,
+      signed: true,
     },
   });
 

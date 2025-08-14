@@ -56,6 +56,7 @@ export default function AdminManageUsersPage() {
         <div className="grid lg:grid-cols-2 2xl:grid-cols-3 gap-4">
           {data.users.map((user: any) => (
             <Link
+              key={user.id}
               to={`user/${user.id}`}
               className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer"
             >
