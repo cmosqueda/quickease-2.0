@@ -43,10 +43,10 @@ export default function GenerateFlashcardModal({ text }: { text: string }) {
       const modal = document.getElementById(
         "generate-flashcard-modal"
       ) as HTMLDialogElement;
-      
+
       modal.close();
       navigate("/learner/flashcards/ai");
-    } catch (err) {
+    } catch {
       toast.error("Error generating content.");
       setIndex(1); // show failed state
     }

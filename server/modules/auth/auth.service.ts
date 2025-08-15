@@ -20,12 +20,7 @@ export async function loginUser(email: string, password: string) {
   }
 }
 
-export async function registerUser(
-  firstName: string,
-  lastName: string,
-  email: string,
-  password: string
-) {
+export async function registerUser(firstName: string, lastName: string, email: string, password: string) {
   try {
     const hashed = await hashPassword(password);
 
@@ -44,11 +39,7 @@ export async function registerUser(
   }
 }
 
-export async function updateEmail(
-  email: string,
-  token: string,
-  new_email: string
-) {
+export async function updateEmail(email: string, token: string, new_email: string) {
   try {
     const userToken = await db_client.userToken.findFirst({
       where: {
@@ -81,11 +72,7 @@ export async function updateEmail(
   }
 }
 
-export async function updatePassword(
-  email: string,
-  token: string,
-  new_password: string
-) {
+export async function updatePassword(email: string, token: string, new_password: string) {
   try {
     const userToken = await db_client.userToken.findFirst({
       where: {
@@ -117,5 +104,38 @@ export async function updatePassword(
     return true;
   } catch (err) {
     throw new Error("Invalid token or failed password update.");
+  }
+}
+
+export async function verifyEmail(email: string, token: string) {
+  try {
+    const userToken = await db_client.userToken.findFirst({
+      where: {
+        token,
+        type: "VERIFY_EMAIL",
+        used: false,
+        expires_at: { gt: new Date() },
+      },
+      include: { user: true },
+    });
+
+    if (!userToken || userToken.user.email !== email) {
+      throw new Error("Invalid or expired token");
+    }
+
+    await db_client.$transaction([
+      db_client.userToken.update({
+        where: { id: userToken.id },
+        data: { used: true },
+      }),
+      db_client.user.update({
+        where: { id: userToken.user.id },
+        data: { is_verified: true },
+      }),
+    ]);
+
+    return true;
+  } catch (err) {
+    throw new Error("Invalid token or verification failed.");
   }
 }

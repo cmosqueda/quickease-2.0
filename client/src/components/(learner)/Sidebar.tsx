@@ -15,9 +15,16 @@ import {
   Settings,
   Timer,
 } from "lucide-react";
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import {
+  use,
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { NavLink, useNavigate, type NavigateFunction } from "react-router";
 import { toast } from "sonner";
+import useAuth from "@/hooks/useAuth";
 
 type NavLinkItem = {
   title: string;
@@ -61,6 +68,8 @@ const Mobile = ({
   isOpen: boolean;
   navigate: NavigateFunction;
 }) => {
+  const { user } = useAuth();
+
   return (
     <div className="drawer lg:hidden">
       <input id="mobile-drawer" type="checkbox" className="drawer-toggle" />
@@ -107,14 +116,24 @@ const Mobile = ({
                     modal.showModal();
                   }
                 }}
+                disabled={!user?.is_verified}
                 className={clsx(
-                  "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer",
+                  "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer disabled:bg-base-300 disabled:cursor-not-allowed",
                   isOpen ? "justify-start" : "justify-center",
                   "hover:bg-base-200"
                 )}
               >
                 {link.icon}
-                {isOpen && <span>{link.title}</span>}
+                {isOpen && (
+                  <div className="flex flex-col items-start">
+                    <span>{link.title}</span>
+                    {!user?.is_verified && (
+                      <p className="text-sm text-base-content/40">
+                        Email not verified.
+                      </p>
+                    )}
+                  </div>
+                )}
               </button>
             ))}
 
@@ -169,6 +188,8 @@ const Desktop = ({
   currentTab: string;
   isOpen: boolean;
 }) => {
+  const { user } = useAuth();
+
   return (
     <div className="hidden relative lg:sticky lg:top-0 lg:flex flex-col gap-2 p-4">
       {_LINKS.slice(0, 2).map((link: any) => (
@@ -195,6 +216,7 @@ const Desktop = ({
       {_LINKS.slice(2, 5).map((link) => (
         <button
           key={link.title}
+          disabled={!user?.is_verified}
           onClick={() => {
             const modal = document.getElementById(
               (link as ModalLinkItem).element
@@ -202,13 +224,22 @@ const Desktop = ({
             if (modal instanceof HTMLDialogElement) modal.showModal();
           }}
           className={clsx(
-            "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer",
+            "flex gap-4 items-center transition p-4 rounded-xl cursor-pointer disabled:bg-base-300 disabled:cursor-not-allowed",
             isOpen ? "justify-start" : "justify-center",
             "hover:bg-base-200"
           )}
         >
           {link.icon}
-          {isOpen && <span>{link.title}</span>}
+          {isOpen && (
+            <div className="flex flex-col items-start">
+              <span>{link.title}</span>
+              {!user?.is_verified && (
+                <p className="text-sm text-base-content/40">
+                  Email not verified.
+                </p>
+              )}
+            </div>
+          )}
         </button>
       ))}
 

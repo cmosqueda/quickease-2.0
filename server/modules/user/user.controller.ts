@@ -19,7 +19,9 @@ export async function get_user(request: FastifyRequest, reply: FastifyReply) {
 
     reply.code(200).send(user);
   } catch (err) {
-    reply.code(500).send({ message: "Error getting user's details." });
+    reply
+      .code(500)
+      .send({ message: "Error getting user's details.", error: err });
   }
 }
 

@@ -34,6 +34,7 @@ export async function comment_on_post(
   } catch (err) {
     reply.code(500).send({
       message: "Error commenting.",
+      errors: err,
     });
   }
 }
@@ -58,6 +59,7 @@ export async function reply_on_comment(
   } catch (err) {
     reply.code(500).send({
       message: "Error replying on comment.",
+      errors: err,
     });
   }
 }

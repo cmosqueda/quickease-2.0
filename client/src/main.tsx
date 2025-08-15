@@ -9,6 +9,7 @@ import AuthLoginPage from "./routes/(auth)/AuthLogin";
 import AuthRegisterPage from "./routes/(auth)/AuthRegister";
 import AuthChangePasswordPage from "./routes/(auth)/AuthChangePassword";
 import AuthChangeEmailPage from "./routes/(auth)/AuthChangeEmail";
+import AuthVerifyEmailPage from "./routes/(auth)/AuthVerifyEmail";
 
 // learner pages
 import LearnerForumPage from "./routes/(learner)/(dashboard)/LearnerForum";
@@ -40,14 +41,19 @@ import LearnerCreatePostPage from "./routes/(learner)/(post)/LearnerCreatePost";
 import LearnerSearchPage from "./routes/(learner)/(search)/LearnerSearch";
 import LearnerViewNotePage from "./routes/(learner)/(note)/LearnerViewNote";
 import LearnerViewFlashcardPage from "./routes/(learner)/(flashcard)/LearnerViewFlashcard";
-import LearnerHydrationFallback from "./routes/LearnerHydrationFallback";
+import LearnerHydrationFallback from "./routes/(learner)/LearnerHydrationFallback";
+import LearnerErrorFallback from "./routes/(learner)/LearnerErrorFallback";
+import LearnerViewProfilePage from "./routes/(learner)/(profile)/LearnerViewProfile";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
 import AdminManageUserPage from "./routes/(admin)/(user)/AdminManageUser";
 import AdminManageUsersPage from "./routes/(admin)/(dashboard)/AdminManageUsers";
 import AdminManageReportsPage from "./routes/(admin)/(dashboard)/AdminManageReports";
-import AdminManagePostPage from "./routes/(admin)/(report)/AdminManageReport";
+import AdminManagePostPage from "./routes/(admin)/(post)/AdminManagePost";
+import AuthForgotPasswordPage from "./routes/(auth)/AuthForgotPassword";
+import AdminSearchUsersPage from "./routes/(admin)/(search)/AdminSearchUsers";
+import AdminSearchReportsPage from "./routes/(admin)/(search)/AdminSearchPosts";
 
 import _API_INSTANCE from "./utils/axios";
 import useAuth from "./hooks/useAuth";
@@ -60,7 +66,7 @@ import {
 } from "react-router";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import {
   checkAuthAndRedirect,
   loadLearnerResources,
@@ -80,6 +86,13 @@ const LearnerRoutes: RouteObject = {
     {
       index: true,
       Component: LearnerForumPage,
+      loader: async () => {
+        const { data: notifications } = await _API_INSTANCE.get(
+          "notifications"
+        );
+
+        return notifications;
+      },
     },
     {
       path: "library",
@@ -87,7 +100,28 @@ const LearnerRoutes: RouteObject = {
       loader: loadLearnerResources,
     },
     { path: "summarize", Component: LearnerSummarizePage },
-    { path: "profile", Component: LearnerProfilePage, loader: () => {} },
+    {
+      path: "profile",
+      Component: LearnerProfilePage,
+      loader: async () => {
+        try {
+          const { data: user } = await _API_INSTANCE.get("users/");
+          const { data: posts } = await _API_INSTANCE.get("forum/");
+
+          console.log({
+            user,
+            posts,
+          });
+
+          return {
+            user,
+            posts,
+          };
+        } catch (err) {
+          redirect(-1 as any);
+        }
+      },
+    },
     {
       path: "search",
       children: [
@@ -133,7 +167,7 @@ const LearnerRoutes: RouteObject = {
     },
     {
       path: "profile/:id",
-      Component: LearnerProfilePage,
+      Component: LearnerViewProfilePage,
       loader: async ({ params }: { params: any }) => {
         try {
           const currentUserID = await useAuth.getState().user?.id;
@@ -427,6 +461,11 @@ const AuthRoutes: RouteObject = {
         },
       ],
     },
+    { path: "forgot-password", Component: AuthForgotPasswordPage },
+    {
+      path: "verify",
+      Component: AuthVerifyEmailPage,
+    },
   ],
 };
 
@@ -435,6 +474,7 @@ const router = createBrowserRouter([
     path: "/",
     Component: LandingPage,
     loader: checkAuthAndRedirect,
+    ErrorBoundary: LearnerErrorFallback,
   },
   AuthRoutes,
   LearnerRoutes,
@@ -442,16 +482,59 @@ const router = createBrowserRouter([
     path: "admin",
     Component: AdminLayout,
     children: [
-      { index: true, Component: AdminManageUsersPage },
-      { path: "reports", Component: AdminManageReportsPage },
-      { path: "user/:userId", Component: AdminManageUserPage },
-      { path: "report/:reportId", Component: AdminManagePostPage },
+      {
+        index: true,
+        Component: AdminManageUsersPage,
+      },
+      {
+        path: "reports",
+        Component: AdminManageReportsPage,
+      },
+      {
+        path: "reports/search",
+        Component: AdminSearchReportsPage,
+      },
+      {
+        path: "user/:id",
+        Component: AdminManageUserPage,
+        loader: async ({ params }) => {
+          try {
+            const { data } = await _API_INSTANCE.get(
+              `admin/auth/user/${params.id}`
+            );
+
+            return data;
+          } catch (err) {
+            redirect(-1 as any);
+          }
+        },
+      },
+      {
+        path: "users/search",
+        Component: AdminSearchUsersPage,
+      },
+      {
+        path: "report/:id",
+        Component: AdminManagePostPage,
+        loader: async ({ params }) => {
+          try {
+            const { data } = await _API_INSTANCE.get(
+              `admin/forum/report/${params.id}`
+            );
+
+            return data;
+          } catch (err) {
+            redirect(-1 as any);
+          }
+        },
+      },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={client}>
+    <Toaster position="top-right" expand={true} />
     <RouterProvider router={router} />
   </QueryClientProvider>
 );

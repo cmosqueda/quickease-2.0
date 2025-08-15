@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import _API_INSTANCE from "@/utils/axios";
+import { checkBadges } from "@/utils/badges";
 
 import {
   ArrowLeft,
@@ -108,6 +109,8 @@ export default function LearnerAnswerQuizPage() {
       );
 
       if (status === 200) {
+        await checkBadges();
+        
         toast(
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row gap-2 items-center flex-1">

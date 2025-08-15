@@ -50,6 +50,7 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
         gte: cutoffDate,
       },
       is_public: true,
+      is_resolved: null,
     },
     orderBy: {
       created_at: "desc",
@@ -412,6 +413,7 @@ export async function searchPost(query: string, page = 1, limit = 10, sort: "new
       },
     ],
     is_public: true,
+    is_resolved: null,
   };
 
   const posts = await db_client.post.findMany({

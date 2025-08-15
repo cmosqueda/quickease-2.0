@@ -1,9 +1,21 @@
 import Sidebar from "@/components/(admin)/Sidebar";
-import { Outlet, useLocation } from "react-router";
+import useAuth from "@/hooks/useAuth";
+
+import { useEffect } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router";
 import { Toaster } from "sonner";
 
 export default function AdminLayout() {
+  const navigate = useNavigate();
+
   const { pathname } = useLocation();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user?.is_admin) {
+      navigate("/admin");
+    }
+  }, [user, navigate]);
 
   return (
     <>

@@ -2,6 +2,7 @@
 import FlippableCard from "@/components/(learner)/FlippableCard";
 import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "@/utils/axios";
+import { checkBadges } from "@/utils/badges";
 
 import { ArrowLeft, EllipsisVertical, Save } from "lucide-react";
 import { useState } from "react";
@@ -59,6 +60,7 @@ export default function LearnerCreateFlashcardPage() {
       );
 
       if (status == 201) {
+        await checkBadges();
         toast.success("Flashcard created.");
         navigate("/learner/library?tab=flashcards", { viewTransition: true });
       }

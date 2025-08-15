@@ -1,7 +1,14 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { generateQuizFromNote, generateFlashcardFromNote } from "./ai.note.service";
+
 import { generateQuizFromPrompt, generateFlashcardsFromPrompt, generateNotesFromPrompt } from "./ai.prompt.service";
-import { generateSummaryNotesFromPDF, generateQuizFromPDF, generateFlashcardsFromPDF } from "./ai.upload.service";
+
+import {
+  generateSummaryNotesFromPDF,
+  generateQuizFromPDF,
+  generateFlashcardsFromPDF,
+  generateSummaryNotesFromImage,
+} from "./ai.upload.service";
 
 export async function generate_quiz_from_note(request: FastifyRequest, reply: FastifyReply) {
   const { note_id } = request.body as {
@@ -48,7 +55,7 @@ export async function generate_quiz_from_prompt(request: FastifyRequest, reply: 
     const generatedContent = await generateQuizFromPrompt(prompt);
 
     reply.code(200).send({
-      content: generatedContent,
+      ...generatedContent,
     });
   } catch (err) {
     reply.code(500).send({
@@ -66,7 +73,7 @@ export async function generate_flashcards_from_prompt(request: FastifyRequest, r
     const generatedContent = await generateFlashcardsFromPrompt(prompt);
 
     reply.code(200).send({
-      content: generatedContent,
+      ...generatedContent,
     });
   } catch (err) {
     reply.code(500).send({
@@ -84,7 +91,7 @@ export async function generate_notes_from_prompt(request: FastifyRequest, reply:
     const generatedContent = await generateNotesFromPrompt(prompt);
 
     reply.code(200).send({
-      content: generatedContent,
+      generatedContent,
     });
   } catch (err) {
     reply.code(500).send({
@@ -136,6 +143,24 @@ export async function generate_flashcards_from_pdf(request: FastifyRequest, repl
 
   try {
     const result = await generateFlashcardsFromPDF(buffer!);
+
+    reply.code(200).send({
+      ...result,
+    });
+  } catch (err) {
+    reply.code(500).send({
+      message: "Error generating summary from PDF.",
+    });
+  }
+}
+
+export async function generate_notes_from_image(request: FastifyRequest, reply: FastifyReply) {
+  const image = await request.file();
+
+  const buffer = await image?.toBuffer();
+
+  try {
+    const result = await generateSummaryNotesFromImage(buffer!);
 
     reply.code(200).send({
       ...result,

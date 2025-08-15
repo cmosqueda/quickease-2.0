@@ -3,6 +3,8 @@ import NotificationsDropdown from "@/components/(learner)/NotificationsDropdown"
 import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
+import useReport from "@/hooks/useReport";
+import useAuth from "@/hooks/useAuth";
 import clsx from "clsx";
 import dayjs from "dayjs";
 
@@ -10,6 +12,7 @@ import {
   ChevronDown,
   ChevronUp,
   EllipsisVertical,
+  Forward,
   LoaderPinwheel,
   MessageCircle,
   Plus,
@@ -19,9 +22,8 @@ import { useEffect, useState } from "react";
 import { EditorProvider, useEditor } from "@tiptap/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useVote } from "@/hooks/useVote";
-import { Link, NavLink, useNavigate } from "react-router";
-import useReport from "@/hooks/useReport";
-import useAuth from "@/hooks/useAuth";
+import { NavLink, useLoaderData, useNavigate } from "react-router";
+import { toast } from "sonner";
 
 const Post = ({
   post,
@@ -81,14 +83,13 @@ const Post = ({
       {/* Header */}
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row gap-2 items-center">
-          <div className="w-[32px] h-[32px] rounded-full bg-base-100" />
           <NavLink
             to={`/learner/profile/${post.user.id}`}
             className="font-semibold"
           >
             {fullName}
           </NavLink>
-          <p className="text-sm text-gray-500">/ {formattedDate}</p>
+          <p className="text-sm text-gray-500">• {formattedDate}</p>
         </div>
 
         {post.user_id != user?.id && (
@@ -134,7 +135,7 @@ const Post = ({
       </NavLink>
 
       {/* Footer */}
-      <div className="flex flex-row gap-4 mt-2">
+      <div className="flex flex-row gap-2">
         <div className="flex flex-row items-center gap-2 p-3 rounded-3xl bg-base-100 border border-base-200">
           <ChevronUp
             className={clsx(
@@ -160,6 +161,18 @@ const Post = ({
           <MessageCircle />
           <p className="text-sm">{post.comments?.length ?? 0}</p>
         </NavLink>
+        <button
+          className="flex flex-row items-center gap-2 px-6 py-3 rounded-3xl bg-base-100 border border-base-200 cursor-pointer hover:bg-base-300 transition"
+          onClick={async () => {
+            await navigator.clipboard.writeText(
+              `https://quickease.online/learner/post/${post.id}`
+            );
+
+            toast.success("Link copied to clipboard.");
+          }}
+        >
+          <Forward />
+        </button>
       </div>
     </div>
   );
@@ -167,6 +180,9 @@ const Post = ({
 
 export default function LearnerForumPage() {
   const navigate = useNavigate();
+  const notifications = useLoaderData();
+  const { user } = useAuth();
+
   const [query, setQuery] = useState("");
   const editor = useEditor({
     editable: true,
@@ -175,23 +191,36 @@ export default function LearnerForumPage() {
     content: "",
   });
 
-  const { data, isFetching } = useInfiniteQuery({
-    queryKey: ["recent-posts"],
-    queryFn: async ({ pageParam = null }) => {
-      const { data: posts } = await _API_INSTANCE.get("/forum/posts/recent", {
-        params: { cursor: pageParam, limit: 10 },
-        timeout: 5 * 60 * 1000,
-      });
+  const { data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["recent-posts"],
+      queryFn: async ({ pageParam = null }) => {
+        const { data: posts } = await _API_INSTANCE.get("/forum/posts/recent", {
+          params: { cursor: pageParam, limit: 6 },
+          timeout: 5 * 60 * 1000,
+        });
+        return posts;
+      },
+      initialPageParam: null,
+      getNextPageParam: (lastPage) => lastPage?.nextCursor ?? null,
+      retry: 3,
+      refetchOnWindowFocus: false,
+    });
 
-      return posts;
-    },
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => {
-      return lastPage?.nextCursor ?? null;
-    },
-    retry: 3,
-    refetchOnWindowFocus: false,
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+          document.body.offsetHeight - 200 &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
+        fetchNextPage();
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   useEffect(() => {
     return () => editor?.destroy();
@@ -216,15 +245,26 @@ export default function LearnerForumPage() {
           />
         </label>
         <div className="hidden lg:flex flex-row gap-2">
-          <Link to={"/learner/post/"} className="btn btn-neutral">
+          <button
+            onClick={() => {
+              navigate("/learner/post/");
+            }}
+            className="btn btn-neutral"
+            disabled={!user?.is_verified}
+          >
             <Plus />
-            <p>Create</p>
-          </Link>
-          <NotificationsDropdown />
+            <div className="flex flex-col items-start">
+              {user?.is_verified && <p>Create</p>}
+              {!user?.is_verified && <p>Email not verified</p>}
+            </div>
+          </button>
+          {user?.is_verified && (
+            <NotificationsDropdown notifications={notifications} />
+          )}
           <ProfileDropdown />
         </div>
       </div>
-      {isFetching ? (
+      {isFetching && !isFetchingNextPage ? (
         <div className="max-w-7xl h-full w-full mx-auto flex items-center justify-center">
           <LoaderPinwheel className="animate-spin" size={128} />
         </div>
@@ -233,6 +273,11 @@ export default function LearnerForumPage() {
           {data?.pages.flatMap((page) =>
             page.posts.map((post: any) => <Post key={post.id} post={post} />)
           )}
+        </div>
+      )}
+      {isFetchingNextPage && (
+        <div className="flex justify-center p-4">
+          <LoaderPinwheel className="animate-spin" size={48} />
         </div>
       )}
     </div>

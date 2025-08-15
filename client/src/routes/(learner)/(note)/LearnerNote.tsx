@@ -13,6 +13,7 @@ import {
   CalendarRange,
   ClipboardList,
   Delete,
+  Forward,
   Save,
   X,
 } from "lucide-react";
@@ -175,32 +176,56 @@ export default function LearnerNotePage() {
           <CustomEditor editor={editor} />
         </div>
         <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
-          <h1 className="font-bold text-xl">Study options</h1>
-          <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() => {
-              const modal = document.getElementById(
-                "generate-flashcard-modal"
-              ) as HTMLDialogElement;
-              modal.showModal();
-            }}
-          >
-            <CalendarRange />
-            <h1>Generate flashcards</h1>
-          </button>
-          <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
-            onClick={() => {
-              const modal = document.getElementById(
-                "generate-quiz-modal"
-              ) as HTMLDialogElement;
-              modal.showModal();
-            }}
-          >
-            <ClipboardList />
-            <h1>Generate quiz</h1>
-          </button>
+          {user?.is_verified && (
+            <>
+              <h1 className="font-bold text-xl">Study options</h1>
+              <button
+                className="rounded-3xl btn btn-soft gap-2 join-item"
+                onClick={() => {
+                  const modal = document.getElementById(
+                    "generate-flashcard-modal"
+                  ) as HTMLDialogElement;
+                  modal.showModal();
+                }}
+              >
+                <CalendarRange />
+                <h1>Generate flashcards</h1>
+              </button>
+              <button
+                className="rounded-3xl btn btn-soft gap-2 join-item"
+                onClick={() => {
+                  const modal = document.getElementById(
+                    "generate-quiz-modal"
+                  ) as HTMLDialogElement;
+                  modal.showModal();
+                }}
+              >
+                <ClipboardList />
+                <h1>Generate quiz</h1>
+              </button>
+            </>
+          )}
+
           <h1 className="font-bold text-xl">Other options</h1>
+          <div className="flex flex-col gap-1">
+            <button
+              className="rounded-3xl btn btn-soft gap-2 join-item w-full"
+              onClick={async () => {
+                await navigator.clipboard.writeText(
+                  `https://quickease.online/learner/note/view/${data.id}`
+                );
+                toast.success("Link copied to clipboard.");
+              }}
+              disabled={isPublic}
+            >
+              <Forward />
+              <h1>Share (Copy Link)</h1>
+            </button>
+            <p className="text-xs text-base-content/50">
+              To share, you must set note to public.
+            </p>
+          </div>
+
           <button
             className="rounded-3xl btn btn-soft gap-2 join-item"
             onClick={handleDelete}

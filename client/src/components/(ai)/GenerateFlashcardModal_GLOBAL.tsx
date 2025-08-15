@@ -2,6 +2,7 @@
 import clsx from "clsx";
 import NoteCard from "../(learner)/NoteCard";
 import _API_INSTANCE from "@/utils/axios";
+import dayjs from "dayjs";
 
 import {
   ArrowRight,
@@ -11,14 +12,14 @@ import {
   SendHorizonal,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { toast } from "sonner";
-import dayjs from "dayjs";
 
 const GenerateFlashcardFromNotes = ({
   notes,
   navigate,
+  setIsGenerating,
 }: {
   notes: {
     id: string;
@@ -28,11 +29,13 @@ const GenerateFlashcardFromNotes = ({
     created_at: string;
   }[];
   navigate: NavigateFunction;
+  setIsGenerating: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [isDisabled, setIsDisabled] = useState(false);
 
   const handleGenerate = async (id: string) => {
     setIsDisabled(true);
+    setIsGenerating(true);
 
     try {
       const { data } = await _API_INSTANCE.post(
@@ -59,6 +62,7 @@ const GenerateFlashcardFromNotes = ({
       throw err;
     } finally {
       setIsDisabled(false);
+      setIsGenerating(false);
     }
   };
 
@@ -151,16 +155,24 @@ const GenerateFlashcardFromPrompt = ({
   );
 };
 
-const GenerateFlashcardFromPDF = () => {
+const GenerateFlashcardFromPDF = ({
+  isGenerating,
+  setIsGenerating,
+}: {
+  isGenerating: boolean;
+  setIsGenerating: Dispatch<SetStateAction<boolean>>;
+}) => {
   const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [generatedContent, setGeneratedContent] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
-    console.log(selectedFile);
     if (selectedFile) {
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        toast.error("File size exceeds 5MB limit.");
+        return;
+      }
       setFile(selectedFile);
     }
   };
@@ -216,6 +228,7 @@ const GenerateFlashcardFromPDF = () => {
     } catch (error) {
       console.error("Upload error:", error);
     } finally {
+      setGeneratedContent("");
       setIsGenerating(false);
     }
   };
@@ -301,11 +314,30 @@ export default function GenerateFlashcardModal({
 }) {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const tabs = [
-    <GenerateFlashcardFromNotes notes={notes} navigate={navigate} />,
-    <GenerateFlashcardFromPDF />,
+    <GenerateFlashcardFromNotes
+      notes={notes}
+      navigate={navigate}
+      setIsGenerating={setIsGenerating}
+    />,
+    <GenerateFlashcardFromPDF
+      isGenerating={isGenerating}
+      setIsGenerating={setIsGenerating}
+    />,
   ];
+
+  if (isGenerating) {
+    return (
+      <dialog id="generate-flashcard-modal-global" className="modal">
+        <div className="modal-box items-center justify-center flex flex-col gap-4 w-fit">
+          <LoaderPinwheel className="animate-spin" size={64} />
+          <h3 className="font-bold text-2xl text-center">Generating...</h3>
+        </div>
+      </dialog>
+    );
+  }
 
   return (
     <dialog id="generate-flashcard-modal-global" className="modal">

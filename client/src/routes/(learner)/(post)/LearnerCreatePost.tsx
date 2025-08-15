@@ -2,6 +2,7 @@
 import CustomEditor from "@/components/Editor";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
+import { checkBadges } from "@/utils/badges";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useEditor } from "@tiptap/react";
@@ -87,6 +88,7 @@ export default function LearnerCreatePostPage() {
       );
 
       if (status === 200) {
+        await checkBadges();
         queryClient.invalidateQueries({ queryKey: ["recent-posts"] });
         toast.success("Post created successfully.");
         navigate(`/learner/post/${data.id}`);

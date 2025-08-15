@@ -15,12 +15,14 @@ import {
 } from "@expo-google-fonts/gabarito";
 
 import "../globals.css";
+import useTheme from "@/hooks/useTheme";
 
 const client = new QueryClient();
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { currentScheme } = useTheme();
   const [loaded, error] = useFonts({
     Gabarito_400Regular,
     Gabarito_500Medium,
@@ -42,9 +44,15 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={client}>
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack
+        screenOptions={{ headerShown: false }}
+        initialRouteName="(learner)"
+      >
         <Stack.Screen name="index" />
-        <StatusBar style="auto" />
+        <Stack.Screen name="(auth)/login" />
+        <Stack.Screen name="(auth)/register" />
+        <Stack.Screen name="(learner)" />
+        <StatusBar style="auto" translucent animated />
       </Stack>
     </QueryClientProvider>
   );

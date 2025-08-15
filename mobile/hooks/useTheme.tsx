@@ -6,14 +6,14 @@ import { immer } from "zustand/middleware/immer";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 type _useTheme = {
-  currentScheme?: Theme;
+  currentScheme: Theme;
   setCurrentScheme: (theme: Theme) => void;
 };
 
 const useTheme = create<_useTheme>()(
   persist(
     immer((set) => ({
-      currentScheme: _THEMES.light,
+      currentScheme: _THEMES.rush,
       setCurrentScheme: (theme: Theme) => {
         set((state) => {
           state.currentScheme = theme;

@@ -1,10 +1,11 @@
+// plugins
 import fastifyCookie from "@fastify/cookie";
 import fastifyEnv from "@fastify/env";
 import fastifyJwt from "@fastify/jwt";
 import fastifyMultipart from "@fastify/multipart";
 import cors from "@fastify/cors";
 
-// routes modules
+// users routes
 import authRoutes from "./modules/auth/auth.routes";
 import flashcardRoutes from "./modules/flashcard/flashcard.route";
 import quizRoutes from "./modules/quiz/quiz.routes";
@@ -13,6 +14,13 @@ import userRoutes from "./modules/user/user.routes";
 import forumRoutes from "./modules/forum/forum.routes";
 import noteRoutes from "./modules/note/note.route";
 import mailRoutes from "./modules/mail/mail.route";
+import notificationRoutes from "./modules/notification/notification.route";
+import badgeRoutes from "./modules/badges/badges.route";
+
+// admin routes
+import adminAuthRoutes from "./modules/admin/admin.auth.route";
+import adminForumRoutes from "./modules/admin/admin.forum.route";
+import adminMailRoutes from "./modules/admin/admin.mail.route";
 
 import { FastifyRequest, FastifyReply } from "fastify";
 import { server } from "./server";
@@ -63,7 +71,7 @@ export default async function initializeFastifyConfig() {
     secret: server.config.JWT_SECRET_KEY,
     cookie: {
       cookieName: "QUICKEASE_TOKEN",
-      signed: false,
+      signed: true,
     },
   });
 
@@ -118,27 +126,85 @@ export default async function initializeFastifyConfig() {
     - 'onRequest' hook that verifies JWT tokens for every route that requires JWT token
     The token/cookie is stored on a key named 'QUICKEASE_TOKEN'.
     */
+
   server.decorate(
     "authenticate",
     async (request: FastifyRequest, reply: FastifyReply) => {
       const token = request.cookies.QUICKEASE_TOKEN;
 
       if (!token) {
-        return reply.status(401).send({ message: "Authentication required" });
+        return reply.code(401).send({ message: "authentication_required" });
       }
 
-      const decoded = request.jwt.verify<{
-        id: string;
-        first_name: string;
-        last_name: string;
-      }>(token);
+      try {
+        const decoded = request.jwt.verify(token) as {
+          id: string;
+          first_name: string;
+          last_name: string;
+          is_admin: boolean;
+        };
 
-      request.user = decoded;
+        if (
+          !decoded.id ||
+          !decoded.first_name ||
+          !decoded.last_name ||
+          typeof decoded.is_admin !== "boolean"
+        ) {
+          return reply.code(401).send({ message: "invalid_token_payload" });
+        }
+
+        request.user = decoded;
+      } catch (err) {
+        return reply.code(401).send({ message: "invalid_token" });
+      }
     }
   );
 
   /*
-    - Registering routes for each modules
+    - 'onRequest' hook that verifies JWT tokens for every route that requires JWT token
+    The token/cookie is stored on a key named 'QUICKEASE_TOKEN'.
+
+    (FOR ADMIN API ROUTES)
+    */
+  server.decorate(
+    "authenticate_admin",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const token = request.cookies.QUICKEASE_TOKEN;
+
+      if (!token) {
+        return reply.code(401).send({ message: "authentication_required" });
+      }
+
+      try {
+        const decoded = request.jwt.verify(token) as {
+          id: string;
+          first_name: string;
+          last_name: string;
+          is_admin: boolean;
+        };
+
+        if (
+          !decoded.id ||
+          !decoded.first_name ||
+          !decoded.last_name ||
+          typeof decoded.is_admin !== "boolean"
+        ) {
+          return reply.code(401).send({ message: "invalid_token_payload" });
+        }
+
+        request.user = decoded;
+
+        if (!decoded.is_admin) {
+          return reply.code(403).send({ message: "admin_only_access" });
+        }
+      } catch (err) {
+        return reply.code(401).send({ message: "invalid_token" });
+      }
+    }
+  );
+
+  /*
+    - Registering routes for each modules (Users)
     */
   await server.register(userRoutes, { prefix: "api/users" });
   await server.register(authRoutes, { prefix: "api/auth" });
@@ -148,11 +214,19 @@ export default async function initializeFastifyConfig() {
   await server.register(forumRoutes, { prefix: "api/forum" });
   await server.register(aiRoutes, { prefix: "api/ai" });
   await server.register(mailRoutes, { prefix: "api/mail" });
+  await server.register(notificationRoutes, { prefix: "api/notifications" });
+  await server.register(badgeRoutes, {prefix: "api/badges"});
+
+  /*
+    - Registering routes for each modules (Admin)
+    */
+  await server.register(adminAuthRoutes, { prefix: "api/admin/auth" });
+  await server.register(adminForumRoutes, { prefix: "api/admin/forum" });
+  await server.register(adminMailRoutes, { prefix: "api/admin/mail" });
 
   /*
     - API testing routes
     */
-
   server.get("/api/test", (req, res) => {
     try {
       res.code(200).send({

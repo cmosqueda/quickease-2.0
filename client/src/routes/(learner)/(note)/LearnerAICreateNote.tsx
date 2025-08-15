@@ -19,6 +19,7 @@ import { useLoaderData, useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { checkBadges } from "@/utils/badges";
 
 export default function LearnerAICreateNotePage() {
   const data = useLoaderData(); // for generated content
@@ -69,6 +70,7 @@ export default function LearnerAICreateNotePage() {
       );
 
       if (res.status == 200) {
+        await checkBadges();
         toast.success("Note created.");
         navigate("/learner/library?tab=notes");
       }

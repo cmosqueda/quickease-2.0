@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import TermsAndPrivacyPolicyModal from "../../components/TermsAndPrivacyPolicyModal";
 import _API_INSTANCE from "@/utils/axios";
+import useAuth from "@/hooks/useAuth";
 
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
@@ -9,6 +10,7 @@ import { toast } from "sonner";
 
 export default function AuthRegisterPage() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   // forms
   const [firstName, setFirstName] = useState("");
@@ -73,6 +75,7 @@ export default function AuthRegisterPage() {
       );
 
       if (response.status == 201) {
+        setUser(response.data);
         navigate("/learner", { viewTransition: true });
       }
     } catch (err: any) {
@@ -110,6 +113,11 @@ export default function AuthRegisterPage() {
               className="input input-md w-full"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key == "Enter") {
+                  handleRegister();
+                }
+              }}
             />
           </label>
           <label className="floating-label">
@@ -120,6 +128,11 @@ export default function AuthRegisterPage() {
               className="input input-md w-full"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key == "Enter") {
+                  handleRegister();
+                }
+              }}
             />
           </label>
         </div>
@@ -131,6 +144,11 @@ export default function AuthRegisterPage() {
             className="input input-md w-full"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                handleRegister();
+              }
+            }}
           />
         </label>
         <label className="floating-label">
@@ -141,6 +159,11 @@ export default function AuthRegisterPage() {
             className="input input-md w-full"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                handleRegister();
+              }
+            }}
           />
         </label>
         <label className="floating-label">
@@ -151,6 +174,11 @@ export default function AuthRegisterPage() {
             className="input input-md w-full"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                handleRegister();
+              }
+            }}
           />
         </label>
         <label className="label">

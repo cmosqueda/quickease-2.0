@@ -1,5 +1,7 @@
 import db_client from "../../utils/client";
 
+import { sendNotification } from "../../utils/notification";
+
 export async function getComments(post_id: string) {
   const comments = await db_client.comment.findMany({
     where: { post_id: post_id },
@@ -19,7 +21,29 @@ export async function commentOnPost(
       post_id,
       user_id,
     },
+    include: {
+      user: {
+        select: { first_name: true, last_name: true },
+      },
+    },
   });
+
+  const post = await db_client.post.findUnique({
+    where: { id: post_id },
+    select: { user_id: true },
+  });
+
+  if (post) {
+    const actorName = `${comment.user.first_name} ${comment.user.last_name}`;
+    await sendNotification({
+      recipientId: post.user_id,
+      actorId: user_id,
+      type: "COMMENTED",
+      message: `${actorName} commented on your post.`,
+      resourceId: post_id,
+      resourceType: "POST",
+    });
+  }
 
   return comment;
 }
@@ -51,6 +75,17 @@ export async function replyOnComment(
   user_id: string,
   post_id: string
 ) {
+  // Fetch actor info
+  const actor = await db_client.user.findUnique({
+    where: { id: user_id },
+    select: { first_name: true, last_name: true },
+  });
+
+  const parentComment = await db_client.comment.findUnique({
+    where: { id: comment_id },
+    select: { user_id: true },
+  });
+
   await db_client.comment.update({
     data: {
       replies: {
@@ -65,6 +100,18 @@ export async function replyOnComment(
       id: comment_id,
     },
   });
+
+  if (parentComment && actor) {
+    const actorName = `${actor.first_name} ${actor.last_name}`;
+    await sendNotification({
+      recipientId: parentComment.user_id,
+      actorId: user_id,
+      type: "REPLIED",
+      message: `${actorName} replied to your comment.`,
+      resourceId: comment_id,
+      resourceType: "COMMENT",
+    });
+  }
 
   return { replied: true };
 }

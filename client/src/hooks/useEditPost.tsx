@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _API_INSTANCE from "@/utils/axios";
+import { checkBadges } from "@/utils/badges";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -32,6 +33,8 @@ export function useEditPost() {
       if (status !== 200) {
         throw new Error("Non-200 response from server.");
       }
+
+      await checkBadges();
 
       return data;
     } catch (err) {
