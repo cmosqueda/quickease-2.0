@@ -3,9 +3,9 @@ import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import clsx from "clsx";
 import dayjs from "dayjs";
 
-import { ChevronRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
-import { NavLink, useLoaderData } from "react-router";
+import { NavLink, useLoaderData, useNavigate } from "react-router";
 import { EditorProvider } from "@tiptap/react";
 
 const OtherUserPrivate = ({ user }: { user: any }) => {
@@ -32,21 +32,38 @@ const OtherUserPrivate = ({ user }: { user: any }) => {
 };
 
 const OtherUser = ({ user }: { user: any }) => {
+  const navigate = useNavigate();
   const [index, setIndex] = useState(0);
 
   const tabs = [
-    <>
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-row justify-between items-center">
-          <h1 className="font-bold text-xl">Badges</h1>
-          <button className="btn btn-md btn-soft items-center flex flex-row">
-            <h1>View all</h1>
-            <ChevronRight />
-          </button>
-        </div>
-        <div className="p-8 rounded-3xl bg-base-100"></div>
-      </div>
-    </>,
+    <div className="grid grid-cols-3 gap-2">
+      {user.badges &&
+        user.badges.map((badge: any) => {
+          const slug = badge.id
+            .replace(/([a-z])([A-Z])/g, "$1-$2")
+            .toLowerCase();
+          const imageUrl = `/assets/images/badges/${slug}-gradient.png`;
+
+          return (
+            <div
+              key={slug}
+              className="flex flex-row items-center justify-around gap-6 py-4 px-8 bg-base-100 rounded-xl border border-base-300 shadow"
+            >
+              <img
+                className="w-24 h-24 rounded-md object-cover"
+                src={imageUrl}
+                alt={badge.id}
+              />
+              <div>
+                <p className="font-bold text-2xl">{badge.name}</p>
+                <p className="text-sm text-base-content/50">
+                  {badge.description}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+    </div>,
     <>
       {user.posts.map((post: any) => (
         <div className="flex flex-col gap-2">
@@ -85,6 +102,10 @@ const OtherUser = ({ user }: { user: any }) => {
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
+      <ArrowLeft
+        onClick={() => navigate(-1 as any, { viewTransition: false })}
+        className="cursor-pointer"
+      />
       <div className="bg-base-100 p-8 flex flex-row gap-4 rounded-3xl">
         <div className="aspect-square items-center">
           <h1 className="font-bold text-4xl p-6 rounded-full bg-base-200 w-fit">
