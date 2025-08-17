@@ -45,6 +45,12 @@ function CustomDrawerContent(props: any) {
         gap: 12,
         flex: 1,
         backgroundColor: currentScheme.colorBase200,
+        borderTopEndRadius: 16,
+        borderBottomEndRadius: 16,
+      }}
+      style={{
+        borderTopEndRadius: 16,
+        borderBottomEndRadius: 16,
       }}
     >
       <CustomPressable
@@ -101,7 +107,7 @@ function CustomDrawerContent(props: any) {
         <CustomPressable
           className="flex-1 rounded-full"
           variant="colorBase100"
-          onPress={() => props.navigation.navigate("settings")}
+          onPress={() => props.navigation.navigate("settings/index")}
         >
           <CustomText>
             <MaterialIcons name="settings" size={20} />
@@ -137,14 +143,16 @@ export default function Layout() {
       <Drawer
         screenOptions={{
           headerShown: false,
-          drawerActiveTintColor: currentScheme.colorBaseContent,
-          drawerActiveBackgroundColor: currentScheme.colorBase300,
-          drawerInactiveBackgroundColor: currentScheme.colorBase100,
-          drawerInactiveTintColor: currentScheme.colorBaseContent,
-          drawerContentContainerStyle: { gap: 12 },
         }}
+        initialRouteName="forum"
         drawerContent={(props) => <CustomDrawerContent {...props} />}
-      />
+      >
+        <Drawer.Screen name="forum" />
+        <Drawer.Screen name="notes" />
+        <Drawer.Screen name="profile" />
+        <Drawer.Screen name="quizzes" />
+        <Drawer.Screen name="flashcards" />
+      </Drawer>
     </GestureHandlerRootView>
   );
 }

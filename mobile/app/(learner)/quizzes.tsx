@@ -1,4 +1,5 @@
 import CustomModal from "@/components/CustomModal";
+import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import ForumHeader from "@/components/ForumHeader";
@@ -77,6 +78,14 @@ export default function Page() {
           </CustomText>
         </CustomView>
       </CustomModal>
+      <CustomPressable
+        variant="colorPrimary"
+        className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+      >
+        <CustomText color="colorPrimaryContent">
+          <MaterialIcons name="post-add" size={32} />
+        </CustomText>
+      </CustomPressable>
     </SafeAreaView>
   );
 }

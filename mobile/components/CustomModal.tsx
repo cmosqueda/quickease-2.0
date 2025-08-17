@@ -4,9 +4,11 @@ import React, { Dispatch, ReactNode, SetStateAction } from "react";
 import {
   Modal,
   ModalProps,
+  StyleSheet,
   useWindowDimensions,
   ViewStyle,
 } from "react-native";
+import * as NavigationBar from "expo-navigation-bar";
 
 export interface CustomModalProps extends Omit<ModalProps, "visible"> {
   modalVisibility: boolean;
@@ -24,9 +26,14 @@ const CustomModal: React.FC<CustomModalProps> = ({
   overlayOpacity = 0.2,
   ...rest
 }) => {
-  const { height } = useWindowDimensions();
+  const onRequestClose = async () => {
+    NavigationBar.setVisibilityAsync("visible");
+    setModalVisibility(false);
+  };
 
-  const onRequestClose = () => setModalVisibility(false);
+  const onShow = async () => {
+    NavigationBar.setVisibilityAsync("hidden");
+  };
 
   return (
     <Modal
@@ -34,13 +41,15 @@ const CustomModal: React.FC<CustomModalProps> = ({
       animationType="slide"
       visible={modalVisibility}
       onRequestClose={onRequestClose}
+      onShow={onShow}
       statusBarTranslucent
+      navigationBarTranslucent
       {...rest}
     >
       <CustomView
         style={[
+          StyleSheet.absoluteFillObject,
           {
-            height,
             backgroundColor: `rgba(0,0,0,${overlayOpacity})`,
             justifyContent: "flex-end",
           },

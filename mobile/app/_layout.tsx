@@ -1,7 +1,8 @@
 import * as SplashScreen from "expo-splash-screen";
+import useTheme from "@/hooks/useTheme";
 
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -15,7 +16,6 @@ import {
 } from "@expo-google-fonts/gabarito";
 
 import "../globals.css";
-import useTheme from "@/hooks/useTheme";
 
 const client = new QueryClient();
 
@@ -38,6 +38,14 @@ export default function RootLayout() {
     }
   }, [loaded, error]);
 
+  useEffect(() => {
+    if (currentScheme.colorscheme === "light") {
+      setStatusBarStyle("dark");
+    } else {
+      setStatusBarStyle("light");
+    }
+  }, [currentScheme.colorscheme]);
+
   if (!loaded && !error) {
     return null;
   }
@@ -45,13 +53,16 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={client}>
       <Stack
-        screenOptions={{ headerShown: false }}
+        screenOptions={{ headerShown: false, animation: "fade_from_bottom" }}
         initialRouteName="(learner)"
       >
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)/login" />
         <Stack.Screen name="(auth)/register" />
-        <Stack.Screen name="(learner)" />
+        <Stack.Screen
+          name="(learner)"
+          options={{ animation: "fade_from_bottom" }}
+        />
       </Stack>
       <StatusBar style="auto" translucent animated />
     </QueryClientProvider>
