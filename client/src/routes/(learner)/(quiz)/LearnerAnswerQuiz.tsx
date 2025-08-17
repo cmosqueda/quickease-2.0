@@ -10,6 +10,8 @@ import {
   ArrowRightFromLine,
   CheckCircle2,
   Info,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
@@ -110,7 +112,7 @@ export default function LearnerAnswerQuizPage() {
 
       if (status === 200) {
         await checkBadges();
-        
+
         toast(
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row gap-2 items-center flex-1">
@@ -240,6 +242,31 @@ export default function LearnerAnswerQuizPage() {
             <p>No question found</p>
           )}
         </div>
+      </div>
+      <div className="flex flex-row gap-2 items-center self-end">
+        {questionIndex > 0 && (
+          <button
+            className="btn btn-primary"
+            onClick={() => setQuestionIndex((prev) => Math.max(0, prev - 1))}
+          >
+            <ChevronLeft />
+            <p>Previous</p>
+          </button>
+        )}
+
+        {questionIndex < data.quiz_content.length - 1 && (
+          <button
+            className="btn btn-primary"
+            onClick={() =>
+              setQuestionIndex((prev) =>
+                Math.min(data.quiz_content.length - 1, prev + 1)
+              )
+            }
+          >
+            <ChevronRight />
+            <p>Next</p>
+          </button>
+        )}
       </div>
     </div>
   );
