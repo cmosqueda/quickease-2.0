@@ -1,27 +1,26 @@
 import useTheme from "@/hooks/useTheme";
 import ForumHeader from "@/components/ForumHeader";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
+import CustomPressable from "@/components/CustomPressable";
+
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View } from "react-native";
-import { StatusBar } from "expo-status-bar";
 
 export default function Page() {
   const { currentScheme } = useTheme();
 
   return (
     <SafeAreaView
-      className="flex flex-1 gap-4"
+      className="flex flex-1"
       style={{
         backgroundColor: currentScheme?.colorBase100,
       }}
     >
-      <StatusBar
-        style={currentScheme.colorscheme === "light" ? "dark" : "light"}
-      />
       <ForumHeader
         rightSideChildren={
           <>
@@ -60,6 +59,15 @@ export default function Page() {
           ></CustomView>
         </CustomView>
       </CustomView>
+
+      <CustomPressable
+        variant="colorPrimary"
+        className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+      >
+        <CustomText color="colorPrimaryContent">
+          <MaterialIcons name="post-add" size={32} />
+        </CustomText>
+      </CustomPressable>
     </SafeAreaView>
   );
 }

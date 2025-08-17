@@ -8,6 +8,7 @@ import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { router } from "expo-router";
+import CustomView from "@/components/CustomView";
 
 export default function Index() {
   const { height, width } = useWindowDimensions();
@@ -23,7 +24,7 @@ export default function Index() {
           height: height / 2,
         }}
       />
-      <View className="self-end">
+      <CustomView className="self-end">
         <CustomText
           variant="regular"
           className="text-xs tracking-widest opacity-40"
@@ -38,17 +39,17 @@ export default function Index() {
           or any text—anytime, anywhere. Whether you&apos;re cramming for exams
           or just reviewing, QuickEase makes studying fast, focused, and easy.
         </CustomText>
-      </View>
-      <View className="flex flex-1" />
+      </CustomView>
+      <CustomView className="flex flex-1" />
     </>,
     <>
-      <View className="flex flex-1" />
+      <CustomView className="flex flex-1" />
     </>,
     <>
-      <View className="flex flex-1" />
+      <CustomView className="flex flex-1" />
     </>,
     <>
-      <View className="flex flex-1" />
+      <CustomView className="flex flex-1" />
     </>,
   ];
 

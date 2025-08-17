@@ -52,8 +52,8 @@ export default function RootLayout() {
         <Stack.Screen name="(auth)/login" />
         <Stack.Screen name="(auth)/register" />
         <Stack.Screen name="(learner)" />
-        <StatusBar style="auto" translucent animated />
       </Stack>
+      <StatusBar style="auto" translucent animated />
     </QueryClientProvider>
   );
 }

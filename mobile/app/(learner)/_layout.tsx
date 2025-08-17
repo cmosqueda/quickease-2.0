@@ -1,16 +1,101 @@
 import useTheme from "@/hooks/useTheme";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import CustomText from "@/components/CustomText";
-import CustomView from "@/components/CustomView";
+import CustomPressable from "@/components/CustomPressable";
+
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
+import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
+import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+function CustomDrawerContent(props: any) {
+  const { currentScheme } = useTheme();
+
+  const links = [
+    {
+      label: "Forum",
+      href: "forum",
+      icon: "solution1" as any,
+    },
+    {
+      href: "notes",
+      label: "Notes",
+      icon: "copy1" as any,
+    },
+  ];
+
+  return (
+    <DrawerContentScrollView contentContainerStyle={{ gap: 12, flex: 1 }}>
+      <CustomPressable
+        variant="colorPrimary"
+        className="flex flex-row gap-4 items-center rounded-3xl"
+        style={{
+          paddingVertical: 16,
+        }}
+        onPress={() => props.navigation.navigate("profile")}
+      >
+        <CustomText color="colorPrimaryContent">
+          <MaterialIcons name="account-circle" size={36} />
+        </CustomText>
+        <CustomText
+          variant="bold"
+          className="text-xl"
+          color="colorPrimaryContent"
+        >
+          Jhon Lloyd Viernes
+        </CustomText>
+      </CustomPressable>
+      <View
+        className="border-b h-1 my-2"
+        style={{
+          borderColor: currentScheme.colorBaseContent,
+          opacity: 0.2,
+        }}
+      />
+      {links.splice(0, 2).map((link) => {
+        return (
+          <DrawerItem
+            key={link.href}
+            onPress={() => props.navigation.navigate(link.href)}
+            label={link.label}
+            activeTintColor={currentScheme.colorBaseContent}
+            activeBackgroundColor={currentScheme.colorBase300}
+            inactiveBackgroundColor={currentScheme.colorBase100}
+            inactiveTintColor={currentScheme.colorBaseContent}
+            icon={() => (
+              <CustomText>
+                <AntDesign name={link.icon} size={24} />
+              </CustomText>
+            )}
+          />
+        );
+      })}
+
+      <View className="flex-1 flex flex-row gap-2 items-center self-end">
+        <CustomPressable className="rounded-full" variant="colorBase200">
+          <CustomText>
+            <MaterialIcons name="settings" size={20} />
+          </CustomText>
+        </CustomPressable>
+        <CustomPressable
+          className="flex flex-row gap-2 rounded-full items-center"
+          variant="colorBase200"
+        >
+          <CustomText>
+            <MaterialIcons name="logout" size={20} />
+          </CustomText>
+          <CustomText className="text-lg">Logout</CustomText>
+        </CustomPressable>
+      </View>
+    </DrawerContentScrollView>
+  );
+}
 
 export default function Layout() {
   const { currentScheme } = useTheme();
-  const insets = useSafeAreaInsets();
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -20,21 +105,14 @@ export default function Layout() {
           drawerActiveTintColor: currentScheme.colorBaseContent,
           drawerActiveBackgroundColor: currentScheme.colorBase300,
           drawerInactiveBackgroundColor: currentScheme.colorBase100,
-          drawerInactiveTintColor: currentScheme.colorBase200,
+          drawerInactiveTintColor: currentScheme.colorBaseContent,
+          drawerContentContainerStyle: { gap: 12 },
         }}
-      >
-        <Drawer.Screen
-          name="forum"
-          options={{
-            title: "Forum",
-            drawerIcon: () => (
-              <CustomText>
-                <AntDesign name="home" size={24} />
-              </CustomText>
-            ),
-          }}
-        />
-      </Drawer>
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+      />
+      <StatusBar
+        style={currentScheme.colorscheme === "light" ? "dark" : "light"}
+      />
     </GestureHandlerRootView>
   );
 }
