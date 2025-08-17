@@ -253,8 +253,17 @@ export default function LearnerAnswerQuizPage() {
                 {currentQuestion.options.map((option, i) => (
                   <div className="flex flex-row gap-2 items-center" key={i}>
                     <input
-                      type="checkbox"
-                      className="checkbox"
+                      type={
+                        currentQuestion.correctAnswers.length > 1
+                          ? "checkbox"
+                          : "radio"
+                      }
+                      name={`question-${questionIndex}`}
+                      className={
+                        currentQuestion.correctAnswers.length > 1
+                          ? "checkbox"
+                          : "radio"
+                      }
                       checked={userAnswers[questionIndex]?.user_answer.includes(
                         i
                       )}
