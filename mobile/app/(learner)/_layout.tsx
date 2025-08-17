@@ -8,10 +8,12 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
-import { View } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import { useWindowDimensions, View } from "react-native";
+import { setStatusBarStyle } from "expo-status-bar";
+import { useEffect } from "react";
 
 function CustomDrawerContent(props: any) {
+  const { height } = useWindowDimensions();
   const { currentScheme } = useTheme();
 
   const links = [
@@ -24,6 +26,16 @@ function CustomDrawerContent(props: any) {
       href: "notes",
       label: "Notes",
       icon: "copy1" as any,
+    },
+    {
+      href: "quizzes",
+      label: "Quizzes",
+      icon: "unknowfile1" as any,
+    },
+    {
+      href: "flashcards",
+      label: "Flashcards",
+      icon: "profile" as any,
     },
   ];
 
@@ -49,13 +61,13 @@ function CustomDrawerContent(props: any) {
         </CustomText>
       </CustomPressable>
       <View
-        className="border-b h-1 my-2"
+        className="border-b h-1 my-2 mx-4"
         style={{
           borderColor: currentScheme.colorBaseContent,
           opacity: 0.2,
         }}
       />
-      {links.splice(0, 2).map((link) => {
+      {links.map((link) => {
         return (
           <DrawerItem
             key={link.href}
@@ -73,9 +85,22 @@ function CustomDrawerContent(props: any) {
           />
         );
       })}
-
+      <View className="flex-1" />
+      <View className="flex-1" />
+      <View className="flex-1" />
+      <View className="flex-1" />
+      <View className="flex-1" />
       <View className="flex-1 flex flex-row gap-2 items-center self-end">
-        <CustomPressable className="rounded-full" variant="colorBase200">
+        <CustomPressable className="flex-1 rounded-full" variant="colorBase200">
+          <CustomText>
+            <MaterialIcons name="timer" size={20} />
+          </CustomText>
+        </CustomPressable>
+        <CustomPressable
+          className="flex-1 rounded-full"
+          variant="colorBase200"
+          onPress={() => props.navigation.navigate("settings")}
+        >
           <CustomText>
             <MaterialIcons name="settings" size={20} />
           </CustomText>
@@ -97,6 +122,14 @@ function CustomDrawerContent(props: any) {
 export default function Layout() {
   const { currentScheme } = useTheme();
 
+  useEffect(() => {
+    if (currentScheme.colorscheme === "light") {
+      setStatusBarStyle("dark");
+    } else {
+      setStatusBarStyle("light");
+    }
+  }, [currentScheme.colorscheme]);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer
@@ -109,9 +142,6 @@ export default function Layout() {
           drawerContentContainerStyle: { gap: 12 },
         }}
         drawerContent={(props) => <CustomDrawerContent {...props} />}
-      />
-      <StatusBar
-        style={currentScheme.colorscheme === "light" ? "dark" : "light"}
       />
     </GestureHandlerRootView>
   );

@@ -24,7 +24,7 @@ export default function Page() {
       }}
     >
       <ForumHeader
-        title="Quizzes"
+        title="Flashcards"
         rightSideChildren={
           <>
             <CustomText>

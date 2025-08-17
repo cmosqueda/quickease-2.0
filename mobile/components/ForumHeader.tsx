@@ -2,23 +2,29 @@ import Entypo from "@expo/vector-icons/Entypo";
 import CustomText from "./CustomText";
 import CustomView from "./CustomView";
 
-import { Pressable, View } from "react-native";
+import { Pressable, View, ViewProps } from "react-native";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
+import { ReactNode } from "react";
+
+type ForumHeaderProps = {
+  title?: string;
+  rightSideChildren?: ReactNode;
+  tabChildren?: ReactNode;
+} & ViewProps;
 
 export default function ForumHeader({
   title = "QuickEase",
   rightSideChildren,
-}: {
-  title?: string;
-  rightSideChildren: React.ReactNode;
-}) {
+  tabChildren,
+  ...viewProps
+}: ForumHeaderProps) {
   const navigation = useNavigation();
 
   return (
-    <>
+    <View {...viewProps}>
       <CustomView
         variant="colorBase100"
-        className="flex flex-row justify-between items-center px-4 py-2"
+        className="flex flex-row justify-between items-center p-4"
       >
         <View className="flex flex-row gap-4 items-center ">
           <Pressable
@@ -32,10 +38,20 @@ export default function ForumHeader({
             {title}
           </CustomText>
         </View>
-        <View className="flex flex-row gap-6 items-center">
-          {rightSideChildren}
-        </View>
+        {rightSideChildren && (
+          <View className="flex flex-row gap-6 items-center">
+            {rightSideChildren}
+          </View>
+        )}
       </CustomView>
-    </>
+      {tabChildren && (
+        <CustomView
+          variant="colorBase100"
+          className="px-8 py-4 flex flex-row gap-4"
+        >
+          {tabChildren}
+        </CustomView>
+      )}
+    </View>
   );
 }
