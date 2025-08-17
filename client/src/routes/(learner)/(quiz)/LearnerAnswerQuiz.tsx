@@ -209,7 +209,7 @@ export default function LearnerAnswerQuizPage() {
             <div
               key={index}
               className={clsx(
-                userAnswers[index].user_answer.length > 0 ? "bg-success" : null,
+                userAnswers[index].user_answer.length > 0 ? "bg-base-content/50" : null,
                 "flex flex-col items-center justify-center p-4 rounded-xl w-[3rem] h-[3rem] aspect-square hover:bg-base-content/40 cursor-pointer bg-base-100"
               )}
               onClick={() => setQuestionIndex(index)}
@@ -217,7 +217,7 @@ export default function LearnerAnswerQuizPage() {
               <h1
                 className={clsx(
                   userAnswers[index].user_answer.length > 0
-                    ? "text-success-content"
+                    ? "text-base-content"
                     : null
                 )}
               >
