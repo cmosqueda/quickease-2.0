@@ -62,16 +62,24 @@ export default function LearnerAnswerQuizPage() {
   const handleOptionToggle = (questionIdx: number, optionIdx: number) => {
     setUserAnswers((prev) => {
       const updated = [...prev];
-      const selected = new Set(updated[questionIdx].user_answer);
+      const currentQ = updated[questionIdx].question;
 
-      selected.has(optionIdx)
-        ? selected.delete(optionIdx)
-        : selected.add(optionIdx);
+      if (currentQ.correctAnswers.length > 1) {
+        const selected = new Set(updated[questionIdx].user_answer);
+        selected.has(optionIdx)
+          ? selected.delete(optionIdx)
+          : selected.add(optionIdx);
 
-      updated[questionIdx] = {
-        ...updated[questionIdx],
-        user_answer: Array.from(selected),
-      };
+        updated[questionIdx] = {
+          ...updated[questionIdx],
+          user_answer: Array.from(selected),
+        };
+      } else {
+        updated[questionIdx] = {
+          ...updated[questionIdx],
+          user_answer: [optionIdx],
+        };
+      }
 
       return updated;
     });
@@ -209,7 +217,9 @@ export default function LearnerAnswerQuizPage() {
             <div
               key={index}
               className={clsx(
-                userAnswers[index].user_answer.length > 0 ? "bg-base-content/50" : null,
+                userAnswers[index].user_answer.length > 0
+                  ? "bg-base-content/50"
+                  : null,
                 "flex flex-col items-center justify-center p-4 rounded-xl w-[3rem] h-[3rem] aspect-square hover:bg-base-content/40 cursor-pointer bg-base-100"
               )}
               onClick={() => setQuestionIndex(index)}
@@ -234,6 +244,11 @@ export default function LearnerAnswerQuizPage() {
                 {questionIndex + 1}. {currentQuestion.question}
               </h1>
               <p>{currentQuestion.description || "No description"}</p>
+              {currentQuestion.correctAnswers.length > 1 && (
+                <p className="text-xs text-base-content/50">
+                  (Multiple answers)
+                </p>
+              )}
               <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-base-100 my-2">
                 {currentQuestion.options.map((option, i) => (
                   <div className="flex flex-row gap-2 items-center" key={i}>
