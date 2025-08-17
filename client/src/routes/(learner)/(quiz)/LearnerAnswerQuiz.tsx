@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import _API_INSTANCE from "@/utils/axios";
 import { checkBadges } from "@/utils/badges";
+import clsx from "clsx";
 
 import {
   ArrowLeft,
@@ -207,10 +208,21 @@ export default function LearnerAnswerQuizPage() {
           {data.quiz_content?.map((_, index) => (
             <div
               key={index}
-              className="flex flex-col items-center justify-center p-4 rounded-xl w-[3rem] h-[3rem] aspect-square hover:bg-base-content/40 cursor-pointer bg-base-100"
+              className={clsx(
+                userAnswers[index].user_answer.length > 0 ? "bg-success" : null,
+                "flex flex-col items-center justify-center p-4 rounded-xl w-[3rem] h-[3rem] aspect-square hover:bg-base-content/40 cursor-pointer bg-base-100"
+              )}
               onClick={() => setQuestionIndex(index)}
             >
-              <h1>{index + 1}</h1>
+              <h1
+                className={clsx(
+                  userAnswers[index].user_answer.length > 0
+                    ? "text-success-content"
+                    : null
+                )}
+              >
+                {index + 1}
+              </h1>
             </div>
           ))}
         </div>
