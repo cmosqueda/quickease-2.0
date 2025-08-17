@@ -40,23 +40,25 @@ function CustomDrawerContent(props: any) {
   ];
 
   return (
-    <DrawerContentScrollView contentContainerStyle={{ gap: 12, flex: 1 }}>
+    <DrawerContentScrollView
+      contentContainerStyle={{
+        gap: 12,
+        flex: 1,
+        backgroundColor: currentScheme.colorBase200,
+      }}
+    >
       <CustomPressable
-        variant="colorPrimary"
+        variant="colorBase100"
         className="flex flex-row gap-4 items-center rounded-3xl"
         style={{
           paddingVertical: 16,
         }}
         onPress={() => props.navigation.navigate("profile")}
       >
-        <CustomText color="colorPrimaryContent">
+        <CustomText color="colorBaseContent">
           <MaterialIcons name="account-circle" size={36} />
         </CustomText>
-        <CustomText
-          variant="bold"
-          className="text-xl"
-          color="colorPrimaryContent"
-        >
+        <CustomText variant="bold" className="text-xl" color="colorBaseContent">
           Jhon Lloyd Viernes
         </CustomText>
       </CustomPressable>
@@ -91,14 +93,14 @@ function CustomDrawerContent(props: any) {
       <View className="flex-1" />
       <View className="flex-1" />
       <View className="flex-1 flex flex-row gap-2 items-center self-end">
-        <CustomPressable className="flex-1 rounded-full" variant="colorBase200">
+        <CustomPressable className="flex-1 rounded-full" variant="colorBase100">
           <CustomText>
             <MaterialIcons name="timer" size={20} />
           </CustomText>
         </CustomPressable>
         <CustomPressable
           className="flex-1 rounded-full"
-          variant="colorBase200"
+          variant="colorBase100"
           onPress={() => props.navigation.navigate("settings")}
         >
           <CustomText>
@@ -107,7 +109,7 @@ function CustomDrawerContent(props: any) {
         </CustomPressable>
         <CustomPressable
           className="flex flex-row gap-2 rounded-full items-center"
-          variant="colorBase200"
+          variant="colorBase100"
         >
           <CustomText>
             <MaterialIcons name="logout" size={20} />
