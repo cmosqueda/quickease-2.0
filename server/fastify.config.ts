@@ -69,6 +69,9 @@ export default async function initializeFastifyConfig() {
     */
   await server.register(fastifyJwt, {
     secret: server.config.JWT_SECRET_KEY,
+    sign: {
+      expiresIn: "1d",
+    },
     cookie: {
       cookieName: "QUICKEASE_TOKEN",
       signed: true,
@@ -215,7 +218,7 @@ export default async function initializeFastifyConfig() {
   await server.register(aiRoutes, { prefix: "api/ai" });
   await server.register(mailRoutes, { prefix: "api/mail" });
   await server.register(notificationRoutes, { prefix: "api/notifications" });
-  await server.register(badgeRoutes, {prefix: "api/badges"});
+  await server.register(badgeRoutes, { prefix: "api/badges" });
 
   /*
     - Registering routes for each modules (Admin)
