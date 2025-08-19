@@ -6,6 +6,7 @@ import ForumHeader from "@/components/ForumHeader";
 import useTheme from "@/hooks/useTheme";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Link } from "expo-router";
 
 import { useState } from "react";
 import { useWindowDimensions, View } from "react-native";
@@ -78,14 +79,16 @@ export default function Page() {
           </CustomText>
         </CustomView>
       </CustomModal>
-      <CustomPressable
-        variant="colorPrimary"
-        className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
-      >
-        <CustomText color="colorPrimaryContent">
-          <MaterialIcons name="post-add" size={32} />
-        </CustomText>
-      </CustomPressable>
+      <Link asChild href={{ pathname: "/quiz/create" }}>
+        <CustomPressable
+          variant="colorPrimary"
+          className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+        >
+          <CustomText color="colorPrimaryContent">
+            <MaterialIcons name="post-add" size={32} />
+          </CustomText>
+        </CustomPressable>
+      </Link>
     </SafeAreaView>
   );
 }

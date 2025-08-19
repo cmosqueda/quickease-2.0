@@ -1,3 +1,5 @@
+import _API_INSTANCE from "@/utils/axios";
+
 export const _BADGES = {
   learningProgress: [
     {
@@ -65,3 +67,15 @@ export const _BADGES = {
     },
   ],
 };
+
+export async function checkBadges() {
+  try {
+    const { data } = await _API_INSTANCE.get("badges/check");
+
+    const { awarded } = data;
+
+    console.log(awarded);
+  } catch (err) {
+    console.error("Badge check failed", err);
+  }
+}

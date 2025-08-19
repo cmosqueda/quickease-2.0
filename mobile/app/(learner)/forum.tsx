@@ -18,7 +18,8 @@ import {
   View,
 } from "react-native";
 import { Dispatch, SetStateAction, useState } from "react";
-import { Link } from "expo-router";
+import { Link, useNavigation } from "expo-router";
+import { CommonActions } from "@react-navigation/native";
 
 const SearchModal = ({
   modalVisibility,
@@ -108,6 +109,7 @@ const NotificationModal = ({
 };
 
 export default function Page() {
+  const navigation = useNavigation();
   const { currentScheme } = useTheme();
 
   const [searchModalVisibility, setSearchModalVisibility] = useState(false);
@@ -140,30 +142,41 @@ export default function Page() {
       />
 
       <CustomView variant="colorBase300" className="flex-1 px-4 py-4">
-        <CustomView
-          variant="colorBase100"
-          className="flex gap-2 p-4 rounded-xl"
+        <Pressable
+          onPress={() =>
+            navigation.dispatch(
+              CommonActions.navigate({
+                name: "post/view/[id]",
+                params: { id: "test" },
+              })
+            )
+          }
         >
-          <View className="flex flex-row gap-3 items-center">
-            <CustomText className="text-xl" color="colorBaseContent">
-              <FontAwesome6 name="user-circle" size={20} />
-            </CustomText>
-            <CustomText
-              variant="bold"
-              className="text-xl"
-              color="colorBaseContent"
-            >
-              Jhon Lloyd Viernes
-            </CustomText>
-          </View>
           <CustomView
-            variant="colorBase200"
-            className="flex flex-col gap-2 p-4 rounded-xl"
-            style={{
-              borderColor: currentScheme.colorBase300,
-            }}
-          ></CustomView>
-        </CustomView>
+            variant="colorBase100"
+            className="flex gap-2 p-4 rounded-xl"
+          >
+            <View className="flex flex-row gap-3 items-center">
+              <CustomText className="text-xl" color="colorBaseContent">
+                <FontAwesome6 name="user-circle" size={20} />
+              </CustomText>
+              <CustomText
+                variant="bold"
+                className="text-xl"
+                color="colorBaseContent"
+              >
+                Jhon Lloyd Viernes
+              </CustomText>
+            </View>
+            <CustomView
+              variant="colorBase200"
+              className="flex flex-col gap-2 p-4 rounded-xl"
+              style={{
+                borderColor: currentScheme.colorBase300,
+              }}
+            ></CustomView>
+          </CustomView>
+        </Pressable>
       </CustomView>
 
       <Link asChild href={"/post/create"}>
