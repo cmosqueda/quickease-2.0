@@ -9,8 +9,6 @@ export type AuthUserRecord = {
   first_name: string;
   last_name: string;
   email: string;
-  gender?: "male" | "female";
-  phone_number: string;
   badges: {
     id: string;
     title: string;

@@ -27,8 +27,6 @@ export interface User {
   first_name: string;
   last_name: string;
   email: string;
-  gender?: string | null;
-  phone_number?: string | null;
   badges?: any;
   is_public: boolean;
   created_at: Date;

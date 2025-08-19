@@ -75,7 +75,6 @@ export async function viewProfile(user_id: string) {
       last_name: true,
       comments: true,
       badges: true,
-      gender: true,
       posts: {
         include: { user: true },
         where: { is_resolved: null },
