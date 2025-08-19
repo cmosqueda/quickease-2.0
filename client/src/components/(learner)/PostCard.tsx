@@ -27,7 +27,14 @@ const PostCard = ({ data }: { data: any }) => {
   return (
     <>
       <div className="flex flex-row items-center gap-3">
-        <div className="bg-base-300 rounded-3xl shadow w-[3rem] h-[3rem] aspect-square" />
+        <img
+          src={
+            data.user.avatar
+              ? `/assets/images/avatars/${data.user.avatar}.svg`
+              : "/assets/images/avatars/blue.svg"
+          }
+          className="bg-base-300 rounded-3xl shadow w-[3rem] h-[3rem] aspect-square"
+        />
         <div>
           <p>
             {data?.user?.first_name} {data?.user?.last_name}

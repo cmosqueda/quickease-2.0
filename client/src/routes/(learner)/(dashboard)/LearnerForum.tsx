@@ -37,6 +37,7 @@ const Post = ({
     vote_sum: number;
     user_vote: number;
     user: {
+      avatar: string;
       id: string;
       first_name: string;
       last_name: string;
@@ -83,6 +84,14 @@ const Post = ({
       {/* Header */}
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row gap-2 items-center">
+          <img
+            src={
+              post.user.avatar
+                ? `/assets/images/avatars/${post.user.avatar}.svg`
+                : "/assets/images/avatars/blue.svg"
+            }
+            className="w-[2rem] aspect-square"
+          />
           <NavLink
             to={`/learner/profile/${post.user.id}`}
             className="font-semibold"
