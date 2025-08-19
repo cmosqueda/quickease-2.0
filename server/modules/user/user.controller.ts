@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import {
+  changeAvatar,
   changeUserEmail,
   changeUserName,
   checkUser,
@@ -125,20 +126,6 @@ export async function toggle_user_visibility(
   }
 }
 
-// Reserved for future implementation
-export async function request_email_change(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {}
-export async function request_change_password(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {}
-export async function change_email(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {}
-
 export async function view_profile(
   request: FastifyRequest,
   reply: FastifyReply
@@ -153,6 +140,23 @@ export async function view_profile(
     }
 
     reply.code(200).send(user);
+  } catch (err) {
+    reply.code(500).send({ message: "Error getting user's details." });
+  }
+}
+
+export async function change_avatar(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const { avatar_id,  } = request.body as {
+    avatar_id: string;
+  };
+
+  try {
+    await changeAvatar(avatar_id, request.user.id);
+
+    reply.code(200).send({ message: "Avatar updated." });
   } catch (err) {
     reply.code(500).send({ message: "Error getting user's details." });
   }

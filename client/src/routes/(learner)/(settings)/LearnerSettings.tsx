@@ -7,7 +7,18 @@ import duration from "dayjs/plugin/duration";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
 import { useEffect, useState } from "react";
-import { Eye, Info, Lock, Mail, MailCheck, UserCircle, X } from "lucide-react";
+import {
+  CheckCircle,
+  CheckCircle2,
+  Eye,
+  Info,
+  Lock,
+  Mail,
+  MailCheck,
+  User,
+  UserCircle,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 
 dayjs.extend(duration);
@@ -128,6 +139,18 @@ const AccountSettings = () => {
       <button
         onClick={() => {
           const modal = document.getElementById(
+            "change-avatar-modal"
+          ) as HTMLDialogElement;
+          modal.showModal();
+        }}
+        className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all"
+      >
+        <User />
+        <p>Change avatar</p>
+      </button>
+      <button
+        onClick={() => {
+          const modal = document.getElementById(
             "change-email-modal"
           ) as HTMLDialogElement;
           modal.showModal();
@@ -164,7 +187,9 @@ const AccountSettings = () => {
         <MailCheck />
         <div className="flex flex-col items-start">
           <p>Verify email</p>
-          {user?.is_verified && <p className="text-sm text-base-content/30">Email verified.</p>}
+          {user?.is_verified && (
+            <p className="text-sm text-base-content/30">Email verified.</p>
+          )}
         </div>
       </button>
 
@@ -442,6 +467,91 @@ const ChangeEmailModal = () => {
   );
 };
 
+const ChangeAvatarModal = () => {
+  const [selectedAvatar, setSelectedAvatar] = useState(
+    useAuth.getState().user?.avatar
+  );
+  const [isSaving, setIsSaving] = useState(false);
+
+  const avatars = [
+    "/assets/images/avatars/blue.svg",
+    "/assets/images/avatars/green.svg",
+    "/assets/images/avatars/orange.svg",
+    "/assets/images/avatars/purple.svg",
+  ];
+
+  const handleUpdate = async () => {
+    setIsSaving(true);
+    const temp = useAuth.getState().user as AuthUserRecord;
+
+    try {
+      await _API_INSTANCE.put(
+        "/users/change-avatar",
+        {
+          avatar_id: selectedAvatar,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
+
+      useAuth.setState({
+        user: {
+          ...temp,
+          avatar: selectedAvatar!,
+        },
+      });
+
+      toast.success("Avatar updated!");
+    } catch {
+      toast.error("Error updating avatar.");
+    } finally {
+      const modal = document.getElementById(
+        "change-avatar-modal"
+      ) as HTMLDialogElement;
+
+      modal.close();
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <dialog id="change-avatar-modal" className="modal">
+      <div className="modal-box flex flex-col gap-6">
+        <div className="flex flex-row gap-2 items-center">
+          <X
+            className="my-2 cursor-pointer"
+            onClick={() => {
+              const modal = document.getElementById(
+                "change-avatar-modal"
+              ) as HTMLDialogElement;
+
+              modal.close();
+            }}
+          />
+          <h3 className="font-bold text-lg">Change avatar</h3>
+        </div>
+        <div className="grid grid-cols-4 items-center justify-center gap-4">
+          {avatars.map((avatar) => (
+            <button
+              className="relative transition-all duration-300 delay-0 hover:scale-110 cursor-pointer hover:brightness-125"
+              onClick={() => setSelectedAvatar(avatar)}
+            >
+              {selectedAvatar == avatar && (
+                <CheckCircle2 className="absolute self-center" />
+              )}
+              <img src={avatar} className="w-[8rem] aspect-square" />
+            </button>
+          ))}
+        </div>
+        <button className="btn" onClick={handleUpdate} disabled={isSaving}>
+          Update
+        </button>
+      </div>
+    </dialog>
+  );
+};
+
 export default function LearnerSettingsPage() {
   const [tabIndex, setTabIndex] = useState(1);
   const tabs = [<AppearanceSettings />, <AccountSettings />];
@@ -473,6 +583,7 @@ export default function LearnerSettingsPage() {
       {tabs[tabIndex]}
       <ChangeNameModal />
       <ChangeEmailModal />
+      <ChangeAvatarModal />
     </div>
   );
 }

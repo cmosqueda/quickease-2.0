@@ -106,12 +106,10 @@ const User = ({ user, posts }: { user: any; posts: any }) => {
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
       <div className="bg-base-100 p-8 flex flex-row gap-4 rounded-3xl">
-        <div className="aspect-square items-center">
-          <h1 className="font-bold text-4xl p-6 rounded-full bg-base-200 w-fit">
-            {user?.first_name[0].toUpperCase()}
-            {user?.last_name[0].toUpperCase()}
-          </h1>
-        </div>
+        <img
+          src={user.avatar ? user.avatar : "/assets/images/avatars/blue.svg"}
+          className="w-[7rem]"
+        />
         <div className="flex flex-col justify-center">
           <h1 className="text-3xl font-bold">
             {user?.first_name} {user?.last_name}

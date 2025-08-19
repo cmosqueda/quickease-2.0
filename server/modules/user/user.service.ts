@@ -94,3 +94,16 @@ export async function viewProfile(user_id: string) {
     };
   }
 }
+
+export async function changeAvatar(avatar_id: string, user_id: string) {
+  await db_client.user.update({
+    data: {
+      avatar: avatar_id,
+    },
+    where: {
+      id: user_id,
+    },
+  });
+
+  return true;
+}
