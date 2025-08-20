@@ -1,18 +1,20 @@
+import useTheme from "@/hooks/useTheme";
 import CustomModal from "@/components/CustomModal";
 import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import ForumHeader from "@/components/ForumHeader";
-import useTheme from "@/hooks/useTheme";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Link } from "expo-router";
 
+import { Link, useNavigation } from "expo-router";
 import { useState } from "react";
-import { useWindowDimensions, View } from "react-native";
+import { Pressable, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { CommonActions } from "@react-navigation/native";
 
 export default function Page() {
+  const navigation = useNavigation();
   const { currentScheme } = useTheme();
   const { height } = useWindowDimensions();
 
@@ -39,25 +41,40 @@ export default function Page() {
           </>
         }
       />
+
       <CustomView
         variant="colorBase300"
         className="flex-col gap-4 flex-1 px-4 py-4"
       >
-        <CustomView className="p-6 rounded-xl gap-2">
-          <View className="gap-2">
-            <View className="flex flex-row gap-4 items-center">
-              <CustomText>
-                <MaterialIcons name="info" size={18} />
-              </CustomText>
-              <CustomText>AI-Generated</CustomText>
+        <Pressable
+          onPress={() =>
+            navigation.dispatch(
+              CommonActions.navigate({
+                name: "quiz/view/[id]",
+                params: {
+                  id: "test",
+                },
+              })
+            )
+          }
+        >
+          <CustomView className="p-6 rounded-xl gap-2">
+            <View className="gap-2">
+              <View className="flex flex-row gap-4 items-center">
+                <CustomText>
+                  <MaterialIcons name="info" size={18} />
+                </CustomText>
+                <CustomText>AI-Generated</CustomText>
+              </View>
+              <CustomText className="text-sm opacity-40">01/01/1970</CustomText>
             </View>
-            <CustomText className="text-sm opacity-40">01/01/1970</CustomText>
-          </View>
-          <CustomText variant="bold" className="text-3xl">
-            Title
-          </CustomText>
-        </CustomView>
+            <CustomText variant="bold" className="text-3xl">
+              Title
+            </CustomText>
+          </CustomView>
+        </Pressable>
       </CustomView>
+
       <CustomModal
         modalVisibility={modalVisibility}
         setModalVisibility={setModalVisibility}

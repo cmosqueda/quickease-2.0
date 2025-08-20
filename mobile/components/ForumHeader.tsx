@@ -1,6 +1,7 @@
-import Entypo from "@expo/vector-icons/Entypo";
 import CustomText from "./CustomText";
 import CustomView from "./CustomView";
+
+import Entypo from "@expo/vector-icons/Entypo";
 
 import { Pressable, View, ViewProps } from "react-native";
 import { DrawerActions, useNavigation } from "@react-navigation/native";

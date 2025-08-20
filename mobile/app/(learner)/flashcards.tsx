@@ -1,20 +1,20 @@
+import useTheme from "@/hooks/useTheme";
 import CustomModal from "@/components/CustomModal";
 import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import ForumHeader from "@/components/ForumHeader";
-import useTheme from "@/hooks/useTheme";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { CommonActions } from "@react-navigation/native";
 
+import { CommonActions } from "@react-navigation/native";
 import { Link, useNavigation } from "expo-router";
 import { useState } from "react";
 import { Pressable, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page() {
-  const navigate = useNavigation();
+  const navigation = useNavigation();
   const { currentScheme } = useTheme();
   const { height } = useWindowDimensions();
 
@@ -48,7 +48,7 @@ export default function Page() {
       >
         <Pressable
           onPress={() =>
-            navigate.dispatch(
+            navigation.dispatch(
               CommonActions.navigate({
                 name: "flashcard/view/[id]",
                 params: { id: "test" },

@@ -1,6 +1,8 @@
 import useTheme from "@/hooks/useTheme";
 import CustomText from "@/components/CustomText";
 import CustomPressable from "@/components/CustomPressable";
+import CustomView from "@/components/CustomView";
+
 import Entypo from "@expo/vector-icons/Entypo";
 
 import { useWindowDimensions, View } from "react-native";
@@ -8,7 +10,6 @@ import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { router } from "expo-router";
-import CustomView from "@/components/CustomView";
 
 export default function Index() {
   const { height, width } = useWindowDimensions();

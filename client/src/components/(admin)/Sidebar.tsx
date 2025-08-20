@@ -17,7 +17,7 @@ import { toast } from "sonner";
 export default function Sidebar({ tab }: { tab: string }) {
   const [isOpen, setIsOpen] = useState(true);
   const [currentTab, setCurrentTab] = useState(tab);
-  const navigate = useNavigate();
+  const navigation = useNavigate();
 
   const links = [
     {
@@ -171,7 +171,7 @@ export default function Sidebar({ tab }: { tab: string }) {
                 isOpen ? "rotate-180" : "rotate-0"
               )}
               onClick={() =>
-                navigate("/admin/settings", { viewTransition: true })
+                navigation("/admin/settings", { viewTransition: true })
               }
             />
           </div>
@@ -194,7 +194,7 @@ export default function Sidebar({ tab }: { tab: string }) {
                     {},
                     { withCredentials: true }
                   );
-                  navigate("/", { viewTransition: true });
+                  navigation("/", { viewTransition: true });
                 } catch (err) {
                   toast.error("Logout error.");
                   throw err;

@@ -1,14 +1,8 @@
+import * as NavigationBar from "expo-navigation-bar";
 import CustomView from "./CustomView";
 
 import React, { Dispatch, ReactNode, SetStateAction } from "react";
-import {
-  Modal,
-  ModalProps,
-  StyleSheet,
-  useWindowDimensions,
-  ViewStyle,
-} from "react-native";
-import * as NavigationBar from "expo-navigation-bar";
+import { Modal, ModalProps, StyleSheet, ViewStyle } from "react-native";
 
 export interface CustomModalProps extends Omit<ModalProps, "visible"> {
   modalVisibility: boolean;

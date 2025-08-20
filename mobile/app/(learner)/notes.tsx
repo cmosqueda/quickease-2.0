@@ -1,9 +1,9 @@
+import useTheme from "@/hooks/useTheme";
 import CustomModal from "@/components/CustomModal";
 import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import ForumHeader from "@/components/ForumHeader";
-import useTheme from "@/hooks/useTheme";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 

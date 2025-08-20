@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
@@ -8,7 +9,6 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { CommonActions } from "@react-navigation/native";
-import clsx from "clsx";
 import { useNavigation } from "expo-router";
 import { useState } from "react";
 import { View, Pressable } from "react-native";
@@ -35,20 +35,26 @@ export default function Page() {
           </CustomView>
         </View>
       </View>
-      <CustomText variant="black" className="text-5xl">
-        Title
-      </CustomText>
-      <CustomText>
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry. Lorem Ipsum has been the industry&apos;s standard dummy text
-        ever since the 1500s, when an unknown printer took a galley of type and
-        scrambled it to make a type specimen book. It has survived not only five
-        centuries, but also the leap into electronic typesetting, remaining
-        essentially unchanged. It was popularised in the 1960s with the release
-        of Letraset sheets containing Lorem Ipsum passages, and more recently
-        with desktop publishing software like Aldus PageMaker including versions
-        of Lorem Ipsum.
-      </CustomText>
+      <CustomView variant="colorBase100" className="p-4 rounded-3xl">
+        <CustomText variant="black" className="text-5xl">
+          Title
+        </CustomText>
+      </CustomView>
+
+      <CustomView variant="colorBase100" className="p-4 rounded-3xl">
+        <CustomText>
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has been the industry&apos;s standard dummy text
+          ever since the 1500s, when an unknown printer took a galley of type
+          and scrambled it to make a type specimen book. It has survived not
+          only five centuries, but also the leap into electronic typesetting,
+          remaining essentially unchanged. It was popularised in the 1960s with
+          the release of Letraset sheets containing Lorem Ipsum passages, and
+          more recently with desktop publishing software like Aldus PageMaker
+          including versions of Lorem Ipsum.
+        </CustomText>
+      </CustomView>
+
       <View className="flex-1" />
       <CustomPressable
         variant="colorBase300"
@@ -105,7 +111,7 @@ export default function Page() {
       style={{ backgroundColor: currentScheme.colorBase200, flex: 1 }}
       className="p-4 gap-4"
     >
-      <View className="flex flex-row gap-4 items-center relative">
+      <View className="flex flex-row gap-4 justify-between items-center relative">
         <Pressable
           className={clsx(tabIndex ? "absolute top-0" : "")}
           onPress={() => {
@@ -119,6 +125,22 @@ export default function Page() {
         >
           <CustomText>
             <MaterialIcons name="keyboard-arrow-left" size={36} />
+          </CustomText>
+        </Pressable>
+        <Pressable
+          onPress={() =>
+            navigation.dispatch(
+              CommonActions.navigate({
+                name: "flashcard/edit/[id]",
+                params: {
+                  id: "test",
+                },
+              })
+            )
+          }
+        >
+          <CustomText>
+            <MaterialCommunityIcons name="note-edit" size={24} />
           </CustomText>
         </Pressable>
       </View>

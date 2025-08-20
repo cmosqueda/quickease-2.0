@@ -4,7 +4,6 @@ import useTheme from "@/hooks/useTheme";
 
 import { Pressable, PressableProps, StyleProp, ViewStyle } from "react-native";
 
-// Define background color variants as constant tuple
 export const bgVariants = [
   "colorBase100",
   "colorBase200",

@@ -1,21 +1,19 @@
+import useTheme from "@/hooks/useTheme";
+import _FONTS from "@/types/theme/Font";
 import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomTextInput from "@/components/CustomTextInput";
 import CustomView from "@/components/CustomView";
 import CustomModal from "@/components/CustomModal";
-import useTheme from "@/hooks/useTheme";
-import _FONTS from "@/types/theme/Font";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
-import { CommonActions } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import {
   KeyboardAvoidingView,
   Pressable,
-  StyleSheet,
   useWindowDimensions,
   View,
 } from "react-native";
@@ -41,9 +39,7 @@ const TagsModal = ({
       modalVisibility={modalVisibility}
       setModalVisibility={setModalVisibility}
     >
-      <KeyboardAvoidingView
-        behavior="position"
-      >
+      <KeyboardAvoidingView behavior="position">
         <CustomView
           variant="colorBase100"
           style={{ maxHeight: height / 1.5, gap: 8 }}
@@ -86,7 +82,7 @@ const TagsModal = ({
 };
 
 export default function Page() {
-  const navigate = useNavigation();
+  const navigation = useNavigation();
   const { currentScheme } = useTheme();
   const { height } = useWindowDimensions();
 
@@ -99,7 +95,7 @@ export default function Page() {
       style={{ backgroundColor: currentScheme.colorBase100 }}
     >
       <View className="flex flex-row gap-2 items-center justify-between">
-        <Pressable onPress={() => navigate.dispatch(CommonActions.goBack())}>
+        <Pressable onPress={() => navigation.goBack()}>
           <CustomText>
             <MaterialIcons name="keyboard-arrow-left" size={36} />
           </CustomText>
@@ -164,6 +160,8 @@ export default function Page() {
         </CustomPressable>
       </CustomView>
       <TagsModal
+        tags={[]}
+        setTags={() => {}}
         modalVisibility={tagsModalVisibility}
         setModalVisibility={setTagsModalVisibility}
       />

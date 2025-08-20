@@ -1,8 +1,9 @@
+import useTheme from "@/hooks/useTheme";
 import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomTextInput from "@/components/CustomTextInput";
 import CustomView from "@/components/CustomView";
-import useTheme from "@/hooks/useTheme";
+
 import Entypo from "@expo/vector-icons/Entypo";
 
 import { router } from "expo-router";

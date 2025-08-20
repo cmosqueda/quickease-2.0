@@ -1,5 +1,6 @@
 import React from "react";
 import useTheme from "@/hooks/useTheme";
+
 import { TextInput, TextInputProps } from "react-native";
 
 type CustomTextInputProps = TextInputProps;

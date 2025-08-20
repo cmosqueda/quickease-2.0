@@ -1,9 +1,9 @@
+import useTheme from "@/hooks/useTheme";
+import _THEMES from "@/types/theme/Themes";
 import CustomModal from "@/components/CustomModal";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import ForumHeader from "@/components/ForumHeader";
-import useTheme from "@/hooks/useTheme";
-import _THEMES from "@/types/theme/Themes";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
@@ -210,7 +210,6 @@ const ThemeSettings = () => {
 
 export default function Page() {
   const { currentScheme } = useTheme();
-  const { height } = useWindowDimensions();
 
   return (
     <SafeAreaView
