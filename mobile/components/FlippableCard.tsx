@@ -8,9 +8,13 @@ import { Animated, Pressable, StyleSheet } from "react-native";
 export default function FlippableCard({
   front,
   back,
+  height = "h-48",
+  classNames,
 }: {
   front: string;
   back: string;
+  height?: string;
+  classNames?: string;
 }) {
   const { currentScheme } = useTheme();
 
@@ -48,7 +52,7 @@ export default function FlippableCard({
   return (
     <Pressable
       onPress={flipCard}
-      className="w-full h-48 items-center justify-center"
+      className={clsx("w-full items-center justify-center", height, classNames)}
     >
       <Animated.View
         style={[
@@ -59,7 +63,11 @@ export default function FlippableCard({
           },
         ]}
       >
-        <CustomText className={clsx("text-2xl")} variant="regular">
+        <CustomText
+          className={clsx("text-2xl")}
+          variant="regular"
+          color="colorPrimaryContent"
+        >
           {front}
         </CustomText>
       </Animated.View>
@@ -74,7 +82,11 @@ export default function FlippableCard({
           },
         ]}
       >
-        <CustomText className={clsx("text-2xl")} variant="black">
+        <CustomText
+          className={clsx("text-2xl")}
+          variant="black"
+          color="colorSecondaryContent"
+        >
           {back}
         </CustomText>
       </Animated.View>
