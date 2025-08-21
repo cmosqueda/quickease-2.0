@@ -1,9 +1,9 @@
 import useTheme from "@/hooks/useTheme";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import CustomText from "@/components/CustomText";
 import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
@@ -11,6 +11,7 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { useWindowDimensions, View } from "react-native";
 import { setStatusBarStyle } from "expo-status-bar";
 import { useEffect } from "react";
+import { DrawerActions } from "@react-navigation/native";
 
 function CustomDrawerContent(props: any) {
   const { height } = useWindowDimensions();
@@ -99,7 +100,14 @@ function CustomDrawerContent(props: any) {
       <View className="flex-1" />
       <View className="flex-1" />
       <View className="flex-1 flex flex-row gap-2 items-center self-end">
-        <CustomPressable className="flex-1 rounded-full" variant="colorBase100">
+        <CustomPressable
+          onPress={() => {
+            props.setPomodoroModalVisibility(true);
+            props.navigation.dispatch(DrawerActions.closeDrawer());
+          }}
+          className="flex-1 rounded-full"
+          variant="colorBase100"
+        >
           <CustomText>
             <MaterialIcons name="timer" size={20} />
           </CustomText>
