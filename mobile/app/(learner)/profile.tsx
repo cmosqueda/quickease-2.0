@@ -1,16 +1,16 @@
 import useTheme from "@/hooks/useTheme";
-import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
+import CustomPressable from "@/components/CustomPressable";
 
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
-import { useState } from "react";
 import { View, Pressable, useWindowDimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page() {
   const navigation = useNavigation();
@@ -39,9 +39,11 @@ export default function Page() {
         style={{ height: height / 6 }}
         className="flex gap-2 items-center justify-center"
       >
-        <CustomText>
-          <MaterialIcons name="account-circle" size={72} />
-        </CustomText>
+        <Pressable>
+          <CustomText>
+            <MaterialIcons name="account-circle" size={96} />
+          </CustomText>
+        </Pressable>
         <CustomText variant="bold" className="text-3xl">
           Jhon Lloyd Viernes
         </CustomText>
