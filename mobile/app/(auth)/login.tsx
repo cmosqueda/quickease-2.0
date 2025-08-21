@@ -5,7 +5,7 @@ import CustomTextInput from "@/components/CustomTextInput";
 
 import Entypo from "@expo/vector-icons/Entypo";
 
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -60,14 +60,13 @@ export default function Page() {
           <CustomText className="opacity-70">Forgot password?</CustomText>
         </Pressable>
         <View className="flex flex-col gap-4">
-          <CustomPressable variant="colorPrimary" className="rounded-3xl">
-            <CustomText
-              color="colorPrimaryContent"
-              className="text-center text-xl"
-            >
-              Login
-            </CustomText>
-          </CustomPressable>
+          <Link asChild href={"/(learner)/forum"}>
+            <CustomPressable variant="colorPrimary" className="rounded-3xl">
+              <CustomText color="colorPrimaryContent" className="text-center">
+                Login
+              </CustomText>
+            </CustomPressable>
+          </Link>
         </View>
         <Pressable
           className="flex flex-row gap-2"

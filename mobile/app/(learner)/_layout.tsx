@@ -147,20 +147,18 @@ export default function Layout() {
   }, [currentScheme.colorscheme]);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer
-        screenOptions={{
-          headerShown: false,
-        }}
-        initialRouteName="forum"
-        drawerContent={(props) => <CustomDrawerContent {...props} />}
-      >
-        <Drawer.Screen name="forum" />
-        <Drawer.Screen name="notes" />
-        <Drawer.Screen name="profile" />
-        <Drawer.Screen name="quizzes" />
-        <Drawer.Screen name="flashcards" />
-      </Drawer>
-    </GestureHandlerRootView>
+    <Drawer
+      screenOptions={{
+        headerShown: false,
+      }}
+      initialRouteName="forum"
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
+      <Drawer.Screen name="forum" />
+      <Drawer.Screen name="notes" />
+      <Drawer.Screen name="profile" />
+      <Drawer.Screen name="quizzes" />
+      <Drawer.Screen name="flashcards" />
+    </Drawer>
   );
 }

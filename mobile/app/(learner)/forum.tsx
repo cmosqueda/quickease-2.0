@@ -3,114 +3,22 @@ import ForumHeader from "@/components/ForumHeader";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import CustomPressable from "@/components/CustomPressable";
-import CustomModal from "@/components/CustomModal";
-import CustomTextInput from "@/components/CustomTextInput";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  KeyboardAvoidingView,
-  Pressable,
-  useWindowDimensions,
-  View,
-} from "react-native";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Pressable, View } from "react-native";
+import { useState } from "react";
 import { Link, useNavigation } from "expo-router";
 import { CommonActions } from "@react-navigation/native";
-
-const SearchModal = ({
-  modalVisibility,
-  setModalVisibility,
-}: {
-  modalVisibility: boolean;
-  setModalVisibility: Dispatch<SetStateAction<boolean>>;
-}) => {
-  const { height } = useWindowDimensions();
-
-  return (
-    <CustomModal
-      modalVisibility={modalVisibility}
-      setModalVisibility={setModalVisibility}
-    >
-      <KeyboardAvoidingView behavior="position">
-        <CustomView
-          variant="colorBase100"
-          style={{ height: height / 4, gap: 8 }}
-          className="rounded-tr-3xl rounded-tl-3xl p-8"
-        >
-          <CustomText>
-            <MaterialIcons
-              name="close"
-              size={24}
-              onPress={() => setModalVisibility(false)}
-            />
-          </CustomText>
-          <CustomText variant="bold" className="text-4xl">
-            Search
-          </CustomText>
-          <View className="flex flex-row gap-2 items-center">
-            <CustomTextInput
-              className="rounded-xl flex-1"
-              autoFocus={true}
-              enterKeyHint="go"
-            />
-          </View>
-        </CustomView>
-      </KeyboardAvoidingView>
-    </CustomModal>
-  );
-};
-
-const NotificationModal = ({
-  modalVisibility,
-  setModalVisibility,
-}: {
-  modalVisibility: boolean;
-  setModalVisibility: Dispatch<SetStateAction<boolean>>;
-}) => {
-  const { height } = useWindowDimensions();
-
-  return (
-    <CustomModal
-      animationType="fade"
-      modalVisibility={modalVisibility}
-      setModalVisibility={setModalVisibility}
-    >
-      <CustomView
-        variant="colorBase100"
-        style={{ height: height, gap: 8 }}
-        className="px-8 py-12"
-      >
-        <CustomText>
-          <MaterialIcons
-            name="close"
-            size={24}
-            onPress={() => setModalVisibility(false)}
-          />
-        </CustomText>
-        <CustomText variant="bold" className="text-4xl">
-          Notifications
-        </CustomText>
-        <CustomView
-          variant="colorBase200"
-          className="p-6 flex flex-row gap-4 items-center rounded-xl"
-        >
-          <CustomText>
-            <MaterialIcons name="notifications" size={24} />
-          </CustomText>
-          <CustomText>Test</CustomText>
-        </CustomView>
-      </CustomView>
-    </CustomModal>
-  );
-};
+import { useTrays } from "react-native-trays";
 
 export default function Page() {
   const navigation = useNavigation();
   const { currentScheme } = useTheme();
+  const { push: openTray, pop: closeTray } = useTrays("main");
 
   const [searchModalVisibility, setSearchModalVisibility] = useState(false);
   const [notificationModalVisibility, setNotificationModalVisibility] =
@@ -126,13 +34,25 @@ export default function Page() {
       <ForumHeader
         rightSideChildren={
           <>
-            <Pressable onPress={() => setSearchModalVisibility(true)}>
+            <Pressable
+              onPress={() =>
+                openTray("SearchTray", {
+                  close: closeTray,
+                })
+              }
+            >
               <CustomText>
                 <FontAwesome5 name="search" size={20} />
               </CustomText>
             </Pressable>
 
-            <Pressable onPress={() => setNotificationModalVisibility(true)}>
+            <Pressable
+              onPress={() =>
+                openTray("NotificationTray", {
+                  close: closeTray,
+                })
+              }
+            >
               <CustomText>
                 <FontAwesome6 name="bell" size={22} />
               </CustomText>
@@ -189,16 +109,6 @@ export default function Page() {
           </CustomText>
         </CustomPressable>
       </Link>
-
-      <SearchModal
-        modalVisibility={searchModalVisibility}
-        setModalVisibility={setSearchModalVisibility}
-      />
-
-      <NotificationModal
-        modalVisibility={notificationModalVisibility}
-        setModalVisibility={setNotificationModalVisibility}
-      />
     </SafeAreaView>
   );
 }
