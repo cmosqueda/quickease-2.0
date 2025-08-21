@@ -8,8 +8,9 @@ import ForumHeader from "@/components/ForumHeader";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { useState } from "react";
-import { Pressable, Switch, useWindowDimensions, View } from "react-native";
+import { Pressable, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Switch } from "@expo/ui/jetpack-compose";
 
 const AccountSettings = () => {
   return (
@@ -58,6 +59,9 @@ const AccountSettings = () => {
 };
 
 const PrivacySettings = () => {
+  const { currentScheme } = useTheme();
+  const [isPublic, setIsPublic] = useState(false);
+
   return (
     <View className="gap-2">
       <CustomText variant="bold" className="text-sm">
@@ -71,7 +75,12 @@ const PrivacySettings = () => {
           </CustomText>
           <CustomText>Set your profile visibility</CustomText>
         </View>
-        <Switch />
+        <Switch
+          value={isPublic}
+          onValueChange={setIsPublic}
+          variant="switch"
+          color={currentScheme.colorPrimary}
+        />
       </CustomView>
     </View>
   );

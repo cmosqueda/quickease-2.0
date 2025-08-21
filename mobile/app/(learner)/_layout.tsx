@@ -5,17 +5,19 @@ import CustomPressable from "@/components/CustomPressable";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
-import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
-import { useWindowDimensions, View } from "react-native";
-import { setStatusBarStyle } from "expo-status-bar";
 import { useEffect } from "react";
 import { DrawerActions } from "@react-navigation/native";
+import { setStatusBarStyle } from "expo-status-bar";
+import { View } from "react-native";
+import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
+import { useTrays } from "react-native-trays";
+import { MyTraysProps } from "@/types/trays/trays";
 
 function CustomDrawerContent(props: any) {
-  const { height } = useWindowDimensions();
   const { currentScheme } = useTheme();
+  const { push: openPomodoro, pop: closePomodoro } =
+    useTrays<MyTraysProps>("PomodoroTray");
 
   const links = [
     {
@@ -102,7 +104,7 @@ function CustomDrawerContent(props: any) {
       <View className="flex-1 flex flex-row gap-2 items-center self-end">
         <CustomPressable
           onPress={() => {
-            props.setPomodoroModalVisibility(true);
+            openPomodoro("PomodoroTray", { close: closePomodoro });
             props.navigation.dispatch(DrawerActions.closeDrawer());
           }}
           className="flex-1 rounded-full"

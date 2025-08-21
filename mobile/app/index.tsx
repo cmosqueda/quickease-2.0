@@ -5,14 +5,14 @@ import CustomView from "@/components/CustomView";
 
 import Entypo from "@expo/vector-icons/Entypo";
 
-import { useWindowDimensions, View } from "react-native";
 import { Image } from "expo-image";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
 import { router } from "expo-router";
+import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useWindowDimensions, View } from "react-native";
 
 export default function Index() {
-  const { height, width } = useWindowDimensions();
+  const { height } = useWindowDimensions();
   const { currentScheme } = useTheme();
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -25,7 +25,7 @@ export default function Index() {
           height: height / 2,
         }}
       />
-      <CustomView className="self-end">
+      <CustomView className="self-end gap-2">
         <CustomText
           variant="regular"
           className="text-xs tracking-widest opacity-40"
@@ -56,7 +56,7 @@ export default function Index() {
 
   return (
     <SafeAreaView
-      className="flex flex-1 px-6 py-4 gap-6"
+      className="flex flex-1 px-6 py-4 gap-8"
       style={{
         backgroundColor: currentScheme?.colorBase100,
       }}

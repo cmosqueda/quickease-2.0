@@ -1,5 +1,4 @@
 import useTheme from "@/hooks/useTheme";
-import CustomModal from "@/components/CustomModal";
 import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
@@ -9,16 +8,16 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { CommonActions } from "@react-navigation/native";
 import { Link, useNavigation } from "expo-router";
-import { useState } from "react";
-import { Pressable, useWindowDimensions, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTrays } from "react-native-trays";
+import { MyTraysProps } from "@/types/trays/trays";
 
 export default function Page() {
   const navigation = useNavigation();
   const { currentScheme } = useTheme();
-  const { height } = useWindowDimensions();
-
-  const [modalVisibility, setModalVisibility] = useState(false);
+  const { push: openTray, pop: closeTray } =
+    useTrays<MyTraysProps>("FilterTrays");
 
   return (
     <SafeAreaView
@@ -35,7 +34,9 @@ export default function Page() {
               <MaterialIcons
                 name="filter-list"
                 size={20}
-                onPress={() => setModalVisibility(true)}
+                onPress={() =>
+                  openTray("FilterNotesTray", { close: closeTray })
+                }
               />
             </CustomText>
           </>
@@ -73,27 +74,6 @@ export default function Page() {
         </Pressable>
       </CustomView>
 
-      <CustomModal
-        modalVisibility={modalVisibility}
-        setModalVisibility={setModalVisibility}
-      >
-        <CustomView
-          variant="colorBase100"
-          style={{ height: height / 2, gap: 8 }}
-          className="rounded-tr-3xl rounded-tl-3xl p-8"
-        >
-          <CustomText>
-            <MaterialIcons
-              name="close"
-              size={24}
-              onPress={() => setModalVisibility(false)}
-            />
-          </CustomText>
-          <CustomText variant="bold" className="text-4xl">
-            Filter
-          </CustomText>
-        </CustomView>
-      </CustomModal>
       <Link asChild href={{ pathname: "/flashcard/create" }}>
         <CustomPressable
           variant="colorPrimary"

@@ -1,12 +1,13 @@
 import * as SplashScreen from "expo-splash-screen";
 import useTheme from "@/hooks/useTheme";
+import _TRAYS from "@/types/trays/trays";
 
 import { Stack } from "expo-router";
-import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { TrayProvider } from "react-native-trays";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Pressable, useWindowDimensions, View } from "react-native";
-import { TrayProvider, useTrays } from "react-native-trays";
 import {
   Gabarito_400Regular,
   Gabarito_500Medium,
@@ -18,12 +19,6 @@ import {
 } from "@expo-google-fonts/gabarito";
 
 import "../globals.css";
-import CustomText from "@/components/CustomText";
-import CustomTextInput from "@/components/CustomTextInput";
-import CustomView from "@/components/CustomView";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import _TRAYS from "@/types/trays/trays";
 
 const client = new QueryClient();
 
@@ -31,7 +26,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const { currentScheme } = useTheme();
-  const { height, width } = useWindowDimensions();
   const [loaded, error] = useFonts({
     Gabarito_400Regular,
     Gabarito_500Medium,
@@ -65,10 +59,38 @@ export default function RootLayout() {
         <TrayProvider
           trays={_TRAYS}
           stackConfigs={{
-            main: {
+            SearchTray: {
               adjustForKeyboard: true,
               dismissOnBackdropPress: true,
               stickToTop: true,
+              backdropStyles: { backgroundColor: "rgba(0,0,0,0.7)" },
+            },
+            NotificationTray: {
+              dismissOnBackdropPress: true,
+              trayStyles: {
+                borderBottomLeftRadius: 0,
+                borderBottomRightRadius: 0,
+              },
+              backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
+              horizontalSpacing: 0,
+            },
+            FilterTrays: {
+              dismissOnBackdropPress: true,
+              trayStyles: {
+                borderBottomLeftRadius: 0,
+                borderBottomRightRadius: 0,
+              },
+              backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
+              horizontalSpacing: 0,
+            },
+            PomodoroTray: {
+              dismissOnBackdropPress: true,
+              trayStyles: {
+                borderBottomLeftRadius: 0,
+                borderBottomRightRadius: 0,
+              },
+              horizontalSpacing: 0,
+              backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
             },
           }}
         >

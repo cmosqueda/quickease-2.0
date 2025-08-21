@@ -1,5 +1,4 @@
 import useTheme from "@/hooks/useTheme";
-import CustomModal from "@/components/CustomModal";
 import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
@@ -8,15 +7,16 @@ import ForumHeader from "@/components/ForumHeader";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { useState } from "react";
-import { useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTrays } from "react-native-trays";
+import { MyTraysProps } from "@/types/trays/trays";
 
 export default function Page() {
   const { currentScheme } = useTheme();
-  const { height } = useWindowDimensions();
+  const { push: openTray, pop: closeTray } =
+    useTrays<MyTraysProps>("FilterTrays");
 
   const [displaySettings, setDisplaySettings] = useState("grid");
-  const [modalVisibility, setModalVisibility] = useState(false);
 
   if (displaySettings === "grid") {
     return (
@@ -34,7 +34,9 @@ export default function Page() {
                 <MaterialIcons
                   name="filter-list"
                   size={20}
-                  onPress={() => setModalVisibility(true)}
+                  onPress={() =>
+                    openTray("FilterNotesTray", { close: closeTray })
+                  }
                 />
               </CustomText>
               <CustomText>
@@ -66,27 +68,6 @@ export default function Page() {
             </CustomText>
           </CustomView>
         </CustomView>
-        <CustomModal
-          modalVisibility={modalVisibility}
-          setModalVisibility={setModalVisibility}
-        >
-          <CustomView
-            variant="colorBase100"
-            style={{ height: height / 2, gap: 8 }}
-            className="rounded-tr-3xl rounded-tl-3xl p-8"
-          >
-            <CustomText>
-              <MaterialIcons
-                name="close"
-                size={24}
-                onPress={() => setModalVisibility(false)}
-              />
-            </CustomText>
-            <CustomText variant="bold" className="text-4xl">
-              Filter
-            </CustomText>
-          </CustomView>
-        </CustomModal>
         <CustomPressable
           variant="colorPrimary"
           className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
@@ -114,7 +95,9 @@ export default function Page() {
               <MaterialIcons
                 name="filter-list"
                 size={20}
-                onPress={() => setModalVisibility(true)}
+                onPress={() =>
+                  openTray("FilterNotesTray", { close: closeTray })
+                }
               />
             </CustomText>
             <CustomText>
@@ -146,27 +129,7 @@ export default function Page() {
           </CustomText>
         </CustomView>
       </CustomView>
-      <CustomModal
-        modalVisibility={modalVisibility}
-        setModalVisibility={setModalVisibility}
-      >
-        <CustomView
-          variant="colorBase100"
-          style={{ height: height / 2, gap: 8 }}
-          className="rounded-tr-3xl rounded-tl-3xl p-8"
-        >
-          <CustomText>
-            <MaterialIcons
-              name="close"
-              size={24}
-              onPress={() => setModalVisibility(false)}
-            />
-          </CustomText>
-          <CustomText variant="bold" className="text-4xl">
-            Filter
-          </CustomText>
-        </CustomView>
-      </CustomModal>
+
       <CustomPressable
         variant="colorPrimary"
         className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"

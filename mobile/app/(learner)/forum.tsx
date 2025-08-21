@@ -10,19 +10,17 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, View } from "react-native";
-import { useState } from "react";
 import { Link, useNavigation } from "expo-router";
 import { CommonActions } from "@react-navigation/native";
 import { useTrays } from "react-native-trays";
+import { MyTraysProps } from "@/types/trays/trays";
 
 export default function Page() {
   const navigation = useNavigation();
   const { currentScheme } = useTheme();
-  const { push: openTray, pop: closeTray } = useTrays("main");
 
-  const [searchModalVisibility, setSearchModalVisibility] = useState(false);
-  const [notificationModalVisibility, setNotificationModalVisibility] =
-    useState(false);
+  const useSearchTray = useTrays<MyTraysProps>("SearchTray");
+  const useNotificationTray = useTrays<MyTraysProps>("NotificationTray");
 
   return (
     <SafeAreaView
@@ -36,8 +34,8 @@ export default function Page() {
           <>
             <Pressable
               onPress={() =>
-                openTray("SearchTray", {
-                  close: closeTray,
+                useSearchTray.push("SearchTray", {
+                  close: useSearchTray.pop,
                 })
               }
             >
@@ -48,8 +46,8 @@ export default function Page() {
 
             <Pressable
               onPress={() =>
-                openTray("NotificationTray", {
-                  close: closeTray,
+                useNotificationTray.push("NotificationTray", {
+                  close: useNotificationTray.pop,
                 })
               }
             >
