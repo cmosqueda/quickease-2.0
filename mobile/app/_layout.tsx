@@ -63,6 +63,9 @@ export default function RootLayout() {
               adjustForKeyboard: true,
               dismissOnBackdropPress: true,
               stickToTop: true,
+              trayStyles: {
+                backgroundColor: useTheme.getState().currentScheme.colorBase100,
+              },
               backdropStyles: { backgroundColor: "rgba(0,0,0,0.7)" },
             },
             NotificationTray: {
@@ -70,6 +73,7 @@ export default function RootLayout() {
               trayStyles: {
                 borderBottomLeftRadius: 0,
                 borderBottomRightRadius: 0,
+                backgroundColor: useTheme.getState().currentScheme.colorBase100,
               },
               backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
               horizontalSpacing: 0,
@@ -79,6 +83,7 @@ export default function RootLayout() {
               trayStyles: {
                 borderBottomLeftRadius: 0,
                 borderBottomRightRadius: 0,
+                backgroundColor: useTheme.getState().currentScheme.colorBase100,
               },
               backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
               horizontalSpacing: 0,
@@ -88,6 +93,7 @@ export default function RootLayout() {
               trayStyles: {
                 borderBottomLeftRadius: 0,
                 borderBottomRightRadius: 0,
+                backgroundColor: useTheme.getState().currentScheme.colorBase100,
               },
               horizontalSpacing: 0,
               backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
