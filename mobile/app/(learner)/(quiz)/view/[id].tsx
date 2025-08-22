@@ -1,19 +1,21 @@
 import clsx from "clsx";
 import dayjs from "dayjs";
 import useAuth from "@/hooks/useAuth";
-import _API_INSTANCE from "@/utils/axios";
 import useTheme from "@/hooks/useTheme";
 import CustomView from "@/components/CustomView";
 import CustomText from "@/components/CustomText";
 import CustomPressable from "@/components/CustomPressable";
+import PagerView from "react-native-pager-view";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { useState } from "react";
-import { ScrollView, Pressable, ToastAndroid, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRef, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
+import { ScrollView, Pressable, ToastAndroid, View } from "react-native";
+
+import _API_INSTANCE from "@/utils/axios";
 
 interface QuizData {
   id: string;
@@ -70,6 +72,7 @@ export default function LearnerQuizPage() {
   const { currentScheme } = useTheme();
   const { user } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const pagerViewRef = useRef<PagerView>(null);
 
   const [quiz, setQuiz] = useState<QuizData | null>({
     id: "dd06550e-65ed-4ac0-95c3-b13f8191dc10",
@@ -504,7 +507,7 @@ export default function LearnerQuizPage() {
       },
     ],
   });
-  const [tabIndex, setTabIndex] = useState(1);
+  const [tabIndex, setTabIndex] = useState(0);
   const [quizVisibility, setQuizVisibility] = useState<boolean | null>(null);
 
   const handleAnswerQuiz = () => {
@@ -678,7 +681,10 @@ export default function LearnerQuizPage() {
               "flex-1 items-center rounded-3xl",
               tabIndex === 0 ? "opacity-100" : "opacity-50"
             )}
-            onPress={() => setTabIndex(0)}
+            onPress={() => {
+              pagerViewRef.current?.setPage(0);
+              setTabIndex(0);
+            }}
           >
             <CustomText
               color={
@@ -694,7 +700,10 @@ export default function LearnerQuizPage() {
             "flex-1 items-center rounded-3xl",
             tabIndex === 1 ? "opacity-100" : "opacity-50"
           )}
-          onPress={() => setTabIndex(1)}
+          onPress={() => {
+            pagerViewRef.current?.setPage(1);
+            setTabIndex(1);
+          }}
         >
           <CustomText
             color={tabIndex === 1 ? "colorPrimaryContent" : "colorBaseContent"}
@@ -704,9 +713,15 @@ export default function LearnerQuizPage() {
         </CustomPressable>
       </View>
 
-      <ScrollView className="flex flex-col gap-4">
-        {tabIndex === 0 ? renderAttempts() : renderLeaderboard()}
-      </ScrollView>
+      <PagerView style={{ flex: 1 }} ref={pagerViewRef} scrollEnabled={false}>
+        <ScrollView className="flex flex-col gap-4" key={0}>
+          {renderAttempts()}
+        </ScrollView>
+        <ScrollView className="flex flex-col gap-4" key={1}>
+          {renderLeaderboard()}
+        </ScrollView>
+      </PagerView>
+
       <CustomPressable
         className="flex flex-row gap-4 items-center justify-center rounded-3xl"
         onPress={handleAnswerQuiz}

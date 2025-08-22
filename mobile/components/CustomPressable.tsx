@@ -43,7 +43,7 @@ const CustomPressable: React.FC<CustomPressableProps> = ({
         },
         style,
       ]}
-      className={clsx("active:opacity-50", className)}
+      className={clsx("active:opacity-50 disabled:opacity-50", className)}
       {...rest}
     >
       {children}

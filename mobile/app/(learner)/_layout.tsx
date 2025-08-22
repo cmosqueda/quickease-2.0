@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import CustomText from "@/components/CustomText";
 import CustomPressable from "@/components/CustomPressable";
@@ -5,14 +6,16 @@ import CustomPressable from "@/components/CustomPressable";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
-import { View } from "react-native";
 import { Drawer } from "expo-router/drawer";
 import { useTrays } from "react-native-trays";
 import { useEffect } from "react";
 import { MyTraysProps } from "@/types/trays/trays";
 import { DrawerActions } from "@react-navigation/native";
 import { setStatusBarStyle } from "expo-status-bar";
+import { ToastAndroid, View } from "react-native";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
+
+import _API_INSTANCE from "@/utils/axios";
 
 function CustomDrawerContent(props: any) {
   const { currentScheme } = useTheme();
@@ -42,6 +45,20 @@ function CustomDrawerContent(props: any) {
       icon: "profile" as any,
     },
   ];
+
+  const handleLogout = async () => {
+    try {
+      useAuth.setState((state) => {
+        state.user = undefined;
+      });
+      await _API_INSTANCE.post("/auth/logout", {}, { withCredentials: true });
+    } catch (err) {
+      ToastAndroid.show(
+        err.message || "Error logging out.",
+        ToastAndroid.SHORT
+      );
+    }
+  };
 
   return (
     <DrawerContentScrollView
@@ -133,7 +150,10 @@ function CustomDrawerContent(props: any) {
         <CustomPressable
           className="flex flex-row gap-2 rounded-full items-center"
           variant="colorBase100"
-          onPress={() => props.navigation.replace("index")}
+          onPress={() => {
+            handleLogout();
+            props.navigation.replace("index");
+          }}
         >
           <CustomText>
             <MaterialIcons name="logout" size={20} />

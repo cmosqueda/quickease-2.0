@@ -175,27 +175,6 @@ export default function LearnerAnswerQuizPage() {
         </CustomView>
       </View>
 
-      <View className="flex flex-row gap-2 justify-end self-end">
-        {questionIndex > 0 && (
-          <CustomPressable
-            onPress={() => setQuestionIndex((p) => p - 1)}
-            variant="colorBase300"
-            className="rounded-3xl px-4 py-2"
-          >
-            <CustomText>Previous</CustomText>
-          </CustomPressable>
-        )}
-        {questionIndex < quizData.quiz_content.length - 1 && (
-          <CustomPressable
-            onPress={() => setQuestionIndex((p) => p + 1)}
-            variant="colorPrimary"
-            className="rounded-3xl px-4 py-2"
-          >
-            <CustomText color="colorPrimaryContent">Next</CustomText>
-          </CustomPressable>
-        )}
-      </View>
-
       <CustomView
         variant="colorBase100"
         className="flex-row gap-4 p-4 rounded-3xl"
@@ -243,6 +222,26 @@ export default function LearnerAnswerQuizPage() {
           )}
         </View>
       </CustomView>
+      <View className="flex flex-row gap-2 justify-end self-end">
+        {questionIndex > 0 && (
+          <CustomPressable
+            onPress={() => setQuestionIndex((p) => p - 1)}
+            variant="colorBase300"
+            className="rounded-3xl px-4 py-2"
+          >
+            <CustomText>Previous</CustomText>
+          </CustomPressable>
+        )}
+        {questionIndex < quizData.quiz_content.length - 1 && (
+          <CustomPressable
+            onPress={() => setQuestionIndex((p) => p + 1)}
+            variant="colorPrimary"
+            className="rounded-3xl px-4 py-2"
+          >
+            <CustomText color="colorPrimaryContent">Next</CustomText>
+          </CustomPressable>
+        )}
+      </View>
     </SafeAreaView>
   );
 }

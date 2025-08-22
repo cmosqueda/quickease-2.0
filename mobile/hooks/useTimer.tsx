@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type Mode = "study" | "shortBreak" | "longBreak";
 
@@ -28,7 +28,6 @@ type TimerStore = {
   setSettings: (study: number, short_break: number) => void;
 };
 
-// defaults if AsyncStorage is empty
 const defaultSettings: TimerSettings = {
   study: 25 * 60,
   shortBreak: 5 * 60,
@@ -133,19 +132,13 @@ const useTimer = create<TimerStore>()(
       },
     })),
     {
-      name: "QUICKEASE_POMODORO_TIMER", // AsyncStorage key
-      storage: {
-        getItem: async (key) => {
-          const value = await AsyncStorage.getItem(key);
-          return value ? JSON.parse(value) : null;
-        },
-        setItem: async (key, value) => {
-          await AsyncStorage.setItem(key, JSON.stringify(value));
-        },
-        removeItem: async (key) => {
-          await AsyncStorage.removeItem(key);
-        },
-      },
+      name: "pomodoro-timer",
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        settings: state.settings,
+        time: state.time,
+        mode: state.mode,
+      }),
     }
   )
 );

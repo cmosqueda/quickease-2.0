@@ -5,15 +5,54 @@ import CustomTextInput from "@/components/CustomTextInput";
 
 import Entypo from "@expo/vector-icons/Entypo";
 
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Pressable, ToastAndroid, View } from "react-native";
+
+import _API_INSTANCE from "@/utils/axios";
 
 export default function Page() {
   const { currentScheme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      ToastAndroid.show("Email and password required.", ToastAndroid.SHORT);
+      return;
+    }
+    setIsLoggingIn(true);
+
+    try {
+      const { data, status } = await _API_INSTANCE.post("auth/login", {
+        email,
+        password,
+      });
+
+      if (status === 200) {
+        console.log(data, status);
+        if (data.is_admin) {
+          ToastAndroid.show(
+            "This is an admin account, please try logging in on desktop.",
+            ToastAndroid.SHORT
+          );
+          return;
+        } else {
+          router.replace("/(learner)/(forum)");
+        }
+      }
+    } catch (err: any) {
+      console.log(err);
+      ToastAndroid.show(
+        err?.response?.data?.message || "Something went wrong.",
+        ToastAndroid.SHORT
+      );
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
 
   return (
     <SafeAreaView
@@ -60,13 +99,16 @@ export default function Page() {
           <CustomText className="opacity-70">Forgot password?</CustomText>
         </Pressable>
         <View className="flex flex-col gap-4">
-          <Link asChild href={"/(learner)"}>
-            <CustomPressable variant="colorPrimary" className="rounded-3xl">
-              <CustomText color="colorPrimaryContent" className="text-center">
-                Login
-              </CustomText>
-            </CustomPressable>
-          </Link>
+          <CustomPressable
+            variant="colorPrimary"
+            className="rounded-3xl"
+            disabled={isLoggingIn}
+            onPress={handleLogin}
+          >
+            <CustomText color="colorPrimaryContent" className="text-center">
+              Login
+            </CustomText>
+          </CustomPressable>
         </View>
         <Pressable
           className="flex flex-row gap-2"
