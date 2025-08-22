@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import PagerView from "react-native-pager-view";
 import CustomText from "@/components/CustomText";
@@ -7,56 +8,63 @@ import CustomPressable from "@/components/CustomPressable";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { User } from "@/types/user/types";
 import { Image } from "expo-image";
 import { useState } from "react";
 import { useTrays } from "react-native-trays";
 import { useAssets } from "expo-asset";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { DrawerActions } from "@react-navigation/native";
-import { View, Pressable, useWindowDimensions } from "react-native";
-
-import { _BADGES } from "@/types/user/badges";
 import { useNavigation } from "expo-router";
+import { DrawerActions } from "@react-navigation/native";
+import { View, Pressable, useWindowDimensions, ScrollView } from "react-native";
 
-const Badges = () => {
-  const [assets, error] = useAssets([
-    require("../../../assets/images/badges/achiever-gradient.png"),
-    require("../../../assets/images/badges/community-favorite-gradient.png"),
-    require("../../../assets/images/badges/first-post-gradient.png"),
-    require("../../../assets/images/badges/first-step-gradient.png"),
-    require("../../../assets/images/badges/flashcard-master-gradient.png"),
-    require("../../../assets/images/badges/helpful-commenter-gradient.png"),
-    require("../../../assets/images/badges/master-reviewer-gradient.png"),
-    require("../../../assets/images/badges/note-taker-gradient.png"),
-    require("../../../assets/images/badges/perfectionist-gradient.png"),
-    require("../../../assets/images/badges/quick-learner-gradient.png"),
-  ]);
+import { _BADGE_ASSET_MAP, _BADGE_MAP, _BADGES } from "@/types/user/badges";
+
+const Badges = ({ user }: { user?: User }) => {
+  const badgeIds = Object.keys(_BADGE_ASSET_MAP);
+  const [assets] = useAssets(Object.values(_BADGE_ASSET_MAP));
 
   if (!assets) return null;
 
   return (
-    <View className="flex flex-col gap-4" key={0}>
-      <CustomView
-        variant="colorBase300"
-        className="p-4 flex flex-row gap-4 items-center rounded-3xl"
-      >
-        <Image
-          source={assets![0].localUri}
-          style={{ width: 84, height: 84, aspectRatio: "1/1" }}
-        />
-        <View className="flex-1">
-          <CustomText variant="bold" className="text-lg">
-            {_BADGES.learningProgress[0].name}
-          </CustomText>
-          <CustomText>{_BADGES.learningProgress[0].description}</CustomText>
-        </View>
-      </CustomView>
-    </View>
+    <ScrollView contentContainerClassName="flex flex-col gap-4">
+      {user?.badges.map(
+        (badge: { id: string; title: string; description: string }) => {
+          const badgeMeta = _BADGE_MAP[badge.id];
+
+          if (!badgeMeta) return null;
+
+          const index = badgeIds.indexOf(badge.id);
+          if (index === -1) return null;
+
+          const asset = assets[index];
+
+          return (
+            <CustomView
+              key={badge.id}
+              variant="colorBase300"
+              className="p-4 flex flex-row gap-4 items-center rounded-3xl"
+            >
+              <Image
+                source={{ uri: asset.localUri ?? asset.uri }}
+                style={{ width: 84, height: 84, aspectRatio: 1 }}
+              />
+              <View className="flex-1">
+                <CustomText variant="bold" className="text-lg">
+                  {badgeMeta.name}
+                </CustomText>
+                <CustomText>{badgeMeta.description}</CustomText>
+              </View>
+            </CustomView>
+          );
+        }
+      )}
+    </ScrollView>
   );
 };
 
-const Avatar = () => {
+const Avatar = ({ user }: { user?: User }) => {
   const { height } = useWindowDimensions();
   const [assets, error] = useAssets([
     require("../../../assets/images/avatars/blue.svg"),
@@ -100,7 +108,7 @@ const Avatar = () => {
         </CustomText>
       </Pressable>
       <CustomText variant="bold" className="text-3xl">
-        Jhon Lloyd Viernes
+        {user?.first_name} {user?.last_name}
       </CustomText>
     </View>
   );
@@ -109,8 +117,11 @@ const Avatar = () => {
 export default function Page() {
   const navigation = useNavigation();
   const { currentScheme } = useTheme();
+  const { user } = useAuth();
 
   const [index, setIndex] = useState(0);
+
+  if (!user) return null;
 
   return (
     <SafeAreaView
@@ -128,7 +139,7 @@ export default function Page() {
           </CustomText>
         </Pressable>
       </View>
-      <Avatar />
+      <Avatar user={user} />
       <CustomView
         className="flex-1 p-4 mt-8 rounded-tl-3xl rounded-tr-3xl gap-4"
         variant="colorBase200"
@@ -169,7 +180,7 @@ export default function Page() {
           </CustomPressable>
         </View>
         <PagerView style={{ flex: 1 }}>
-          <Badges />
+          <Badges key={0} user={user} />
         </PagerView>
       </CustomView>
     </SafeAreaView>

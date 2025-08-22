@@ -1,3 +1,10 @@
+// enums
+export enum ResolveType {
+  IS_DELETED = "IS_DELETED",
+  IS_HIDDEN = "IS_HIDDEN",
+  NULL = "NULL",
+}
+
 export enum ResourceType {
   NOTE = "NOTE",
   QUIZ = "QUIZ",
@@ -21,17 +28,26 @@ export enum NotificationType {
   DELETED_COMMENT_BY_REPORT = "DELETED_COMMENT_BY_REPORT",
 }
 
+export enum TokenType {
+  CHANGE_EMAIL = "CHANGE_EMAIL",
+  RESET_PASSWORD = "RESET_PASSWORD",
+  VERIFY_EMAIL = "VERIFY_EMAIL",
+}
+
+// models
 export interface User {
   id: string;
   password: string;
   first_name: string;
   last_name: string;
   email: string;
+  avatar?: string;
   badges?: any;
   is_public: boolean;
   created_at: Date;
   updated_at: Date;
   is_admin: boolean;
+  is_verified: boolean;
 
   flashcards: Flashcard[];
   notes: Note[];
@@ -44,19 +60,19 @@ export interface User {
   forumReports: Report[];
   notifications_received: Notification[];
   notifications_sent: Notification[];
+  UserToken: UserToken[];
 }
 
 export interface Flashcard {
   id: string;
   user_id: string;
-  user: User;
   title: string;
-  description?: string | null;
+  description?: string;
   flashcards: any;
-  is_public?: boolean | null;
+  is_public?: boolean;
   created_at: Date;
   updated_at: Date;
-  is_ai_generated?: boolean | null;
+  is_ai_generated?: boolean;
 
   post_attachments: PostAttachment[];
 }
@@ -64,13 +80,12 @@ export interface Flashcard {
 export interface Note {
   id: string;
   user_id: string;
-  user: User;
   title: string;
   notes_content: string;
-  is_public?: boolean | null;
+  is_public?: boolean;
   created_at: Date;
   updated_at: Date;
-  is_ai_generated?: boolean | null;
+  is_ai_generated?: boolean;
 
   post_attachments: PostAttachment[];
 }
@@ -78,16 +93,15 @@ export interface Note {
 export interface Quiz {
   id: string;
   user_id: string;
-  user: User;
   quiz_content: any;
   title: string;
-  description?: string | null;
-  is_public?: boolean | null;
+  description?: string;
+  is_public?: boolean;
   created_at: Date;
   updated_at: Date;
-  is_ai_generated?: boolean | null;
-  is_randomized?: boolean | null;
-  timed_quiz?: string | null;
+  is_ai_generated?: boolean;
+  is_randomized?: boolean;
+  timed_quiz?: number;
 
   post_attachments: PostAttachment[];
   attempts: QuizAttempt[];
@@ -104,12 +118,12 @@ export interface Tag {
 export interface Post {
   id: string;
   user_id: string;
-  user: User;
   title: string;
   post_body: string;
   created_at: Date;
   updated_at: Date;
   is_public: boolean;
+  is_resolved?: ResolveType;
 
   tags: PostTag[];
   comments: Comment[];
@@ -121,24 +135,23 @@ export interface Post {
 export interface PostTag {
   tag_id: string;
   post_id: string;
+
   tag: Tag;
   post: Post;
 }
 
 export interface Comment {
   id: string;
-  parent_comment_id?: string | null;
-  parent_comment?: Comment | null;
-  replies: Comment[];
+  parent_comment_id?: string;
 
   post_id: string;
-  post: Post;
   user_id: string;
-  user: User;
   comment_body: string;
   created_at: Date;
   updated_at: Date;
 
+  parent_comment?: Comment;
+  replies: Comment[];
   votes: CommentVote[];
   reports: Report[];
 }
@@ -147,6 +160,7 @@ export interface PostVote {
   user_id: string;
   post_id: string;
   vote_type: number;
+
   user: User;
   post: Post;
 }
@@ -155,6 +169,7 @@ export interface CommentVote {
   user_id: string;
   comment_id: string;
   vote_type: number;
+
   user: User;
   comment: Comment;
 }
@@ -162,62 +177,71 @@ export interface CommentVote {
 export interface PostAttachment {
   id: string;
   post_id: string;
-  post: Post;
-
   resource_type: ResourceType;
-
-  note_id?: string | null;
-  flashcard_id?: string | null;
-  quiz_id?: string | null;
-
-  note?: Note | null;
-  flashcard?: Flashcard | null;
-  quiz?: Quiz | null;
-
+  note_id?: string;
+  flashcard_id?: string;
+  quiz_id?: string;
   created_at: Date;
   updated_at: Date;
+
+  note?: Note;
+  flashcard?: Flashcard;
+  quiz?: Quiz;
+  post: Post;
 }
 
 export interface QuizAttempt {
   id: string;
   quiz_id: string;
-  quiz: Quiz;
   user_id: string;
-  user: User;
   started_at: Date;
-  completed_at?: Date | null;
+  completed_at?: Date;
   answer_data: any;
   is_public: boolean;
   duration: number;
   score: number;
+
+  quiz: Quiz;
+  user: User;
 }
 
 export interface Report {
   id: string;
   reported_by_id: string;
-  reported_by: User;
-
-  reported_post_id?: string | null;
-  reported_post?: Post | null;
-
-  reported_comment_id?: string | null;
-  reported_comment?: Comment | null;
-
+  reported_post_id?: string;
+  reported_comment_id?: string;
   description: string;
   reported_target_type: ReportTargetType;
   reported_at: Date;
+
+  reported_by: User;
+  reported_post?: Post;
+  reported_comment?: Comment;
 }
 
 export interface Notification {
   id: string;
   recipient_id: string;
-  recipient: User;
   actor_id: string;
-  actor: User;
   type: NotificationType;
-  resource_id?: string | null;
-  resource_type?: string | null;
+  resource_id?: string;
+  resource_type?: string;
   message: string;
   is_read: boolean;
   created_at: Date;
+
+  recipient: User;
+  actor: User;
+}
+
+export interface UserToken {
+  id: string;
+  user_id: string;
+  token: string;
+  type: TokenType;
+  expires_at: Date;
+  created_at: Date;
+  used: boolean;
+
+  user: User;
 }
