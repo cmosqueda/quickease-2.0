@@ -1,25 +1,49 @@
-import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
-import _API_INSTANCE from "@/utils/axios";
-import _FONTS from "@/types/theme/Font";
-import FlippableCard from "@/components/FlippableCard";
 import CustomText from "@/components/CustomText";
+import CustomView from "@/components/CustomView";
+import FlippableCard from "@/components/FlippableCard";
 import CustomPressable from "@/components/CustomPressable";
 import CustomTextInput from "@/components/CustomTextInput";
-import CustomView from "@/components/CustomView";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { useState } from "react";
-import { View, ScrollView, ToastAndroid, Pressable } from "react-native";
+import { useQuery } from "@tanstack/react-query";
+import { Flashcard } from "@/types/user/types";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
+import {
+  View,
+  ScrollView,
+  ToastAndroid,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
+
+import _API_INSTANCE from "@/utils/axios";
+import _FONTS from "@/types/theme/Font";
 
 export default function Page() {
-  const { user } = useAuth();
   const { currentScheme } = useTheme();
-  const { flashcardId } = useLocalSearchParams();
+  const { id: flashcardId } = useLocalSearchParams<{ id?: string }>();
+
+  const {
+    data: flashcardData,
+    isFetching,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["view-flashcard", flashcardId],
+    queryFn: async () => {
+      const { data } = await _API_INSTANCE.get<Flashcard>(
+        `/flashcard/${flashcardId}`
+      );
+      return data;
+    },
+    retry: 3,
+    enabled: Boolean(flashcardId),
+  });
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -27,45 +51,103 @@ export default function Page() {
   const [back, setBack] = useState("");
   const [cards, setCards] = useState<{ front: string; back: string }[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [index, setIndex] = useState(0);
+
+  // Pre-fill form values once flashcard data is loaded
+  useEffect(() => {
+    if (flashcardData) {
+      setTitle(flashcardData.title ?? "");
+      setDescription(flashcardData.description ?? "");
+      setCards(flashcardData.flashcards ?? []);
+    }
+  }, [flashcardData]);
 
   const handleAddCard = () => {
-    if (!front && !back) {
-      ToastAndroid.show("Invalid input values.", ToastAndroid.SHORT);
+    if (!front.trim() || !back.trim()) {
+      ToastAndroid.show(
+        "Both front and back are required.",
+        ToastAndroid.SHORT
+      );
       return;
     }
-    setCards([...cards, { front, back }]);
+    setCards((prev) => [...prev, { front, back }]);
     setFront("");
     setBack("");
   };
 
   const handleSave = async () => {
+    if (!title.trim()) {
+      ToastAndroid.show("Title is required.", ToastAndroid.SHORT);
+      return;
+    }
     if (cards.length < 2) {
       ToastAndroid.show("At least 2 cards required.", ToastAndroid.SHORT);
       return;
     }
-    setIsSaving(true);
 
+    setIsSaving(true);
     try {
-      const { status } = await _API_INSTANCE.put(`flashcard/${flashcardId}`, {
-        title,
-        description,
-        flashcards: cards,
-        user_id: user?.id,
-      });
+      const { status } = await _API_INSTANCE.put(
+        `/flashcard/update`,
+        {
+          flashcard_id: flashcardId,
+          title,
+          description,
+          flashcards: cards,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
 
       if (status === 200) {
         ToastAndroid.show("Flashcard updated.", ToastAndroid.SHORT);
         router.back();
+      } else {
+        ToastAndroid.show("Unexpected server response.", ToastAndroid.LONG);
       }
     } catch (err: any) {
       ToastAndroid.show(
-        `Error updating flashcard: ${err.message}`,
+        `Error updating flashcard: ${err.message ?? "Unknown error"}`,
         ToastAndroid.LONG
       );
     } finally {
       setIsSaving(false);
     }
   };
+
+  if (isFetching) {
+    return (
+      <SafeAreaView
+        className="flex-1 items-center justify-center"
+        style={{ backgroundColor: currentScheme.colorBase200 }}
+      >
+        <ActivityIndicator color={currentScheme.colorPrimary} size={96} />
+      </SafeAreaView>
+    );
+  }
+
+  if (isError) {
+    return (
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: currentScheme.colorBase200 }}
+        className="p-4 justify-center items-center"
+      >
+        <CustomText variant="bold" className="text-red-600">
+          Failed to load flashcard.
+        </CustomText>
+        {__DEV__ && (
+          <CustomText className="text-xs opacity-50">
+            {(error as Error)?.message}
+          </CustomText>
+        )}
+      </SafeAreaView>
+    );
+  }
+
+  if (!flashcardData) {
+    return null;
+  }
 
   const tabs = [
     <>
@@ -97,7 +179,7 @@ export default function Page() {
         variant="colorBase300"
         className="rounded-3xl items-center"
         onPress={() => {
-          if (!title) {
+          if (!title.trim()) {
             ToastAndroid.show("Missing title.", ToastAndroid.SHORT);
             return;
           }
@@ -141,18 +223,24 @@ export default function Page() {
       <CustomText variant="bold" className="text-xl">
         Existing Cards
       </CustomText>
-      <ScrollView
-        contentContainerStyle={{ backgroundColor: currentScheme.colorBase100 }}
-        contentContainerClassName="gap-4"
-      >
-        {cards.map((card, index) => (
-          <FlippableCard front={card.front} back={card.back} key={index} />
-        ))}
-      </ScrollView>
+      {cards.length > 0 ? (
+        <ScrollView
+          contentContainerStyle={{
+            backgroundColor: currentScheme.colorBase200,
+          }}
+          contentContainerClassName="gap-4"
+        >
+          {cards.map((card, index) => (
+            <FlippableCard front={card.front} back={card.back} key={index} />
+          ))}
+        </ScrollView>
+      ) : (
+        <CustomText className="opacity-60">
+          No cards yet. Add one above.
+        </CustomText>
+      )}
     </>,
   ];
-
-  const [index, setIndex] = useState(0);
 
   return (
     <SafeAreaView
@@ -163,8 +251,9 @@ export default function Page() {
         <View className="flex flex-row gap-2 items-center">
           <Pressable
             onPress={() => {
-              if (index == 1) {
+              if (index === 1) {
                 setIndex(0);
+                return;
               }
               router.back();
             }}

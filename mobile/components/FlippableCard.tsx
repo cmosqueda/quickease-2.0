@@ -64,7 +64,7 @@ export default function FlippableCard({
         ]}
       >
         <CustomText
-          className={clsx("text-2xl")}
+          className={clsx("text-2xl self-center text-center")}
           variant="regular"
           color="colorPrimaryContent"
         >
@@ -83,7 +83,7 @@ export default function FlippableCard({
         ]}
       >
         <CustomText
-          className={clsx("text-2xl")}
+          className={clsx("text-2xl self-center text-center")}
           variant="black"
           color="colorSecondaryContent"
         >
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backfaceVisibility: "hidden",
+    textAlign: "center",
   },
   cardBack: {
     position: "absolute",
