@@ -10,16 +10,11 @@ import CustomView from "@/components/CustomView";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-import { useLocalSearchParams, router } from "expo-router";
+import { Switch } from "@expo/ui/jetpack-compose";
 import { useState } from "react";
-import {
-  Pressable,
-  ScrollView,
-  Switch,
-  ToastAndroid,
-  View,
-} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams, router } from "expo-router";
+import { Pressable, ScrollView, ToastAndroid, View } from "react-native";
 
 interface Question {
   question: string;
@@ -234,6 +229,7 @@ export default function Page() {
                   className="rounded-xl flex-1"
                 />
                 <Switch
+                  variant="checkbox"
                   value={q.correctAnswers.includes(oIndex)}
                   onValueChange={() => handleCorrectAnswerToggle(index, oIndex)}
                 />

@@ -8,11 +8,12 @@ import CustomView from "@/components/CustomView";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { router, useLocalSearchParams } from "expo-router";
+import { Switch } from "@expo/ui/jetpack-compose";
 import { useState } from "react";
-import { ToastAndroid, Pressable, Switch, View, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { checkBadges } from "@/types/user/badges";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router, useLocalSearchParams } from "expo-router";
+import { ToastAndroid, Pressable, View, Alert } from "react-native";
 
 interface QuizQuestion {
   question: string;
@@ -224,6 +225,7 @@ export default function LearnerAnswerQuizPage() {
                     className="flex flex-row gap-2 items-center"
                   >
                     <Switch
+                      variant="checkbox"
                       value={userAnswers[questionIndex].user_answer.includes(
                         oIdx
                       )}

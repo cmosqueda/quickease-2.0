@@ -5,12 +5,12 @@ import ForumHeader from "@/components/ForumHeader";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-import { useState } from "react";
 import { Switch } from "@expo/ui/jetpack-compose";
 import { useTrays } from "react-native-trays";
+import { useState } from "react";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Pressable, useWindowDimensions, View } from "react-native";
+import { Pressable, View } from "react-native";
 
 const AccountSettings = () => {
   return (
@@ -33,7 +33,7 @@ const AccountSettings = () => {
           <CustomText>
             <MaterialIcons name="email" size={20} />
           </CustomText>
-          <CustomText>Change your email</CustomText>
+          <CustomText>Request to change your email</CustomText>
         </View>
       </CustomView>
 
@@ -51,7 +51,9 @@ const AccountSettings = () => {
           <CustomText>
             <MaterialIcons name="check-circle" size={20} />
           </CustomText>
-          <CustomText>Verify email</CustomText>
+          <View>
+            <CustomText>Verify email</CustomText>
+          </View>
         </View>
       </CustomView>
     </View>
