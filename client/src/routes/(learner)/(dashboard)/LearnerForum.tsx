@@ -87,7 +87,7 @@ const Post = ({
           <img
             src={
               post.user.avatar
-                ? post.user.avatar
+                ? `/assets/images/avatars/${post.user.avatar}.svg`
                 : "/assets/images/avatars/blue.svg"
             }
             className="w-[2rem] aspect-square"

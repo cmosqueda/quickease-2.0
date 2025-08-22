@@ -149,7 +149,7 @@ const CommentCard = ({
           <img
             src={
               comment.user.avatar
-                ? comment.user.avatar
+                ? `/assets/images/avatars/${comment.user.avatar}.svg`
                 : "/assets/images/avatars/blue.svg"
             }
             className="w-[36px] aspect-square rounded-full bg-base-300"

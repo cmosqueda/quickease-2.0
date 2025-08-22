@@ -488,7 +488,7 @@ const ChangeAvatarModal = () => {
       await _API_INSTANCE.put(
         "/users/change-avatar",
         {
-          avatar_id: selectedAvatar,
+          avatar_id: selectedAvatar?.split("/").pop()?.replace(".svg", ""),
         },
         {
           timeout: 8 * 60 * 1000,

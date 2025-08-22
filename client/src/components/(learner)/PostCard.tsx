@@ -30,7 +30,7 @@ const PostCard = ({ data }: { data: any }) => {
         <img
           src={
             data.user.avatar
-              ? data.user.avatar
+              ? `/assets/images/avatars/${data.user.avatar}.svg`
               : "/assets/images/avatars/blue.svg"
           }
           className="bg-base-300 rounded-3xl shadow w-[3rem] h-[3rem] aspect-square"
