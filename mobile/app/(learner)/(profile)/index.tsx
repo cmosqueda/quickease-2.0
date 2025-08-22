@@ -14,23 +14,22 @@ import { useAssets } from "expo-asset";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerActions } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
 import { View, Pressable, useWindowDimensions } from "react-native";
 
 import { _BADGES } from "@/types/user/badges";
 
 const Badges = () => {
   const [assets, error] = useAssets([
-    require("../../assets/images/badges/achiever-gradient.png"),
-    require("../../assets/images/badges/community-favorite-gradient.png"),
-    require("../../assets/images/badges/first-post-gradient.png"),
-    require("../../assets/images/badges/first-step-gradient.png"),
-    require("../../assets/images/badges/flashcard-master-gradient.png"),
-    require("../../assets/images/badges/helpful-commenter-gradient.png"),
-    require("../../assets/images/badges/master-reviewer-gradient.png"),
-    require("../../assets/images/badges/note-taker-gradient.png"),
-    require("../../assets/images/badges/perfectionist-gradient.png"),
-    require("../../assets/images/badges/quick-learner-gradient.png"),
+    require("../../../assets/images/badges/achiever-gradient.png"),
+    require("../../../assets/images/badges/community-favorite-gradient.png"),
+    require("../../../assets/images/badges/first-post-gradient.png"),
+    require("../../../assets/images/badges/first-step-gradient.png"),
+    require("../../../assets/images/badges/flashcard-master-gradient.png"),
+    require("../../../assets/images/badges/helpful-commenter-gradient.png"),
+    require("../../../assets/images/badges/master-reviewer-gradient.png"),
+    require("../../../assets/images/badges/note-taker-gradient.png"),
+    require("../../../assets/images/badges/perfectionist-gradient.png"),
+    require("../../../assets/images/badges/quick-learner-gradient.png"),
   ]);
 
   if (!assets) return null;
@@ -59,10 +58,10 @@ const Badges = () => {
 const Avatar = () => {
   const { height } = useWindowDimensions();
   const [assets, error] = useAssets([
-    require("../../assets/images/avatars/blue.svg"),
-    require("../../assets/images/avatars/green.svg"),
-    require("../../assets/images/avatars/orange.svg"),
-    require("../../assets/images/avatars/purple.svg"),
+    require("../../../assets/images/avatars/blue.svg"),
+    require("../../../assets/images/avatars/green.svg"),
+    require("../../../assets/images/avatars/orange.svg"),
+    require("../../../assets/images/avatars/purple.svg"),
   ]);
   const { push: openAvatarTray, pop: closeAvatarTray } = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
@@ -107,7 +106,6 @@ const Avatar = () => {
 };
 
 export default function Page() {
-  const navigation = useNavigation();
   const { currentScheme } = useTheme();
 
   const [index, setIndex] = useState(0);

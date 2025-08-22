@@ -6,18 +6,17 @@ import ForumHeader from "@/components/ForumHeader";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-import { CommonActions } from "@react-navigation/native";
-import { Link, useNavigation } from "expo-router";
-import { Pressable, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useTrays } from "react-native-trays";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
+import { Pressable, View } from "react-native";
+import { Link, router } from "expo-router";
 
 export default function Page() {
-  const navigation = useNavigation();
   const { currentScheme } = useTheme();
-  const { push: openTray, pop: closeTray } =
-    useTrays<MyTraysProps>("DismissibleRoundedNoMarginAndSpacingTray");
+  const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
+    "DismissibleRoundedNoMarginAndSpacingTray"
+  );
 
   return (
     <SafeAreaView
@@ -27,7 +26,7 @@ export default function Page() {
       }}
     >
       <ForumHeader
-        title="Flashcards"
+        title="Quizzes"
         rightSideChildren={
           <>
             <CustomText>
@@ -35,7 +34,7 @@ export default function Page() {
                 name="filter-list"
                 size={20}
                 onPress={() =>
-                  openTray("FilterNotesTray", { close: closeTray })
+                  openTray("FilterQuizzesTray", { close: closeTray })
                 }
               />
             </CustomText>
@@ -49,12 +48,10 @@ export default function Page() {
       >
         <Pressable
           onPress={() =>
-            navigation.dispatch(
-              CommonActions.navigate({
-                name: "flashcard/view/[id]",
-                params: { id: "test" },
-              })
-            )
+            router.push({
+              pathname: "/(learner)/(quiz)/view/[id]",
+              params: { id: "test" },
+            })
           }
         >
           <CustomView className="p-6 rounded-xl gap-2">
@@ -74,7 +71,7 @@ export default function Page() {
         </Pressable>
       </CustomView>
 
-      <Link asChild href={{ pathname: "/flashcard/create" }}>
+      <Link asChild href={{ pathname: "/(learner)/(quiz)/create" }}>
         <CustomPressable
           variant="colorPrimary"
           className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"

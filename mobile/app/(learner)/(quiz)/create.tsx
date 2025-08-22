@@ -10,8 +10,7 @@ import CustomView from "@/components/CustomView";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-import { CommonActions } from "@react-navigation/native";
-import { useNavigation, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   Pressable,
@@ -21,6 +20,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { checkBadges } from "@/types/user/badges";
 
 interface Question {
   question: string;
@@ -30,12 +30,17 @@ interface Question {
 }
 
 export default function Page() {
-  const navigation = useNavigation();
   const { currentScheme } = useTheme();
-  const { quizId } = useLocalSearchParams<{ quizId: string }>();
 
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [quizTitle, setQuizTitle] = useState("");
+  const [questions, setQuestions] = useState<Question[]>([
+    {
+      question: "",
+      description: "",
+      options: ["", "", "", ""],
+      correctAnswers: [],
+    },
+  ]);
+  const [quizTitle, setQuizTitle] = useState("Untitled Quiz");
   const [quizDescription, setQuizDescription] = useState("");
   const [isTimedQuiz, setIsTimedQuiz] = useState(false);
   const [isRandomized, setIsRandomized] = useState(false);
@@ -92,6 +97,7 @@ export default function Page() {
   };
 
   const handleSubmit = async () => {
+    //
     if (questions.length < 2) {
       ToastAndroid.show("Must have at least 2 questions.", ToastAndroid.SHORT);
       return;
@@ -125,8 +131,8 @@ export default function Page() {
     setIsSubmitting(true);
 
     try {
-      const { status } = await _API_INSTANCE.put(
-        `/quiz/${quizId}`,
+      const { status, data } = await _API_INSTANCE.post(
+        "/quiz/create",
         {
           title: quizTitle.trim(),
           description: quizDescription.trim(),
@@ -137,17 +143,18 @@ export default function Page() {
         { timeout: 8 * 60 * 1000 }
       );
 
-      if (status === 200) {
-        ToastAndroid.show("Quiz updated", ToastAndroid.SHORT);
-        navigation.dispatch(
-          CommonActions.navigate({
-            name: "/quiz/view/[id]",
-            params: { id: quizId },
-          })
-        );
+      if (status == 201) {
+        await checkBadges();
+        ToastAndroid.show("Quiz created", ToastAndroid.SHORT);
+        router.push({
+          pathname: "/(learner)/(quiz)/view/[id]",
+          params: {
+            id: data.id,
+          },
+        });
       }
     } catch (err) {
-      ToastAndroid.show("Error updating quiz.", ToastAndroid.SHORT);
+      ToastAndroid.show("Error creating quiz.", ToastAndroid.SHORT);
       throw err;
     } finally {
       setIsSubmitting(false);
@@ -191,6 +198,7 @@ export default function Page() {
             ToastAndroid.show("No quiz title?", ToastAndroid.SHORT);
             return;
           }
+
           setTabIndex(1);
         }}
       >
@@ -276,10 +284,12 @@ export default function Page() {
         <View className="flex flex-row gap-2 items-center">
           <Pressable
             onPress={() => {
-              if (tabIndex === 1) {
+              if (tabIndex == 1) {
                 setTabIndex(0);
                 return;
               }
+
+              setTabIndex(0);
               navigation.goBack();
             }}
           >
@@ -287,30 +297,29 @@ export default function Page() {
               <MaterialIcons name="keyboard-arrow-left" size={36} />
             </CustomText>
           </Pressable>
-          <CustomText>Edit quiz</CustomText>
+          <CustomText>Create quiz</CustomText>
         </View>
         <CustomPressable
           disabled={isSubmitting}
           className="flex flex-row gap-2 items-center rounded-3xl"
           variant="colorBase200"
-          onPress={handleSubmit}
         >
           <CustomText>
             <MaterialCommunityIcons name="content-save" size={20} />
           </CustomText>
-          <CustomText>{isSubmitting ? "Saving..." : "Save"}</CustomText>
+          <CustomText>Save</CustomText>
         </CustomPressable>
       </View>
       <View className="flex flex-row gap-2">
         <CustomView
           className="rounded-full flex-1"
-          variant={tabIndex === 0 ? "colorPrimary" : "colorBase300"}
+          variant={tabIndex == 0 ? "colorPrimary" : "colorBase300"}
           style={{ height: 6 }}
         />
         <CustomView
           className="rounded-full flex-1"
           style={{ height: 6 }}
-          variant={tabIndex === 1 ? "colorPrimary" : "colorBase300"}
+          variant={tabIndex == 1 ? "colorPrimary" : "colorBase300"}
         />
       </View>
       {tabs[tabIndex]}

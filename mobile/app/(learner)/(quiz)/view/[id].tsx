@@ -13,8 +13,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useState } from "react";
 import { ScrollView, Pressable, ToastAndroid, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useLocalSearchParams } from "expo-router";
-import { CommonActions } from "@react-navigation/native";
+import { useLocalSearchParams, router } from "expo-router";
 
 interface QuizData {
   id: string;
@@ -71,7 +70,6 @@ export default function LearnerQuizPage() {
   const { currentScheme } = useTheme();
   const { user } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const navigate = useNavigation();
 
   const [quiz, setQuiz] = useState<QuizData | null>({
     id: "dd06550e-65ed-4ac0-95c3-b13f8191dc10",
@@ -510,25 +508,17 @@ export default function LearnerQuizPage() {
   const [quizVisibility, setQuizVisibility] = useState<boolean | null>(null);
 
   const handleAnswerQuiz = () => {
-    navigate.dispatch(
-      CommonActions.navigate({
-        name: "quiz/answer/[id]",
-        params: {
-          id: "test",
-        },
-      })
-    );
+    router.push({
+      pathname: "/(learner)/(quiz)/answer/[id]",
+      params: { id: "test" },
+    });
   };
 
   const handleEditQuiz = () => {
-    navigate.dispatch(
-      CommonActions.navigate({
-        name: "quiz/edit/[id]",
-        params: {
-          id: "test",
-        },
-      })
-    );
+    router.push({
+      pathname: "/(learner)/(quiz)/edit/[id]",
+      params: { id: "test" },
+    });
   };
 
   const handleDeleteQuiz = async () => {
@@ -538,7 +528,7 @@ export default function LearnerQuizPage() {
       });
       if (status === 200) {
         ToastAndroid.show("Quiz deleted.", ToastAndroid.SHORT);
-        navigate.goBack();
+        router.back();
       }
     } catch {
       ToastAndroid.show("Failed to delete quiz.", ToastAndroid.SHORT);
@@ -654,7 +644,7 @@ export default function LearnerQuizPage() {
         variant="colorBase200"
         className="flex flex-row justify-between items-center"
       >
-        <Pressable onPress={() => navigate.goBack()}>
+        <Pressable onPress={() => router.back()}>
           <CustomText>
             <MaterialIcons name="keyboard-arrow-left" size={24} />
           </CustomText>

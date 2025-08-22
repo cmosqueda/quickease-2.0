@@ -8,14 +8,12 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-import { CommonActions } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
+import { router } from "expo-router";
 import { useState } from "react";
 import { View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page() {
-  const navigation = useNavigation();
   const { currentScheme } = useTheme();
 
   const [flashcards, setFlashcards] = useState([]);
@@ -120,7 +118,7 @@ export default function Page() {
               return;
             }
 
-            navigation.dispatch(CommonActions.goBack());
+            router.back();
           }}
         >
           <CustomText>
@@ -129,14 +127,10 @@ export default function Page() {
         </Pressable>
         <Pressable
           onPress={() =>
-            navigation.dispatch(
-              CommonActions.navigate({
-                name: "flashcard/edit/[id]",
-                params: {
-                  id: "test",
-                },
-              })
-            )
+            router.push({
+              pathname: "/(learner)/(flashcard)/edit/[id]",
+              params: { id: "test" },
+            })
           }
         >
           <CustomText>

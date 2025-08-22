@@ -1,6 +1,6 @@
+import _API_INSTANCE from "@/utils/axios";
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
-import _API_INSTANCE from "@/utils/axios";
 import _FONTS from "@/types/theme/Font";
 import FlippableCard from "@/components/FlippableCard";
 import CustomText from "@/components/CustomText";
@@ -13,14 +13,12 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { useState } from "react";
 import { View, ScrollView, ToastAndroid, Pressable } from "react-native";
+import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useLocalSearchParams } from "expo-router";
 
 export default function Page() {
-  const navigation = useNavigation();
   const { user } = useAuth();
   const { currentScheme } = useTheme();
-  const { flashcardId } = useLocalSearchParams();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -34,6 +32,7 @@ export default function Page() {
       ToastAndroid.show("Invalid input values.", ToastAndroid.SHORT);
       return;
     }
+
     setCards([...cards, { front, back }]);
     setFront("");
     setBack("");
@@ -41,26 +40,29 @@ export default function Page() {
 
   const handleSave = async () => {
     if (cards.length < 2) {
-      ToastAndroid.show("At least 2 cards required.", ToastAndroid.SHORT);
+      ToastAndroid.show(
+        "The flashcards must contain at least 2.",
+        ToastAndroid.SHORT
+      );
       return;
     }
     setIsSaving(true);
 
     try {
-      const { status } = await _API_INSTANCE.put(`flashcard/${flashcardId}`, {
+      const { status } = await _API_INSTANCE.post("flashcard/create", {
         title,
         description,
         flashcards: cards,
         user_id: user?.id,
       });
 
-      if (status === 200) {
-        ToastAndroid.show("Flashcard updated.", ToastAndroid.SHORT);
-        navigation.goBack();
+      if (status === 201) {
+        await checkBadges();
+        ToastAndroid.show("Flashcard created.", ToastAndroid.SHORT);
       }
     } catch (err: any) {
       ToastAndroid.show(
-        `Error updating flashcard: ${err.message}`,
+        `Error creating flashcard: ${err.message}`,
         ToastAndroid.LONG
       );
     } finally {
@@ -73,6 +75,7 @@ export default function Page() {
       <View className="flex-1">
         <CustomTextInput
           style={{
+            backgroundColor: "",
             paddingHorizontal: 0,
             fontFamily: _FONTS.Gabarito_900Black,
           }}
@@ -83,6 +86,7 @@ export default function Page() {
         />
         <CustomTextInput
           style={{
+            backgroundColor: null as any,
             paddingHorizontal: 0,
             fontFamily: _FONTS.Gabarito_400Regular,
             flex: 1,
@@ -99,9 +103,10 @@ export default function Page() {
         className="rounded-3xl items-center"
         onPress={() => {
           if (!title) {
-            ToastAndroid.show("Missing title.", ToastAndroid.SHORT);
+            ToastAndroid.show("No flashcard title?", ToastAndroid.SHORT);
             return;
           }
+
           setIndex(1);
         }}
       >
@@ -110,14 +115,14 @@ export default function Page() {
     </>,
     <>
       <CustomText variant="black" className="text-5xl">
-        Edit Cards
+        Questions
       </CustomText>
       <CustomView variant="colorBase300" className="gap-4 p-4 rounded-3xl">
         <CustomText>Front (Question)</CustomText>
         <CustomTextInput
           value={front}
           onChangeText={setFront}
-          placeholder="Edit the front"
+          placeholder="Enter the front of the card"
           style={{ backgroundColor: currentScheme.colorBase200 }}
           className="rounded-xl"
           multiline
@@ -126,7 +131,7 @@ export default function Page() {
         <CustomTextInput
           value={back}
           onChangeText={setBack}
-          placeholder="Edit the back"
+          placeholder="Enter the back of the card"
           style={{ backgroundColor: currentScheme.colorBase200 }}
           className="rounded-xl"
           multiline
@@ -135,12 +140,12 @@ export default function Page() {
           onPress={handleAddCard}
           className="items-center rounded-xl"
         >
-          <CustomText color="colorPrimaryContent">Add Card</CustomText>
+          <CustomText color="colorPrimaryContent">Add</CustomText>
         </CustomPressable>
       </CustomView>
 
       <CustomText variant="bold" className="text-xl">
-        Existing Cards
+        Previews
       </CustomText>
       <ScrollView
         contentContainerStyle={{ backgroundColor: currentScheme.colorBase100 }}
@@ -152,12 +157,11 @@ export default function Page() {
       </ScrollView>
     </>,
   ];
-
   const [index, setIndex] = useState(0);
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: currentScheme.colorBase200 }}
+      style={{ flex: 1, backgroundColor: currentScheme.colorBase100 }}
       className="p-4 gap-4"
     >
       <View className="flex flex-row items-center justify-between">
@@ -167,6 +171,7 @@ export default function Page() {
               if (index == 1) {
                 setIndex(0);
               }
+
               navigation.goBack();
             }}
           >
@@ -174,18 +179,16 @@ export default function Page() {
               <MaterialIcons name="keyboard-arrow-left" size={36} />
             </CustomText>
           </Pressable>
-          <CustomText>Edit Flashcard</CustomText>
+          <CustomText>Create flashcard</CustomText>
         </View>
         <CustomPressable
           className="flex flex-row gap-2 items-center rounded-3xl"
           variant="colorBase200"
-          onPress={handleSave}
-          disabled={isSaving}
         >
           <CustomText>
             <MaterialCommunityIcons name="content-save" size={20} />
           </CustomText>
-          <CustomText>{isSaving ? "Saving..." : "Save"}</CustomText>
+          <CustomText>Save</CustomText>
         </CustomPressable>
       </View>
       {tabs[index]}

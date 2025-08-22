@@ -8,15 +8,13 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Pressable, View } from "react-native";
-import { Link, useNavigation } from "expo-router";
-import { CommonActions } from "@react-navigation/native";
 import { useTrays } from "react-native-trays";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Link, router } from "expo-router";
 import { MyTraysProps } from "@/types/trays/trays";
+import { Pressable, View } from "react-native";
 
 export default function Page() {
-  const navigation = useNavigation();
   const { currentScheme } = useTheme();
 
   const useSearchTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
@@ -64,12 +62,10 @@ export default function Page() {
       <CustomView variant="colorBase300" className="flex-1 px-4 py-4">
         <Pressable
           onPress={() =>
-            navigation.dispatch(
-              CommonActions.navigate({
-                name: "post/view/[id]",
-                params: { id: "test" },
-              })
-            )
+            router.push({
+              pathname: "/post/view/[id]",
+              params: { id: "test" },
+            })
           }
         >
           <CustomView

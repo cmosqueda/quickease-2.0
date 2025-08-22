@@ -3,23 +3,14 @@ import _API_INSTANCE from "@/utils/axios";
 
 import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
-import CustomTextInput from "@/components/CustomTextInput";
 import CustomView from "@/components/CustomView";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { CommonActions, useNavigation } from "@react-navigation/native";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import {
-  ScrollView,
-  ToastAndroid,
-  Pressable,
-  Switch,
-  View,
-  Alert,
-} from "react-native";
+import { ToastAndroid, Pressable, Switch, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { checkBadges } from "@/types/user/badges";
 
@@ -37,7 +28,6 @@ interface UserAnswer {
 
 export default function LearnerAnswerQuizPage() {
   const { currentScheme } = useTheme();
-  const navigation = useNavigation();
   const params = useLocalSearchParams<{ id: string }>();
 
   const [quizData, setQuizData] = useState<{
@@ -120,12 +110,10 @@ export default function LearnerAnswerQuizPage() {
       if (status === 200) {
         await checkBadges();
         ToastAndroid.show("Quiz submitted!", ToastAndroid.SHORT);
-        navigation.dispatch(
-          CommonActions.navigate({
-            name: "/quiz/attempt/[id]",
-            params: { id: data.id },
-          })
-        );
+        router.push({
+          pathname: "/(learner)/(quiz)/attempt/[id]",
+          params: { id: data.id },
+        });
       }
     } catch (err) {
       ToastAndroid.show("Error submitting quiz.", ToastAndroid.SHORT);

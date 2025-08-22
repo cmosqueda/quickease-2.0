@@ -4,7 +4,7 @@ import CustomView from "./CustomView";
 import Entypo from "@expo/vector-icons/Entypo";
 
 import { Pressable, View, ViewProps } from "react-native";
-import { DrawerActions, useNavigation } from "@react-navigation/native";
+import { DrawerActions } from "@react-navigation/native";
 import { ReactNode } from "react";
 
 type ForumHeaderProps = {
@@ -19,8 +19,6 @@ export default function ForumHeader({
   tabChildren,
   ...viewProps
 }: ForumHeaderProps) {
-  const navigation = useNavigation();
-
   return (
     <View {...viewProps}>
       <CustomView

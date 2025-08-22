@@ -22,22 +22,22 @@ function CustomDrawerContent(props: any) {
 
   const links = [
     {
+      href: "(forum)",
       label: "Forum",
-      href: "forum",
       icon: "solution1" as any,
     },
     {
-      href: "notes",
+      href: "(note)",
       label: "Notes",
       icon: "copy1" as any,
     },
     {
-      href: "quizzes",
+      href: "(quiz)",
       label: "Quizzes",
       icon: "unknowfile1" as any,
     },
     {
-      href: "flashcards",
+      href: "(flashcard)",
       label: "Flashcards",
       icon: "profile" as any,
     },
@@ -159,15 +159,17 @@ export default function Layout() {
     <Drawer
       screenOptions={{
         headerShown: false,
+        drawerType: "slide",
       }}
-      initialRouteName="forum"
+      initialRouteName="(forum)"
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Drawer.Screen name="forum" />
-      <Drawer.Screen name="notes" />
-      <Drawer.Screen name="profile" />
-      <Drawer.Screen name="quizzes" />
-      <Drawer.Screen name="flashcards" />
+      <Drawer.Screen name="(flashcard)" />
+      <Drawer.Screen name="(forum)" />
+      <Drawer.Screen name="(note)" />
+      <Drawer.Screen name="(quiz)" />
+      <Drawer.Screen name="(settings)" />
+      <Drawer.Screen name="(profile)" />
     </Drawer>
   );
 }

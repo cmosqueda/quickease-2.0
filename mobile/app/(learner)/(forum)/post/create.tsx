@@ -13,11 +13,9 @@ import { useTrays } from "react-native-trays";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
-import { useNavigation } from "expo-router";
 import { Pressable, View } from "react-native";
 
 export default function Page() {
-  const navigation = useNavigation();
   const tagsTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
   const { currentScheme } = useTheme();
 

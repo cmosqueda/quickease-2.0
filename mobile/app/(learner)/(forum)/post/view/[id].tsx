@@ -6,16 +6,11 @@ import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-import { useNavigation } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Pressable, View } from "react-native";
 import { useRef, useState } from "react";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-import { Pressable, ScrollView, View } from "react-native";
 
 export default function Page() {
-  const navigation = useNavigation();
   const { currentScheme } = useTheme();
 
   const [index, setIndex] = useState(0);

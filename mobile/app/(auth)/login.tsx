@@ -60,7 +60,7 @@ export default function Page() {
           <CustomText className="opacity-70">Forgot password?</CustomText>
         </Pressable>
         <View className="flex flex-col gap-4">
-          <Link asChild href={"/(learner)/forum"}>
+          <Link asChild href={"/(learner)"}>
             <CustomPressable variant="colorPrimary" className="rounded-3xl">
               <CustomText color="colorPrimaryContent" className="text-center">
                 Login
