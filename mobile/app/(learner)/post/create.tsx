@@ -4,89 +4,24 @@ import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomTextInput from "@/components/CustomTextInput";
 import CustomView from "@/components/CustomView";
-import CustomModal from "@/components/CustomModal";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
-import { useNavigation } from "expo-router";
-import {
-  KeyboardAvoidingView,
-  Pressable,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { useTrays } from "react-native-trays";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Dispatch, SetStateAction, useState } from "react";
-
-const TagsModal = ({
-  tags,
-  setTags,
-  modalVisibility,
-  setModalVisibility,
-}: {
-  tags: string[];
-  setTags: Dispatch<SetStateAction<string>>;
-  modalVisibility: boolean;
-  setModalVisibility: Dispatch<SetStateAction<boolean>>;
-}) => {
-  const { height } = useWindowDimensions();
-
-  return (
-    <CustomModal
-      animationType="fade"
-      modalVisibility={modalVisibility}
-      setModalVisibility={setModalVisibility}
-    >
-      <KeyboardAvoidingView behavior="position">
-        <CustomView
-          variant="colorBase100"
-          style={{ maxHeight: height / 1.5, gap: 8 }}
-          className="px-8 py-12 gap-4 rounded-tl-3xl rounded-tr-3xl"
-        >
-          <View className="flex flex-row gap-4 items-center">
-            <CustomText>
-              <MaterialIcons
-                name="keyboard-arrow-left"
-                size={24}
-                onPress={() => setModalVisibility(false)}
-              />
-            </CustomText>
-            <CustomText variant="bold" className="text-4xl">
-              Tags
-            </CustomText>
-          </View>
-          <View className="gap-2">
-            <CustomText>Add tag</CustomText>
-            <View className="flex flex-row gap-4 items-center">
-              <CustomTextInput className="rounded-xl flex-1" />
-              <CustomPressable
-                variant="colorBase200"
-                style={{ paddingHorizontal: 16, paddingVertical: 16 }}
-                className="rounded-3xl"
-              >
-                <MaterialCommunityIcons name="plus" />
-              </CustomPressable>
-            </View>
-          </View>
-          {tags && (
-            <View className="gap-2">
-              <CustomText>Tags</CustomText>
-            </View>
-          )}
-        </CustomView>
-      </KeyboardAvoidingView>
-    </CustomModal>
-  );
-};
+import { MyTraysProps } from "@/types/trays/trays";
+import { useNavigation } from "expo-router";
+import { Pressable, View } from "react-native";
 
 export default function Page() {
   const navigation = useNavigation();
+  const tagsTray = useTrays<MyTraysProps>("TagsTray");
   const { currentScheme } = useTheme();
-  const { height } = useWindowDimensions();
 
-  const [tagsModalVisibility, setTagsModalVisibility] = useState(false);
+  const [tags, setTags] = useState([]);
 
   return (
     <SafeAreaView
@@ -119,7 +54,13 @@ export default function Page() {
         <CustomPressable
           variant="colorBase300"
           className="rounded-3xl"
-          onPress={() => setTagsModalVisibility(true)}
+          onPress={() =>
+            tagsTray.push("TagsTray", {
+              tags: tags,
+              setTags: setTags,
+              close: tagsTray.pop,
+            })
+          }
         >
           <CustomText>Add tags</CustomText>
         </CustomPressable>
@@ -159,12 +100,6 @@ export default function Page() {
           </CustomText>
         </CustomPressable>
       </CustomView>
-      <TagsModal
-        tags={[]}
-        setTags={() => {}}
-        modalVisibility={tagsModalVisibility}
-        setModalVisibility={setTagsModalVisibility}
-      />
     </SafeAreaView>
   );
 }

@@ -5,19 +5,22 @@ import CustomPressable from "@/components/CustomPressable";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
+import { View } from "react-native";
 import { Drawer } from "expo-router/drawer";
+import { useTrays } from "react-native-trays";
 import { useEffect } from "react";
+import { MyTraysProps } from "@/types/trays/trays";
 import { DrawerActions } from "@react-navigation/native";
 import { setStatusBarStyle } from "expo-status-bar";
-import { View } from "react-native";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
-import { useTrays } from "react-native-trays";
-import { MyTraysProps } from "@/types/trays/trays";
 
 function CustomDrawerContent(props: any) {
   const { currentScheme } = useTheme();
-  const { push: openPomodoro, pop: closePomodoro } =
-    useTrays<MyTraysProps>("PomodoroTray");
+  const {
+    push: openPomodoro,
+    pop: closePomodoro,
+    replaceTray,
+  } = useTrays<MyTraysProps>("PomodoroTray");
 
   const links = [
     {
@@ -104,7 +107,13 @@ function CustomDrawerContent(props: any) {
       <View className="flex-1 flex flex-row gap-2 items-center self-end">
         <CustomPressable
           onPress={() => {
-            openPomodoro("PomodoroTray", { close: closePomodoro });
+            openPomodoro("PomodoroTray", {
+              close: closePomodoro,
+              openSettings: () => {
+                closePomodoro();
+                openPomodoro("PomodoroSettingsTray", { back: closePomodoro });
+              },
+            });
             props.navigation.dispatch(DrawerActions.closeDrawer());
           }}
           className="flex-1 rounded-full"

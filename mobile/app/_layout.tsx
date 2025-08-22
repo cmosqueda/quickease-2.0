@@ -98,6 +98,15 @@ export default function RootLayout() {
               horizontalSpacing: 0,
               backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
             },
+            TagsTray: {
+              adjustForKeyboard: true,
+              stickToTop: true,
+              dismissOnBackdropPress: true,
+              trayStyles: {
+                backgroundColor: useTheme.getState().currentScheme.colorBase100,
+              },
+              backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
+            },
           }}
         >
           <Stack
