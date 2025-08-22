@@ -36,21 +36,9 @@ export default function RootLayout() {
     Gabarito_900Black,
   });
 
-  const [isChecking, setIsChecking] = useState(true);
-
   useEffect(() => {
-    const check = async () => {
-      const loggedIn = await checkAuthAndRedirect();
-      if (loggedIn) {
-        return router.replace("/(learner)/(forum)");
-      }
-
-      setIsChecking(false);
-    };
-
     if (loaded || error) {
       SplashScreen.hideAsync();
-      check();
     }
   }, [loaded, error]);
 

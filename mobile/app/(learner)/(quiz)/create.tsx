@@ -92,7 +92,6 @@ export default function Page() {
   };
 
   const handleSubmit = async () => {
-    //
     if (questions.length < 2) {
       ToastAndroid.show("Must have at least 2 questions.", ToastAndroid.SHORT);
       return;

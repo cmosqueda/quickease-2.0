@@ -8,12 +8,20 @@ import CustomView from "@/components/CustomView";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { Quiz } from "@/types/user/types";
 import { Switch } from "@expo/ui/jetpack-compose";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  ToastAndroid,
+  Pressable,
+  View,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { ToastAndroid, Pressable, View, Alert } from "react-native";
 
 interface QuizQuestion {
   question: string;
@@ -29,50 +37,43 @@ interface UserAnswer {
 
 export default function LearnerAnswerQuizPage() {
   const { currentScheme } = useTheme();
-  const params = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<{ id: string }>();
 
-  const [quizData, setQuizData] = useState<{
-    id: string;
-    title: string;
-    description: string;
-    is_ai_generated: boolean;
-    quiz_content: QuizQuestion[];
-  }>({
-    id: params.id || "demo",
-    title: "Sample Quiz",
-    description: "This is a test quiz.",
-    is_ai_generated: false,
-    quiz_content: [
-      {
-        question: "What is 2+2?",
-        description: "Simple math",
-        options: ["1", "2", "3", "4"],
-        correctAnswers: [3],
-      },
-      {
-        question: "Select prime numbers",
-        description: "",
-        options: ["2", "3", "4", "5"],
-        correctAnswers: [0, 1, 3],
-      },
-    ],
+  const { data: quizData, isFetching } = useQuery<Quiz>({
+    queryKey: ["answer-quiz", id],
+    queryFn: async () => {
+      const { data } = await _API_INSTANCE.get<Quiz>(`/quiz/${id}`);
+      return data;
+    },
+    refetchOnWindowFocus: false,
+    retry: 3,
+    enabled: !!id,
   });
 
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>(
-    quizData.quiz_content.map((q) => ({
-      question: q,
-      user_answer: [],
-    }))
-  );
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const currentQuestion = quizData.quiz_content[questionIndex];
+  useEffect(() => {
+    if (quizData?.quiz_content) {
+      setUserAnswers(
+        quizData.quiz_content.map((q) => ({
+          question: q,
+          user_answer: [],
+        }))
+      );
+    }
+  }, [quizData]);
+
+  const currentQuestion: QuizQuestion | null =
+    quizData?.quiz_content?.[questionIndex] ?? null;
 
   const handleOptionToggle = (qIdx: number, optIdx: number) => {
     setUserAnswers((prev) => {
       const updated = [...prev];
-      const q = updated[qIdx].question;
+      const q = updated[qIdx]?.question;
+
+      if (!q) return prev; // guard
 
       if (q.correctAnswers.length > 1) {
         const selected = new Set(updated[qIdx].user_answer);
@@ -86,6 +87,7 @@ export default function LearnerAnswerQuizPage() {
   };
 
   const handleSubmit = async () => {
+    if (!quizData) return;
     setIsSubmitting(true);
 
     const correctCount = userAnswers.reduce((acc, ans) => {
@@ -116,12 +118,34 @@ export default function LearnerAnswerQuizPage() {
           params: { id: data.id },
         });
       }
-    } catch (err) {
+    } catch {
       ToastAndroid.show("Error submitting quiz.", ToastAndroid.SHORT);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  if (isFetching) {
+    return (
+      <SafeAreaView
+        className="flex-1 items-center justify-center"
+        style={{ backgroundColor: currentScheme.colorBase200 }}
+      >
+        <ActivityIndicator color={currentScheme.colorPrimary} size={96} />
+      </SafeAreaView>
+    );
+  }
+
+  if (!quizData?.quiz_content?.length) {
+    return (
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: currentScheme.colorBase200 }}
+        className="items-center justify-center"
+      >
+        <CustomText>No quiz data found.</CustomText>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView
@@ -155,26 +179,6 @@ export default function LearnerAnswerQuizPage() {
         </CustomPressable>
       </View>
 
-      <View className="gap-2">
-        <CustomText>Questions</CustomText>
-        <CustomView className="p-4 rounded-3xl flex flex-row gap-2">
-          {quizData.quiz_content.map((_, idx) => (
-            <CustomPressable
-              key={idx}
-              onPress={() => setQuestionIndex(idx)}
-              className="items-center justify-center rounded-xl p-2"
-              variant={
-                userAnswers[idx].user_answer.length > 0
-                  ? "colorPrimary"
-                  : "colorBase300"
-              }
-            >
-              <CustomText>{idx + 1}</CustomText>
-            </CustomPressable>
-          ))}
-        </CustomView>
-      </View>
-
       <CustomView
         variant="colorBase100"
         className="flex-row gap-4 p-4 rounded-3xl"
@@ -193,26 +197,20 @@ export default function LearnerAnswerQuizPage() {
                   (Multiple answers allowed)
                 </CustomText>
               )}
-              <CustomView
-                variant="colorBase200"
-                className="rounded-xl p-4 gap-2"
-              >
+              <CustomView variant="colorBase200" className="rounded-xl p-4">
                 {currentQuestion.options.map((opt, oIdx) => (
                   <Pressable
                     key={oIdx}
                     onPress={() => handleOptionToggle(questionIndex, oIdx)}
-                    className="flex flex-row gap-2 items-center"
+                    className="flex flex-row gap-1 items-center"
                   >
                     <Switch
                       variant="checkbox"
-                      value={userAnswers[questionIndex].user_answer.includes(
+                      value={userAnswers[questionIndex]?.user_answer.includes(
                         oIdx
                       )}
-                      onValueChange={() =>
-                        handleOptionToggle(questionIndex, oIdx)
-                      }
                     />
-                    <CustomText>{opt}</CustomText>
+                    <CustomText className="flex-1">{opt}</CustomText>
                   </Pressable>
                 ))}
               </CustomView>
@@ -222,6 +220,7 @@ export default function LearnerAnswerQuizPage() {
           )}
         </View>
       </CustomView>
+
       <View className="flex flex-row gap-2 justify-end self-end">
         {questionIndex > 0 && (
           <CustomPressable

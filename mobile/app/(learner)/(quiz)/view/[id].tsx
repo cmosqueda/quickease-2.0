@@ -2,518 +2,60 @@ import clsx from "clsx";
 import dayjs from "dayjs";
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
+import PagerView from "react-native-pager-view";
 import CustomView from "@/components/CustomView";
 import CustomText from "@/components/CustomText";
 import CustomPressable from "@/components/CustomPressable";
-import PagerView from "react-native-pager-view";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
-import { ScrollView, Pressable, ToastAndroid, View } from "react-native";
+import {
+  ScrollView,
+  Pressable,
+  ToastAndroid,
+  View,
+  ActivityIndicator,
+} from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
-
-interface QuizData {
-  id: string;
-  user_id: string;
-  quiz_content: {
-    question: string;
-    description?: string;
-    options: string[];
-    correctAnswers: number[];
-  }[];
-  title: string;
-  description?: string;
-  is_public: boolean | null;
-  created_at: string;
-  updated_at: string;
-  is_ai_generated: boolean;
-  is_randomized: boolean;
-  timed_quiz: string;
-  attempts: {
-    id: string;
-    duration: number;
-    score: number;
-    started_at: string;
-    completed_at: string;
-    user_id: string;
-    answer_data: {
-      question: {
-        correctAnswers: number[];
-      };
-      user_answer: number[];
-    }[];
-  }[];
-  leaderboard: {
-    id: string;
-    duration: number;
-    score: number;
-    started_at: string;
-    completed_at: string;
-    user: {
-      id: string;
-      first_name: string;
-      last_name: string;
-    };
-    answer_data: {
-      question: {
-        correctAnswers: number[];
-      };
-      user_answer: number[];
-    }[];
-  }[];
-}
 
 export default function LearnerQuizPage() {
   const { currentScheme } = useTheme();
   const { user } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
+
+  const {
+    data: quizData,
+    isFetching,
+    isError,
+  } = useQuery({
+    queryKey: ["view-quiz", id],
+    queryFn: async () => {
+      try {
+        const { data } = await _API_INSTANCE.get(`/quiz/${id}`);
+
+        return data;
+      } catch (err) {
+        throw err;
+      }
+    },
+    retry: 3,
+    enabled: !!id,
+  });
+
   const pagerViewRef = useRef<PagerView>(null);
 
-  const [quiz, setQuiz] = useState<QuizData | null>({
-    id: "dd06550e-65ed-4ac0-95c3-b13f8191dc10",
-    user_id: "27bba94a-b17f-4cc3-9389-279aa94d79e0",
-    quiz_content: [
-      {
-        options: [
-          "Hyper Text Manipulation Language",
-          "Hyper Text Markup Language",
-          "Home Tool Markup Language",
-          "Hyper Text Markup Language",
-        ],
-        question: "What does HTML stand for?",
-        description:
-          "This question tests your basic understanding of the HTML acronym.",
-        correctAnswers: [1, 3],
-      },
-      {
-        options: [
-          "To style web pages",
-          "To define the content and structure of web content",
-          "To add interactivity to web pages",
-          "To manage server-side logic",
-        ],
-        question: "What is the primary purpose of HTML?",
-        description:
-          "This question assesses your understanding of HTML's core function.",
-        correctAnswers: [1],
-      },
-      {
-        options: [
-          "In a text editor",
-          "In a web browser",
-          "On a server",
-          "In the command line",
-        ],
-        question: "Where is HTML generally displayed?",
-        description:
-          "This question tests your knowledge of where HTML code is rendered.",
-        correctAnswers: [1],
-      },
-      {
-        options: [
-          "JavaScript",
-          "Cascading Style Sheets (CSS)",
-          "Python",
-          "SQL",
-        ],
-        question:
-          "HTML is often assisted by which of the following technologies for styling?",
-        description:
-          "This question asks about a common technology used alongside HTML for styling.",
-        correctAnswers: [1],
-      },
-      {
-        options: ["CSS", "HTML", "JavaScript", "XML"],
-        question:
-          "Which technology is used to add interactivity to web pages, often alongside HTML?",
-        description:
-          "This question relates to a scripting language commonly used with HTML for interactivity.",
-        correctAnswers: [2],
-      },
-      {
-        options: [
-          "A programming language",
-          "A scripting language",
-          "A markup language",
-          "A database management system",
-        ],
-        question: "Which of the following best describes HTML?",
-        description: "Tests your ability to describe HTML.",
-        correctAnswers: [2],
-      },
-      {
-        options: [
-          "Style, Interactivity",
-          "Content, Structure",
-          "Functionality, Appearance",
-          "Animations, Layout",
-        ],
-        question: "HTML defines the ______ and ______ of web content.",
-        description: "Fill in the blanks regarding HTML's role.",
-        correctAnswers: [1],
-      },
-      {
-        options: ["Yes", "No", "Only with CSS", "Only with HTML"],
-        question: "Can Javascript directly style HTML elements?",
-        description: "Asks about Javascript styling capabilities.",
-        correctAnswers: [0],
-      },
-      {
-        options: [
-          "HTML",
-          "JavaScript",
-          "Cascading Style Sheets (CSS)",
-          "Python",
-        ],
-        question:
-          "If you wanted to design the visual layout of a website, what would you use?",
-        description: "Asks about how to design the layout of the website.",
-        correctAnswers: [2],
-      },
-      {
-        options: [
-          "Only Cascading Style Sheets (CSS)",
-          "Only Javascript",
-          "Cascading Style Sheets (CSS) and Javascript",
-          "None of the above",
-        ],
-        question: "What technologies may be used to improve HTML?",
-        description: "Asks about technologies that work with HTML.",
-        correctAnswers: [2],
-      },
-    ],
-    title: "HTML Fundamentals Quiz",
-    description: "asdasdsad",
-    is_public: true,
-    created_at: "2025-08-17T09:45:25.945Z",
-    updated_at: "2025-08-17T09:45:25.945Z",
-    is_ai_generated: true,
-    is_randomized: false,
-    timed_quiz: "0",
-    attempts: [
-      {
-        id: "091cb095-b029-45a6-a077-3b3d9ee4a7c6",
-        quiz_id: "dd06550e-65ed-4ac0-95c3-b13f8191dc10",
-        user_id: "27bba94a-b17f-4cc3-9389-279aa94d79e0",
-        started_at: "2025-08-17T10:03:52.915Z",
-        completed_at: "2025-08-17T10:04:31.369Z",
-        answer_data: [
-          {
-            question: {
-              options: [
-                "Hyper Text Manipulation Language",
-                "Hyper Text Markup Language",
-                "Home Tool Markup Language",
-                "Highly Textual Machine Language",
-              ],
-              question: "What does HTML stand for?",
-              description:
-                "This question tests your basic understanding of the HTML acronym.",
-              correctAnswers: [1],
-            },
-            user_answer: [1],
-          },
-          {
-            question: {
-              options: [
-                "To style web pages",
-                "To define the content and structure of web content",
-                "To add interactivity to web pages",
-                "To manage server-side logic",
-              ],
-              question: "What is the primary purpose of HTML?",
-              description:
-                "This question assesses your understanding of HTML's core function.",
-              correctAnswers: [1],
-            },
-            user_answer: [1],
-          },
-          {
-            question: {
-              options: [
-                "In a text editor",
-                "In a web browser",
-                "On a server",
-                "In the command line",
-              ],
-              question: "Where is HTML generally displayed?",
-              description:
-                "This question tests your knowledge of where HTML code is rendered.",
-              correctAnswers: [1],
-            },
-            user_answer: [1],
-          },
-          {
-            question: {
-              options: [
-                "JavaScript",
-                "Cascading Style Sheets (CSS)",
-                "Python",
-                "SQL",
-              ],
-              question:
-                "HTML is often assisted by which of the following technologies for styling?",
-              description:
-                "This question asks about a common technology used alongside HTML for styling.",
-              correctAnswers: [1],
-            },
-            user_answer: [1],
-          },
-          {
-            question: {
-              options: ["CSS", "HTML", "JavaScript", "XML"],
-              question:
-                "Which technology is used to add interactivity to web pages, often alongside HTML?",
-              description:
-                "This question relates to a scripting language commonly used with HTML for interactivity.",
-              correctAnswers: [2],
-            },
-            user_answer: [2],
-          },
-          {
-            question: {
-              options: [
-                "A programming language",
-                "A scripting language",
-                "A markup language",
-                "A database management system",
-              ],
-              question: "Which of the following best describes HTML?",
-              description: "Tests your ability to describe HTML.",
-              correctAnswers: [2],
-            },
-            user_answer: [2],
-          },
-          {
-            question: {
-              options: [
-                "Style, Interactivity",
-                "Content, Structure",
-                "Functionality, Appearance",
-                "Animations, Layout",
-              ],
-              question: "HTML defines the ______ and ______ of web content.",
-              description: "Fill in the blanks regarding HTML's role.",
-              correctAnswers: [1],
-            },
-            user_answer: [1],
-          },
-          {
-            question: {
-              options: ["Yes", "No", "Only with CSS", "Only with HTML"],
-              question: "Can Javascript directly style HTML elements?",
-              description: "Asks about Javascript styling capabilities.",
-              correctAnswers: [0],
-            },
-            user_answer: [0],
-          },
-          {
-            question: {
-              options: [
-                "HTML",
-                "JavaScript",
-                "Cascading Style Sheets (CSS)",
-                "Python",
-              ],
-              question:
-                "If you wanted to design the visual layout of a website, what would you use?",
-              description:
-                "Asks about how to design the layout of the website.",
-              correctAnswers: [2],
-            },
-            user_answer: [2],
-          },
-          {
-            question: {
-              options: [
-                "Only Cascading Style Sheets (CSS)",
-                "Only Javascript",
-                "Cascading Style Sheets (CSS) and Javascript",
-                "None of the above",
-              ],
-              question: "What technologies may be used to improve HTML?",
-              description: "Asks about technologies that work with HTML.",
-              correctAnswers: [2],
-            },
-            user_answer: [2],
-          },
-        ],
-        is_public: true,
-        duration: 38,
-        score: 10,
-      },
-    ],
-    leaderboard: [
-      {
-        id: "091cb095-b029-45a6-a077-3b3d9ee4a7c6",
-        quiz_id: "dd06550e-65ed-4ac0-95c3-b13f8191dc10",
-        user_id: "27bba94a-b17f-4cc3-9389-279aa94d79e0",
-        started_at: "2025-08-17T10:03:52.915Z",
-        completed_at: "2025-08-17T10:04:31.369Z",
-        answer_data: [
-          {
-            question: {
-              options: [
-                "Hyper Text Manipulation Language",
-                "Hyper Text Markup Language",
-                "Home Tool Markup Language",
-                "Highly Textual Machine Language",
-              ],
-              question: "What does HTML stand for?",
-              description:
-                "This question tests your basic understanding of the HTML acronym.",
-              correctAnswers: [1],
-            },
-            user_answer: [1],
-          },
-          {
-            question: {
-              options: [
-                "To style web pages",
-                "To define the content and structure of web content",
-                "To add interactivity to web pages",
-                "To manage server-side logic",
-              ],
-              question: "What is the primary purpose of HTML?",
-              description:
-                "This question assesses your understanding of HTML's core function.",
-              correctAnswers: [1],
-            },
-            user_answer: [1],
-          },
-          {
-            question: {
-              options: [
-                "In a text editor",
-                "In a web browser",
-                "On a server",
-                "In the command line",
-              ],
-              question: "Where is HTML generally displayed?",
-              description:
-                "This question tests your knowledge of where HTML code is rendered.",
-              correctAnswers: [1],
-            },
-            user_answer: [1],
-          },
-          {
-            question: {
-              options: [
-                "JavaScript",
-                "Cascading Style Sheets (CSS)",
-                "Python",
-                "SQL",
-              ],
-              question:
-                "HTML is often assisted by which of the following technologies for styling?",
-              description:
-                "This question asks about a common technology used alongside HTML for styling.",
-              correctAnswers: [1],
-            },
-            user_answer: [1],
-          },
-          {
-            question: {
-              options: ["CSS", "HTML", "JavaScript", "XML"],
-              question:
-                "Which technology is used to add interactivity to web pages, often alongside HTML?",
-              description:
-                "This question relates to a scripting language commonly used with HTML for interactivity.",
-              correctAnswers: [2],
-            },
-            user_answer: [2],
-          },
-          {
-            question: {
-              options: [
-                "A programming language",
-                "A scripting language",
-                "A markup language",
-                "A database management system",
-              ],
-              question: "Which of the following best describes HTML?",
-              description: "Tests your ability to describe HTML.",
-              correctAnswers: [2],
-            },
-            user_answer: [2],
-          },
-          {
-            question: {
-              options: [
-                "Style, Interactivity",
-                "Content, Structure",
-                "Functionality, Appearance",
-                "Animations, Layout",
-              ],
-              question: "HTML defines the ______ and ______ of web content.",
-              description: "Fill in the blanks regarding HTML's role.",
-              correctAnswers: [1],
-            },
-            user_answer: [1],
-          },
-          {
-            question: {
-              options: ["Yes", "No", "Only with CSS", "Only with HTML"],
-              question: "Can Javascript directly style HTML elements?",
-              description: "Asks about Javascript styling capabilities.",
-              correctAnswers: [0],
-            },
-            user_answer: [0],
-          },
-          {
-            question: {
-              options: [
-                "HTML",
-                "JavaScript",
-                "Cascading Style Sheets (CSS)",
-                "Python",
-              ],
-              question:
-                "If you wanted to design the visual layout of a website, what would you use?",
-              description:
-                "Asks about how to design the layout of the website.",
-              correctAnswers: [2],
-            },
-            user_answer: [2],
-          },
-          {
-            question: {
-              options: [
-                "Only Cascading Style Sheets (CSS)",
-                "Only Javascript",
-                "Cascading Style Sheets (CSS) and Javascript",
-                "None of the above",
-              ],
-              question: "What technologies may be used to improve HTML?",
-              description: "Asks about technologies that work with HTML.",
-              correctAnswers: [2],
-            },
-            user_answer: [2],
-          },
-        ],
-        is_public: true,
-        duration: 38,
-        score: 10,
-        user: {
-          id: "27bba94a-b17f-4cc3-9389-279aa94d79e0",
-          first_name: "Jhon Lloyd",
-          last_name: "Viernes",
-        },
-      },
-    ],
-  });
   const [tabIndex, setTabIndex] = useState(0);
-  const [quizVisibility, setQuizVisibility] = useState<boolean | null>(null);
 
   const handleAnswerQuiz = () => {
     router.push({
       pathname: "/(learner)/(quiz)/answer/[id]",
-      params: { id: "test" },
+      params: { id: id },
     });
   };
 
@@ -534,7 +76,7 @@ export default function LearnerQuizPage() {
         router.back();
       }
     } catch {
-      ToastAndroid.show("Failed to delete quiz.", ToastAndroid.SHORT);
+      ToastAndroid.show("Failed to delete quizData.", ToastAndroid.SHORT);
     }
   };
 
@@ -554,7 +96,7 @@ export default function LearnerQuizPage() {
   };
 
   const renderAttempts = () =>
-    quiz?.attempts.map((entry, index) => {
+    quizData?.attempts.map((entry, index) => {
       const totalQuestions = entry.answer_data.length;
       const correctCount = entry.answer_data.reduce((acc, item) => {
         const { correctAnswers } = item.question;
@@ -590,7 +132,7 @@ export default function LearnerQuizPage() {
     });
 
   const renderLeaderboard = () =>
-    quiz?.leaderboard.map((entry, index) => {
+    quizData?.leaderboard.map((entry, index) => {
       const totalQuestions = entry.answer_data.length;
       const correctCount = entry.answer_data.reduce((acc, item) => {
         const { correctAnswers } = item.question;
@@ -625,13 +167,13 @@ export default function LearnerQuizPage() {
       );
     });
 
-  if (!quiz) {
+  if (!quizData) {
     return (
       <SafeAreaView
         className="flex-1 items-center justify-center"
         style={{ backgroundColor: currentScheme.colorBase200 }}
       >
-        <CustomText>Loading quiz...</CustomText>
+        <ActivityIndicator color={currentScheme.colorPrimary} size={96} />
       </SafeAreaView>
     );
   }
@@ -660,22 +202,24 @@ export default function LearnerQuizPage() {
       </CustomView>
 
       <CustomView variant="colorBase100" className="gap-4 p-4 rounded-3xl">
-        {quiz.is_ai_generated && (
+        {quizData.is_ai_generated && (
           <View className="flex flex-row items-center gap-2">
-            <CustomText className="opacity-50">
+            <CustomText className="opacity-75">
               <MaterialIcons name="info" size={16} />
             </CustomText>
             <CustomText className="opacity-50">AI-generated</CustomText>
           </View>
         )}
         <CustomText variant="black" className="text-4xl">
-          {quiz.title || "Untitled"}
+          {quizData.title || "Untitled"}
         </CustomText>
-        <CustomText>{quiz.description || "No description provided"}</CustomText>
+        <CustomText>
+          {quizData.description || "No description provided"}
+        </CustomText>
       </CustomView>
 
       <View className="flex flex-row gap-4">
-        {quiz.attempts.length > 0 && (
+        {quizData.attempts.length > 0 && (
           <CustomPressable
             className={clsx(
               "flex-1 items-center rounded-3xl",
