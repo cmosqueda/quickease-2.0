@@ -1,4 +1,5 @@
 import useTheme from "@/hooks/useTheme";
+import PagerView from "react-native-pager-view";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import CustomPressable from "@/components/CustomPressable";
@@ -11,11 +12,26 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import { View, Pressable, useWindowDimensions } from "react-native";
+import { useAssets } from "expo-asset";
+import { Image } from "expo-image";
+import { _BADGES } from "@/types/user/badges";
 
 export default function Page() {
   const navigation = useNavigation();
   const { currentScheme } = useTheme();
   const { height } = useWindowDimensions();
+  const [assets, error] = useAssets([
+    require("../../assets/images/badges/achiever-gradient.png"),
+    require("../../assets/images/badges/community-favorite-gradient.png"),
+    require("../../assets/images/badges/first-post-gradient.png"),
+    require("../../assets/images/badges/first-step-gradient.png"),
+    require("../../assets/images/badges/flashcard-master-gradient.png"),
+    require("../../assets/images/badges/helpful-commenter-gradient.png"),
+    require("../../assets/images/badges/master-reviewer-gradient.png"),
+    require("../../assets/images/badges/note-taker-gradient.png"),
+    require("../../assets/images/badges/perfectionist-gradient.png"),
+    require("../../assets/images/badges/quick-learner-gradient.png"),
+  ]);
 
   const [index, setIndex] = useState(0);
 
@@ -49,7 +65,7 @@ export default function Page() {
         </CustomText>
       </View>
       <CustomView
-        className="flex-1 p-4 mt-8 rounded-tl-3xl rounded-tr-3xl"
+        className="flex-1 p-4 mt-8 rounded-tl-3xl rounded-tr-3xl gap-4"
         variant="colorBase200"
       >
         <View className="flex flex-row gap-2">
@@ -87,6 +103,27 @@ export default function Page() {
             </CustomText>
           </CustomPressable>
         </View>
+        <PagerView style={{ flex: 1 }}>
+          <View className="flex flex-col gap-4" key={0}>
+            <CustomView
+              variant="colorBase300"
+              className="p-4 flex flex-row gap-4 items-center rounded-3xl"
+            >
+              <Image
+                source={assets![0].localUri}
+                style={{ width: 84, height: 84, aspectRatio: "1/1" }}
+              />
+              <View className="flex-1">
+                <CustomText variant="bold" className="text-lg">
+                  {_BADGES.learningProgress[0].name}
+                </CustomText>
+                <CustomText>
+                  {_BADGES.learningProgress[0].description}
+                </CustomText>
+              </View>
+            </CustomView>
+          </View>
+        </PagerView>
       </CustomView>
     </SafeAreaView>
   );

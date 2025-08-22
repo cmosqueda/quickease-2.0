@@ -18,7 +18,7 @@ import { Pressable, View } from "react-native";
 
 export default function Page() {
   const navigation = useNavigation();
-  const tagsTray = useTrays<MyTraysProps>("TagsTray");
+  const tagsTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
   const { currentScheme } = useTheme();
 
   const [tags, setTags] = useState([]);

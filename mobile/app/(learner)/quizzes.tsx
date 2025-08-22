@@ -17,7 +17,7 @@ export default function Page() {
   const navigation = useNavigation();
   const { currentScheme } = useTheme();
   const { push: openTray, pop: closeTray } =
-    useTrays<MyTraysProps>("FilterTrays");
+    useTrays<MyTraysProps>("DismissibleRoundedNoMarginAndSpacingTray");
 
   return (
     <SafeAreaView

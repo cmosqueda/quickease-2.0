@@ -59,7 +59,7 @@ export default function RootLayout() {
         <TrayProvider
           trays={_TRAYS}
           stackConfigs={{
-            SearchTray: {
+            DismissibleStickToTopTray: {
               adjustForKeyboard: true,
               dismissOnBackdropPress: true,
               stickToTop: true,
@@ -68,7 +68,7 @@ export default function RootLayout() {
               },
               backdropStyles: { backgroundColor: "rgba(0,0,0,0.7)" },
             },
-            NotificationTray: {
+            DismissibleRoundedNoMarginAndSpacingTray: {
               dismissOnBackdropPress: true,
               trayStyles: {
                 borderBottomLeftRadius: 0,
@@ -78,8 +78,7 @@ export default function RootLayout() {
               backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
               horizontalSpacing: 0,
             },
-            FilterTrays: {
-              dismissOnBackdropPress: true,
+            RoundedNoMarginAndSpacingTray: {
               trayStyles: {
                 borderBottomLeftRadius: 0,
                 borderBottomRightRadius: 0,
@@ -87,25 +86,6 @@ export default function RootLayout() {
               },
               backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
               horizontalSpacing: 0,
-            },
-            PomodoroTray: {
-              dismissOnBackdropPress: true,
-              trayStyles: {
-                borderBottomLeftRadius: 0,
-                borderBottomRightRadius: 0,
-                backgroundColor: useTheme.getState().currentScheme.colorBase100,
-              },
-              horizontalSpacing: 0,
-              backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
-            },
-            TagsTray: {
-              adjustForKeyboard: true,
-              stickToTop: true,
-              dismissOnBackdropPress: true,
-              trayStyles: {
-                backgroundColor: useTheme.getState().currentScheme.colorBase100,
-              },
-              backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
             },
           }}
         >

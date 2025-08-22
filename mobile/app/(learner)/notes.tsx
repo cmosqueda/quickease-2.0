@@ -1,20 +1,20 @@
 import useTheme from "@/hooks/useTheme";
-import CustomPressable from "@/components/CustomPressable";
+import ForumHeader from "@/components/ForumHeader";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
-import ForumHeader from "@/components/ForumHeader";
+import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useTrays } from "react-native-trays";
 import { MyTraysProps } from "@/types/trays/trays";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page() {
   const { currentScheme } = useTheme();
   const { push: openTray, pop: closeTray } =
-    useTrays<MyTraysProps>("FilterTrays");
+    useTrays<MyTraysProps>("DismissibleRoundedNoMarginAndSpacingTray");
 
   const [displaySettings, setDisplaySettings] = useState("grid");
 

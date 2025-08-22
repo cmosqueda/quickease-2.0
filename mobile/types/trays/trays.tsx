@@ -14,8 +14,9 @@ import { Picker } from "@expo/ui/jetpack-compose";
 import { rgbaToHex } from "@/utils/colors";
 import { TimerPicker } from "react-native-timer-picker";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { Dimensions, Pressable, View } from "react-native";
+import { Dimensions, Pressable, useWindowDimensions, View } from "react-native";
 import { Dispatch, SetStateAction, useState } from "react";
+import _THEMES from "../theme/Themes";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
@@ -33,6 +34,7 @@ export type MyTraysProps = {
     setTags: Dispatch<SetStateAction<any>>;
     close: () => void;
   };
+  ChangeThemesTray: { close: () => void };
 };
 
 const _TRAYS = {
@@ -258,12 +260,6 @@ const _TRAYS = {
             Study session is currently set to {formatTime(settings.study)}{" "}
             minutes
           </CustomText>
-          <CustomPressable
-            variant="colorBase200"
-            className="rounded-3xl justify-center items-center"
-          >
-            <CustomText>Save</CustomText>
-          </CustomPressable>
         </View>,
         <View key={1} className="flex gap-4">
           <TimerPicker
@@ -283,12 +279,6 @@ const _TRAYS = {
             Break session is currently set to {formatTime(settings.shortBreak)}{" "}
             minutes
           </CustomText>
-          <CustomPressable
-            variant="colorBase200"
-            className="rounded-3xl justify-center items-center"
-          >
-            <CustomText>Save</CustomText>
-          </CustomPressable>
         </View>,
       ]; // 0 - Study | 1 - Break
 
@@ -322,6 +312,12 @@ const _TRAYS = {
             />
           </View>
           {tabs[index]}
+          <CustomPressable
+            variant="colorBase200"
+            className="rounded-3xl justify-center items-center"
+          >
+            <CustomText>Save</CustomText>
+          </CustomPressable>
         </CustomView>
       );
     },
@@ -370,6 +366,109 @@ const _TRAYS = {
               <CustomText>Tags</CustomText>
             </View>
           )}
+        </CustomView>
+      );
+    },
+  },
+  ChangeThemesTray: {
+    component: ({ close }: { close: () => void }) => {
+      const { height } = useWindowDimensions();
+      const { setCurrentScheme } = useTheme();
+
+      return (
+        <CustomView
+          variant="colorBase100"
+          className="rounded-tr-3xl rounded-tl-3xl p-8 gap-8"
+        >
+          <CustomText>
+            <MaterialIcons name="close" size={24} onPress={close} />
+          </CustomText>
+
+          <View className="gap-4">
+            <CustomText>Light</CustomText>
+            <CustomView
+              variant="colorBase200"
+              className="flex flex-row gap-4 flex-wrap p-4 rounded-3xl justify-center"
+            >
+              {Object.values(_THEMES)
+                .filter((theme) => theme.colorscheme === "light")
+                .map((theme) => (
+                  <Pressable
+                    onPress={() => setCurrentScheme(theme.name)}
+                    key={theme.name}
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 12,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <View style={{ flex: 1, flexDirection: "row" }}>
+                      <View
+                        style={{ flex: 1, backgroundColor: theme.colorBase100 }}
+                      />
+                      <View
+                        style={{ flex: 1, backgroundColor: theme.colorBase200 }}
+                      />
+                    </View>
+                    <View style={{ flex: 1, flexDirection: "row" }}>
+                      <View
+                        style={{ flex: 1, backgroundColor: theme.colorPrimary }}
+                      />
+                      <View
+                        style={{
+                          flex: 1,
+                          backgroundColor: theme.colorSecondary,
+                        }}
+                      />
+                    </View>
+                  </Pressable>
+                ))}
+            </CustomView>
+          </View>
+
+          <View className="gap-4">
+            <CustomText>Dark</CustomText>
+            <CustomView
+              variant="colorBase200"
+              className="flex flex-row gap-4 flex-wrap p-4 rounded-3xl justify-center"
+            >
+              {Object.values(_THEMES)
+                .filter((theme) => theme.colorscheme === "dark")
+                .map((theme) => (
+                  <Pressable
+                    onPress={() => setCurrentScheme(theme.name)}
+                    key={theme.name}
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 12,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <View style={{ flex: 1, flexDirection: "row" }}>
+                      <View
+                        style={{ flex: 1, backgroundColor: theme.colorBase100 }}
+                      />
+                      <View
+                        style={{ flex: 1, backgroundColor: theme.colorBase200 }}
+                      />
+                    </View>
+                    <View style={{ flex: 1, flexDirection: "row" }}>
+                      <View
+                        style={{ flex: 1, backgroundColor: theme.colorPrimary }}
+                      />
+                      <View
+                        style={{
+                          flex: 1,
+                          backgroundColor: theme.colorSecondary,
+                        }}
+                      />
+                    </View>
+                  </Pressable>
+                ))}
+            </CustomView>
+          </View>
         </CustomView>
       );
     },

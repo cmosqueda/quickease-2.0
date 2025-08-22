@@ -16,11 +16,9 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 
 function CustomDrawerContent(props: any) {
   const { currentScheme } = useTheme();
-  const {
-    push: openPomodoro,
-    pop: closePomodoro,
-    replaceTray,
-  } = useTrays<MyTraysProps>("PomodoroTray");
+  const { push: openPomodoro, pop: closePomodoro } = useTrays<MyTraysProps>(
+    "DismissibleRoundedNoMarginAndSpacingTray"
+  );
 
   const links = [
     {

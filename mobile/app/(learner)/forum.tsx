@@ -19,8 +19,10 @@ export default function Page() {
   const navigation = useNavigation();
   const { currentScheme } = useTheme();
 
-  const useSearchTray = useTrays<MyTraysProps>("SearchTray");
-  const useNotificationTray = useTrays<MyTraysProps>("NotificationTray");
+  const useSearchTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
+  const useNotificationTray = useTrays<MyTraysProps>(
+    "DismissibleRoundedNoMarginAndSpacingTray"
+  );
 
   return (
     <SafeAreaView
