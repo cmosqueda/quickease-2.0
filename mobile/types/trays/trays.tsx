@@ -14,9 +14,12 @@ import { Picker } from "@expo/ui/jetpack-compose";
 import { rgbaToHex } from "@/utils/colors";
 import { TimerPicker } from "react-native-timer-picker";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { Dimensions, Pressable, useWindowDimensions, View } from "react-native";
 import { Dispatch, SetStateAction, useState } from "react";
+import { Dimensions, Pressable, useWindowDimensions, View } from "react-native";
+
 import _THEMES from "../theme/Themes";
+import { Image } from "expo-image";
+import { Asset } from "expo-asset";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
@@ -35,6 +38,7 @@ export type MyTraysProps = {
     close: () => void;
   };
   ChangeThemesTray: { close: () => void };
+  ChangeAvatarTray: { avatars: Asset[]; close: () => void };
 };
 
 const _TRAYS = {
@@ -372,7 +376,6 @@ const _TRAYS = {
   },
   ChangeThemesTray: {
     component: ({ close }: { close: () => void }) => {
-      const { height } = useWindowDimensions();
       const { setCurrentScheme } = useTheme();
 
       return (
@@ -469,6 +472,59 @@ const _TRAYS = {
                 ))}
             </CustomView>
           </View>
+        </CustomView>
+      );
+    },
+  },
+  ChangeAvatarTray: {
+    component: ({
+      avatars,
+      close,
+    }: {
+      avatars: Asset[];
+      close: () => void;
+    }) => {
+      const [selectedAvatar, setSelectedAvatar] = useState(0);
+      const avatarIndex = ["blue.svg", "green.svg", "orange.svg", "purple.svg"];
+
+      return (
+        <CustomView
+          variant="colorBase100"
+          className="rounded-tr-3xl rounded-tl-3xl p-8 gap-8"
+        >
+          <CustomText>
+            <MaterialIcons name="close" size={24} onPress={close} />
+          </CustomText>
+
+          <View className="gap-4 flex flex-row items-center justify-center flex-wrap">
+            {avatars.map((avatar: any, index: number) => (
+              <Pressable
+                key={index}
+                className="relative"
+                onPress={() => setSelectedAvatar(index)}
+              >
+                {selectedAvatar == index && (
+                  <CustomText
+                    color="colorBase300"
+                    className="absolute top-0 z-50"
+                  >
+                    <MaterialCommunityIcons name="check-circle" size={24} />
+                  </CustomText>
+                )}
+
+                <Image
+                  source={avatar.localUri}
+                  style={{ width: 64, height: 64, aspectRatio: "1/1" }}
+                />
+              </Pressable>
+            ))}
+          </View>
+          <CustomPressable
+            variant="colorBase200"
+            className="rounded-3xl items-center"
+          >
+            <CustomText>Save</CustomText>
+          </CustomPressable>
         </CustomView>
       );
     },
