@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import useTimer from "@/hooks/useTimer";
 import formatTime from "@/utils/format_time";
@@ -10,16 +11,18 @@ import CustomTextInput from "@/components/CustomTextInput";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { User } from "../user/types";
 import { Image } from "expo-image";
 import { Asset } from "expo-asset";
 import { Picker } from "@expo/ui/jetpack-compose";
 import { rgbaToHex } from "@/utils/colors";
 import { TimerPicker } from "react-native-timer-picker";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { Dimensions, Pressable, View } from "react-native";
+import { Dimensions, Pressable, ToastAndroid, View } from "react-native";
 import { Dispatch, SetStateAction, useState } from "react";
 
 import _THEMES from "../theme/Themes";
+import _API_INSTANCE from "@/utils/axios";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
@@ -495,6 +498,43 @@ const _TRAYS = {
       const [selectedAvatar, setSelectedAvatar] = useState(0);
       const avatarIndex = ["blue.svg", "green.svg", "orange.svg", "purple.svg"];
 
+      const [isSaving, setIsSaving] = useState(false);
+
+      const handleUpdate = async () => {
+        setIsSaving(true);
+        const temp = useAuth.getState().user as User;
+
+        try {
+          const { status } = await _API_INSTANCE.put(
+            "/users/change-avatar",
+            {
+              avatar_id: avatarIndex[selectedAvatar]?.replace(".svg", ""),
+            },
+            {
+              timeout: 8 * 60 * 1000,
+            }
+          );
+
+          if (status === 200) {
+            useAuth.setState({
+              user: {
+                ...temp,
+                avatar: avatarIndex[selectedAvatar]!.replace(".svg", ""),
+              },
+            });
+
+            close();
+          }
+        } catch (err) {
+          ToastAndroid.show(
+            err.message || "Error updating avatar.",
+            ToastAndroid.SHORT
+          );
+        } finally {
+          setIsSaving(false);
+        }
+      };
+
       return (
         <CustomView
           variant="colorBase100"
@@ -530,8 +570,10 @@ const _TRAYS = {
           <CustomPressable
             variant="colorBase200"
             className="rounded-3xl items-center"
+            disabled={isSaving}
+            onPress={handleUpdate}
           >
-            <CustomText>Save</CustomText>
+            <CustomText>{isSaving ? "Saving..." : "Save"}</CustomText>
           </CustomPressable>
         </CustomView>
       );

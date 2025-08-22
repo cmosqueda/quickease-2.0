@@ -20,6 +20,7 @@ import { DrawerActions } from "@react-navigation/native";
 import { View, Pressable, useWindowDimensions, ScrollView } from "react-native";
 
 import { _BADGE_ASSET_MAP, _BADGE_MAP, _BADGES } from "@/types/user/badges";
+import { _AVATAR_ASSET_MAP } from "@/types/user/avatars";
 
 const Badges = ({ user }: { user?: User }) => {
   const badgeIds = Object.keys(_BADGE_ASSET_MAP);
@@ -66,17 +67,22 @@ const Badges = ({ user }: { user?: User }) => {
 
 const Avatar = ({ user }: { user?: User }) => {
   const { height } = useWindowDimensions();
-  const [assets, error] = useAssets([
-    require("../../../assets/images/avatars/blue.svg"),
-    require("../../../assets/images/avatars/green.svg"),
-    require("../../../assets/images/avatars/orange.svg"),
-    require("../../../assets/images/avatars/purple.svg"),
-  ]);
+
+  const avatarIds = Object.keys(_AVATAR_ASSET_MAP);
+  const [assets] = useAssets(Object.values(_AVATAR_ASSET_MAP));
+
   const { push: openAvatarTray, pop: closeAvatarTray } = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
 
   if (!assets) return null;
+
+  // Fallback if user.avatar is missing/invalid
+  const avatarId =
+    user?.avatar && avatarIds.includes(user.avatar) ? user.avatar : "blue";
+
+  const avatarIndex = avatarIds.indexOf(avatarId);
+  const avatarAsset = assets[avatarIndex];
 
   return (
     <View
@@ -100,13 +106,15 @@ const Avatar = ({ user }: { user?: User }) => {
         >
           <MaterialCommunityIcons name="account-edit-outline" size={16} />
         </CustomText>
-        <CustomText>
+
+        {avatarAsset && (
           <Image
-            source={assets![2].localUri}
-            style={{ aspectRatio: "1/1", width: 96, height: 96 }}
+            source={{ uri: avatarAsset.localUri ?? avatarAsset.uri }}
+            style={{ aspectRatio: 1, width: 96, height: 96 }}
           />
-        </CustomText>
+        )}
       </Pressable>
+
       <CustomText variant="bold" className="text-3xl">
         {user?.first_name} {user?.last_name}
       </CustomText>
