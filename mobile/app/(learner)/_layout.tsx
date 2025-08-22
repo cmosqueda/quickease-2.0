@@ -160,7 +160,7 @@ export default function Layout() {
     <Drawer
       screenOptions={{
         headerShown: false,
-        drawerType: "slide",
+        drawerStatusBarAnimation: "slide",
       }}
       initialRouteName="(forum)"
       drawerContent={(props) => <CustomDrawerContent {...props} />}

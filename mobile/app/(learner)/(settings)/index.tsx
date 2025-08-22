@@ -13,6 +13,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, View } from "react-native";
 
 const AccountSettings = () => {
+  const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
+    "DismissibleStickToTopTray"
+  );
+
+  const [firstName, setFirstName] = useState("Jhon Lloyd");
+  const [lastName, setLastName] = useState("Viernes");
+
   return (
     <View className="gap-2">
       <CustomText variant="bold" className="text-sm">
@@ -20,12 +27,23 @@ const AccountSettings = () => {
       </CustomText>
 
       <CustomView className="px-6 py-6 rounded-3xl flex flex-row justify-between items-center">
-        <View className="flex flex-row items-center gap-4">
+        <Pressable
+          onPress={() =>
+            openTray("ChangeNameTray", {
+              firstName: firstName,
+              lastName: lastName,
+              setFirstName: setFirstName,
+              setLastName: setLastName,
+              close: closeTray,
+            })
+          }
+          className="flex flex-row items-center gap-4"
+        >
           <CustomText>
             <MaterialIcons name="edit" size={20} />
           </CustomText>
           <CustomText>Change your name</CustomText>
-        </View>
+        </Pressable>
       </CustomView>
 
       <CustomView className="px-6 py-6 rounded-3xl flex flex-row justify-between items-center">
