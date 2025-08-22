@@ -63,7 +63,7 @@ function CustomDrawerContent(props: any) {
         style={{
           paddingVertical: 16,
         }}
-        onPress={() => props.navigation.navigate("profile")}
+        onPress={() => props.navigation.navigate("(profile)")}
       >
         <CustomText color="colorBaseContent">
           <MaterialIcons name="account-circle" size={36} />
@@ -124,7 +124,7 @@ function CustomDrawerContent(props: any) {
         <CustomPressable
           className="flex-1 rounded-full"
           variant="colorBase100"
-          onPress={() => props.navigation.navigate("settings/index")}
+          onPress={() => props.navigation.navigate("(settings)")}
         >
           <CustomText>
             <MaterialIcons name="settings" size={20} />
@@ -133,6 +133,7 @@ function CustomDrawerContent(props: any) {
         <CustomPressable
           className="flex flex-row gap-2 rounded-full items-center"
           variant="colorBase100"
+          onPress={() => props.navigation.replace("index")}
         >
           <CustomText>
             <MaterialIcons name="logout" size={20} />

@@ -17,6 +17,7 @@ import { DrawerActions } from "@react-navigation/native";
 import { View, Pressable, useWindowDimensions } from "react-native";
 
 import { _BADGES } from "@/types/user/badges";
+import { useNavigation } from "expo-router";
 
 const Badges = () => {
   const [assets, error] = useAssets([
@@ -106,6 +107,7 @@ const Avatar = () => {
 };
 
 export default function Page() {
+  const navigation = useNavigation();
   const { currentScheme } = useTheme();
 
   const [index, setIndex] = useState(0);

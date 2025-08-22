@@ -14,7 +14,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useState } from "react";
 import { View, ScrollView, ToastAndroid, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 export default function Page() {
   const { user } = useAuth();
@@ -55,7 +55,7 @@ export default function Page() {
 
       if (status === 200) {
         ToastAndroid.show("Flashcard updated.", ToastAndroid.SHORT);
-        navigation.goBack();
+        router.back();
       }
     } catch (err: any) {
       ToastAndroid.show(
@@ -166,7 +166,7 @@ export default function Page() {
               if (index == 1) {
                 setIndex(0);
               }
-              navigation.goBack();
+              router.back();
             }}
           >
             <CustomText>
@@ -177,7 +177,7 @@ export default function Page() {
         </View>
         <CustomPressable
           className="flex flex-row gap-2 items-center rounded-3xl"
-          variant="colorBase200"
+          variant="colorBase300"
           onPress={handleSave}
           disabled={isSaving}
         >

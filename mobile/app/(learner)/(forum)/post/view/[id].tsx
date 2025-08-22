@@ -9,6 +9,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, View } from "react-native";
 import { useRef, useState } from "react";
+import { router } from "expo-router";
 
 export default function Page() {
   const { currentScheme } = useTheme();
@@ -28,7 +29,7 @@ export default function Page() {
         <Pressable
           onPress={() => {
             setIndex(0);
-            navigation.goBack();
+            router.back();
           }}
         >
           <CustomText>

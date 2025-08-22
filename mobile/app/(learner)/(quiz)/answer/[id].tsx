@@ -134,7 +134,7 @@ export default function LearnerAnswerQuizPage() {
               "Are you sure?",
               "By clicking yes, you agree to abandon your attempt."
             );
-            navigation.goBack();
+            router.back();
           }}
         >
           <CustomText>

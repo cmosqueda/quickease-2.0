@@ -14,6 +14,7 @@ import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { Pressable, View } from "react-native";
+import { router } from "expo-router";
 
 export default function Page() {
   const tagsTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
@@ -28,7 +29,7 @@ export default function Page() {
       style={{ backgroundColor: currentScheme.colorBase100 }}
     >
       <View className="flex flex-row gap-2 items-center justify-between">
-        <Pressable onPress={() => navigation.goBack()}>
+        <Pressable onPress={() => router.back()}>
           <CustomText>
             <MaterialIcons name="keyboard-arrow-left" size={36} />
           </CustomText>

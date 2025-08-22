@@ -15,6 +15,7 @@ import { useState } from "react";
 import { View, ScrollView, ToastAndroid, Pressable } from "react-native";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
 export default function Page() {
   const { user } = useAuth();
@@ -172,7 +173,7 @@ export default function Page() {
                 setIndex(0);
               }
 
-              navigation.goBack();
+              router.back();
             }}
           >
             <CustomText>

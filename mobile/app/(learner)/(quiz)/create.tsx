@@ -290,7 +290,7 @@ export default function Page() {
               }
 
               setTabIndex(0);
-              navigation.goBack();
+              router.back();
             }}
           >
             <CustomText>
