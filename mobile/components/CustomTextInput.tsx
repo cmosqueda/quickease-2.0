@@ -2,6 +2,7 @@ import React from "react";
 import useTheme from "@/hooks/useTheme";
 
 import { TextInput, TextInputProps } from "react-native";
+import _FONTS from "@/types/theme/Font";
 
 type CustomTextInputProps = TextInputProps;
 
@@ -19,6 +20,7 @@ export default function CustomTextInput(props: CustomTextInputProps) {
     <TextInput
       style={[
         {
+          fontFamily: _FONTS.Gabarito_400Regular,
           backgroundColor: currentScheme?.colorBase200,
           color: currentScheme?.colorBaseContent,
           paddingHorizontal: 12,

@@ -62,7 +62,7 @@ export default function LearnerQuizPage() {
   const handleEditQuiz = () => {
     router.push({
       pathname: "/(learner)/(quiz)/edit/[id]",
-      params: { id: "test" },
+      params: { id: id },
     });
   };
 
