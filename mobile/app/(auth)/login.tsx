@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, ToastAndroid, View } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
+import useAuth from "@/hooks/useAuth";
 
 export default function Page() {
   const { currentScheme } = useTheme();
@@ -40,6 +41,9 @@ export default function Page() {
           );
           return;
         } else {
+          useAuth.setState((state) => {
+            state.user = data;
+          });
           router.replace("/(learner)/(forum)");
         }
       }
