@@ -13,8 +13,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page() {
   const { currentScheme } = useTheme();
-  const { push: openTray, pop: closeTray } =
-    useTrays<MyTraysProps>("DismissibleRoundedNoMarginAndSpacingTray");
+  const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
+    "DismissibleRoundedNoMarginAndSpacingTray"
+  );
 
   const [displaySettings, setDisplaySettings] = useState("grid");
 
@@ -59,7 +60,7 @@ export default function Page() {
         />
         <CustomView
           variant="colorBase300"
-          className="flex-row flex-wrap gap-4 flex-1 px-4 py-4"
+          className="flex-row flex-wrap gap-4 flex-1 px-4 py-4 rounded-tr-3xl rounded-tl-3xl"
         >
           <CustomView className="flex-0 p-6 rounded-xl gap-2">
             <CustomText className="text-sm opacity-40">01/01/1970</CustomText>
@@ -120,7 +121,7 @@ export default function Page() {
       />
       <CustomView
         variant="colorBase300"
-        className="flex flex-col gap-4 flex-1 px-4 py-4"
+        className="flex flex-col gap-4 flex-1 px-4 py-4 rounded-tr-3xl rounded-tl-3xl"
       >
         <CustomView className="flex-0 p-6 rounded-xl gap-2">
           <CustomText className="text-sm opacity-40">01/01/1970</CustomText>

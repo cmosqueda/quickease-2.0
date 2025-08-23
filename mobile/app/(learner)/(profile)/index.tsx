@@ -74,44 +74,60 @@ const Badges = ({ user }: { user: User }) => {
 };
 
 const Posts = ({ user }: { user: User }) => {
-  const { data, isFetching, isError } = useQuery({
+  const { data, isFetching, isError } = useQuery<Post[]>({
     queryKey: [user.id, "user-posts"],
     queryFn: async () => {
-      try {
-        const { data } = await _API_INSTANCE.get<Post[]>("forum/");
-
-        return data;
-      } catch (err) {
-        throw err;
-      }
+      const { data } = await _API_INSTANCE.get<Post[]>("forum/");
+      return data;
     },
-    enabled: !!user.id,
+    enabled: Boolean(user.id),
     retry: 3,
   });
 
-  if (!isFetching) {
+  if (isFetching) {
     return (
-      <ScrollView contentContainerClassName="flex flex-col gap-4">
-        {data!.length > 0 &&
-          data!.map((post: Post) => (
-            <CustomView
-              key={post.id}
-              variant="colorBase300"
-              className="p-4 gap-2 rounded-3xl"
-            >
-              <CustomText
-                variant="bold"
-                className="text-2xl"
-                color="colorBaseContent"
-              >
-                {post.title}
-              </CustomText>
-              <CustomText color="colorBaseContent">{post.post_body}</CustomText>
-            </CustomView>
-          ))}
-      </ScrollView>
+      <CustomView className="flex items-center justify-center p-4">
+        <CustomText>Loading posts…</CustomText>
+      </CustomView>
     );
   }
+
+  if (isError || !data) {
+    return (
+      <CustomView className="flex items-center justify-center p-4">
+        <CustomText>Failed to load posts.</CustomText>
+      </CustomView>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <CustomView className="flex items-center justify-center p-4">
+        <CustomText>No posts yet.</CustomText>
+      </CustomView>
+    );
+  }
+
+  return (
+    <ScrollView contentContainerClassName="flex flex-col gap-4">
+      {data.map((post) => (
+        <CustomView
+          key={post.id}
+          variant="colorBase300"
+          className="p-4 gap-2 rounded-3xl"
+        >
+          <CustomText
+            variant="bold"
+            className="text-2xl"
+            color="colorBaseContent"
+          >
+            {post.title}
+          </CustomText>
+          <CustomText color="colorBaseContent">{post.post_body}</CustomText>
+        </CustomView>
+      ))}
+    </ScrollView>
+  );
 };
 
 const Avatar = ({ user }: { user: User }) => {

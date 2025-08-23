@@ -86,51 +86,48 @@ export default function Page() {
       </CustomView>
 
       <PagerView style={{ flex: 1 }} scrollEnabled={false} ref={pagerViewRef}>
-        <View key={0}>
+        <CustomView
+          variant="colorBase300"
+          className="flex-col gap-4 flex-1 px-4 py-4 rounded-tr-3xl rounded-tl-3xl"
+          key={0}
+        >
           {user?.quizzes &&
             user.quizzes.length > 0 &&
             user.quizzes.map((quiz: Quiz) => (
-              <CustomView
+              <Pressable
                 key={quiz.id}
-                variant="colorBase300"
-                className="flex-col gap-4 flex-1 px-4 py-4"
+                onPress={() =>
+                  router.push({
+                    pathname: "/(learner)/(quiz)/view/[id]",
+                    params: { id: quiz.id },
+                  })
+                }
               >
-                <Pressable
-                  onPress={() =>
-                    router.push({
-                      pathname: "/(learner)/(quiz)/view/[id]",
-                      params: { id: quiz.id },
-                    })
-                  }
-                >
-                  <CustomView className="p-6 rounded-xl gap-2">
-                    <View className="gap-2">
-                      {quiz.is_ai_generated && (
-                        <View className="flex flex-row gap-4 items-center">
-                          <CustomText>
-                            <MaterialIcons name="info" size={18} />
-                          </CustomText>
-                          <CustomText>AI-Generated</CustomText>
-                        </View>
-                      )}
-                      <CustomText className="text-sm opacity-40">
-                        {dayjs(quiz.updated_at).format(
-                          "hh:mm A / MMMM DD YYYY"
-                        )}
-                      </CustomText>
-                    </View>
-                    <CustomText variant="bold" className="text-3xl">
-                      {quiz.title}
+                <CustomView className="p-6 rounded-xl gap-2">
+                  <View className="gap-2">
+                    {quiz.is_ai_generated && (
+                      <View className="flex flex-row gap-4 items-center">
+                        <CustomText>
+                          <MaterialIcons name="info" size={18} />
+                        </CustomText>
+                        <CustomText>AI-Generated</CustomText>
+                      </View>
+                    )}
+                    <CustomText className="text-sm opacity-40">
+                      {dayjs(quiz.updated_at).format("hh:mm A / MMMM DD YYYY")}
                     </CustomText>
-                  </CustomView>
-                </Pressable>
-              </CustomView>
+                  </View>
+                  <CustomText variant="bold" className="text-3xl">
+                    {quiz.title}
+                  </CustomText>
+                </CustomView>
+              </Pressable>
             ))}
-        </View>
+        </CustomView>
         <CustomView
           key={1}
           variant="colorBase300"
-          className="flex-col gap-4 flex-1 px-4 py-4"
+          className="flex-col gap-4 flex-1 px-4 py-4 rounded-tr-3xl rounded-tl-3xl"
         >
           <Pressable
             style={{ backgroundColor: currentScheme.colorBase100 }}

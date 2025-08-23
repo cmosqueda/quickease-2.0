@@ -59,7 +59,10 @@ export default function Page() {
         }
       />
 
-      <CustomView variant="colorBase300" className="flex-1 px-4 py-4">
+      <CustomView
+        variant="colorBase300"
+        className="flex-1 px-4 py-4 rounded-tr-3xl rounded-tl-3xl"
+      >
         <Pressable
           onPress={() =>
             router.push({

@@ -87,7 +87,7 @@ export default function Page() {
       <PagerView style={{ flex: 1 }} ref={pagerViewRef}>
         <CustomView
           variant="colorBase300"
-          className="flex-col gap-4 flex-1 px-4 py-4"
+          className="flex-col gap-4 flex-1 px-4 py-4 rounded-tr-3xl rounded-tl-3xl"
           key={0}
         >
           {user?.flashcards.map((flashcard: Flashcard) => (
@@ -129,7 +129,7 @@ export default function Page() {
         <CustomView
           key={1}
           variant="colorBase300"
-          className="flex-col gap-4 flex-1 px-4 py-4"
+          className="flex-col gap-4 flex-1 px-4 py-4 rounded-tr-3xl rounded-tl-3xl"
         >
           <Pressable
             style={{ backgroundColor: currentScheme.colorBase100 }}
