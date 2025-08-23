@@ -22,7 +22,7 @@ import _GENERATION_ANIMATION from "../assets/animations/generate-study-materials
 
 export default function Index() {
   const pageViewRef = useRef<PagerView>(null);
-  const { height } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
   const { currentScheme } = useTheme();
   const [assets] = useAssets([require("../assets/images/mascot.png")]);
 
@@ -84,6 +84,8 @@ export default function Index() {
 
   useEffect(() => {
     const check = async () => {
+      setIsChecking(true);
+
       try {
         const loggedIn = await checkAuthAndRedirect();
         if (loggedIn) {
@@ -110,10 +112,10 @@ export default function Index() {
         }}
       >
         <LottieView
-          source={animations[1]}
+          source={animations[3]}
           autoPlay
           loop
-          style={{ height: height / 2 }}
+          style={{ height: height / 2.5, width: width }}
         />
       </SafeAreaView>
     );

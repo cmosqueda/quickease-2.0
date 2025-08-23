@@ -1,6 +1,9 @@
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
+import useTimer from "@/hooks/useTimer";
+import formatTime from "@/utils/format_time";
 import CustomText from "@/components/CustomText";
+import CustomView from "@/components/CustomView";
 import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -22,6 +25,15 @@ function CustomDrawerContent(props: any) {
   const { push: openPomodoro, pop: closePomodoro } = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
+
+  const { isRunning, mode, pause, reset, start, tick, time } = useTimer();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      tick();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [tick]);
 
   const links = [
     {
@@ -60,6 +72,67 @@ function CustomDrawerContent(props: any) {
     }
   };
 
+  const PomodoroComponent = () => {
+    return (
+      <CustomView variant="colorBase100" className="p-4 gap-2 rounded-3xl">
+        <View className="flex flex-row items-center justify-between">
+          <View className="flex flex-row gap-4 items-center">
+            <View>
+              <CustomText variant="bold" className="">
+                {mode === "study" ? "Study Mode" : "Short Break Mode"}
+              </CustomText>
+              <CustomText className="text-xs" style={{ opacity: 0.5 }}>
+                Current mode
+              </CustomText>
+            </View>
+          </View>
+        </View>
+
+        <View className="flex flex-row gap-4 items-center justify-between">
+          <View className="items-center">
+            <CustomText variant="black" className="text-3xl">
+              {formatTime(time)}
+            </CustomText>
+          </View>
+          <View className="flex flex-row gap-4 justify-center">
+            {isRunning && (
+              <CustomPressable
+                className="flex flex-row gap-2 items-center justify-center rounded-3xl"
+                variant="colorBase300"
+                onPress={() => pause()}
+              >
+                <CustomText>
+                  <MaterialIcons name="pause" size={20} />
+                </CustomText>
+              </CustomPressable>
+            )}
+            {!isRunning && (
+              <CustomPressable
+                className="flex flex-row gap-2 items-center justify-center rounded-3xl"
+                variant="colorBase300"
+                onPress={() => start()}
+              >
+                <CustomText>
+                  <MaterialIcons name="play-arrow" size={20} />
+                </CustomText>
+              </CustomPressable>
+            )}
+
+            <CustomPressable
+              className="flex flex-row gap-2 items-center justify-center rounded-3xl"
+              variant="colorBase300"
+              onPress={() => reset()}
+            >
+              <CustomText>
+                <MaterialIcons name="stop" size={24} />
+              </CustomText>
+            </CustomPressable>
+          </View>
+        </View>
+      </CustomView>
+    );
+  };
+
   return (
     <DrawerContentScrollView
       contentContainerStyle={{
@@ -96,29 +169,32 @@ function CustomDrawerContent(props: any) {
           opacity: 0.2,
         }}
       />
-      {links.map((link) => {
-        return (
-          <DrawerItem
-            key={link.href}
-            onPress={() => props.navigation.navigate(link.href)}
-            label={link.label}
-            activeTintColor={currentScheme.colorBaseContent}
-            activeBackgroundColor={currentScheme.colorBase300}
-            inactiveBackgroundColor={currentScheme.colorBase100}
-            inactiveTintColor={currentScheme.colorBaseContent}
-            icon={() => (
-              <CustomText>
-                <AntDesign name={link.icon} size={24} />
-              </CustomText>
-            )}
-          />
-        );
-      })}
+
+      <View className="gap-4">
+        {links.map((link) => {
+          return (
+            <DrawerItem
+              key={link.href}
+              onPress={() => props.navigation.navigate(link.href)}
+              label={link.label}
+              activeTintColor={currentScheme.colorBaseContent}
+              activeBackgroundColor={currentScheme.colorBase300}
+              inactiveBackgroundColor={currentScheme.colorBase100}
+              inactiveTintColor={currentScheme.colorBaseContent}
+              icon={() => (
+                <CustomText>
+                  <AntDesign name={link.icon} size={24} />
+                </CustomText>
+              )}
+            />
+          );
+        })}
+      </View>
+
       <View className="flex-1" />
       <View className="flex-1" />
       <View className="flex-1" />
-      <View className="flex-1" />
-      <View className="flex-1" />
+      <PomodoroComponent />
       <View className="flex-1 flex flex-row gap-2 items-center self-end">
         <CustomPressable
           onPress={() => {
@@ -158,7 +234,7 @@ function CustomDrawerContent(props: any) {
           <CustomText>
             <MaterialIcons name="logout" size={20} />
           </CustomText>
-          <CustomText className="text-lg">Logout</CustomText>
+          <CustomText>Logout</CustomText>
         </CustomPressable>
       </View>
     </DrawerContentScrollView>
