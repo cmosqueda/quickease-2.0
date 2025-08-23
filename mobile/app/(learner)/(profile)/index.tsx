@@ -1,0 +1,196 @@
+import useAuth from "@/hooks/useAuth";
+import useTheme from "@/hooks/useTheme";
+import PagerView from "react-native-pager-view";
+import CustomText from "@/components/CustomText";
+import CustomView from "@/components/CustomView";
+import CustomPressable from "@/components/CustomPressable";
+
+import Entypo from "@expo/vector-icons/Entypo";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
+import { User } from "@/types/user/types";
+import { Image } from "expo-image";
+import { useState } from "react";
+import { useTrays } from "react-native-trays";
+import { useAssets } from "expo-asset";
+import { MyTraysProps } from "@/types/trays/trays";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "expo-router";
+import { DrawerActions } from "@react-navigation/native";
+import { View, Pressable, useWindowDimensions, ScrollView } from "react-native";
+
+import { _BADGE_ASSET_MAP, _BADGE_MAP, _BADGES } from "@/types/user/badges";
+import { _AVATAR_ASSET_MAP } from "@/types/user/avatars";
+
+const Badges = ({ user }: { user?: User }) => {
+  const badgeIds = Object.keys(_BADGE_ASSET_MAP);
+  const [assets] = useAssets(Object.values(_BADGE_ASSET_MAP));
+
+  if (!assets) return null;
+
+  return (
+    <ScrollView contentContainerClassName="flex flex-col gap-4">
+      {user?.badges.map(
+        (badge: { id: string; title: string; description: string }) => {
+          const badgeMeta = _BADGE_MAP[badge.id];
+
+          if (!badgeMeta) return null;
+
+          const index = badgeIds.indexOf(badge.id);
+          if (index === -1) return null;
+
+          const asset = assets[index];
+
+          return (
+            <CustomView
+              key={badge.id}
+              variant="colorBase300"
+              className="p-4 flex flex-row gap-4 items-center rounded-3xl"
+            >
+              <Image
+                source={{ uri: asset.localUri ?? asset.uri }}
+                style={{ width: 84, height: 84, aspectRatio: 1 }}
+              />
+              <View className="flex-1">
+                <CustomText variant="bold" className="text-lg">
+                  {badgeMeta.name}
+                </CustomText>
+                <CustomText>{badgeMeta.description}</CustomText>
+              </View>
+            </CustomView>
+          );
+        }
+      )}
+    </ScrollView>
+  );
+};
+
+const Avatar = ({ user }: { user?: User }) => {
+  const { height } = useWindowDimensions();
+
+  const avatarIds = Object.keys(_AVATAR_ASSET_MAP);
+  const [assets] = useAssets(Object.values(_AVATAR_ASSET_MAP));
+
+  const { push: openAvatarTray, pop: closeAvatarTray } = useTrays<MyTraysProps>(
+    "DismissibleRoundedNoMarginAndSpacingTray"
+  );
+
+  if (!assets) return null;
+
+  // Fallback if user.avatar is missing/invalid
+  const avatarId =
+    user?.avatar && avatarIds.includes(user.avatar) ? user.avatar : "blue";
+
+  const avatarIndex = avatarIds.indexOf(avatarId);
+  const avatarAsset = assets[avatarIndex];
+
+  return (
+    <View
+      style={{ height: height / 6 }}
+      className="flex gap-4 items-center justify-center"
+    >
+      <Pressable
+        className="relative"
+        onPress={() =>
+          openAvatarTray("ChangeAvatarTray", {
+            close: closeAvatarTray,
+            avatars: assets,
+          })
+        }
+      >
+        <CustomText
+          className="bottom-0 absolute z-50 p-1 rounded-full"
+          style={{
+            backgroundColor: useTheme.getState().currentScheme.colorBase300,
+          }}
+        >
+          <MaterialCommunityIcons name="account-edit-outline" size={16} />
+        </CustomText>
+
+        {avatarAsset && (
+          <Image
+            source={{ uri: avatarAsset.localUri ?? avatarAsset.uri }}
+            style={{ aspectRatio: 1, width: 96, height: 96 }}
+          />
+        )}
+      </Pressable>
+
+      <CustomText variant="bold" className="text-3xl">
+        {user?.first_name} {user?.last_name}
+      </CustomText>
+    </View>
+  );
+};
+
+export default function Page() {
+  const navigation = useNavigation();
+  const { currentScheme } = useTheme();
+  const { user } = useAuth();
+
+  const [index, setIndex] = useState(0);
+
+  if (!user) return null;
+
+  return (
+    <SafeAreaView
+      className="flex flex-1"
+      style={{
+        backgroundColor: currentScheme?.colorBase100,
+      }}
+    >
+      <View className="flex flex-row justify-between items-center px-4 py-2">
+        <Pressable
+          onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+        >
+          <CustomText>
+            <Entypo name="menu" size={26} />
+          </CustomText>
+        </Pressable>
+      </View>
+      <Avatar user={user} />
+      <CustomView
+        className="flex-1 p-4 mt-8 rounded-tl-3xl rounded-tr-3xl gap-4"
+        variant="colorBase200"
+      >
+        <View className="flex flex-row gap-2">
+          <CustomPressable
+            variant={index == 0 ? "colorPrimary" : "colorBase300"}
+            className="flex-1 rounded-3xl flex flex-row gap-2 justify-center"
+            onPress={() => setIndex(0)}
+          >
+            <CustomText
+              color={index == 0 ? "colorPrimaryContent" : "colorBaseContent"}
+            >
+              Badges
+            </CustomText>
+          </CustomPressable>
+          <CustomPressable
+            variant={index == 1 ? "colorPrimary" : "colorBase300"}
+            className="flex-1 rounded-3xl flex flex-row gap-2 justify-center"
+            onPress={() => setIndex(1)}
+          >
+            <CustomText
+              color={index == 1 ? "colorPrimaryContent" : "colorBaseContent"}
+            >
+              Stats
+            </CustomText>
+          </CustomPressable>
+          <CustomPressable
+            variant={index == 2 ? "colorPrimary" : "colorBase300"}
+            className="flex-1 rounded-3xl flex flex-row gap-2 justify-center"
+            onPress={() => setIndex(2)}
+          >
+            <CustomText
+              color={index == 2 ? "colorPrimaryContent" : "colorBaseContent"}
+            >
+              Posts
+            </CustomText>
+          </CustomPressable>
+        </View>
+        <PagerView style={{ flex: 1 }}>
+          <Badges key={0} user={user} />
+        </PagerView>
+      </CustomView>
+    </SafeAreaView>
+  );
+}

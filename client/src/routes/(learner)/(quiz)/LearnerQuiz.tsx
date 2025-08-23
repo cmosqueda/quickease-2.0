@@ -17,62 +17,64 @@ import { useEffect, useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
 
+interface QuizData {
+  id: string;
+  user_id: string;
+  quiz_content: {
+    question: string;
+    description?: string;
+    options: string[];
+    correctAnswers: number[];
+  }[];
+  title: string;
+  description?: string;
+  is_public: boolean | null;
+  created_at: string;
+  updated_at: string;
+  is_ai_generated: boolean;
+  is_randomized: boolean;
+  timed_quiz: string;
+  attempts: {
+    id: string;
+    duration: number;
+    score: number;
+    started_at: string;
+    completed_at: string;
+    user_id: string;
+    answer_data: {
+      question: {
+        correctAnswers: number[];
+      };
+      user_answer: number[];
+    }[];
+  }[];
+  leaderboard: {
+    id: string;
+    duration: number;
+    score: number;
+    started_at: string;
+    completed_at: string;
+    user: {
+      id: string;
+      first_name: string;
+      last_name: string;
+    };
+    answer_data: {
+      question: {
+        correctAnswers: number[];
+      };
+      user_answer: number[];
+    }[];
+  }[];
+}
+
 export default function LearnerQuizPage() {
   const navigate = useNavigate();
+  const data = useLoaderData() as QuizData;
   const { user } = useAuth();
-  const data = useLoaderData() as {
-    id: string;
-    user_id: string;
-    quiz_content: {
-      question: string;
-      description?: string;
-      options: string[];
-      correctAnswers: number[];
-    }[];
-    title: string;
-    description?: string;
-    is_public: boolean | null;
-    created_at: string;
-    updated_at: string;
-    is_ai_generated: boolean;
-    is_randomized: boolean;
-    timed_quiz: string;
-    attempts: {
-      id: string;
-      answer_data: {
-        question: {
-          question: string;
-          description?: string;
-          options: string[];
-          correctAnswers: number[];
-        }[];
-        user_answer: number[];
-      }[];
-      user_id: string;
-      started_at: string;
-      completed_at: string;
-    }[];
-    leaderboard: {
-      id: string;
-      duration: number;
-      score: number;
-      started_at: string;
-      completed_at: string;
-      user: {
-        id: string;
-        first_name: string;
-        last_name: string;
-      };
-      answer_data: {
-        question: {
-          correctAnswers: number[];
-        };
-        user_answer: number[];
-      }[];
-    }[];
-  };
 
   const [tabIndex, setTabIndex] = useState(1);
+  const [quizVisibility, setVisibility] = useState(data.is_public);
 
   const handleAnswerQuiz = async () => {
     await localStorage.setItem("QUICKEASE_CURRENT_QUIZ", JSON.stringify(data));
@@ -104,22 +106,59 @@ export default function LearnerQuizPage() {
     }
   };
 
-  const renderAttempts = () => (
-    <div className="flex flex-row gap-4">
-      {data.attempts.map((attempt, index: number) => (
-        <NavLink
-          key={attempt.id}
-          to={`/learner/quizzes/${data.id}/attempt/${attempt.id}`}
-          className="flex flex-col p-4 bg-base-100 rounded-3xl w-fit"
+  const handleVisibility = async (visibility: boolean) => {
+    try {
+      const { status } = await _API_INSTANCE.put("/quiz/toggle-visibility", {
+        visibility,
+        quiz_id: data.id,
+      });
+
+      if (status == 200) {
+        toast.success("Quiz visibility updated.");
+        data.is_public = visibility;
+        setVisibility(visibility);
+      }
+    } catch {
+      toast.error("Error updating visibility.");
+      return;
+    }
+  };
+
+  const renderAttempts = () =>
+    data.attempts.map((entry, index) => {
+      const totalQuestions = entry.answer_data.length;
+      const correctCount = entry.answer_data.reduce((acc, item) => {
+        const { correctAnswers } = item.question;
+        const userAnswers = item.user_answer;
+        const isCorrect =
+          correctAnswers.length === userAnswers.length &&
+          correctAnswers.every((ans: number) => userAnswers.includes(ans));
+        return acc + (isCorrect ? 1 : 0);
+      }, 0);
+
+      return (
+        <div
+          key={entry.id}
+          className="flex flex-row justify-between items-center bg-base-100 p-4 rounded-2xl"
         >
-          {dayjs(attempt.started_at).format("MMMM DD, YYYY")}
-          <p className="font-bold text-4xl text-center">
-            {calculateScore(attempt.answer_data)}/{attempt.answer_data.length}
-          </p>
-        </NavLink>
-      ))}
-    </div>
-  );
+          <div className="flex flex-row gap-4">
+            <p>{index + 1}</p>
+            <div>
+              <h1 className="text-xl font-bold">
+                {user?.first_name} {user?.last_name}
+              </h1>
+              <p>
+                {dayjs(entry.completed_at).format("MMMM DD YYYY / hh:mm A")}
+              </p>
+            </div>
+          </div>
+          <h1 className="font-bold text-xl">
+            {correctCount}/{totalQuestions}
+          </h1>
+        </div>
+      );
+    });
+
   const renderLeaderboard = () =>
     data.leaderboard.map((entry, index) => {
       const totalQuestions = entry.answer_data.length;
@@ -178,6 +217,19 @@ export default function LearnerQuizPage() {
                 </summary>
                 <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4">
                   <li>
+                    <a
+                      onClick={() => {
+                        if (quizVisibility) {
+                          handleVisibility(false);
+                        } else {
+                          handleVisibility(true);
+                        }
+                      }}
+                    >
+                      {quizVisibility ? "Set to private" : "Set to public"}
+                    </a>
+                  </li>
+                  <li>
                     <a onClick={handleDeleteQuiz}>Delete</a>
                   </li>
                 </ul>
@@ -194,7 +246,7 @@ export default function LearnerQuizPage() {
         </div>
       </div>
 
-      <div>
+      <div className="p-8 rounded-xl bg-base-100">
         {data.is_ai_generated && (
           <div className="flex flex-row items-center gap-2">
             <Info size={16} className="text-sm text-base-content/50" />

@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import {
+  change_avatar,
   check_user,
   edit_email,
   edit_user_name,
@@ -37,5 +38,10 @@ export default async function userRoutes(fastify: FastifyInstance) {
   fastify.put("/toggle-visibility", {
     preHandler: [fastify.authenticate],
     handler: toggle_user_visibility,
+  });
+
+  fastify.put("/change-avatar", {
+    preHandler: [fastify.authenticate],
+    handler: change_avatar,
   });
 }

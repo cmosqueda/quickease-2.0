@@ -1,8 +1,13 @@
 import * as SplashScreen from "expo-splash-screen";
+import useTheme from "@/hooks/useTheme";
+import _TRAYS from "@/types/trays/trays";
 
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { TrayProvider } from "react-native-trays";
+import { router, Stack } from "expo-router";
+import { useEffect, useState } from "react";
+import { checkAuthAndRedirect } from "@/utils/axios";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Gabarito_400Regular,
@@ -15,7 +20,6 @@ import {
 } from "@expo-google-fonts/gabarito";
 
 import "../globals.css";
-import useTheme from "@/hooks/useTheme";
 
 const client = new QueryClient();
 
@@ -38,22 +42,72 @@ export default function RootLayout() {
     }
   }, [loaded, error]);
 
+  useEffect(() => {
+    if (currentScheme.colorscheme === "light") {
+      setStatusBarStyle("dark");
+    } else {
+      setStatusBarStyle("light");
+    }
+  }, [currentScheme.colorscheme]);
+
   if (!loaded && !error) {
     return null;
   }
 
   return (
-    <QueryClientProvider client={client}>
-      <Stack
-        screenOptions={{ headerShown: false }}
-        initialRouteName="(learner)"
-      >
-        <Stack.Screen name="index" />
-        <Stack.Screen name="(auth)/login" />
-        <Stack.Screen name="(auth)/register" />
-        <Stack.Screen name="(learner)" />
+    <GestureHandlerRootView>
+      <QueryClientProvider client={client}>
+        <TrayProvider
+          trays={_TRAYS}
+          stackConfigs={{
+            DismissibleStickToTopTray: {
+              adjustForKeyboard: true,
+              dismissOnBackdropPress: true,
+              stickToTop: true,
+              trayStyles: {
+                backgroundColor: useTheme.getState().currentScheme.colorBase100,
+              },
+              backdropStyles: { backgroundColor: "rgba(0,0,0,0.7)" },
+            },
+            DismissibleRoundedNoMarginAndSpacingTray: {
+              dismissOnBackdropPress: true,
+              trayStyles: {
+                borderBottomLeftRadius: 0,
+                borderBottomRightRadius: 0,
+                backgroundColor: useTheme.getState().currentScheme.colorBase100,
+              },
+              backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
+              horizontalSpacing: 0,
+            },
+            RoundedNoMarginAndSpacingTray: {
+              trayStyles: {
+                borderBottomLeftRadius: 0,
+                borderBottomRightRadius: 0,
+                backgroundColor: useTheme.getState().currentScheme.colorBase100,
+              },
+              backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
+              horizontalSpacing: 0,
+            },
+          }}
+        >
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              animation: "fade_from_bottom",
+            }}
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(auth)/login" />
+            <Stack.Screen name="(auth)/register" />
+            <Stack.Screen
+              name="(learner)"
+              options={{ animation: "fade_from_bottom" }}
+            />
+          </Stack>
+        </TrayProvider>
+
         <StatusBar style="auto" translucent animated />
-      </Stack>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }

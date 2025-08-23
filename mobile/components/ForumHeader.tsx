@@ -1,26 +1,32 @@
-import Entypo from "@expo/vector-icons/Entypo";
 import CustomText from "./CustomText";
-import useTheme from "@/hooks/useTheme";
 import CustomView from "./CustomView";
 
-import { Pressable, View } from "react-native";
-import { DrawerActions, useNavigation } from "@react-navigation/native";
+import Entypo from "@expo/vector-icons/Entypo";
+
+import { Pressable, View, ViewProps } from "react-native";
+import { DrawerActions } from "@react-navigation/native";
+import { ReactNode } from "react";
+import { useNavigation } from "expo-router";
+
+type ForumHeaderProps = {
+  title?: string;
+  rightSideChildren?: ReactNode;
+  tabChildren?: ReactNode;
+} & ViewProps;
 
 export default function ForumHeader({
   title = "QuickEase",
   rightSideChildren,
-}: {
-  title?: string;
-  rightSideChildren: React.ReactNode;
-}) {
-  const { currentScheme } = useTheme();
+  tabChildren,
+  ...viewProps
+}: ForumHeaderProps) {
   const navigation = useNavigation();
 
   return (
-    <>
+    <View {...viewProps}>
       <CustomView
         variant="colorBase100"
-        className="flex flex-row justify-between items-center px-4 pt-2"
+        className="flex flex-row justify-between items-center p-4"
       >
         <View className="flex flex-row gap-4 items-center ">
           <Pressable
@@ -30,14 +36,24 @@ export default function ForumHeader({
               <Entypo name="menu" size={26} />
             </CustomText>
           </Pressable>
-          <CustomText variant="bold" className="text-xl">
+          <CustomText variant="black" className="text-xl">
             {title}
           </CustomText>
         </View>
-        <View className="flex flex-row gap-6 items-center">
-          {rightSideChildren}
-        </View>
+        {rightSideChildren && (
+          <View className="flex flex-row gap-6 items-center">
+            {rightSideChildren}
+          </View>
+        )}
       </CustomView>
-    </>
+      {tabChildren && (
+        <CustomView
+          variant="colorBase100"
+          className="px-8 py-4 flex flex-row gap-4"
+        >
+          {tabChildren}
+        </CustomView>
+      )}
+    </View>
   );
 }

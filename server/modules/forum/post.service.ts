@@ -62,6 +62,7 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
           first_name: true,
           last_name: true,
           email: true,
+          avatar: true,
         },
       },
       votes: {
@@ -136,6 +137,7 @@ export async function getPost(post_id: string, user_id: string) {
           first_name: true,
           last_name: true,
           email: true,
+          avatar: true,
         },
       },
       votes: {
@@ -162,6 +164,7 @@ export async function getPost(post_id: string, user_id: string) {
           first_name: true,
           last_name: true,
           email: true,
+          avatar: true,
         },
       },
       votes: {
@@ -423,6 +426,7 @@ export async function searchPost(query: string, page = 1, limit = 10, sort: "new
         select: {
           first_name: true,
           last_name: true,
+          avatar: true,
         },
       },
       tags: {

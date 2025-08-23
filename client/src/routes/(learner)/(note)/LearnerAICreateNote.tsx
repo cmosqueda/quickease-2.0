@@ -69,7 +69,7 @@ export default function LearnerAICreateNotePage() {
         }
       );
 
-      if (res.status == 200) {
+      if (res.status == 201) {
         await checkBadges();
         toast.success("Note created.");
         navigate("/learner/library?tab=notes");

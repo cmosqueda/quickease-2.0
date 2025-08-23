@@ -282,6 +282,14 @@ export default function LearnerCreatePostPage() {
               );
             })}
       </div>
+
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={() => setTabIndex(0)}
+      >
+        Confirm selection
+      </button>
     </>,
     <>
       {/* Header */}
@@ -332,6 +340,14 @@ export default function LearnerCreatePostPage() {
               );
             })}
       </div>
+
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={() => setTabIndex(0)}
+      >
+        Confirm selection
+      </button>
     </>,
     <>
       {/* Header */}
@@ -380,6 +396,14 @@ export default function LearnerCreatePostPage() {
               );
             })}
       </div>
+
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={() => setTabIndex(0)}
+      >
+        Confirm selection
+      </button>
     </>,
   ]; // 0 - Post | 1 - Notes | 2 - Flashcards | 3 - Quizzes
 

@@ -8,9 +8,8 @@ export type AuthUserRecord = {
   username: string;
   first_name: string;
   last_name: string;
+  avatar: string;
   email: string;
-  gender?: "male" | "female";
-  phone_number: string;
   badges: {
     id: string;
     title: string;

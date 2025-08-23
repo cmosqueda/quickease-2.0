@@ -30,6 +30,7 @@ type CommentCardProps = {
     first_name: string;
     last_name: string;
     email: string;
+    avatar: string;
   };
   replies: CommentCardProps[];
   user_vote: number;
@@ -145,7 +146,14 @@ const CommentCard = ({
     return (
       <div className="flex flex-col gap-4">
         <div className="flex flex-row gap-4 items-start">
-          <div className="w-[36px] aspect-square rounded-full bg-base-300" />
+          <img
+            src={
+              comment.user.avatar
+                ? `/assets/images/avatars/${comment.user.avatar}.svg`
+                : "/assets/images/avatars/blue.svg"
+            }
+            className="w-[36px] aspect-square rounded-full bg-base-300"
+          />
           <div className="flex flex-col flex-1">
             <NavLink
               className={"font-bold"}

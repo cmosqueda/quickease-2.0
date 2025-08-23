@@ -12,19 +12,18 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  password     String
-  first_name   String
-  last_name    String
-  email        String   @unique
-  gender       String?
-  phone_number String?
-  badges       Json?
-  is_public    Boolean  @default(true)
-  created_at   DateTime @default(now())
-  updated_at   DateTime @default(now())
-  is_admin     Boolean  @default(false)
-  is_verified  Boolean  @default(false)
+  id          String   @id @default(uuid())
+  password    String
+  first_name  String
+  last_name   String
+  email       String   @unique
+  avatar      String?
+  badges      Json?
+  is_public   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  is_admin    Boolean  @default(false)
+  is_verified Boolean  @default(false)
 
   flashcards             Flashcard[]
   notes                  Note[]
@@ -101,14 +100,14 @@ enum ResolveType {
 }
 
 model Post {
-  id          String      @id @default(uuid())
-  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id          String       @id @default(uuid())
+  user        User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id     String
   title       String
   post_body   String
-  created_at  DateTime    @default(now())
-  updated_at  DateTime    @default(now())
-  is_public   Boolean     @default(true)
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @default(now())
+  is_public   Boolean      @default(true)
   is_resolved ResolveType?
 
   tags        PostTag[]

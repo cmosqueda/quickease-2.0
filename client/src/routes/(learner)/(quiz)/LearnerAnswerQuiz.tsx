@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import _API_INSTANCE from "@/utils/axios";
 import { checkBadges } from "@/utils/badges";
+import clsx from "clsx";
 
 import {
   ArrowLeft,
@@ -10,6 +11,8 @@ import {
   ArrowRightFromLine,
   CheckCircle2,
   Info,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
@@ -59,16 +62,24 @@ export default function LearnerAnswerQuizPage() {
   const handleOptionToggle = (questionIdx: number, optionIdx: number) => {
     setUserAnswers((prev) => {
       const updated = [...prev];
-      const selected = new Set(updated[questionIdx].user_answer);
+      const currentQ = updated[questionIdx].question;
 
-      selected.has(optionIdx)
-        ? selected.delete(optionIdx)
-        : selected.add(optionIdx);
+      if (currentQ.correctAnswers.length > 1) {
+        const selected = new Set(updated[questionIdx].user_answer);
+        selected.has(optionIdx)
+          ? selected.delete(optionIdx)
+          : selected.add(optionIdx);
 
-      updated[questionIdx] = {
-        ...updated[questionIdx],
-        user_answer: Array.from(selected),
-      };
+        updated[questionIdx] = {
+          ...updated[questionIdx],
+          user_answer: Array.from(selected),
+        };
+      } else {
+        updated[questionIdx] = {
+          ...updated[questionIdx],
+          user_answer: [optionIdx],
+        };
+      }
 
       return updated;
     });
@@ -110,7 +121,7 @@ export default function LearnerAnswerQuizPage() {
 
       if (status === 200) {
         await checkBadges();
-        
+
         toast(
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row gap-2 items-center flex-1">
@@ -205,10 +216,23 @@ export default function LearnerAnswerQuizPage() {
           {data.quiz_content?.map((_, index) => (
             <div
               key={index}
-              className="flex flex-col items-center justify-center p-4 rounded-xl w-[3rem] h-[3rem] aspect-square hover:bg-base-content/40 cursor-pointer bg-base-100"
+              className={clsx(
+                userAnswers[index].user_answer.length > 0
+                  ? "bg-base-content/50"
+                  : null,
+                "flex flex-col items-center justify-center p-4 rounded-xl w-[3rem] h-[3rem] aspect-square hover:bg-base-content/40 cursor-pointer bg-base-100"
+              )}
               onClick={() => setQuestionIndex(index)}
             >
-              <h1>{index + 1}</h1>
+              <h1
+                className={clsx(
+                  userAnswers[index].user_answer.length > 0
+                    ? "text-base-content"
+                    : null
+                )}
+              >
+                {index + 1}
+              </h1>
             </div>
           ))}
         </div>
@@ -220,12 +244,26 @@ export default function LearnerAnswerQuizPage() {
                 {questionIndex + 1}. {currentQuestion.question}
               </h1>
               <p>{currentQuestion.description || "No description"}</p>
+              {currentQuestion.correctAnswers.length > 1 && (
+                <p className="text-xs text-base-content/50">
+                  (Multiple answers)
+                </p>
+              )}
               <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-base-100 my-2">
                 {currentQuestion.options.map((option, i) => (
                   <div className="flex flex-row gap-2 items-center" key={i}>
                     <input
-                      type="checkbox"
-                      className="checkbox"
+                      type={
+                        currentQuestion.correctAnswers.length > 1
+                          ? "checkbox"
+                          : "radio"
+                      }
+                      name={`question-${questionIndex}`}
+                      className={
+                        currentQuestion.correctAnswers.length > 1
+                          ? "checkbox"
+                          : "radio"
+                      }
                       checked={userAnswers[questionIndex]?.user_answer.includes(
                         i
                       )}
@@ -240,6 +278,31 @@ export default function LearnerAnswerQuizPage() {
             <p>No question found</p>
           )}
         </div>
+      </div>
+      <div className="flex flex-row gap-2 items-center self-end">
+        {questionIndex > 0 && (
+          <button
+            className="btn btn-primary"
+            onClick={() => setQuestionIndex((prev) => Math.max(0, prev - 1))}
+          >
+            <ChevronLeft />
+            <p>Previous</p>
+          </button>
+        )}
+
+        {questionIndex < data.quiz_content.length - 1 && (
+          <button
+            className="btn btn-primary"
+            onClick={() =>
+              setQuestionIndex((prev) =>
+                Math.min(data.quiz_content.length - 1, prev + 1)
+              )
+            }
+          >
+            <ChevronRight />
+            <p>Next</p>
+          </button>
+        )}
       </div>
     </div>
   );

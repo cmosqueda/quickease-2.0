@@ -19,9 +19,27 @@ This directory serves the mobile client-side of our study named `QuickEase 2.0`,
 Expo and its other modules, immer, NativeWind, prettier-plugin-tailwindcss, zod, zustand
 ```
 
-## Testing Rules
+## Building the development build
 
-1. Always use development build for manual testing or unit testing (if allowed)
+Requirements
+
+- Installed /node_modules
+- Java SDK 17.0.3/18
+- CMake/NDK/Command-line Tools/Platform Tools/Build Tools/Google USB Driver (All can be installed in Android Studio)
+
+1. Install the dependencies
+   First is to install Android Studio on your environment, navigate to `More Actions` and there should be a window. Navigate to `Languages & Frameworks` & select `Android SDK`. Click the `SDK Tools` on the tab list. Make sure these are checked/installed:ZZ
+   - Android 15.0 ("VanillaIceCream") API 35 / Revision 2
+   - Android SDK Build Tools
+   - NDK latest version & version 27.1.12297006 (Side by Side)
+   - Android SDK Command-line Tools (latest)
+   - CMake
+   - Android SDK Platform-Tools
+   - Google USB Driver
+
+2. If you still didn't run the `npm install` command, please do.
+3. After installing the dependencies, run the `npx expo run:android` command.
+4. Wait for it to build then the development build should be ready to go.
 
 ## Coding rules
 

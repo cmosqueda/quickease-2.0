@@ -23,7 +23,8 @@ export async function getUserNote(note_id: string) {
 export async function createUserNote(
   title: string,
   content: string,
-  user_id: string
+  user_id: string,
+  is_ai_generated: boolean
 ) {
   try {
     return await db_client.note.create({
@@ -31,6 +32,7 @@ export async function createUserNote(
         title,
         notes_content: content,
         user_id,
+        is_ai_generated,
       },
     });
   } catch (err) {

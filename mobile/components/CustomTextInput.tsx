@@ -1,8 +1,9 @@
 import React from "react";
-import { TextInput, TextInputProps, StyleSheet } from "react-native";
 import useTheme from "@/hooks/useTheme";
 
-// Define a prop type that extends the default TextInputProps
+import { TextInput, TextInputProps } from "react-native";
+import _FONTS from "@/types/theme/Font";
+
 type CustomTextInputProps = TextInputProps;
 
 export default function CustomTextInput(props: CustomTextInputProps) {
@@ -19,6 +20,7 @@ export default function CustomTextInput(props: CustomTextInputProps) {
     <TextInput
       style={[
         {
+          fontFamily: _FONTS.Gabarito_400Regular,
           backgroundColor: currentScheme?.colorBase200,
           color: currentScheme?.colorBaseContent,
           paddingHorizontal: 12,
@@ -27,6 +29,7 @@ export default function CustomTextInput(props: CustomTextInputProps) {
       ]}
       cursorColor={cursorColor}
       selectionColor={selectionColor}
+      placeholderTextColor={currentScheme.colorSecondary}
       {...rest}
     />
   );

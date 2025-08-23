@@ -48,10 +48,16 @@ export async function create_user_note(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const { title, content, user_id } = request.body as {
+  const {
+    title,
+    content,
+    user_id,
+    is_ai_generated = false,
+  } = request.body as {
     title: string;
     content: string;
     user_id: string;
+    is_ai_generated: boolean;
   };
 
   const schema = z.object({
@@ -70,7 +76,7 @@ export async function create_user_note(
   }
 
   try {
-    const note = await createUserNote(title, content, user_id);
+    const note = await createUserNote(title, content, user_id, is_ai_generated);
     reply.code(201).send(note);
   } catch (err) {
     reply.code(500).send({ message: "Error creating note.", errors: err });
