@@ -177,8 +177,7 @@ const _TRAYS = {
               </CustomText>
               <View>
                 <CustomText variant="bold" className="text-xl">
-                  {mode[0].toUpperCase()}
-                  {mode.slice(1)} Mode
+                  {mode === "study" ? "Study Mode" : "Short Break Mode"}
                 </CustomText>
                 <CustomText className="text-sm" style={{ opacity: 0.5 }}>
                   Current mode

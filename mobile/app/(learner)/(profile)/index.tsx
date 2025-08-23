@@ -8,9 +8,9 @@ import CustomPressable from "@/components/CustomPressable";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { User } from "@/types/user/types";
+import { Post, User } from "@/types/user/types";
 import { Image } from "expo-image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTrays } from "react-native-trays";
 import { useAssets } from "expo-asset";
 import { MyTraysProps } from "@/types/trays/trays";
@@ -19,10 +19,12 @@ import { useNavigation } from "expo-router";
 import { DrawerActions } from "@react-navigation/native";
 import { View, Pressable, useWindowDimensions, ScrollView } from "react-native";
 
-import { _BADGE_ASSET_MAP, _BADGE_MAP, _BADGES } from "@/types/user/badges";
 import { _AVATAR_ASSET_MAP } from "@/types/user/avatars";
+import { _BADGE_ASSET_MAP, _BADGE_MAP } from "@/types/user/badges";
+import { useQuery } from "@tanstack/react-query";
+import _API_INSTANCE from "@/utils/axios";
 
-const Badges = ({ user }: { user?: User }) => {
+const Badges = ({ user }: { user: User }) => {
   const badgeIds = Object.keys(_BADGE_ASSET_MAP);
   const [assets] = useAssets(Object.values(_BADGE_ASSET_MAP));
 
@@ -52,10 +54,16 @@ const Badges = ({ user }: { user?: User }) => {
                 style={{ width: 84, height: 84, aspectRatio: 1 }}
               />
               <View className="flex-1">
-                <CustomText variant="bold" className="text-lg">
+                <CustomText
+                  variant="bold"
+                  className="text-lg"
+                  color="colorBaseContent"
+                >
                   {badgeMeta.name}
                 </CustomText>
-                <CustomText>{badgeMeta.description}</CustomText>
+                <CustomText color="colorBaseContent">
+                  {badgeMeta.description}
+                </CustomText>
               </View>
             </CustomView>
           );
@@ -65,7 +73,48 @@ const Badges = ({ user }: { user?: User }) => {
   );
 };
 
-const Avatar = ({ user }: { user?: User }) => {
+const Posts = ({ user }: { user: User }) => {
+  const { data, isFetching, isError } = useQuery({
+    queryKey: [user.id, "user-posts"],
+    queryFn: async () => {
+      try {
+        const { data } = await _API_INSTANCE.get<Post[]>("forum/");
+
+        return data;
+      } catch (err) {
+        throw err;
+      }
+    },
+    enabled: !!user.id,
+    retry: 3,
+  });
+
+  if (!isFetching) {
+    return (
+      <ScrollView contentContainerClassName="flex flex-col gap-4">
+        {data!.length > 0 &&
+          data!.map((post: Post) => (
+            <CustomView
+              key={post.id}
+              variant="colorBase300"
+              className="p-4 gap-2 rounded-3xl"
+            >
+              <CustomText
+                variant="bold"
+                className="text-2xl"
+                color="colorBaseContent"
+              >
+                {post.title}
+              </CustomText>
+              <CustomText color="colorBaseContent">{post.post_body}</CustomText>
+            </CustomView>
+          ))}
+      </ScrollView>
+    );
+  }
+};
+
+const Avatar = ({ user }: { user: User }) => {
   const { height } = useWindowDimensions();
 
   const avatarIds = Object.keys(_AVATAR_ASSET_MAP);
@@ -115,9 +164,23 @@ const Avatar = ({ user }: { user?: User }) => {
         )}
       </Pressable>
 
-      <CustomText variant="bold" className="text-3xl">
-        {user?.first_name} {user?.last_name}
-      </CustomText>
+      <View className="items-center">
+        <CustomText variant="bold" className="text-3xl">
+          {user?.first_name} {user?.last_name}
+        </CustomText>
+        {user?.flashcards &&
+          user?.quizzes &&
+          user!.flashcards.length > 0 &&
+          user!.quizzes.length > 0 && (
+            <View className="flex flex-row items-center justify-evenly gap-2">
+              <CustomText>
+                {user?.flashcards.length} flashcards created
+              </CustomText>
+              <CustomText>•</CustomText>
+              <CustomText>{user?.quizzes.length} quiz created</CustomText>
+            </View>
+          )}
+      </View>
     </View>
   );
 };
@@ -126,6 +189,7 @@ export default function Page() {
   const navigation = useNavigation();
   const { currentScheme } = useTheme();
   const { user } = useAuth();
+  const pagerViewRef = useRef<PagerView>(null);
 
   const [index, setIndex] = useState(0);
 
@@ -156,7 +220,10 @@ export default function Page() {
           <CustomPressable
             variant={index == 0 ? "colorPrimary" : "colorBase300"}
             className="flex-1 rounded-3xl flex flex-row gap-2 justify-center"
-            onPress={() => setIndex(0)}
+            onPress={() => {
+              setIndex(0);
+              pagerViewRef.current?.setPage(0);
+            }}
           >
             <CustomText
               color={index == 0 ? "colorPrimaryContent" : "colorBaseContent"}
@@ -167,28 +234,21 @@ export default function Page() {
           <CustomPressable
             variant={index == 1 ? "colorPrimary" : "colorBase300"}
             className="flex-1 rounded-3xl flex flex-row gap-2 justify-center"
-            onPress={() => setIndex(1)}
+            onPress={() => {
+              setIndex(1);
+              pagerViewRef.current?.setPage(1);
+            }}
           >
             <CustomText
               color={index == 1 ? "colorPrimaryContent" : "colorBaseContent"}
-            >
-              Stats
-            </CustomText>
-          </CustomPressable>
-          <CustomPressable
-            variant={index == 2 ? "colorPrimary" : "colorBase300"}
-            className="flex-1 rounded-3xl flex flex-row gap-2 justify-center"
-            onPress={() => setIndex(2)}
-          >
-            <CustomText
-              color={index == 2 ? "colorPrimaryContent" : "colorBaseContent"}
             >
               Posts
             </CustomText>
           </CustomPressable>
         </View>
-        <PagerView style={{ flex: 1 }}>
+        <PagerView style={{ flex: 1 }} scrollEnabled={false} ref={pagerViewRef}>
           <Badges key={0} user={user} />
+          <Posts key={1} user={user} />
         </PagerView>
       </CustomView>
     </SafeAreaView>
