@@ -15,10 +15,11 @@ import { useEffect } from "react";
 import { MyTraysProps } from "@/types/trays/trays";
 import { DrawerActions } from "@react-navigation/native";
 import { setStatusBarStyle } from "expo-status-bar";
-import { ToastAndroid, View } from "react-native";
+import { Pressable, ToastAndroid, View } from "react-native";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 
 import _API_INSTANCE from "@/utils/axios";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 function CustomDrawerContent(props: any) {
   const { currentScheme } = useTheme();
@@ -63,6 +64,7 @@ function CustomDrawerContent(props: any) {
       useAuth.setState((state) => {
         state.user = undefined;
       });
+      reset();
       await _API_INSTANCE.post("/auth/logout", {}, { withCredentials: true });
     } catch (err) {
       ToastAndroid.show(
@@ -86,6 +88,18 @@ function CustomDrawerContent(props: any) {
               </CustomText>
             </View>
           </View>
+          <Pressable
+            onPress={() => {
+              reset();
+              useTimer.setState((state) => {
+                state.mode = "study";
+              });
+            }}
+          >
+            <CustomText>
+              <MaterialCommunityIcons name="refresh" size={24} />
+            </CustomText>
+          </Pressable>
         </View>
 
         <View className="flex flex-row gap-4 items-center justify-between">
@@ -94,7 +108,7 @@ function CustomDrawerContent(props: any) {
               {formatTime(time)}
             </CustomText>
           </View>
-          <View className="flex flex-row gap-4 justify-center">
+          <View className="flex flex-row gap-2 justify-center">
             {isRunning && (
               <CustomPressable
                 className="flex flex-row gap-2 items-center justify-center rounded-3xl"

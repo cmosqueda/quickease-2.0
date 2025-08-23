@@ -53,7 +53,7 @@ export default function Page() {
       />
       <CustomView
         variant="colorBase100"
-        className="px-4 flex flex-row justify-evenly items-center relative gap-4"
+        className="px-8 flex flex-row justify-evenly items-center relative gap-4"
       >
         <Pressable
           onPress={() => {

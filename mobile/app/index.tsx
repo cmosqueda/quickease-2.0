@@ -142,7 +142,7 @@ export default function Index() {
   if (!loggedIn && !isChecking) {
     return (
       <SafeAreaView
-        className="flex flex-1"
+        className="flex flex-1 p-2"
         style={{
           backgroundColor: currentScheme?.colorBase100,
         }}
