@@ -8,21 +8,55 @@ import CustomPressable from "@/components/CustomPressable";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { Post, User } from "@/types/user/types";
 import { Image } from "expo-image";
-import { useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useTrays } from "react-native-trays";
 import { useAssets } from "expo-asset";
+import { Post, User } from "@/types/user/types";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
 import { DrawerActions } from "@react-navigation/native";
+import { useRef, useState } from "react";
+import { RichText, useEditorBridge } from "@10play/tentap-editor";
 import { View, Pressable, useWindowDimensions, ScrollView } from "react-native";
 
 import { _AVATAR_ASSET_MAP } from "@/types/user/avatars";
 import { _BADGE_ASSET_MAP, _BADGE_MAP } from "@/types/user/badges";
-import { useQuery } from "@tanstack/react-query";
+
 import _API_INSTANCE from "@/utils/axios";
+import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
+
+const PostComponent = ({ post }: { post: Post }) => {
+  const { currentScheme } = useTheme();
+  const editor = useEditorBridge({
+    theme: {
+      webview: {
+        padding: 8,
+        backgroundColor: currentScheme.colorBase300,
+      },
+    },
+    bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
+    dynamicHeight: true,
+    editable: false,
+    initialContent: post.post_body,
+  });
+
+  return (
+    <View>
+      <CustomText variant="bold" className="text-2xl" color="colorBaseContent">
+        {post.title}
+      </CustomText>
+      <CustomView
+        key={post.id}
+        variant="colorBase300"
+        className="p-4 rounded-3xl"
+      >
+        <RichText editor={editor} />
+      </CustomView>
+    </View>
+  );
+};
 
 const Badges = ({ user }: { user: User }) => {
   const badgeIds = Object.keys(_BADGE_ASSET_MAP);
@@ -86,7 +120,7 @@ const Posts = ({ user }: { user: User }) => {
 
   if (isFetching) {
     return (
-      <CustomView className="flex items-center justify-center p-4">
+      <CustomView className="flex items-center justify-center p-4 rounded-3xl">
         <CustomText>Loading posts…</CustomText>
       </CustomView>
     );
@@ -110,22 +144,9 @@ const Posts = ({ user }: { user: User }) => {
 
   return (
     <ScrollView contentContainerClassName="flex flex-col gap-4">
-      {data.map((post) => (
-        <CustomView
-          key={post.id}
-          variant="colorBase300"
-          className="p-4 gap-2 rounded-3xl"
-        >
-          <CustomText
-            variant="bold"
-            className="text-2xl"
-            color="colorBaseContent"
-          >
-            {post.title}
-          </CustomText>
-          <CustomText color="colorBaseContent">{post.post_body}</CustomText>
-        </CustomView>
-      ))}
+      {data.map((post) => {
+        return <PostComponent post={post} />;
+      })}
     </ScrollView>
   );
 };

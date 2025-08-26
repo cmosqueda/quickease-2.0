@@ -52,7 +52,10 @@ export default function Page() {
         {user?.notes.map((note: Note) => (
           <Link
             asChild
-            href={{ pathname: "/(learner)/(flashcard)" }}
+            href={{
+              pathname: "/(learner)/(note)/(view)/[id]",
+              params: { id: note.id },
+            }}
             key={note.id}
           >
             <Pressable>

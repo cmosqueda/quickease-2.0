@@ -33,7 +33,10 @@ export default function Page() {
       });
 
       if (status === 200) {
-        console.log(data, status);
+        const { status } = await _API_INSTANCE.get("/users/check", {
+          withCredentials: true,
+        });
+
         if (data.is_admin) {
           ToastAndroid.show(
             "This is an admin account, please try logging in on desktop.",
@@ -41,8 +44,16 @@ export default function Page() {
           );
           return;
         } else {
+          const [notes, flashcard, quiz] = await Promise.all([
+            _API_INSTANCE.get("/notes"),
+            _API_INSTANCE.get("/flashcard"),
+            _API_INSTANCE.get("/quiz"),
+          ]);
           useAuth.setState((state) => {
             state.user = data;
+            state.user!.notes = notes.data;
+            state.user!.flashcards = flashcard.data;
+            state.user!.quizzes = quiz.data;
           });
           router.replace("/(learner)/(forum)");
         }
@@ -96,7 +107,7 @@ export default function Page() {
             value={password}
             onChangeText={setPassword}
             className="rounded-xl"
-            secureTextEntry
+            secureTextEntry={true}
           />
         </View>
         <Pressable className="self-end">

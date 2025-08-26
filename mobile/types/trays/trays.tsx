@@ -128,7 +128,20 @@ const _TRAYS = {
             keyExtractor={(item) => item.id.toString()}
             contentContainerClassName="gap-4"
             refreshControl={
-              <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+              <RefreshControl
+                refreshing={isFetching}
+                onRefresh={refetch}
+                tintColor={
+                  useTheme.getState().currentScheme.colorPrimaryContent
+                }
+                titleColor={
+                  useTheme.getState().currentScheme.colorPrimaryContent
+                }
+                colors={[useTheme.getState().currentScheme.colorPrimaryContent]}
+                progressBackgroundColor={
+                  useTheme.getState().currentScheme.colorPrimary
+                }
+              />
             }
             renderItem={({ item }) => (
               <CustomView
