@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Comment, Post } from "@/types/user/types";
 import { useRef, useState } from "react";
 import { RichText, useEditorBridge } from "@10play/tentap-editor";
-import { FlatList, Pressable, View } from "react-native";
+import { FlatList, Pressable, ScrollView, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 
 import _API_INSTANCE from "@/utils/axios";
@@ -37,7 +37,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
   });
 
   return (
-    <CustomView className="gap-2 rounded-3xl flex-1" variant="colorBase100">
+    <CustomView className="rounded-3xl flex-1" variant="colorBase100">
       <View className="p-4 gap-4">
         <View className="flex flex-row gap-4 items-center">
           <UserAvatar avatar={comment.user?.avatar!} />
@@ -53,9 +53,11 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
           </View>
         </View>
       </View>
-      <View className="flex-1 px-4">
-        <RichText editor={editor} />
-      </View>
+      {editor && (
+        <View className="px-4">
+          <RichText editor={editor} />
+        </View>
+      )}
 
       <CustomView
         variant="colorPrimary"
@@ -225,16 +227,12 @@ export default function Page() {
               </View>
             </CustomView>
           </CustomView>
-          <View className="flex-1 p-4 gap-4" key={1}>
-            <FlatList
-              data={post.comments}
-              keyExtractor={(item) => String(item.id)}
-              renderItem={({ item }) => <CommentComponent comment={item} />}
-              contentContainerStyle={{ gap: 16 }}
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
-              removeClippedSubviews
-            />
+          <View className="p-4 gap-4" key={1}>
+            <ScrollView contentContainerClassName="gap-4">
+              {post.comments.map((comment: Comment) => (
+                <CommentComponent key={comment.id} comment={comment} />
+              ))}
+            </ScrollView>
           </View>
         </PagerView>
       </SafeAreaView>
