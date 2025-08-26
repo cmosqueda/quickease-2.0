@@ -13,15 +13,25 @@ import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Comment, Post } from "@/types/user/types";
 import { useRef, useState } from "react";
+import { useVote, useVoteOnComment } from "@/hooks/useVote";
 import { RichText, useEditorBridge } from "@10play/tentap-editor";
-import { FlatList, Pressable, ScrollView, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 
 import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
-const CommentComponent = ({ comment }: { comment: Comment }) => {
+const CommentComponent = ({
+  comment,
+  invalidateKey,
+}: {
+  comment: Comment;
+  invalidateKey: (string | number)[];
+}) => {
   const { currentScheme } = useTheme();
+
+  const { mutate: voteOnComment, isPending: isVotingComment } =
+    useVoteOnComment([invalidateKey]);
 
   const editor = useEditorBridge({
     theme: {
@@ -63,15 +73,30 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
         variant="colorPrimary"
         className="flex flex-row gap-4 items-center rounded-3xl px-6 py-4"
       >
-        <CustomText color="colorPrimaryContent">
-          <MaterialIcons name="keyboard-arrow-up" size={24} />
-        </CustomText>
+        <Pressable
+          disabled={isVotingComment}
+          onPress={() =>
+            voteOnComment({ comment_id: comment.id, vote_type: 1 })
+          }
+        >
+          <CustomText color="colorPrimaryContent">
+            <MaterialIcons name="keyboard-arrow-up" size={24} />
+          </CustomText>
+        </Pressable>
+
         <CustomText variant="bold" color="colorPrimaryContent">
-          {comment.votes.length}
+          {comment.vote_sum}
         </CustomText>
-        <CustomText color="colorPrimaryContent">
-          <MaterialIcons name="keyboard-arrow-down" size={24} />
-        </CustomText>
+        <Pressable
+          disabled={isVotingComment}
+          onPress={() =>
+            voteOnComment({ comment_id: comment.id, vote_type: -1 })
+          }
+        >
+          <CustomText color="colorPrimaryContent">
+            <MaterialIcons name="keyboard-arrow-down" size={24} />
+          </CustomText>
+        </Pressable>
         <View className="flex-1" />
         <View className="flex flex-row gap-2 items-center">
           <CustomText color="colorPrimaryContent">
@@ -93,6 +118,9 @@ export default function Page() {
   const [index, setIndex] = useState(0);
   const pagerViewRef = useRef<PagerView>(null);
 
+  const { mutate: voteOnPost, isPending: isVotingPost } = useVote([
+    ["view-post", id],
+  ]);
   const {
     data: post,
     refetch,
@@ -188,9 +216,13 @@ export default function Page() {
               <View className="flex flex-row gap-4 items-center">
                 <UserAvatar avatar={post.user?.avatar!} />
                 <View>
-                  <CustomText variant="bold">Jhon Lloyd Viernes</CustomText>
+                  <CustomText variant="bold">
+                    {post.user?.first_name} {post.user?.last_name}
+                  </CustomText>
                   <CustomText className="text-sm opacity-40">
-                    August 15, 2025
+                    {dayjs(post.created_at)
+                      .format("hh:mm A / MMMM DD, YYYY")
+                      .toString()}
                   </CustomText>
                 </View>
               </View>
@@ -207,15 +239,27 @@ export default function Page() {
               variant="colorPrimary"
               className="flex flex-row gap-4 items-center rounded-3xl px-6 py-4"
             >
-              <CustomText color="colorPrimaryContent">
-                <MaterialIcons name="keyboard-arrow-up" size={24} />
-              </CustomText>
+              <Pressable
+                disabled={isVotingPost}
+                onPress={() => voteOnPost({ post_id: id, vote_type: -1 })}
+              >
+                <CustomText color="colorPrimaryContent">
+                  <MaterialIcons name="keyboard-arrow-up" size={24} />
+                </CustomText>
+              </Pressable>
+
               <CustomText variant="bold" color="colorPrimaryContent">
-                {post.votes.length}
+                {post.vote_sum}
               </CustomText>
-              <CustomText color="colorPrimaryContent">
-                <MaterialIcons name="keyboard-arrow-down" size={24} />
-              </CustomText>
+              <Pressable
+                disabled={isVotingPost}
+                onPress={() => voteOnPost({ post_id: id, vote_type: -1 })}
+              >
+                <CustomText color="colorPrimaryContent">
+                  <MaterialIcons name="keyboard-arrow-down" size={24} />
+                </CustomText>
+              </Pressable>
+
               <View className="flex-1" />
               <View className="flex flex-row gap-2 items-center">
                 <CustomText color="colorPrimaryContent">
@@ -230,7 +274,11 @@ export default function Page() {
           <View className="p-4 gap-4" key={1}>
             <ScrollView contentContainerClassName="gap-4">
               {post.comments.map((comment: Comment) => (
-                <CommentComponent key={comment.id} comment={comment} />
+                <CommentComponent
+                  invalidateKey={["view-post", id]}
+                  key={comment.id}
+                  comment={comment}
+                />
               ))}
             </ScrollView>
           </View>

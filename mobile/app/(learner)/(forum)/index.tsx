@@ -12,6 +12,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { Link } from "expo-router";
 import { Post } from "@/types/user/types";
+import { useVote } from "@/hooks/useVote";
 import { useTrays } from "react-native-trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
@@ -22,6 +23,8 @@ import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
 const PostComponent = ({ post }: { post: Post }) => {
+  const { mutate: voteOnPost, isPending } = useVote([["recent-posts"]]);
+
   return (
     <CustomView variant="colorBase100" className="rounded-3xl">
       <Link
@@ -72,15 +75,27 @@ const PostComponent = ({ post }: { post: Post }) => {
         variant="colorPrimary"
         className="flex flex-row gap-4 items-center rounded-3xl px-6 py-4"
       >
-        <CustomText color="colorPrimaryContent">
-          <MaterialIcons name="keyboard-arrow-up" size={24} />
-        </CustomText>
+        <Pressable
+          disabled={isPending}
+          onPress={() => voteOnPost({ post_id: post.id, vote_type: 1 })}
+        >
+          <CustomText color="colorPrimaryContent">
+            <MaterialIcons name="keyboard-arrow-up" size={24} />
+          </CustomText>
+        </Pressable>
+
         <CustomText variant="bold" color="colorPrimaryContent">
-          {post.votes.length}
+          {post.vote_sum}
         </CustomText>
-        <CustomText color="colorPrimaryContent">
-          <MaterialIcons name="keyboard-arrow-down" size={24} />
-        </CustomText>
+        <Pressable
+          disabled={isPending}
+          onPress={() => voteOnPost({ post_id: post.id, vote_type: -1 })}
+        >
+          <CustomText color="colorPrimaryContent">
+            <MaterialIcons name="keyboard-arrow-down" size={24} />
+          </CustomText>
+        </Pressable>
+
         <View className="flex-1" />
         <View className="flex flex-row gap-2 items-center">
           <CustomText color="colorPrimaryContent">

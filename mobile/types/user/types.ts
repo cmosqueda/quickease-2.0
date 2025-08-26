@@ -125,6 +125,7 @@ export interface Post {
   is_public: boolean;
   is_resolved?: ResolveType;
   user?: User;
+  vote_sum?: number;
 
   tags: PostTag[];
   comments: Comment[];
@@ -151,6 +152,7 @@ export interface Comment {
   created_at: Date;
   updated_at: Date;
   user?: User;
+  vote_sum?: number;
 
   parent_comment?: Comment;
   replies: Comment[];
