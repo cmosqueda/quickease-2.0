@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import useTheme from "@/hooks/useTheme";
 import PagerView from "react-native-pager-view";
+import UserAvatar from "@/components/UserAvatar";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import CustomPressable from "@/components/CustomPressable";
@@ -39,7 +40,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
     <CustomView className="gap-2 rounded-3xl flex-1" variant="colorBase100">
       <View className="p-4 gap-4">
         <View className="flex flex-row gap-4 items-center">
-          <View className="w-[2.5rem] aspect-square rounded-3xl bg-red-600" />
+          <UserAvatar avatar={comment.user?.avatar!} />
           <View>
             <CustomText variant="bold">
               {comment.user?.first_name} {comment.user?.last_name}
@@ -183,7 +184,7 @@ export default function Page() {
           >
             <View className="gap-2">
               <View className="flex flex-row gap-4 items-center">
-                <View className="w-[2.5rem] aspect-square rounded-3xl bg-red-600" />
+                <UserAvatar avatar={post.user?.avatar!} />
                 <View>
                   <CustomText variant="bold">Jhon Lloyd Viernes</CustomText>
                   <CustomText className="text-sm opacity-40">
@@ -232,6 +233,7 @@ export default function Page() {
               contentContainerStyle={{ gap: 16 }}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
+              removeClippedSubviews
             />
           </View>
         </PagerView>

@@ -53,7 +53,7 @@ export default function Page() {
           <Link
             asChild
             href={{
-              pathname: "/(learner)/(note)/(view)/[id]",
+              pathname: "/(learner)/(note)/view/[id]",
               params: { id: note.id },
             }}
             key={note.id}

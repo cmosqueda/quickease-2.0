@@ -1,5 +1,6 @@
 import useTheme from "@/hooks/useTheme";
 import ForumHeader from "@/components/ForumHeader";
+import UserAvatar from "@/components/UserAvatar";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import CustomPressable from "@/components/CustomPressable";
@@ -7,6 +8,7 @@ import CustomPressable from "@/components/CustomPressable";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { Link } from "expo-router";
 import { Post } from "@/types/user/types";
@@ -25,7 +27,6 @@ import {
 
 import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const PostComponent = ({ post }: { post: Post }) => {
   return (
@@ -45,10 +46,12 @@ const PostComponent = ({ post }: { post: Post }) => {
           >
             <View className="flex flex-row gap-3 items-center">
               <CustomText color="colorBaseContent">
-                <FontAwesome6 name="user-circle" size={16} />
-              </CustomText>
-              <CustomText color="colorBaseContent">
-                {post.user?.first_name} {post.user?.last_name}
+                <View className="flex flex-row gap-3 items-center">
+                  <UserAvatar avatar={post.user?.avatar!} />
+                  <CustomText color="colorBaseContent">
+                    {post.user?.first_name} {post.user?.last_name}
+                  </CustomText>
+                </View>
               </CustomText>
             </View>
             <CustomText className="text-3xl" variant="bold">
