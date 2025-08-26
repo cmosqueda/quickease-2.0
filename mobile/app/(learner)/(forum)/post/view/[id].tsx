@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import useTheme from "@/hooks/useTheme";
 import PagerView from "react-native-pager-view";
 import CustomText from "@/components/CustomText";
@@ -5,191 +6,236 @@ import CustomView from "@/components/CustomView";
 import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Pressable, View } from "react-native";
+import { Comment, Post } from "@/types/user/types";
 import { useRef, useState } from "react";
-import { router } from "expo-router";
+import { RichText, useEditorBridge } from "@10play/tentap-editor";
+import { FlatList, Pressable, View } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+
+import _API_INSTANCE from "@/utils/axios";
+import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
+
+const CommentComponent = ({ comment }: { comment: Comment }) => {
+  const { currentScheme } = useTheme();
+
+  const editor = useEditorBridge({
+    theme: {
+      webview: {
+        padding: 8,
+        backgroundColor: currentScheme.colorBase100,
+      },
+    },
+    bridgeExtensions: [..._EDITOR_BRIDGE_EXTENSIONS],
+    dynamicHeight: true,
+    editable: false,
+    initialContent: comment ? comment.comment_body : "",
+  });
+
+  return (
+    <CustomView className="gap-2 rounded-3xl flex-1" variant="colorBase100">
+      <View className="p-4 gap-4">
+        <View className="flex flex-row gap-4 items-center">
+          <View className="w-[2.5rem] aspect-square rounded-3xl bg-red-600" />
+          <View>
+            <CustomText variant="bold">
+              {comment.user?.first_name} {comment.user?.last_name}
+            </CustomText>
+            <CustomText className="text-sm opacity-60">
+              {dayjs(comment.updated_at)
+                .format("hh:mm A / MMMM DD, YYYY")
+                .toString()}
+            </CustomText>
+          </View>
+        </View>
+      </View>
+      <View className="flex-1 px-4">
+        <RichText editor={editor} />
+      </View>
+
+      <CustomView
+        variant="colorPrimary"
+        className="flex flex-row gap-4 items-center rounded-3xl px-6 py-4"
+      >
+        <CustomText color="colorPrimaryContent">
+          <MaterialIcons name="keyboard-arrow-up" size={24} />
+        </CustomText>
+        <CustomText variant="bold" color="colorPrimaryContent">
+          {comment.votes.length}
+        </CustomText>
+        <CustomText color="colorPrimaryContent">
+          <MaterialIcons name="keyboard-arrow-down" size={24} />
+        </CustomText>
+        <View className="flex-1" />
+        <View className="flex flex-row gap-2 items-center">
+          <CustomText color="colorPrimaryContent">
+            <MaterialCommunityIcons name="comment" size={24} />
+          </CustomText>
+          <CustomText color="colorPrimaryContent">
+            {comment.replies.length}
+          </CustomText>
+        </View>
+      </CustomView>
+    </CustomView>
+  );
+};
 
 export default function Page() {
+  const { id } = useLocalSearchParams<{ id: string }>();
   const { currentScheme } = useTheme();
 
   const [index, setIndex] = useState(0);
   const pagerViewRef = useRef<PagerView>(null);
 
-  return (
-    <SafeAreaView
-      className="flex-1 p-4 gap-4"
-      style={{
-        position: "relative",
-        backgroundColor: currentScheme.colorBase200,
-      }}
-    >
-      <View className="flex flex-row gap-4 items-center">
-        <Pressable
-          onPress={() => {
-            setIndex(0);
-            router.back();
-          }}
-        >
-          <CustomText>
-            <MaterialIcons name="keyboard-arrow-left" size={36} />
-          </CustomText>
-        </Pressable>
-        <View className="flex flex-row gap-2 self-center flex-1">
-          <CustomPressable
-            variant={index == 0 ? "colorPrimary" : "colorBase100"}
-            className="rounded-3xl flex-1 items-center"
+  const {
+    data: post,
+    refetch,
+    isFetching,
+  } = useQuery({
+    queryKey: ["view-post", id],
+    queryFn: async () => {
+      try {
+        const { data } = await _API_INSTANCE.get<Post>(`/forum/post/${id}`);
+        console.log(data);
+        return data;
+      } catch (err) {
+        throw err;
+      }
+    },
+  });
+
+  const editor = useEditorBridge({
+    theme: {
+      webview: {
+        padding: 8,
+        backgroundColor: currentScheme.colorBase100,
+      },
+    },
+    bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
+    dynamicHeight: true,
+    editable: false,
+    initialContent: post ? post.post_body : "",
+  });
+
+  if (post && editor) {
+    return (
+      <SafeAreaView
+        className="flex-1"
+        style={{
+          position: "relative",
+          backgroundColor: currentScheme.colorBase300,
+        }}
+      >
+        <View className="flex flex-row gap-4 items-center p-4">
+          <Pressable
             onPress={() => {
               setIndex(0);
-              pagerViewRef.current?.setPage(0);
+              router.back();
             }}
           >
-            <CustomText
-              color={index == 0 ? "colorPrimaryContent" : "colorBaseContent"}
-            >
-              Post
+            <CustomText>
+              <MaterialIcons name="keyboard-arrow-left" size={36} />
             </CustomText>
-          </CustomPressable>
-          <CustomPressable
-            variant={index == 1 ? "colorPrimary" : "colorBase100"}
-            className="rounded-3xl flex-1 items-center"
-            onPress={() => {
-              setIndex(1);
-              pagerViewRef.current?.setPage(1);
-            }}
-          >
-            <CustomText
-              color={index == 1 ? "colorPrimaryContent" : "colorBaseContent"}
+          </Pressable>
+          <View className="flex flex-row gap-2 self-center flex-1">
+            <CustomPressable
+              variant={index == 0 ? "colorPrimary" : "colorBase100"}
+              className="rounded-3xl flex-1 items-center"
+              onPress={() => {
+                setIndex(0);
+                pagerViewRef.current?.setPage(0);
+              }}
             >
-              Answers
-            </CustomText>
-          </CustomPressable>
-        </View>
-      </View>
-      <PagerView
-        style={{ flex: 1, gap: 8 }}
-        ref={pagerViewRef}
-        initialPage={0}
-        scrollEnabled={false}
-      >
-        <View className="flex-1 gap-4" key={0}>
-          <View className="gap-2">
-            <View className="flex flex-row gap-4 items-center">
-              <View className="w-[2.5rem] aspect-square rounded-3xl bg-red-600" />
-              <CustomView variant="colorBase200">
-                <CustomText variant="bold">Jhon Lloyd Viernes</CustomText>
-                <CustomText className="text-sm opacity-40">
-                  August 15, 2025
-                </CustomText>
-              </CustomView>
-            </View>
-          </View>
-
-          <View className="gap-2">
-            <CustomText variant="bold" className="text-4xl">
-              Lorem Ipsum. (Title)
-            </CustomText>
-            <CustomView variant="colorBase100" className="p-4 rounded-xl">
-              <CustomText>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged. It was
-                popularised in the 1960s with the release of Letraset sheets
-                containing Lorem Ipsum passages, and more recently with desktop
-                publishing software like Aldus PageMaker including versions of
-                Lorem Ipsum.
-              </CustomText>
-            </CustomView>
-          </View>
-
-          <View className="flex flex-row gap-2">
-            <CustomView
-              variant="colorBase100"
-              className="flex flex-row gap-4 items-center px-6 py-2 rounded-3xl"
-            >
-              <CustomText>
-                <MaterialIcons name="arrow-upward" size={24} />
-              </CustomText>
-              <CustomText variant="black">0</CustomText>
-              <CustomText>
-                <MaterialIcons name="arrow-downward" size={24} />
-              </CustomText>
-            </CustomView>
-            <CustomPressable className="rounded-3xl" variant="colorBase100">
-              <CustomText>
-                <MaterialIcons name="comment" size={20} />
+              <CustomText
+                color={index == 0 ? "colorPrimaryContent" : "colorBaseContent"}
+              >
+                Post
               </CustomText>
             </CustomPressable>
-            <CustomPressable className="rounded-3xl" variant="colorBase100">
-              <CustomText>
-                <MaterialIcons name="menu" size={20} />
+            <CustomPressable
+              variant={index == 1 ? "colorPrimary" : "colorBase100"}
+              className="rounded-3xl flex-1 items-center"
+              onPress={() => {
+                setIndex(1);
+                pagerViewRef.current?.setPage(1);
+              }}
+            >
+              <CustomText
+                color={index == 1 ? "colorPrimaryContent" : "colorBaseContent"}
+              >
+                Answers
               </CustomText>
             </CustomPressable>
           </View>
         </View>
-        <View className="flex-1" key={1}>
-          <View className="gap-4">
+        <PagerView
+          style={{ flex: 1, gap: 8 }}
+          ref={pagerViewRef}
+          initialPage={0}
+          scrollEnabled={false}
+        >
+          <CustomView
+            className="flex-1 gap-4 p-4 rounded-tr-3xl rounded-tl-3xl"
+            key={0}
+          >
             <View className="gap-2">
               <View className="flex flex-row gap-4 items-center">
                 <View className="w-[2.5rem] aspect-square rounded-3xl bg-red-600" />
-                <CustomView variant="colorBase200">
+                <View>
                   <CustomText variant="bold">Jhon Lloyd Viernes</CustomText>
                   <CustomText className="text-sm opacity-40">
                     August 15, 2025
                   </CustomText>
-                </CustomView>
+                </View>
               </View>
             </View>
-            <CustomView
-              className="gap-4 p-4 rounded-3xl"
-              variant="colorBase100"
-            >
-              <CustomView variant="colorBase100">
-                <CustomText>
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a type
-                  specimen book. It has survived not only five centuries, but
-                  also the leap into electronic typesetting, remaining
-                  essentially unchanged. It was popularised in the 1960s with
-                  the release of Letraset sheets containing Lorem Ipsum
-                  passages, and more recently with desktop publishing software
-                  like Aldus PageMaker including versions of Lorem Ipsum.
-                </CustomText>
-              </CustomView>
-            </CustomView>
-            <View className="flex flex-row gap-2">
-              <CustomView
-                variant="colorBase100"
-                className="flex flex-row gap-4 items-center px-6 py-2 rounded-3xl"
-              >
-                <CustomText>
-                  <MaterialIcons name="arrow-upward" size={24} />
-                </CustomText>
-                <CustomText variant="black">0</CustomText>
-                <CustomText>
-                  <MaterialIcons name="arrow-downward" size={24} />
-                </CustomText>
-              </CustomView>
-              <CustomPressable className="rounded-3xl" variant="colorBase100">
-                <CustomText>
-                  <MaterialIcons name="comment" size={20} />
-                </CustomText>
-              </CustomPressable>
-              <CustomPressable className="rounded-3xl" variant="colorBase100">
-                <CustomText>
-                  <MaterialIcons name="menu" size={20} />
-                </CustomText>
-              </CustomPressable>
+
+            <View className="flex-1">
+              <CustomText variant="bold" className="text-4xl">
+                {post.title}
+              </CustomText>
+              <RichText editor={editor} />
             </View>
+
+            <CustomView
+              variant="colorPrimary"
+              className="flex flex-row gap-4 items-center rounded-3xl px-6 py-4"
+            >
+              <CustomText color="colorPrimaryContent">
+                <MaterialIcons name="keyboard-arrow-up" size={24} />
+              </CustomText>
+              <CustomText variant="bold" color="colorPrimaryContent">
+                {post.votes.length}
+              </CustomText>
+              <CustomText color="colorPrimaryContent">
+                <MaterialIcons name="keyboard-arrow-down" size={24} />
+              </CustomText>
+              <View className="flex-1" />
+              <View className="flex flex-row gap-2 items-center">
+                <CustomText color="colorPrimaryContent">
+                  <MaterialCommunityIcons name="comment" size={24} />
+                </CustomText>
+                <CustomText color="colorPrimaryContent">
+                  {post.comments.length}
+                </CustomText>
+              </View>
+            </CustomView>
+          </CustomView>
+          <View className="flex-1 p-4 gap-4" key={1}>
+            <FlatList
+              data={post.comments}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item }) => <CommentComponent comment={item} />}
+              contentContainerStyle={{ gap: 16 }}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+            />
           </View>
-        </View>
-      </PagerView>
-    </SafeAreaView>
-  );
+        </PagerView>
+      </SafeAreaView>
+    );
+  }
 }

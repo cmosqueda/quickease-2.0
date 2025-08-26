@@ -42,20 +42,26 @@ const PostComponent = ({ post }: { post: Post }) => {
     initialContent: post.post_body,
   });
 
-  return (
-    <View>
-      <CustomText variant="bold" className="text-2xl" color="colorBaseContent">
-        {post.title}
-      </CustomText>
-      <CustomView
-        key={post.id}
-        variant="colorBase300"
-        className="p-4 rounded-3xl"
-      >
-        <RichText editor={editor} />
-      </CustomView>
-    </View>
-  );
+  if (editor) {
+    return (
+      <View>
+        <CustomText
+          variant="bold"
+          className="text-2xl"
+          color="colorBaseContent"
+        >
+          {post.title}
+        </CustomText>
+        <CustomView
+          key={post.id}
+          variant="colorBase300"
+          className="p-4 rounded-3xl"
+        >
+          <RichText editor={editor} />
+        </CustomView>
+      </View>
+    );
+  }
 };
 
 const Badges = ({ user }: { user: User }) => {
@@ -145,7 +151,7 @@ const Posts = ({ user }: { user: User }) => {
   return (
     <ScrollView contentContainerClassName="flex flex-col gap-4">
       {data.map((post) => {
-        return <PostComponent post={post} />;
+        return <PostComponent post={post} key={post.id} />;
       })}
     </ScrollView>
   );
