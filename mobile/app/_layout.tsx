@@ -71,6 +71,7 @@ export default function RootLayout() {
             },
             DismissibleRoundedNoMarginAndSpacingTray: {
               dismissOnBackdropPress: true,
+              adjustForKeyboard: true,
               trayStyles: {
                 borderBottomLeftRadius: 0,
                 borderBottomRightRadius: 0,
@@ -80,6 +81,7 @@ export default function RootLayout() {
               horizontalSpacing: 0,
             },
             RoundedNoMarginAndSpacingTray: {
+              adjustForKeyboard: true,
               trayStyles: {
                 borderBottomLeftRadius: 0,
                 borderBottomRightRadius: 0,

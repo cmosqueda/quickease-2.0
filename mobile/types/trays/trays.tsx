@@ -11,26 +11,37 @@ import CustomTextInput from "@/components/CustomTextInput";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { Notification, User } from "../user/types";
 import { Image } from "expo-image";
 import { Asset } from "expo-asset";
 import { Picker } from "@expo/ui/jetpack-compose";
+import { useQuery } from "@tanstack/react-query";
 import { rgbaToHex } from "@/utils/colors";
 import { TimerPicker } from "react-native-timer-picker";
+import {
+  RichText,
+  useEditorBridge,
+  useEditorContent,
+} from "@10play/tentap-editor";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
+import { Comment, Notification, Post, User } from "../user/types";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+
 import {
   Dimensions,
   FlatList,
+  KeyboardAvoidingView,
   Pressable,
   RefreshControl,
+  ScrollView,
   ToastAndroid,
   View,
 } from "react-native";
-import { Dispatch, SetStateAction, useState } from "react";
 
 import _THEMES from "../theme/Themes";
 import _API_INSTANCE from "@/utils/axios";
-import { useQuery } from "@tanstack/react-query";
+import CommentComponent from "@/components/CommentComponent";
+import _EDITOR_BRIDGE_EXTENSIONS from "../theme/TenTapThemes";
+import { useComment } from "@/hooks/useComment";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
@@ -56,6 +67,14 @@ export type MyTraysProps = {
     lastName: string;
     setLastName: Dispatch<SetStateAction<string>>;
 
+    close: () => void;
+  };
+  RepliesTray: {
+    comment: Comment;
+    close: () => void;
+  };
+  CommentOnPostTray: {
+    post: Post;
     close: () => void;
   };
 };
@@ -697,6 +716,135 @@ const _TRAYS = {
             className="rounded-3xl items-center"
           >
             <CustomText>Update</CustomText>
+          </CustomPressable>
+        </CustomView>
+      );
+    },
+  },
+  RepliesTray: {
+    component: ({
+      comment,
+      close,
+    }: {
+      comment: Comment;
+      close: () => void;
+    }) => {
+      if (comment.replies.length > 0) {
+        return (
+          <CustomView
+            variant="colorBase100"
+            className="rounded-tr-3xl rounded-tl-3xl px-4 py-8 gap-4"
+          >
+            <View className="flex flex-row items-center justify-between">
+              <View className="flex flex-row gap-4 items-center">
+                <CustomText>
+                  <MaterialIcons
+                    name="keyboard-arrow-left"
+                    size={24}
+                    onPress={close}
+                  />
+                </CustomText>
+                <View>
+                  <CustomText variant="bold" className="text-xl">
+                    Replies
+                  </CustomText>
+                </View>
+              </View>
+            </View>
+            <ScrollView contentContainerClassName="gap-4">
+              {comment.replies.map((reply: Comment) => (
+                <CommentComponent
+                  key={reply.id}
+                  comment={reply}
+                  invalidateKey={["view-post", comment.post_id]}
+                  disableCommentBtn
+                />
+              ))}
+            </ScrollView>
+          </CustomView>
+        );
+      }
+    },
+  },
+  CommentOnPostTray: {
+    component: ({ post, close }: { post: Post; close: () => void }) => {
+      const [isSubmitting, setIsSubmitting] = useState(false);
+
+      const editor = useEditorBridge({
+        theme: {
+          webview: {
+            padding: 8,
+            backgroundColor: useTheme.getState().currentScheme.colorBase100,
+          },
+        },
+        bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
+        dynamicHeight: true,
+      });
+
+      const editorContent = useEditorContent(editor, {
+        type: "html",
+      });
+
+      const { mutate: createComment, isPending } = useComment([
+        ["view-post", post.id],
+      ]);
+
+      const handleSubmit = () => {
+        if (!editorContent) {
+          ToastAndroid.show("Empty comment?", ToastAndroid.SHORT);
+          return;
+        }
+        setIsSubmitting(true);
+
+        createComment(
+          {
+            body: editorContent,
+            post_id: post.id,
+          },
+          {
+            onSuccess: () => {
+              close();
+              setIsSubmitting(false);
+            },
+            onError: () => {
+              setIsSubmitting(false);
+            },
+          }
+        );
+      };
+
+      return (
+        <CustomView
+          variant="colorBase100"
+          className="rounded-tr-3xl rounded-tl-3xl p-4 gap-4 flex-1"
+        >
+          <View className="flex flex-row items-center justify-between">
+            <View className="flex flex-row gap-4 items-center">
+              <CustomText>
+                <MaterialIcons
+                  name="keyboard-arrow-left"
+                  size={24}
+                  onPress={close}
+                />
+              </CustomText>
+              <View>
+                <CustomText variant="bold" className="text-xl">
+                  Comment to
+                </CustomText>
+                <CustomText className="text-sm">{post.title}</CustomText>
+              </View>
+            </View>
+          </View>
+          <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+            {editor && <RichText editor={editor} />}
+          </KeyboardAvoidingView>
+          <CustomPressable
+            className="rounded-3xl items-center"
+            variant="colorBase300"
+            onPress={handleSubmit}
+            disabled={isSubmitting}
+          >
+            <CustomText>Comment</CustomText>
           </CustomPressable>
         </CustomView>
       );
