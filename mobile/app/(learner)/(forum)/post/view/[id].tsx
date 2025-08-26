@@ -194,18 +194,43 @@ export default function Page() {
             </CustomView>
           </CustomView>
           <View className="p-4 gap-4" key={1}>
-            <ScrollView contentContainerClassName="gap-4">
-              {post.comments.map((comment: Comment) => (
-                <CommentComponent
-                  invalidateKey={["view-post", id]}
-                  key={comment.id}
-                  comment={comment}
-                />
-              ))}
-            </ScrollView>
+            {post.comments.length > 0 && (
+              <ScrollView contentContainerClassName="gap-4">
+                {post.comments.map((comment: Comment) => (
+                  <CommentComponent
+                    invalidateKey={["view-post", id]}
+                    key={comment.id}
+                    comment={comment}
+                  />
+                ))}
+              </ScrollView>
+            )}
+            {post.comments.length == 0 && (
+              <View className="flex-1 items-center justify-center gap-4">
+                <CustomText>
+                  <MaterialCommunityIcons
+                    name="emoticon-happy-outline"
+                    size={64}
+                  />
+                </CustomText>
+                <CustomText className="text-2xl">
+                  No answers, unfortunately.
+                </CustomText>
+              </View>
+            )}
           </View>
         </PagerView>
       </SafeAreaView>
     );
   }
+
+  return (
+    <SafeAreaView
+      className="flex-1"
+      style={{
+        position: "relative",
+        backgroundColor: currentScheme.colorBase300,
+      }}
+    ></SafeAreaView>
+  );
 }
