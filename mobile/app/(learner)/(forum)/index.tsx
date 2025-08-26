@@ -16,14 +16,7 @@ import { useTrays } from "react-native-trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { useInfiniteQuery } from "@tanstack/react-query";
-
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  View,
-} from "react-native";
+import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
@@ -173,31 +166,23 @@ export default function Page() {
         className="flex-1 p-4 rounded-tr-3xl rounded-tl-3xl"
         variant="colorBase300"
       >
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          data={data?.pages.flatMap((page) => page.posts) ?? []}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <PostComponent post={item} />}
-          refreshControl={
-            <RefreshControl
-              refreshing={isFetching && !isFetchingNextPage}
-              onRefresh={refetch}
-            />
-          }
-          contentContainerStyle={{ gap: 16 }}
-          onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage) {
-              fetchNextPage();
+        {data && (
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={isFetching && !isFetchingNextPage}
+                onRefresh={refetch}
+              />
             }
-          }}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={
-            isFetchingNextPage ? (
-              <ActivityIndicator style={{ marginVertical: 16 }} />
-            ) : null
-          }
-        />
+            contentContainerClassName="gap-4"
+          >
+            {data?.pages.flatMap((page) =>
+              page.posts.map((post: Post) => (
+                <PostComponent post={post} key={post.id} />
+              ))
+            )}
+          </ScrollView>
+        )}
       </CustomView>
 
       <Link asChild href={"/post/create"}>
