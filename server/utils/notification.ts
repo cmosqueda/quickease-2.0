@@ -32,14 +32,13 @@ export async function sendNotification({
       update: {
         message,
         is_read: false,
-        created_at: new Date(),
       },
       create: {
         recipient_id: recipientId,
         actor_id: actorId,
         type,
         message,
-        resource_id: resourceId,
+        resource_id: resourceId ?? "",
         resource_type: resourceType,
       },
     });

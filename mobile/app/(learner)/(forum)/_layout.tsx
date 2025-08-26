@@ -5,7 +5,10 @@ export default function Layout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="post/create" />
-      <Stack.Screen name="post/view/[id]" />
+      <Stack.Screen
+        name="post/view/[id]"
+        options={{ animation: "fade_from_bottom" }}
+      />
     </Stack>
   );
 }

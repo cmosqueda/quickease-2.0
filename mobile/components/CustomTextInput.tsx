@@ -24,9 +24,11 @@ export default function CustomTextInput(props: CustomTextInputProps) {
           backgroundColor: currentScheme?.colorBase200,
           color: currentScheme?.colorBaseContent,
           paddingHorizontal: 12,
+          flexWrap: "wrap",
         },
         style,
       ]}
+      multiline
       cursorColor={cursorColor}
       selectionColor={selectionColor}
       placeholderTextColor={currentScheme.colorSecondary}

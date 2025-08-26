@@ -52,7 +52,10 @@ export default function Page() {
         {user?.notes.map((note: Note) => (
           <Link
             asChild
-            href={{ pathname: "/(learner)/(flashcard)" }}
+            href={{
+              pathname: "/(learner)/(note)/view/[id]",
+              params: { id: note.id },
+            }}
             key={note.id}
           >
             <Pressable>
@@ -79,14 +82,16 @@ export default function Page() {
         ))}
       </CustomView>
 
-      <CustomPressable
-        variant="colorPrimary"
-        className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
-      >
-        <CustomText color="colorPrimaryContent">
-          <MaterialIcons name="post-add" size={32} />
-        </CustomText>
-      </CustomPressable>
+      <Link asChild href={"create"}>
+        <CustomPressable
+          variant="colorPrimary"
+          className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+        >
+          <CustomText color="colorPrimaryContent">
+            <MaterialIcons name="post-add" size={32} />
+          </CustomText>
+        </CustomPressable>
+      </Link>
     </SafeAreaView>
   );
 }
