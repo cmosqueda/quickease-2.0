@@ -8,6 +8,7 @@ export default function Layout() {
       <Stack.Screen name="edit/[id]" />
       <Stack.Screen name="view/[id]" />
       <Stack.Screen name="answer/[id]" />
+      <Stack.Screen name="ai/generated" />
     </Stack>
   );
 }

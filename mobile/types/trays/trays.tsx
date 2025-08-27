@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import dayjs from "dayjs";
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import useTimer from "@/hooks/useTimer";
@@ -7,42 +8,45 @@ import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import CustomPressable from "@/components/CustomPressable";
 import CustomTextInput from "@/components/CustomTextInput";
+import CommentComponent from "@/components/CommentComponent";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { toast } from "sonner-native";
 import { Image } from "expo-image";
 import { Asset } from "expo-asset";
 import { Picker } from "@expo/ui/jetpack-compose";
 import { useQuery } from "@tanstack/react-query";
 import { rgbaToHex } from "@/utils/colors";
+import { useComment } from "@/hooks/useComment";
 import { TimerPicker } from "react-native-timer-picker";
+import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
+import { Dispatch, SetStateAction, useState } from "react";
+import { Comment, Note, Notification, Post, User } from "../user/types";
+
 import {
   RichText,
   useEditorBridge,
   useEditorContent,
 } from "@10play/tentap-editor";
-import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { Comment, Note, Notification, Post, User } from "../user/types";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   KeyboardAvoidingView,
   Pressable,
   RefreshControl,
   ScrollView,
-  ToastAndroid,
   View,
 } from "react-native";
 
 import _THEMES from "../theme/Themes";
 import _API_INSTANCE from "@/utils/axios";
-import CommentComponent from "@/components/CommentComponent";
 import _EDITOR_BRIDGE_EXTENSIONS from "../theme/TenTapThemes";
-import { useComment } from "@/hooks/useComment";
-import { toast } from "sonner-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
@@ -81,6 +85,16 @@ export type MyTraysProps = {
   CommentOnPostTray: {
     post: Post;
     close: () => void;
+  };
+  StudyToolsSelectionTray: {
+    openGenerateFromNotes: () => void;
+    openUploadFile: () => void;
+    close: () => void;
+    type: "quiz" | "flashcard";
+  };
+  GenerateFromNotesTray: {
+    close: () => void;
+    type: "quiz" | "flashcard";
   };
 };
 
@@ -856,6 +870,201 @@ const _TRAYS = {
           >
             <CustomText>Comment</CustomText>
           </CustomPressable>
+        </CustomView>
+      );
+    },
+  },
+  StudyToolsSelectionTray: {
+    component: ({
+      openGenerateFromNotes,
+      openUploadFile,
+      close,
+      type,
+    }: {
+      openGenerateFromNotes: void;
+      openUploadFile: void;
+      close: () => void;
+      type: "quiz" | "flashcard";
+    }) => {
+      const { currentScheme } = useTheme();
+
+      return (
+        <CustomView
+          variant="colorBase100"
+          className="rounded-tr-3xl rounded-tl-3xl px-4 py-8 gap-4"
+        >
+          <View className="flex flex-row gap-4 items-center">
+            <CustomText>
+              <MaterialIcons
+                name="keyboard-arrow-left"
+                size={24}
+                onPress={close}
+              />
+            </CustomText>
+            <CustomText variant="bold" className="text-xl">
+              {type === "quiz" ? "Quiz" : "Flashcard"} Study Tools
+            </CustomText>
+          </View>
+          <Pressable
+            style={{ backgroundColor: currentScheme.colorBase200 }}
+            className="p-6 rounded-xl flex flex-row gap-6 items-center"
+          >
+            <CustomText>
+              <MaterialCommunityIcons name="note-multiple" size={32} />
+            </CustomText>
+            <Pressable onPress={openGenerateFromNotes} className="flex-1">
+              <CustomText className="text-xl" variant="black">
+                Select from notes
+              </CustomText>
+              <CustomText className="opacity-60">
+                Generate a quiz from selecting one of your notes.
+              </CustomText>
+            </Pressable>
+          </Pressable>
+          <Pressable
+            style={{ backgroundColor: currentScheme.colorBase200 }}
+            className="p-6 rounded-xl flex flex-row gap-6 items-center"
+          >
+            <CustomText>
+              <MaterialCommunityIcons name="file-upload" size={32} />
+            </CustomText>
+            <View className="flex-1">
+              <CustomText className="text-xl" variant="black">
+                Upload file
+              </CustomText>
+              <CustomText className="opacity-60">
+                Generate a quiz by uploading a document.
+              </CustomText>
+            </View>
+          </Pressable>
+        </CustomView>
+      );
+    },
+  },
+  GenerateFromNotesTray: {
+    component: ({
+      close,
+      type,
+    }: {
+      close: () => void;
+      type: "quiz" | "flashcard";
+    }) => {
+      const { user } = useAuth();
+
+      const [index, setIndex] = useState(0);
+
+      const handleGenerateQuiz = async (id: string) => {
+        setIndex(1);
+
+        try {
+          const { data } = await _API_INSTANCE.post(
+            "/ai/generate-quiz-from-note",
+            {
+              note_id: id,
+            },
+            { timeout: 8 * 60 * 1000 }
+          );
+
+          await AsyncStorage.setItem(
+            "app-ai-generated-quiz",
+            JSON.stringify(data)
+          );
+
+          router.push("/(learner)/(quiz)/ai/generated");
+          close();
+        } catch (err) {
+          toast.error("Error generating content.");
+          throw err;
+        }
+      };
+
+      const tabs = [
+        <>
+          <ScrollView contentContainerClassName="gap-4">
+            {user?.notes
+              .filter((note: Note) => note.is_ai_generated === false)
+              .map((note: Note) => (
+                <Pressable
+                  key={note.id}
+                  onPress={() => {
+                    if (type == "quiz") {
+                      handleGenerateQuiz(note.id);
+                    } else {
+                    }
+                  }}
+                >
+                  <CustomView
+                    variant="colorPrimary"
+                    className="p-6 rounded-xl gap-2"
+                  >
+                    {note.is_ai_generated && (
+                      <View className="flex flex-row gap-4 items-center">
+                        <CustomText color="colorPrimaryContent">
+                          <MaterialIcons name="info" size={18} />
+                        </CustomText>
+                        <CustomText color="colorPrimaryContent">
+                          AI-Generated
+                        </CustomText>
+                      </View>
+                    )}
+                    <CustomText
+                      color="colorPrimaryContent"
+                      className="text-sm opacity-70"
+                    >
+                      {dayjs(note.updated_at)
+                        .format("hh:mm A / MMMM DD, YYYY")
+                        .toString()}
+                    </CustomText>
+                    <CustomText
+                      color="colorPrimaryContent"
+                      variant="bold"
+                      className="text-3xl"
+                    >
+                      {note.title}
+                    </CustomText>
+                  </CustomView>
+                </Pressable>
+              ))}
+          </ScrollView>
+        </>,
+        <>
+          <View className="py-8 items-center justify-center">
+            <CustomText>
+              <ActivityIndicator
+                size={72}
+                color={useTheme.getState().currentScheme.colorPrimary}
+              />
+            </CustomText>
+            <CustomText variant="bold" className="text-xl">
+              Generating...
+            </CustomText>
+          </View>
+        </>,
+      ];
+
+      return (
+        <CustomView
+          variant="colorBase100"
+          className="rounded-tr-3xl rounded-tl-3xl px-4 py-8 gap-4"
+        >
+          <View className="flex flex-row gap-4 items-center">
+            <CustomText>
+              <MaterialIcons
+                name="keyboard-arrow-left"
+                size={24}
+                onPress={close}
+              />
+            </CustomText>
+            <View>
+              <CustomText variant="bold" className="text-xl">
+                Generate {type === "quiz" ? "quiz" : "flashcards"} from notes
+              </CustomText>
+              <CustomText className="text-sm opacity-60">
+                Select a note
+              </CustomText>
+            </View>
+          </View>
+          {tabs[index]}
         </CustomView>
       );
     },

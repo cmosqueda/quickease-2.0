@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { useRef, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Page() {
   const { user } = useAuth();
@@ -38,15 +39,32 @@ export default function Page() {
         title="Quizzes"
         rightSideChildren={
           <>
-            <CustomText>
-              <MaterialIcons
-                name="filter-list"
-                size={20}
-                onPress={() =>
-                  openTray("FilterQuizzesTray", { close: closeTray })
-                }
-              />
-            </CustomText>
+            <Pressable
+              onPress={() =>
+                openTray("StudyToolsSelectionTray", {
+                  openGenerateFromNotes: () => {
+                    closeTray();
+                    openTray("GenerateFromNotesTray", {
+                      close: closeTray,
+                      type: "quiz",
+                    });
+                  },
+                  openUploadFile: () => {
+                    closeTray();
+                    openTray("GenerateFromNotesTray", {
+                      close: closeTray,
+                      type: "quiz",
+                    });
+                  },
+                  close: closeTray,
+                  type: "quiz",
+                })
+              }
+            >
+              <CustomText>
+                <MaterialCommunityIcons name="toolbox-outline" size={20} />
+              </CustomText>
+            </Pressable>
           </>
         }
       />
