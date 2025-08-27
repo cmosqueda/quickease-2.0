@@ -1,18 +1,18 @@
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
-import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
+import CustomPressable from "@/components/CustomPressable";
 import CustomTextInput from "@/components/CustomTextInput";
 
 import Entypo from "@expo/vector-icons/Entypo";
 
+import { toast } from "sonner-native";
 import { router } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Pressable, ToastAndroid, View } from "react-native";
+import { Pressable, View } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
-import useAuth from "@/hooks/useAuth";
-import { toast } from "sonner-native";
 
 export default function Page() {
   const { currentScheme } = useTheme();
