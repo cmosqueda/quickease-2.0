@@ -8,6 +8,7 @@ import ForumHeader from "@/components/ForumHeader";
 import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { Link } from "expo-router";
 import { useTrays } from "react-native-trays";
@@ -37,15 +38,32 @@ export default function Page() {
         title="Flashcards"
         rightSideChildren={
           <>
-            <CustomText>
-              <MaterialIcons
-                name="filter-list"
-                size={20}
-                onPress={() =>
-                  openTray("FilterNotesTray", { close: closeTray })
-                }
-              />
-            </CustomText>
+            <Pressable
+              onPress={() =>
+                openTray("StudyToolsSelectionTray", {
+                  openGenerateFromNotes: () => {
+                    closeTray();
+                    openTray("GenerateFromNotesTray", {
+                      close: closeTray,
+                      type: "flashcard",
+                    });
+                  },
+                  openUploadFile: () => {
+                    closeTray();
+                    openTray("GenerateFromNotesTray", {
+                      close: closeTray,
+                      type: "flashcard",
+                    });
+                  },
+                  close: closeTray,
+                  type: "flashcard",
+                })
+              }
+            >
+              <CustomText>
+                <MaterialCommunityIcons name="toolbox-outline" size={20} />
+              </CustomText>
+            </Pressable>
           </>
         }
       />

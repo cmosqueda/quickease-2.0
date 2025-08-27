@@ -57,7 +57,6 @@ export default function Page() {
         }
       }
     } catch (err: any) {
-      console.log(err);
       toast(err?.response?.data?.message || "Something went wrong.");
     } finally {
       setIsLoggingIn(false);

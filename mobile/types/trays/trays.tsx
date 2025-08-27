@@ -978,6 +978,31 @@ const _TRAYS = {
         }
       };
 
+      const handleGenerateFlashcards = async (id: string) => {
+        setIndex(1);
+
+        try {
+          const { data } = await _API_INSTANCE.post(
+            "/ai/generate-flashcards-from-note",
+            {
+              note_id: id,
+            },
+            { timeout: 8 * 60 * 1000 }
+          );
+
+          await AsyncStorage.setItem(
+            "app-ai-generated-flashcards",
+            JSON.stringify(data)
+          );
+
+          router.push("/(learner)/(flashcard)/ai/generated");
+          close();
+        } catch (err) {
+          toast.error("Error generating content.");
+          throw err;
+        }
+      };
+
       const tabs = [
         <>
           <ScrollView contentContainerClassName="gap-4">
@@ -990,6 +1015,7 @@ const _TRAYS = {
                     if (type == "quiz") {
                       handleGenerateQuiz(note.id);
                     } else {
+                      handleGenerateFlashcards(note.id);
                     }
                   }}
                 >

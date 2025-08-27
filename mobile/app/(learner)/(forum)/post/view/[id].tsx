@@ -46,7 +46,6 @@ export default function Page() {
     queryFn: async () => {
       try {
         const { data } = await _API_INSTANCE.get<Post>(`/forum/post/${id}`);
-        console.log(data);
         return data;
       } catch (err) {
         throw err;

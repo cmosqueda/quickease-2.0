@@ -54,8 +54,6 @@ export default function Page() {
           setQuizDescription(parsed.description || "");
           setQuestions(parsed.quiz_content || []);
           setContent(parsed);
-
-          console.log("Loaded quiz:", parsed);
         } else {
           setQuestions([
             {
