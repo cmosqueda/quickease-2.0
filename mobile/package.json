@@ -64,6 +64,7 @@
     "react-native-trays": "^0.11.0",
     "react-native-web": "~0.20.0",
     "react-native-webview": "^13.15.0",
+    "sonner-native": "^0.21.0",
     "tailwindcss": "^3.4.17",
     "zod": "^4.0.5",
     "zustand": "^5.0.6"

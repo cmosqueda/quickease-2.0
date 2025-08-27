@@ -12,6 +12,7 @@ import { Pressable, ToastAndroid, View } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
 import useAuth from "@/hooks/useAuth";
+import { toast } from "sonner-native";
 
 export default function Page() {
   const { currentScheme } = useTheme();
@@ -21,7 +22,7 @@ export default function Page() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      ToastAndroid.show("Email and password required.", ToastAndroid.SHORT);
+      toast("Email and password required.");
       return;
     }
     setIsLoggingIn(true);
@@ -38,10 +39,7 @@ export default function Page() {
         });
 
         if (data.is_admin) {
-          ToastAndroid.show(
-            "This is an admin account, please try logging in on desktop.",
-            ToastAndroid.SHORT
-          );
+          toast("This is an admin account, please try logging in on desktop.");
           return;
         } else {
           const [notes, flashcard, quiz] = await Promise.all([
@@ -60,10 +58,7 @@ export default function Page() {
       }
     } catch (err: any) {
       console.log(err);
-      ToastAndroid.show(
-        err?.response?.data?.message || "Something went wrong.",
-        ToastAndroid.SHORT
-      );
+      toast(err?.response?.data?.message || "Something went wrong.");
     } finally {
       setIsLoggingIn(false);
     }

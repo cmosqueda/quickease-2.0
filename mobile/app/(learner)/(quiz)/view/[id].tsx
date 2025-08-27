@@ -23,6 +23,8 @@ import {
 } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
+import { Quiz } from "@/types/user/types";
+import { toast } from "sonner-native";
 
 export default function LearnerQuizPage() {
   const { currentScheme } = useTheme();
@@ -66,21 +68,27 @@ export default function LearnerQuizPage() {
     });
   };
 
-  const handleDeleteQuiz = async () => {
+  const handleDeleteQuiz = async ({ quiz }: { quiz: Quiz }) => {
     try {
       const { status } = await _API_INSTANCE.delete(`/quiz/delete`, {
         data: { quiz_id: quiz?.id },
       });
       if (status === 200) {
-        ToastAndroid.show("Quiz deleted.", ToastAndroid.SHORT);
+        toast("Quiz deleted.");
         router.back();
       }
     } catch {
-      ToastAndroid.show("Failed to delete quizData.", ToastAndroid.SHORT);
+      toast("Failed to delete quizData.");
     }
   };
 
-  const handleVisibility = async (visibility: boolean) => {
+  const handleVisibility = async ({
+    quiz,
+    visibility,
+  }: {
+    quiz: Quiz;
+    visibility: boolean;
+  }) => {
     try {
       const { status } = await _API_INSTANCE.put("/quiz/toggle-visibility", {
         visibility,
@@ -88,10 +96,10 @@ export default function LearnerQuizPage() {
       });
       if (status === 200) {
         setQuizVisibility(visibility);
-        ToastAndroid.show("Quiz visibility updated.", ToastAndroid.SHORT);
+        toast("Quiz visibility updated.");
       }
     } catch {
-      ToastAndroid.show("Error updating visibility.", ToastAndroid.SHORT);
+      toast("Error updating visibility.");
     }
   };
 

@@ -23,6 +23,7 @@ import {
 
 import _API_INSTANCE from "@/utils/axios";
 import _FONTS from "@/types/theme/Font";
+import { toast } from "sonner-native";
 
 export default function Page() {
   const { currentScheme } = useTheme();
@@ -64,10 +65,7 @@ export default function Page() {
 
   const handleAddCard = () => {
     if (!front.trim() || !back.trim()) {
-      ToastAndroid.show(
-        "Both front and back are required.",
-        ToastAndroid.SHORT
-      );
+      toast("Both front and back are required.");
       return;
     }
     setCards((prev) => [...prev, { front, back }]);
@@ -77,11 +75,11 @@ export default function Page() {
 
   const handleSave = async () => {
     if (!title.trim()) {
-      ToastAndroid.show("Title is required.", ToastAndroid.SHORT);
+      toast("Title is required.");
       return;
     }
     if (cards.length < 2) {
-      ToastAndroid.show("At least 2 cards required.", ToastAndroid.SHORT);
+      toast("At least 2 cards required.");
       return;
     }
 
@@ -101,16 +99,13 @@ export default function Page() {
       );
 
       if (status === 200) {
-        ToastAndroid.show("Flashcard updated.", ToastAndroid.SHORT);
+        toast("Flashcard updated.");
         router.back();
       } else {
-        ToastAndroid.show("Unexpected server response.", ToastAndroid.LONG);
+        toast("Unexpected server response.");
       }
     } catch (err: any) {
-      ToastAndroid.show(
-        `Error updating flashcard: ${err.message ?? "Unknown error"}`,
-        ToastAndroid.LONG
-      );
+      toast(`Error updating flashcard: ${err.message ?? "Unknown error"}`);
     } finally {
       setIsSaving(false);
     }
@@ -180,7 +175,7 @@ export default function Page() {
         className="rounded-3xl items-center"
         onPress={() => {
           if (!title.trim()) {
-            ToastAndroid.show("Missing title.", ToastAndroid.SHORT);
+            toast("Missing title.");
             return;
           }
           setIndex(1);

@@ -23,7 +23,7 @@ import {
   useEditorContent,
 } from "@10play/tentap-editor";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { Comment, Notification, Post, User } from "../user/types";
+import { Comment, Note, Notification, Post, User } from "../user/types";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import {
@@ -42,12 +42,17 @@ import _API_INSTANCE from "@/utils/axios";
 import CommentComponent from "@/components/CommentComponent";
 import _EDITOR_BRIDGE_EXTENSIONS from "../theme/TenTapThemes";
 import { useComment } from "@/hooks/useComment";
+import { toast } from "sonner-native";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
   NotificationTray: { close: () => void };
   FilterQuizzesTray: { close: () => void };
-  FilterNotesTray: { close: () => void };
+  FilterNotesTray: {
+    close: () => void;
+    notes?: Note[];
+    setNotes: SetStateAction<Dispatch<Note[]>>;
+  };
   FilterFlashcardsTray: { close: () => void };
   PomodoroTray: {
     close: () => void;
@@ -195,7 +200,15 @@ const _TRAYS = {
     ),
   },
   FilterNotesTray: {
-    component: ({ close }: { close: () => void }) => (
+    component: ({
+      close,
+      notes,
+      setNotes,
+    }: {
+      close: () => void;
+      notes?: Note[];
+      setNotes: SetStateAction<Dispatch<Note[]>>;
+    }) => (
       <CustomView
         variant="colorBase100"
         style={{ height: Dimensions.get("screen").height / 2, gap: 8 }}
@@ -600,10 +613,7 @@ const _TRAYS = {
             close();
           }
         } catch (err) {
-          ToastAndroid.show(
-            err.message || "Error updating avatar.",
-            ToastAndroid.SHORT
-          );
+          toast(err.message || "Error updating avatar.");
         } finally {
           setIsSaving(false);
         }
@@ -791,7 +801,7 @@ const _TRAYS = {
 
       const handleSubmit = () => {
         if (!editorContent) {
-          ToastAndroid.show("Empty comment?", ToastAndroid.SHORT);
+          toast("Empty comment?");
           return;
         }
         setIsSubmitting(true);

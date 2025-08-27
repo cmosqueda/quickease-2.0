@@ -2,10 +2,10 @@ import * as SplashScreen from "expo-splash-screen";
 import useTheme from "@/hooks/useTheme";
 import _TRAYS from "@/types/trays/trays";
 
+import { Stack } from "expo-router";
+import { Toaster } from "sonner-native";
+import { useEffect } from "react";
 import { TrayProvider } from "react-native-trays";
-import { router, Stack } from "expo-router";
-import { useEffect, useState } from "react";
-import { checkAuthAndRedirect } from "@/utils/axios";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -107,7 +107,14 @@ export default function RootLayout() {
             />
           </Stack>
         </TrayProvider>
-
+        <Toaster
+          position="top-center"
+          swipeToDismissDirection="left"
+          theme={currentScheme.colorscheme == "dark" ? "light" : "dark"}
+          style={{
+            backgroundColor: currentScheme.colorPrimary,
+          }}
+        />
         <StatusBar style="auto" translucent animated />
       </QueryClientProvider>
     </GestureHandlerRootView>

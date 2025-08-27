@@ -1,21 +1,23 @@
-import _API_INSTANCE from "@/utils/axios";
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
-import _FONTS from "@/types/theme/Font";
-import FlippableCard from "@/components/FlippableCard";
 import CustomText from "@/components/CustomText";
+import CustomView from "@/components/CustomView";
+import FlippableCard from "@/components/FlippableCard";
 import CustomPressable from "@/components/CustomPressable";
 import CustomTextInput from "@/components/CustomTextInput";
-import CustomView from "@/components/CustomView";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { toast } from "sonner-native";
+import { router } from "expo-router";
 import { useState } from "react";
-import { View, ScrollView, ToastAndroid, Pressable } from "react-native";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { View, ScrollView, ToastAndroid, Pressable } from "react-native";
+
+import _API_INSTANCE from "@/utils/axios";
+import _FONTS from "@/types/theme/Font";
 
 export default function Page() {
   const { user } = useAuth();
@@ -30,7 +32,7 @@ export default function Page() {
 
   const handleAddCard = () => {
     if (!front && !back) {
-      ToastAndroid.show("Invalid input values.", ToastAndroid.SHORT);
+      toast("Invalid input values.");
       return;
     }
 
@@ -41,10 +43,7 @@ export default function Page() {
 
   const handleSave = async () => {
     if (cards.length < 2) {
-      ToastAndroid.show(
-        "The flashcards must contain at least 2.",
-        ToastAndroid.SHORT
-      );
+      toast("The flashcards must contain at least 2.");
       return;
     }
     setIsSaving(true);
@@ -59,13 +58,10 @@ export default function Page() {
 
       if (status === 201) {
         await checkBadges();
-        ToastAndroid.show("Flashcard created.", ToastAndroid.SHORT);
+        toast("Flashcard created.");
       }
     } catch (err: any) {
-      ToastAndroid.show(
-        `Error creating flashcard: ${err.message}`,
-        ToastAndroid.LONG
-      );
+      toast(`Error creating flashcard: ${err.message}`);
     } finally {
       setIsSaving(false);
     }
@@ -104,7 +100,7 @@ export default function Page() {
         className="rounded-3xl items-center"
         onPress={() => {
           if (!title) {
-            ToastAndroid.show("No flashcard title?", ToastAndroid.SHORT);
+            toast("No flashcard title?");
             return;
           }
 

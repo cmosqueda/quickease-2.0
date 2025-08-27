@@ -22,6 +22,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
+import { toast } from "sonner-native";
 
 interface QuizQuestion {
   question: string;
@@ -112,14 +113,14 @@ export default function LearnerAnswerQuizPage() {
 
       if (status === 200) {
         await checkBadges();
-        ToastAndroid.show("Quiz submitted!", ToastAndroid.SHORT);
+        toast("Quiz submitted!");
         router.push({
           pathname: "/(learner)/(quiz)/attempt/[id]",
           params: { id: data.id },
         });
       }
     } catch {
-      ToastAndroid.show("Error submitting quiz.", ToastAndroid.SHORT);
+      toast("Error submitting quiz.");
     } finally {
       setIsSubmitting(false);
     }

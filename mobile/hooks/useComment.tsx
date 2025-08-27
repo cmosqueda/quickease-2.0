@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _API_INSTANCE from "@/utils/axios";
 
+import { toast } from "sonner-native";
 import { checkBadges } from "@/types/user/badges";
-import { ToastAndroid } from "react-native";
 import { QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
 
 type CommentInput = {
@@ -60,10 +60,7 @@ export function useComment(keysToInvalidate: QueryKey[] = [["view-post"]]) {
     },
     onError: (err: any) => {
       console.error(err);
-      ToastAndroid.show(
-        err?.message || "Failed to post comment.",
-        ToastAndroid.SHORT
-      );
+      toast(err?.message || "Failed to post comment.");
     },
   });
 }
