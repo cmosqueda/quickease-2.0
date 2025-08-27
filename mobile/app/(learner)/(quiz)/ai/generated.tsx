@@ -1,34 +1,31 @@
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
-import _FONTS from "@/types/theme/Font";
-import _API_INSTANCE from "@/utils/axios";
-
-import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
-import CustomTextInput from "@/components/CustomTextInput";
 import CustomView from "@/components/CustomView";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomTextInput from "@/components/CustomTextInput";
+import CustomPressable from "@/components/CustomPressable";
 
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { toast } from "sonner-native";
 import { Switch } from "@expo/ui/jetpack-compose";
 import { router } from "expo-router";
-import { useState } from "react";
+import { Question } from "../edit/[id]";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useLayoutEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 
-interface Question {
-  question: string;
-  description: string;
-  options: string[];
-  correctAnswers: number[];
-}
+import _FONTS from "@/types/theme/Font";
+import _API_INSTANCE from "@/utils/axios";
 
 export default function Page() {
   const { addQuiz } = useAuth();
   const { currentScheme } = useTheme();
+  const [content, setContent] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const [questions, setQuestions] = useState<Question[]>([
     {
@@ -44,6 +41,39 @@ export default function Page() {
   const [isRandomized, setIsRandomized] = useState(false);
   const [totalSeconds, setTotalSeconds] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useLayoutEffect(() => {
+    const getGeneratedContent = async () => {
+      try {
+        const _CONTENT = await AsyncStorage.getItem("app-ai-generated-quiz");
+
+        if (_CONTENT) {
+          const parsed = JSON.parse(_CONTENT);
+
+          setQuizTitle(parsed.title || "Untitled Quiz");
+          setQuizDescription(parsed.description || "");
+          setQuestions(parsed.quiz_content || []);
+          setContent(parsed);
+        } else {
+          setQuestions([
+            {
+              question: "",
+              description: "",
+              options: ["", "", "", ""],
+              correctAnswers: [],
+            },
+          ]);
+        }
+      } catch (err) {
+        console.error("Failed to parse quiz:", err);
+        router.back();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getGeneratedContent();
+  }, []);
 
   const handleQuestionChange = (
     index: number,
@@ -98,16 +128,19 @@ export default function Page() {
     setIsSubmitting(true);
 
     try {
-      const { status, data } = await _API_INSTANCE.post(
+      const { data, status } = await _API_INSTANCE.post(
         "/quiz/create",
         {
-          title: quizTitle.trim(),
+          title: `${quizTitle.trim()}`,
           description: quizDescription.trim(),
           quiz_content: questions,
           is_randomized: isRandomized,
           timed_quiz: isTimedQuiz ? totalSeconds : 0,
+          isAI: true,
         },
-        { timeout: 8 * 60 * 1000 }
+        {
+          timeout: 8 * 60 * 1000,
+        }
       );
 
       if (status == 201) {
@@ -243,6 +276,15 @@ export default function Page() {
       </CustomPressable>
     </>,
   ];
+
+  if (isLoading) {
+    return (
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: currentScheme.colorBase100 }}
+        className="p-4 gap-4"
+      ></SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView

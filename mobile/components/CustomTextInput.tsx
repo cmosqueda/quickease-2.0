@@ -2,6 +2,7 @@ import React from "react";
 import useTheme from "@/hooks/useTheme";
 
 import { TextInput, TextInputProps } from "react-native";
+
 import _FONTS from "@/types/theme/Font";
 
 type CustomTextInputProps = TextInputProps;
@@ -28,7 +29,6 @@ export default function CustomTextInput(props: CustomTextInputProps) {
         },
         style,
       ]}
-      multiline
       cursorColor={cursorColor}
       selectionColor={selectionColor}
       placeholderTextColor={currentScheme.colorSecondary}

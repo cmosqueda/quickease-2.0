@@ -1,7 +1,9 @@
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import PagerView from "react-native-pager-view";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import FlippableCard from "@/components/FlippableCard";
 import CustomPressable from "@/components/CustomPressable";
 import CustomTextInput from "@/components/CustomTextInput";
@@ -10,37 +12,20 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { toast } from "sonner-native";
-import { useQuery } from "@tanstack/react-query";
-import { Flashcard } from "@/types/user/types";
+import { router } from "expo-router";
+import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect, useRef, useState } from "react";
-import { router, useLocalSearchParams } from "expo-router";
-import { View, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { View, ScrollView, Pressable } from "react-native";
+import { useLayoutEffect, useRef, useState } from "react";
 
-import _API_INSTANCE from "@/utils/axios";
 import _FONTS from "@/types/theme/Font";
+import _API_INSTANCE from "@/utils/axios";
 
 export default function Page() {
+  const { user, addFlashcard } = useAuth();
   const { currentScheme } = useTheme();
-  const { id: flashcardId } = useLocalSearchParams<{ id?: string }>();
-  const pagerViewRef = useRef<PagerView>(null);
 
-  const {
-    data: flashcardData,
-    isFetching,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["view-flashcard", flashcardId],
-    queryFn: async () => {
-      const { data } = await _API_INSTANCE.get<Flashcard>(
-        `/flashcard/${flashcardId}`
-      );
-      return data;
-    },
-    retry: 3,
-    enabled: Boolean(flashcardId),
-  });
+  const pagerViewRef = useRef<PagerView>(null);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -48,103 +33,81 @@ export default function Page() {
   const [back, setBack] = useState("");
   const [cards, setCards] = useState<{ front: string; back: string }[]>([]);
   const [isSaving, setIsSaving] = useState(false);
-  const [index, setIndex] = useState(0);
-
-  // Pre-fill form values once flashcard data is loaded
-  useEffect(() => {
-    if (flashcardData) {
-      setTitle(flashcardData.title ?? "");
-      setDescription(flashcardData.description ?? "");
-      setCards(flashcardData.flashcards ?? []);
-    }
-  }, [flashcardData]);
 
   const handleAddCard = () => {
-    if (!front.trim() || !back.trim()) {
-      toast("Both front and back are required.");
+    if (!front && !back) {
+      toast("Invalid input values.");
       return;
     }
-    setCards((prev) => [...prev, { front, back }]);
+
+    setCards([...cards, { front, back }]);
     setFront("");
     setBack("");
   };
 
   const handleSave = async () => {
     setIsSaving(true);
-    try {
-      const { status } = await _API_INSTANCE.put(
-        `/flashcard/update`,
-        {
-          flashcard_id: flashcardId,
-          title,
-          description,
-          flashcards: cards,
-        },
-        {
-          timeout: 8 * 60 * 1000,
-        }
-      );
 
-      if (status === 200) {
-        toast("Flashcard updated.");
+    try {
+      const { status, data } = await _API_INSTANCE.post("flashcard/create", {
+        title,
+        description,
+        flashcards: cards,
+        user_id: user?.id,
+      });
+
+      if (status === 201) {
+        addFlashcard(data);
+        await checkBadges();
+        toast("Flashcard created.");
         router.back();
-      } else {
-        toast("Unexpected server response.");
       }
     } catch (err: any) {
-      toast(`Error updating flashcard: ${err.message ?? "Unknown error"}`);
+      toast(`Error creating flashcard: ${err.message}`);
     } finally {
       setIsSaving(false);
     }
   };
 
-  if (isFetching) {
-    return (
-      <SafeAreaView
-        className="flex-1 items-center justify-center"
-        style={{ backgroundColor: currentScheme.colorBase200 }}
-      >
-        <ActivityIndicator color={currentScheme.colorPrimary} size={96} />
-      </SafeAreaView>
-    );
-  }
+  const [index, setIndex] = useState(0);
 
-  if (isError) {
-    return (
-      <SafeAreaView
-        style={{ flex: 1, backgroundColor: currentScheme.colorBase200 }}
-        className="p-4 justify-center items-center"
-      >
-        <CustomText variant="bold" className="text-red-600">
-          Failed to load flashcard.
-        </CustomText>
-        {__DEV__ && (
-          <CustomText className="text-xs opacity-50">
-            {(error as Error)?.message}
-          </CustomText>
-        )}
-      </SafeAreaView>
-    );
-  }
+  useLayoutEffect(() => {
+    const getGeneratedContent = async () => {
+      try {
+        const stored = await AsyncStorage.getItem(
+          "app-ai-generated-flashcards"
+        );
 
-  if (!flashcardData) {
-    return null;
-  }
+        if (stored) {
+          const parsed = JSON.parse(stored);
+
+          setTitle(parsed.title || "Untitled Flashcards");
+          setDescription(parsed.description || "");
+          setCards(parsed.flashcards || []);
+        }
+      } catch (err) {
+        router.back();
+      }
+    };
+
+    getGeneratedContent();
+  }, []);
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: currentScheme.colorBase200 }}
+      style={{ flex: 1, backgroundColor: currentScheme.colorBase100 }}
       className="p-4 gap-4"
     >
       <View className="flex flex-row items-center justify-between">
         <View className="flex flex-row gap-2 items-center">
           <Pressable
             onPress={() => {
-              if (index === 1) {
-                setIndex(0);
+              if (index == 1) {
                 pagerViewRef.current?.setPage(0);
+                setIndex(0);
                 return;
               }
+
               router.back();
             }}
           >
@@ -152,33 +115,28 @@ export default function Page() {
               <MaterialIcons name="keyboard-arrow-left" size={36} />
             </CustomText>
           </Pressable>
-          <CustomText>Edit Flashcard</CustomText>
+          <CustomText>Create flashcard</CustomText>
         </View>
         <CustomPressable
           className="flex flex-row gap-2 items-center rounded-3xl"
-          variant="colorBase300"
+          variant="colorBase200"
           onPress={() => {
-            if (!title.trim()) {
-              toast("Title is required.");
-              return;
-            }
             if (cards.length < 2) {
-              toast("At least 2 cards required.");
+              toast("The flashcards must contain at least 2.");
               return;
             }
 
             toast.promise(handleSave(), {
-              loading: "Saving flashcards...",
+              loading: "Saving flashcards..,",
               error: "Error saving flashcards.",
               success: (data) => "Flashcards saved.",
             });
           }}
-          disabled={isSaving}
         >
           <CustomText>
             <MaterialCommunityIcons name="content-save" size={20} />
           </CustomText>
-          <CustomText>{isSaving ? "Saving..." : "Save"}</CustomText>
+          <CustomText>Save</CustomText>
         </CustomPressable>
       </View>
       <View className="flex flex-row gap-2">
@@ -195,15 +153,15 @@ export default function Page() {
       </View>
       <PagerView
         ref={pagerViewRef}
-        initialPage={0}
-        style={{ flex: 1 }}
         onPageScroll={(e) => setIndex(e.nativeEvent.position)}
+        style={{ flex: 1 }}
         scrollEnabled={false}
       >
         <View key={0}>
           <View className="flex-1">
             <CustomTextInput
               style={{
+                backgroundColor: "",
                 paddingHorizontal: 0,
                 fontFamily: _FONTS.Gabarito_900Black,
               }}
@@ -214,6 +172,7 @@ export default function Page() {
             />
             <CustomTextInput
               style={{
+                backgroundColor: null as any,
                 paddingHorizontal: 0,
                 fontFamily: _FONTS.Gabarito_400Regular,
                 flex: 1,
@@ -229,8 +188,8 @@ export default function Page() {
             variant="colorBase300"
             className="rounded-3xl items-center"
             onPress={() => {
-              if (!title.trim()) {
-                toast("Missing title.");
+              if (!title) {
+                toast("No flashcard title?");
                 return;
               }
 
@@ -241,16 +200,16 @@ export default function Page() {
             <CustomText>Next</CustomText>
           </CustomPressable>
         </View>
-        <View key={1} className="gap-4">
+        <View key={1}>
           <CustomText variant="black" className="text-5xl">
-            Edit Cards
+            Questions
           </CustomText>
           <CustomView variant="colorBase300" className="gap-4 p-4 rounded-3xl">
             <CustomText>Front (Question)</CustomText>
             <CustomTextInput
               value={front}
               onChangeText={setFront}
-              placeholder="Edit the front"
+              placeholder="Enter the front of the card"
               style={{ backgroundColor: currentScheme.colorBase200 }}
               className="rounded-xl"
               multiline
@@ -259,7 +218,7 @@ export default function Page() {
             <CustomTextInput
               value={back}
               onChangeText={setBack}
-              placeholder="Edit the back"
+              placeholder="Enter the back of the card"
               style={{ backgroundColor: currentScheme.colorBase200 }}
               className="rounded-xl"
               multiline
@@ -268,33 +227,23 @@ export default function Page() {
               onPress={handleAddCard}
               className="items-center rounded-xl"
             >
-              <CustomText color="colorPrimaryContent">Add Card</CustomText>
+              <CustomText color="colorPrimaryContent">Add</CustomText>
             </CustomPressable>
           </CustomView>
 
           <CustomText variant="bold" className="text-xl">
-            Existing Cards
+            Previews
           </CustomText>
-          {cards.length > 0 ? (
-            <ScrollView
-              contentContainerStyle={{
-                backgroundColor: currentScheme.colorBase200,
-              }}
-              contentContainerClassName="gap-4"
-            >
-              {cards.map((card, index) => (
-                <FlippableCard
-                  front={card.front}
-                  back={card.back}
-                  key={index}
-                />
-              ))}
-            </ScrollView>
-          ) : (
-            <CustomText className="opacity-60">
-              No cards yet. Add one above.
-            </CustomText>
-          )}
+          <ScrollView
+            contentContainerStyle={{
+              backgroundColor: currentScheme.colorBase100,
+            }}
+            contentContainerClassName="gap-4"
+          >
+            {cards.map((card, index) => (
+              <FlippableCard front={card.front} back={card.back} key={index} />
+            ))}
+          </ScrollView>
         </View>
       </PagerView>
     </SafeAreaView>

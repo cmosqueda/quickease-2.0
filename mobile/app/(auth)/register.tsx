@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import PagerView from "react-native-pager-view";
 import CustomText from "@/components/CustomText";
@@ -7,20 +8,56 @@ import CustomTextInput from "@/components/CustomTextInput";
 
 import Entypo from "@expo/vector-icons/Entypo";
 
+import { toast } from "sonner-native";
 import { router } from "expo-router";
-import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, View } from "react-native";
+import { useRef, useState } from "react";
+
+import _API_INSTANCE from "@/utils/axios";
 
 export default function Page() {
+  const { setUser } = useAuth();
   const { currentScheme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
+  const [isRegistering, setIsRegistering] = useState(false);
+
   const [tabIndex, setTabIndex] = useState(0);
   const pageViewRef = useRef<PagerView>(null);
+
+  const handleRegister = async () => {
+    setIsRegistering(true);
+
+    try {
+      const { data, status } = await _API_INSTANCE.post(
+        "/auth/register",
+        {
+          firstName,
+          lastName,
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+
+      if (status === 201) {
+        setUser(data);
+        router.replace("/(learner)/(forum)");
+      }
+    } catch (err: any) {
+      console.log(err);
+      toast.error(
+        err.response.data.message || "Error registering, please try again."
+      );
+      throw err;
+    } finally {
+      setIsRegistering(false);
+    }
+  };
 
   return (
     <SafeAreaView
@@ -79,18 +116,17 @@ export default function Page() {
           <View className="flex flex-col gap-1">
             <CustomText className="opacity-50">First Name</CustomText>
             <CustomTextInput
-              value={email}
-              onChangeText={setEmail}
+              value={firstName}
+              onChangeText={setFirstName}
               className="rounded-xl"
             />
           </View>
           <View className="flex flex-col gap-1">
             <CustomText className="opacity-50">Last Name</CustomText>
             <CustomTextInput
-              value={password}
-              onChangeText={setPassword}
+              value={lastName}
+              onChangeText={setLastName}
               className="rounded-xl"
-              secureTextEntry
             />
           </View>
 
@@ -131,11 +167,13 @@ export default function Page() {
             />
           </View>
           <View className="flex flex-col gap-4">
-            <CustomPressable variant="colorPrimary" className="rounded-3xl">
-              <CustomText
-                color="colorPrimaryContent"
-                className="text-center text-xl"
-              >
+            <CustomPressable
+              variant="colorPrimary"
+              className="rounded-3xl"
+              disabled={isRegistering}
+              onPress={handleRegister}
+            >
+              <CustomText color="colorPrimaryContent" className="text-center">
                 Register
               </CustomText>
             </CustomPressable>

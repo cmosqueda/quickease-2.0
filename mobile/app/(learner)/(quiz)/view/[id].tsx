@@ -14,13 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
-import {
-  ScrollView,
-  Pressable,
-  ToastAndroid,
-  View,
-  ActivityIndicator,
-} from "react-native";
+import { ScrollView, Pressable, View, ActivityIndicator } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
 import { Quiz } from "@/types/user/types";
@@ -31,11 +25,7 @@ export default function LearnerQuizPage() {
   const { user } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const {
-    data: quizData,
-    isFetching,
-    isError,
-  } = useQuery({
+  const { data: quizData } = useQuery({
     queryKey: ["view-quiz", id],
     queryFn: async () => {
       try {
@@ -199,12 +189,12 @@ export default function LearnerQuizPage() {
       >
         <Pressable onPress={() => router.back()}>
           <CustomText>
-            <MaterialIcons name="keyboard-arrow-left" size={24} />
+            <MaterialIcons name="keyboard-arrow-left" size={36} />
           </CustomText>
         </Pressable>
         <Pressable onPress={handleEditQuiz}>
           <CustomText>
-            <MaterialCommunityIcons name="layers-edit" size={24} />
+            <MaterialCommunityIcons name="layers-edit" size={28} />
           </CustomText>
         </Pressable>
       </CustomView>
@@ -265,7 +255,13 @@ export default function LearnerQuizPage() {
         </CustomPressable>
       </View>
 
-      <PagerView style={{ flex: 1 }} ref={pagerViewRef} scrollEnabled={false}>
+      <PagerView
+        style={{ flex: 1 }}
+        ref={pagerViewRef}
+        onPageScroll={(e) => {
+          setTabIndex(e.nativeEvent.position);
+        }}
+      >
         <ScrollView className="flex flex-col gap-4" key={0}>
           {renderAttempts()}
         </ScrollView>

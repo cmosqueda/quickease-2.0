@@ -7,6 +7,7 @@ export default function Layout() {
       <Stack.Screen name="create" options={{ animation: "fade_from_bottom" }} />
       <Stack.Screen name="edit/[id]" />
       <Stack.Screen name="view/[id]" />
+      <Stack.Screen name="ai/generated" />
     </Stack>
   );
 }

@@ -12,8 +12,6 @@ export const checkAuthAndRedirect = async () => {
         withCredentials: true,
       });
 
-      console.log(data.posts);
-
       useAuth.setState((state) => {
         state.user = data;
       });
