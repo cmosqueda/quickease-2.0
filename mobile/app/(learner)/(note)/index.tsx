@@ -14,8 +14,8 @@ import { Link } from "expo-router";
 import { useTrays } from "react-native-trays";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRef, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
-import { useEffect, useRef, useState } from "react";
 
 export default function Page() {
   const { currentScheme } = useTheme();
@@ -23,11 +23,9 @@ export default function Page() {
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
   const { user } = useAuth();
-  const pagerViewRef = useRef<PagerView>(null);
-
-  const [notes, setNotes] = useState(user?.notes);
 
   const [index, setIndex] = useState(0);
+  const pagerViewRef = useRef<PagerView>(null);
 
   return (
     <SafeAreaView

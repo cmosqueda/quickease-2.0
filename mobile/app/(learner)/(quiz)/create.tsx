@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import _FONTS from "@/types/theme/Font";
 import _API_INSTANCE from "@/utils/axios";
@@ -10,13 +11,13 @@ import CustomView from "@/components/CustomView";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+import { toast } from "sonner-native";
 import { Switch } from "@expo/ui/jetpack-compose";
 import { router } from "expo-router";
 import { useState } from "react";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Pressable, ScrollView, ToastAndroid, View } from "react-native";
-import { toast } from "sonner-native";
+import { Pressable, ScrollView, View } from "react-native";
 
 interface Question {
   question: string;
@@ -26,6 +27,7 @@ interface Question {
 }
 
 export default function Page() {
+  const { addQuiz } = useAuth();
   const { currentScheme } = useTheme();
 
   const [questions, setQuestions] = useState<Question[]>([
@@ -95,22 +97,22 @@ export default function Page() {
   const handleSubmit = async () => {
     if (questions.length < 2) {
       toast("Must have at least 2 questions.");
-      return;
+      throw Error;
     }
 
     for (let index = 0; index < questions.length; index++) {
       const q = questions[index];
       if (!q.question.trim()) {
         toast(`Question ${index + 1} is empty.`);
-        return;
+        throw Error;
       }
       if (q.options.some((opt) => !opt.trim())) {
         toast(`Question ${index + 1} has an empty option.`);
-        return;
+        throw Error;
       }
       if (q.correctAnswers.length === 0) {
         toast(`Question ${index + 1} has no correct answer selected.`);
-        return;
+        throw Error;
       }
     }
 
@@ -130,6 +132,7 @@ export default function Page() {
       );
 
       if (status == 201) {
+        addQuiz(data);
         await checkBadges();
         toast("Quiz created");
         router.push({
@@ -290,6 +293,13 @@ export default function Page() {
           disabled={isSubmitting}
           className="flex flex-row gap-2 items-center rounded-3xl"
           variant="colorBase200"
+          onPress={() => {
+            toast.promise(handleSubmit(), {
+              loading: "Saving quiz...",
+              error: "Error saving quiz.",
+              success: (data) => "Quiz saved.",
+            });
+          }}
         >
           <CustomText>
             <MaterialCommunityIcons name="content-save" size={20} />

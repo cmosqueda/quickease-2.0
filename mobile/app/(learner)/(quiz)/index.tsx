@@ -8,15 +8,14 @@ import ForumHeader from "@/components/ForumHeader";
 import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { Link } from "expo-router";
 import { Quiz } from "@/types/user/types";
 import { useTrays } from "react-native-trays";
-import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
-import { Pressable, View } from "react-native";
 import { useRef, useState } from "react";
+import { Pressable, ScrollView, View } from "react-native";
 
 export default function Page() {
   const { user } = useAuth();
@@ -62,7 +61,7 @@ export default function Page() {
           }}
           className="flex-1 gap-2 "
         >
-          <CustomText className="text-center">Library</CustomText>
+          <CustomText className="text-center">All</CustomText>
           <CustomView
             className="rounded-full"
             variant={index === 0 ? "colorPrimary" : "colorBase100"}
@@ -76,35 +75,132 @@ export default function Page() {
           }}
           className="flex-1 gap-2 "
         >
-          <CustomText className="text-center">Study Tools</CustomText>
+          <CustomText className="text-center">By recent</CustomText>
           <CustomView
             className="rounded-full"
             variant={index === 1 ? "colorPrimary" : "colorBase100"}
             style={{ height: 3 }}
           />
         </Pressable>
+        <Pressable
+          onPress={() => {
+            setIndex(2);
+            pagerViewRef.current?.setPage(2);
+          }}
+          className="flex-1 gap-2 "
+        >
+          <CustomText className="text-center">AI-Generated</CustomText>
+          <CustomView
+            className="rounded-full"
+            variant={index === 2 ? "colorPrimary" : "colorBase100"}
+            style={{ height: 3 }}
+          />
+        </Pressable>
       </CustomView>
 
-      <PagerView style={{ flex: 1 }} scrollEnabled={false} ref={pagerViewRef}>
-        <CustomView
-          variant="colorBase300"
-          className="flex-col gap-4 flex-1 px-4 py-4 rounded-tr-3xl rounded-tl-3xl"
+      <PagerView
+        ref={pagerViewRef}
+        style={{ flex: 1 }}
+        onPageSelected={(e) => {
+          setIndex(e.nativeEvent.position);
+        }}
+      >
+        <ScrollView
+          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
+          className="rounded-tr-3xl rounded-tl-3xl"
+          style={{ backgroundColor: currentScheme.colorBase300 }}
           key={0}
         >
-          {user?.quizzes &&
-            user.quizzes.length > 0 &&
-            user.quizzes.map((quiz: Quiz) => (
-              <Pressable
-                key={quiz.id}
-                onPress={() =>
-                  router.push({
-                    pathname: "/(learner)/(quiz)/view/[id]",
-                    params: { id: quiz.id },
-                  })
-                }
-              >
+          {user?.quizzes.map((quiz: Quiz) => (
+            <Link
+              asChild
+              href={{
+                pathname: "/(learner)/(quiz)/view/[id]",
+                params: { id: quiz.id },
+              }}
+              key={quiz.id}
+            >
+              <Pressable>
                 <CustomView className="p-6 rounded-xl gap-2">
-                  <View className="gap-2">
+                  {quiz.is_ai_generated && (
+                    <View className="flex flex-row gap-4 items-center">
+                      <CustomText>
+                        <MaterialIcons name="info" size={18} />
+                      </CustomText>
+                      <CustomText>AI-Generated</CustomText>
+                    </View>
+                  )}
+                  <CustomText className="text-sm opacity-40">
+                    {dayjs(quiz.updated_at)
+                      .format("hh:mm A / MMMM DD, YYYY")
+                      .toString()}
+                  </CustomText>
+                  <CustomText variant="bold" className="text-3xl">
+                    {quiz.title}
+                  </CustomText>
+                </CustomView>
+              </Pressable>
+            </Link>
+          ))}
+        </ScrollView>
+        <ScrollView
+          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
+          className="rounded-tr-3xl rounded-tl-3xl"
+          style={{ backgroundColor: currentScheme.colorBase300 }}
+          key={1}
+        >
+          {[...(user?.quizzes ?? [])]
+            .sort(
+              (a: Quiz, b: Quiz) =>
+                dayjs(b.updated_at).valueOf() - dayjs(a.updated_at).valueOf()
+            )
+            .map((quiz: Quiz) => (
+              <Link
+                asChild
+                key={quiz.id}
+                href={{
+                  pathname: "/(learner)/(quiz)/view/[id]",
+                  params: { id: quiz.id.toString() },
+                }}
+              >
+                <Pressable>
+                  <CustomView className="p-6 rounded-xl gap-2">
+                    {quiz.is_ai_generated && (
+                      <View className="flex flex-row gap-4 items-center">
+                        <MaterialIcons name="info" size={18} />
+                        <CustomText>AI-Generated</CustomText>
+                      </View>
+                    )}
+                    <CustomText className="text-sm opacity-40">
+                      {dayjs(quiz.updated_at).format("hh:mm A / MMMM DD, YYYY")}
+                    </CustomText>
+                    <CustomText variant="bold" className="text-3xl">
+                      {quiz.title}
+                    </CustomText>
+                  </CustomView>
+                </Pressable>
+              </Link>
+            ))}
+        </ScrollView>
+        <ScrollView
+          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
+          className="rounded-tr-3xl rounded-tl-3xl"
+          style={{ backgroundColor: currentScheme.colorBase300 }}
+          key={2}
+        >
+          {user?.quizzes
+            .filter((quiz: Quiz) => quiz.is_ai_generated === true)
+            .map((quiz: Quiz) => (
+              <Link
+                asChild
+                href={{
+                  pathname: "/(learner)/(quiz)/view/[id]",
+                  params: { id: quiz.id },
+                }}
+                key={quiz.id}
+              >
+                <Pressable>
+                  <CustomView className="p-6 rounded-xl gap-2">
                     {quiz.is_ai_generated && (
                       <View className="flex flex-row gap-4 items-center">
                         <CustomText>
@@ -114,54 +210,18 @@ export default function Page() {
                       </View>
                     )}
                     <CustomText className="text-sm opacity-40">
-                      {dayjs(quiz.updated_at).format("hh:mm A / MMMM DD YYYY")}
+                      {dayjs(quiz.updated_at)
+                        .format("hh:mm A / MMMM DD, YYYY")
+                        .toString()}
                     </CustomText>
-                  </View>
-                  <CustomText variant="bold" className="text-3xl">
-                    {quiz.title}
-                  </CustomText>
-                </CustomView>
-              </Pressable>
+                    <CustomText variant="bold" className="text-3xl">
+                      {quiz.title}
+                    </CustomText>
+                  </CustomView>
+                </Pressable>
+              </Link>
             ))}
-        </CustomView>
-        <CustomView
-          key={1}
-          variant="colorBase300"
-          className="flex-col gap-4 flex-1 px-4 py-4 rounded-tr-3xl rounded-tl-3xl"
-        >
-          <Pressable
-            style={{ backgroundColor: currentScheme.colorBase100 }}
-            className="p-6 rounded-xl flex flex-row gap-6 items-center"
-          >
-            <CustomText>
-              <MaterialCommunityIcons name="note-multiple" size={32} />
-            </CustomText>
-            <View className="flex-1">
-              <CustomText className="text-xl" variant="black">
-                Select from notes
-              </CustomText>
-              <CustomText className="opacity-60">
-                Generate a quiz from selecting one of your notes.
-              </CustomText>
-            </View>
-          </Pressable>
-          <Pressable
-            style={{ backgroundColor: currentScheme.colorBase100 }}
-            className="p-6 rounded-xl flex flex-row gap-6 items-center"
-          >
-            <CustomText>
-              <MaterialCommunityIcons name="file-upload" size={32} />
-            </CustomText>
-            <View className="flex-1">
-              <CustomText className="text-xl" variant="black">
-                Upload file
-              </CustomText>
-              <CustomText className="opacity-60">
-                Generate a quiz by uploading a document.
-              </CustomText>
-            </View>
-          </Pressable>
-        </CustomView>
+        </ScrollView>
       </PagerView>
       <Link asChild href={"/(learner)/(quiz)/create"}>
         <CustomPressable

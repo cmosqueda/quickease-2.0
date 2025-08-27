@@ -1,4 +1,5 @@
 import useTheme from "@/hooks/useTheme";
+import PagerView from "react-native-pager-view";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import FlippableCard from "@/components/FlippableCard";
@@ -8,26 +9,21 @@ import CustomTextInput from "@/components/CustomTextInput";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { toast } from "sonner-native";
 import { useQuery } from "@tanstack/react-query";
 import { Flashcard } from "@/types/user/types";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
-import {
-  View,
-  ScrollView,
-  ToastAndroid,
-  Pressable,
-  ActivityIndicator,
-} from "react-native";
+import { View, ScrollView, Pressable, ActivityIndicator } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
 import _FONTS from "@/types/theme/Font";
-import { toast } from "sonner-native";
 
 export default function Page() {
   const { currentScheme } = useTheme();
   const { id: flashcardId } = useLocalSearchParams<{ id?: string }>();
+  const pagerViewRef = useRef<PagerView>(null);
 
   const {
     data: flashcardData,
@@ -74,15 +70,6 @@ export default function Page() {
   };
 
   const handleSave = async () => {
-    if (!title.trim()) {
-      toast("Title is required.");
-      return;
-    }
-    if (cards.length < 2) {
-      toast("At least 2 cards required.");
-      return;
-    }
-
     setIsSaving(true);
     try {
       const { status } = await _API_INSTANCE.put(
@@ -144,99 +131,6 @@ export default function Page() {
     return null;
   }
 
-  const tabs = [
-    <>
-      <View className="flex-1">
-        <CustomTextInput
-          style={{
-            paddingHorizontal: 0,
-            fontFamily: _FONTS.Gabarito_900Black,
-          }}
-          className="text-4xl"
-          placeholder="Title"
-          value={title}
-          onChangeText={setTitle}
-        />
-        <CustomTextInput
-          style={{
-            paddingHorizontal: 0,
-            fontFamily: _FONTS.Gabarito_400Regular,
-            flex: 1,
-          }}
-          placeholder="Description"
-          multiline
-          textAlignVertical="top"
-          value={description}
-          onChangeText={setDescription}
-        />
-      </View>
-      <CustomPressable
-        variant="colorBase300"
-        className="rounded-3xl items-center"
-        onPress={() => {
-          if (!title.trim()) {
-            toast("Missing title.");
-            return;
-          }
-          setIndex(1);
-        }}
-      >
-        <CustomText>Next</CustomText>
-      </CustomPressable>
-    </>,
-    <>
-      <CustomText variant="black" className="text-5xl">
-        Edit Cards
-      </CustomText>
-      <CustomView variant="colorBase300" className="gap-4 p-4 rounded-3xl">
-        <CustomText>Front (Question)</CustomText>
-        <CustomTextInput
-          value={front}
-          onChangeText={setFront}
-          placeholder="Edit the front"
-          style={{ backgroundColor: currentScheme.colorBase200 }}
-          className="rounded-xl"
-          multiline
-        />
-        <CustomText>Back (Answer)</CustomText>
-        <CustomTextInput
-          value={back}
-          onChangeText={setBack}
-          placeholder="Edit the back"
-          style={{ backgroundColor: currentScheme.colorBase200 }}
-          className="rounded-xl"
-          multiline
-        />
-        <CustomPressable
-          onPress={handleAddCard}
-          className="items-center rounded-xl"
-        >
-          <CustomText color="colorPrimaryContent">Add Card</CustomText>
-        </CustomPressable>
-      </CustomView>
-
-      <CustomText variant="bold" className="text-xl">
-        Existing Cards
-      </CustomText>
-      {cards.length > 0 ? (
-        <ScrollView
-          contentContainerStyle={{
-            backgroundColor: currentScheme.colorBase200,
-          }}
-          contentContainerClassName="gap-4"
-        >
-          {cards.map((card, index) => (
-            <FlippableCard front={card.front} back={card.back} key={index} />
-          ))}
-        </ScrollView>
-      ) : (
-        <CustomText className="opacity-60">
-          No cards yet. Add one above.
-        </CustomText>
-      )}
-    </>,
-  ];
-
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: currentScheme.colorBase200 }}
@@ -248,6 +142,7 @@ export default function Page() {
             onPress={() => {
               if (index === 1) {
                 setIndex(0);
+                pagerViewRef.current?.setPage(0);
                 return;
               }
               router.back();
@@ -262,7 +157,22 @@ export default function Page() {
         <CustomPressable
           className="flex flex-row gap-2 items-center rounded-3xl"
           variant="colorBase300"
-          onPress={handleSave}
+          onPress={() => {
+            if (!title.trim()) {
+              toast("Title is required.");
+              return;
+            }
+            if (cards.length < 2) {
+              toast("At least 2 cards required.");
+              return;
+            }
+
+            toast.promise(handleSave(), {
+              loading: "Saving flashcards...",
+              error: "Error saving flashcards.",
+              success: (data) => "Flashcards saved.",
+            });
+          }}
           disabled={isSaving}
         >
           <CustomText>
@@ -271,7 +181,122 @@ export default function Page() {
           <CustomText>{isSaving ? "Saving..." : "Save"}</CustomText>
         </CustomPressable>
       </View>
-      {tabs[index]}
+      <View className="flex flex-row gap-2">
+        <CustomView
+          className="rounded-full flex-1"
+          variant={index == 0 ? "colorPrimary" : "colorBase300"}
+          style={{ height: 6 }}
+        />
+        <CustomView
+          className="rounded-full flex-1"
+          style={{ height: 6 }}
+          variant={index == 1 ? "colorPrimary" : "colorBase300"}
+        />
+      </View>
+      <PagerView
+        ref={pagerViewRef}
+        initialPage={0}
+        style={{ flex: 1 }}
+        onPageScroll={(e) => setIndex(e.nativeEvent.position)}
+        scrollEnabled={false}
+      >
+        <View key={0}>
+          <View className="flex-1">
+            <CustomTextInput
+              style={{
+                paddingHorizontal: 0,
+                fontFamily: _FONTS.Gabarito_900Black,
+              }}
+              className="text-4xl"
+              placeholder="Title"
+              value={title}
+              onChangeText={setTitle}
+            />
+            <CustomTextInput
+              style={{
+                paddingHorizontal: 0,
+                fontFamily: _FONTS.Gabarito_400Regular,
+                flex: 1,
+              }}
+              placeholder="Description"
+              multiline
+              textAlignVertical="top"
+              value={description}
+              onChangeText={setDescription}
+            />
+          </View>
+          <CustomPressable
+            variant="colorBase300"
+            className="rounded-3xl items-center"
+            onPress={() => {
+              if (!title.trim()) {
+                toast("Missing title.");
+                return;
+              }
+
+              pagerViewRef.current?.setPage(1);
+              setIndex(1);
+            }}
+          >
+            <CustomText>Next</CustomText>
+          </CustomPressable>
+        </View>
+        <View key={1} className="gap-4">
+          <CustomText variant="black" className="text-5xl">
+            Edit Cards
+          </CustomText>
+          <CustomView variant="colorBase300" className="gap-4 p-4 rounded-3xl">
+            <CustomText>Front (Question)</CustomText>
+            <CustomTextInput
+              value={front}
+              onChangeText={setFront}
+              placeholder="Edit the front"
+              style={{ backgroundColor: currentScheme.colorBase200 }}
+              className="rounded-xl"
+              multiline
+            />
+            <CustomText>Back (Answer)</CustomText>
+            <CustomTextInput
+              value={back}
+              onChangeText={setBack}
+              placeholder="Edit the back"
+              style={{ backgroundColor: currentScheme.colorBase200 }}
+              className="rounded-xl"
+              multiline
+            />
+            <CustomPressable
+              onPress={handleAddCard}
+              className="items-center rounded-xl"
+            >
+              <CustomText color="colorPrimaryContent">Add Card</CustomText>
+            </CustomPressable>
+          </CustomView>
+
+          <CustomText variant="bold" className="text-xl">
+            Existing Cards
+          </CustomText>
+          {cards.length > 0 ? (
+            <ScrollView
+              contentContainerStyle={{
+                backgroundColor: currentScheme.colorBase200,
+              }}
+              contentContainerClassName="gap-4"
+            >
+              {cards.map((card, index) => (
+                <FlippableCard
+                  front={card.front}
+                  back={card.back}
+                  key={index}
+                />
+              ))}
+            </ScrollView>
+          ) : (
+            <CustomText className="opacity-60">
+              No cards yet. Add one above.
+            </CustomText>
+          )}
+        </View>
+      </PagerView>
     </SafeAreaView>
   );
 }

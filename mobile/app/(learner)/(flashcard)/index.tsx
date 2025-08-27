@@ -8,15 +8,14 @@ import ForumHeader from "@/components/ForumHeader";
 import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { Link } from "expo-router";
 import { useTrays } from "react-native-trays";
 import { Flashcard } from "@/types/user/types";
 import { MyTraysProps } from "@/types/trays/trays";
-import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Pressable, View } from "react-native";
 import { useRef, useState } from "react";
+import { Pressable, ScrollView, View } from "react-native";
 
 export default function Page() {
   const { user } = useAuth();
@@ -61,7 +60,7 @@ export default function Page() {
           }}
           className="flex-1 gap-2 "
         >
-          <CustomText className="text-center">Library</CustomText>
+          <CustomText className="text-center">All</CustomText>
           <CustomView
             className="rounded-full"
             variant={index === 0 ? "colorPrimary" : "colorBase100"}
@@ -75,33 +74,53 @@ export default function Page() {
           }}
           className="flex-1 gap-2 "
         >
-          <CustomText className="text-center">Study Tools</CustomText>
+          <CustomText className="text-center">By recent</CustomText>
           <CustomView
             className="rounded-full"
             variant={index === 1 ? "colorPrimary" : "colorBase100"}
             style={{ height: 3 }}
           />
         </Pressable>
+        <Pressable
+          onPress={() => {
+            setIndex(2);
+            pagerViewRef.current?.setPage(2);
+          }}
+          className="flex-1 gap-2 "
+        >
+          <CustomText className="text-center">AI-Generated</CustomText>
+          <CustomView
+            className="rounded-full"
+            variant={index === 2 ? "colorPrimary" : "colorBase100"}
+            style={{ height: 3 }}
+          />
+        </Pressable>
       </CustomView>
 
-      <PagerView style={{ flex: 1 }} ref={pagerViewRef}>
-        <CustomView
-          variant="colorBase300"
-          className="flex-col gap-4 flex-1 px-4 py-4 rounded-tr-3xl rounded-tl-3xl"
+      <PagerView
+        ref={pagerViewRef}
+        style={{ flex: 1 }}
+        onPageSelected={(e) => {
+          setIndex(e.nativeEvent.position);
+        }}
+      >
+        <ScrollView
+          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
+          className="rounded-tr-3xl rounded-tl-3xl"
+          style={{ backgroundColor: currentScheme.colorBase300 }}
           key={0}
         >
           {user?.flashcards.map((flashcard: Flashcard) => (
-            <Pressable
+            <Link
+              asChild
+              href={{
+                pathname: "/(learner)/(flashcard)/view/[id]",
+                params: { id: flashcard.id },
+              }}
               key={flashcard.id}
-              onPress={() =>
-                router.push({
-                  pathname: "/(learner)/(flashcard)/view/[id]",
-                  params: { id: flashcard.id },
-                })
-              }
             >
-              <CustomView className="p-6 rounded-xl gap-2">
-                <View className="gap-2">
+              <Pressable>
+                <CustomView className="p-6 rounded-xl gap-2">
                   {flashcard.is_ai_generated && (
                     <View className="flex flex-row gap-4 items-center">
                       <CustomText>
@@ -115,55 +134,97 @@ export default function Page() {
                       .format("hh:mm A / MMMM DD, YYYY")
                       .toString()}
                   </CustomText>
-                </View>
-                <CustomText variant="bold" className="text-3xl">
-                  {flashcard.title}
-                </CustomText>
-                {flashcard.description && (
-                  <CustomText>{flashcard.description}</CustomText>
-                )}
-              </CustomView>
-            </Pressable>
+                  <CustomText variant="bold" className="text-3xl">
+                    {flashcard.title}
+                  </CustomText>
+                </CustomView>
+              </Pressable>
+            </Link>
           ))}
-        </CustomView>
-        <CustomView
+        </ScrollView>
+        <ScrollView
+          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
+          className="rounded-tr-3xl rounded-tl-3xl"
+          style={{ backgroundColor: currentScheme.colorBase300 }}
           key={1}
-          variant="colorBase300"
-          className="flex-col gap-4 flex-1 px-4 py-4 rounded-tr-3xl rounded-tl-3xl"
         >
-          <Pressable
-            style={{ backgroundColor: currentScheme.colorBase100 }}
-            className="p-6 rounded-xl flex flex-row gap-6 items-center"
-          >
-            <CustomText>
-              <MaterialCommunityIcons name="note-multiple" size={32} />
-            </CustomText>
-            <View className="flex-1">
-              <CustomText className="text-xl" variant="black">
-                Select from notes
-              </CustomText>
-              <CustomText className="opacity-60">
-                Generate flashcards from selecting one of your notes.
-              </CustomText>
-            </View>
-          </Pressable>
-          <Pressable
-            style={{ backgroundColor: currentScheme.colorBase100 }}
-            className="p-6 rounded-xl flex flex-row gap-6 items-center"
-          >
-            <CustomText>
-              <MaterialCommunityIcons name="file-upload" size={32} />
-            </CustomText>
-            <View className="flex-1">
-              <CustomText className="text-xl" variant="black">
-                Upload file
-              </CustomText>
-              <CustomText className="opacity-60">
-                Generate flashcards by uploading a document.
-              </CustomText>
-            </View>
-          </Pressable>
-        </CustomView>
+          {[...(user?.flashcards ?? [])]
+            .sort(
+              (a: Flashcard, b: Flashcard) =>
+                dayjs(b.updated_at).valueOf() - dayjs(a.updated_at).valueOf()
+            )
+            .map((flashcard: Flashcard) => (
+              <Link
+                asChild
+                key={flashcard.id}
+                href={{
+                  pathname: "/(learner)/(flashcard)/view/[id]",
+                  params: { id: flashcard.id.toString() },
+                }}
+              >
+                <Pressable>
+                  <CustomView className="p-6 rounded-xl gap-2">
+                    {flashcard.is_ai_generated && (
+                      <View className="flex flex-row gap-4 items-center">
+                        <MaterialIcons name="info" size={18} />
+                        <CustomText>AI-Generated</CustomText>
+                      </View>
+                    )}
+                    <CustomText className="text-sm opacity-40">
+                      {dayjs(flashcard.updated_at).format(
+                        "hh:mm A / MMMM DD, YYYY"
+                      )}
+                    </CustomText>
+                    <CustomText variant="bold" className="text-3xl">
+                      {flashcard.title}
+                    </CustomText>
+                  </CustomView>
+                </Pressable>
+              </Link>
+            ))}
+        </ScrollView>
+        <ScrollView
+          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
+          className="rounded-tr-3xl rounded-tl-3xl"
+          style={{ backgroundColor: currentScheme.colorBase300 }}
+          key={2}
+        >
+          {user?.flashcards
+            .filter(
+              (flashcard: Flashcard) => flashcard.is_ai_generated === true
+            )
+            .map((flashcard: Flashcard) => (
+              <Link
+                asChild
+                href={{
+                  pathname: "/(learner)/(flashcard)/view/[id]",
+                  params: { id: flashcard.id },
+                }}
+                key={flashcard.id}
+              >
+                <Pressable>
+                  <CustomView className="p-6 rounded-xl gap-2">
+                    {flashcard.is_ai_generated && (
+                      <View className="flex flex-row gap-4 items-center">
+                        <CustomText>
+                          <MaterialIcons name="info" size={18} />
+                        </CustomText>
+                        <CustomText>AI-Generated</CustomText>
+                      </View>
+                    )}
+                    <CustomText className="text-sm opacity-40">
+                      {dayjs(flashcard.updated_at)
+                        .format("hh:mm A / MMMM DD, YYYY")
+                        .toString()}
+                    </CustomText>
+                    <CustomText variant="bold" className="text-3xl">
+                      {flashcard.title}
+                    </CustomText>
+                  </CustomView>
+                </Pressable>
+              </Link>
+            ))}
+        </ScrollView>
       </PagerView>
 
       <Link asChild href={"/(learner)/(flashcard)/create"}>
