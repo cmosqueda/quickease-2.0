@@ -16,6 +16,7 @@ import { useState } from "react";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, ScrollView, ToastAndroid, View } from "react-native";
+import { toast } from "sonner-native";
 
 interface Question {
   question: string;
@@ -93,31 +94,22 @@ export default function Page() {
 
   const handleSubmit = async () => {
     if (questions.length < 2) {
-      ToastAndroid.show("Must have at least 2 questions.", ToastAndroid.SHORT);
+      toast("Must have at least 2 questions.");
       return;
     }
 
     for (let index = 0; index < questions.length; index++) {
       const q = questions[index];
       if (!q.question.trim()) {
-        ToastAndroid.show(
-          `Question ${index + 1} is empty.`,
-          ToastAndroid.SHORT
-        );
+        toast(`Question ${index + 1} is empty.`);
         return;
       }
       if (q.options.some((opt) => !opt.trim())) {
-        ToastAndroid.show(
-          `Question ${index + 1} has an empty option.`,
-          ToastAndroid.SHORT
-        );
+        toast(`Question ${index + 1} has an empty option.`);
         return;
       }
       if (q.correctAnswers.length === 0) {
-        ToastAndroid.show(
-          `Question ${index + 1} has no correct answer selected.`,
-          ToastAndroid.SHORT
-        );
+        toast(`Question ${index + 1} has no correct answer selected.`);
         return;
       }
     }
@@ -139,7 +131,7 @@ export default function Page() {
 
       if (status == 201) {
         await checkBadges();
-        ToastAndroid.show("Quiz created", ToastAndroid.SHORT);
+        toast("Quiz created");
         router.push({
           pathname: "/(learner)/(quiz)/view/[id]",
           params: {
@@ -148,7 +140,7 @@ export default function Page() {
         });
       }
     } catch (err) {
-      ToastAndroid.show("Error creating quiz.", ToastAndroid.SHORT);
+      toast("Error creating quiz.");
       throw err;
     } finally {
       setIsSubmitting(false);
@@ -189,7 +181,7 @@ export default function Page() {
         className="rounded-3xl items-center"
         onPress={() => {
           if (!quizTitle) {
-            ToastAndroid.show("No quiz title?", ToastAndroid.SHORT);
+            toast("No quiz title?");
             return;
           }
 

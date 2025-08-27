@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { toast } from "sonner-native";
 import {
   useMutation,
   useQueryClient,
@@ -40,7 +41,7 @@ export function useVote(keysToInvalidate: QueryKey[] = [["recent-posts"]]) {
     },
     onError: (err: any) => {
       console.error(err);
-      ToastAndroid.show(err.message || "Error voting.", ToastAndroid.SHORT);
+      toast(err.message || "Error voting.");
     },
   });
 }
@@ -76,7 +77,7 @@ export function useVoteOnComment(keysToInvalidate: QueryKey[] = [["post"]]) {
     },
     onError: (err: any) => {
       console.error(err);
-      ToastAndroid.show(err.message || "Error voting.", ToastAndroid.SHORT);
+      toast(err.message || "Error voting.");
     },
   });
 }

@@ -1,14 +1,27 @@
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import CustomText from "@/components/CustomText";
 import CustomTextInput from "@/components/CustomTextInput";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+import { toast } from "sonner-native";
 import { router } from "expo-router";
 import { useState } from "react";
+import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { RichText, useEditorBridge } from "@10play/tentap-editor";
-import { View, Pressable, KeyboardAvoidingView } from "react-native";
+import {
+  RichText,
+  Toolbar,
+  useEditorBridge,
+  useEditorContent,
+} from "@10play/tentap-editor";
+import {
+  View,
+  Pressable,
+  KeyboardAvoidingView,
+  useWindowDimensions,
+} from "react-native";
 
 import _FONTS from "@/types/theme/Font";
 import _API_INSTANCE from "@/utils/axios";
@@ -16,7 +29,9 @@ import _GENERATION_ANIMATION from "../../../assets/animations/generate-study-mat
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
 export default function Page() {
+  const { user, addNote } = useAuth();
   const { currentScheme } = useTheme();
+  const { height, width } = useWindowDimensions();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -33,6 +48,33 @@ export default function Page() {
     editable: true,
     initialContent: content,
   });
+
+  const editorContent = useEditorContent(editor, { type: "html" });
+
+  const handleSave = async () => {
+    try {
+      const res = await _API_INSTANCE.post(
+        "/notes/create",
+        {
+          title: title,
+          content: editorContent,
+          user_id: user?.id,
+        },
+        {
+          timeout: 8 * 60 * 1000,
+        }
+      );
+
+      if (res.status == 201) {
+        addNote(res.data);
+
+        await checkBadges();
+        router.back();
+      }
+    } catch (err: any) {
+      throw err;
+    }
+  };
 
   if (!editor) {
     return (
@@ -59,6 +101,19 @@ export default function Page() {
               <MaterialIcons name="keyboard-arrow-left" size={36} />
             </CustomText>
           </Pressable>
+          <Pressable
+            onPress={() => {
+              toast.promise(handleSave(), {
+                loading: "Saving note.",
+                error: "Error saving note.",
+                success: (data) => "Note created.",
+              });
+            }}
+          >
+            <CustomText>
+              <MaterialIcons name="save" size={32} />
+            </CustomText>
+          </Pressable>
         </View>
         <CustomTextInput
           style={{
@@ -71,8 +126,16 @@ export default function Page() {
           value={title}
           onChangeText={setTitle}
         />
-        <KeyboardAvoidingView className="flex-1" behavior="height">
-          <RichText editor={editor} />
+        <RichText editor={editor} />
+        <KeyboardAvoidingView
+          behavior="position"
+          style={{ position: "absolute", width: width, bottom: 0 }}
+        >
+          <Toolbar
+            editor={editor}
+            shouldHideDisabledToolbarItems
+            hidden={false}
+          />
         </KeyboardAvoidingView>
       </SafeAreaView>
     );

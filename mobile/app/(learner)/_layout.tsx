@@ -20,6 +20,7 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 
 import _API_INSTANCE from "@/utils/axios";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { toast } from "sonner-native";
 
 function CustomDrawerContent(props: any) {
   const { currentScheme } = useTheme();
@@ -67,10 +68,7 @@ function CustomDrawerContent(props: any) {
       reset();
       await _API_INSTANCE.post("/auth/logout", {}, { withCredentials: true });
     } catch (err) {
-      ToastAndroid.show(
-        err.message || "Error logging out.",
-        ToastAndroid.SHORT
-      );
+      toast(err.message || "Error logging out.");
     }
   };
 
