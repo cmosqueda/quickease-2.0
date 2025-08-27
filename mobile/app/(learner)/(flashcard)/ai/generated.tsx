@@ -18,8 +18,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { View, ScrollView, Pressable } from "react-native";
 import { useLayoutEffect, useRef, useState } from "react";
 
-import _API_INSTANCE from "@/utils/axios";
 import _FONTS from "@/types/theme/Font";
+import _API_INSTANCE from "@/utils/axios";
 
 export default function Page() {
   const { user, addFlashcard } = useAuth();

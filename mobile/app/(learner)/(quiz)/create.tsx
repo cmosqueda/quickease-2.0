@@ -95,27 +95,6 @@ export default function Page() {
   };
 
   const handleSubmit = async () => {
-    if (questions.length < 2) {
-      toast("Must have at least 2 questions.");
-      throw Error;
-    }
-
-    for (let index = 0; index < questions.length; index++) {
-      const q = questions[index];
-      if (!q.question.trim()) {
-        toast(`Question ${index + 1} is empty.`);
-        throw Error;
-      }
-      if (q.options.some((opt) => !opt.trim())) {
-        toast(`Question ${index + 1} has an empty option.`);
-        throw Error;
-      }
-      if (q.correctAnswers.length === 0) {
-        toast(`Question ${index + 1} has no correct answer selected.`);
-        throw Error;
-      }
-    }
-
     setIsSubmitting(true);
 
     try {
@@ -294,6 +273,27 @@ export default function Page() {
           className="flex flex-row gap-2 items-center rounded-3xl"
           variant="colorBase200"
           onPress={() => {
+            if (questions.length < 2) {
+              toast("Must have at least 2 questions.");
+              throw Error;
+            }
+
+            for (let index = 0; index < questions.length; index++) {
+              const q = questions[index];
+              if (!q.question.trim()) {
+                toast(`Question ${index + 1} is empty.`);
+                throw Error;
+              }
+              if (q.options.some((opt) => !opt.trim())) {
+                toast(`Question ${index + 1} has an empty option.`);
+                throw Error;
+              }
+              if (q.correctAnswers.length === 0) {
+                toast(`Question ${index + 1} has no correct answer selected.`);
+                throw Error;
+              }
+            }
+
             toast.promise(handleSubmit(), {
               loading: "Saving quiz...",
               error: "Error saving quiz.",

@@ -5,9 +5,11 @@ import CustomView from "@/components/CustomView";
 import CustomPressable from "@/components/CustomPressable";
 import CustomTextInput from "@/components/CustomTextInput";
 
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { Quiz } from "@/types/user/types";
+import { toast } from "sonner-native";
 import { Switch } from "@expo/ui/jetpack-compose";
 import { useQuery } from "@tanstack/react-query";
 import { checkBadges } from "@/types/user/badges";
@@ -18,8 +20,6 @@ import { ActivityIndicator, Pressable, ScrollView, View } from "react-native";
 
 import _FONTS from "@/types/theme/Font";
 import _API_INSTANCE from "@/utils/axios";
-import { Quiz } from "@/types/user/types";
-import { toast } from "sonner-native";
 
 export interface Question {
   question: string;
@@ -62,7 +62,7 @@ export default function Page() {
       setQuestions(
         Array.isArray(quizData.quiz_content) ? quizData.quiz_content : []
       );
-      setIsTimedQuiz(quizData.timed_quiz > 0);
+      setIsTimedQuiz(quizData.timed_quiz! > 0);
       setTotalSeconds(quizData.timed_quiz ?? 0);
       setIsRandomized(quizData.is_randomized ?? false);
     }
@@ -127,27 +127,6 @@ export default function Page() {
   };
 
   const handleSubmit = async () => {
-    if (questions.length < 2) {
-      toast("Must have at least 2 questions.");
-      return;
-    }
-
-    for (let index = 0; index < questions.length; index++) {
-      const q = questions[index];
-      if (!q.question.trim()) {
-        toast(`Question ${index + 1} is empty.`);
-        return;
-      }
-      if (q.options.some((opt) => !opt.trim())) {
-        toast(`Question ${index + 1} has an empty option.`);
-        return;
-      }
-      if (!q.correctAnswers || q.correctAnswers.length === 0) {
-        toast(`Question ${index + 1} has no correct answer selected.`);
-        return;
-      }
-    }
-
     setIsSubmitting(true);
 
     try {
@@ -230,7 +209,34 @@ export default function Page() {
           disabled={isSubmitting}
           className="flex flex-row gap-2 items-center rounded-3xl"
           variant="colorBase200"
-          onPress={handleSubmit}
+          onPress={() => {
+            if (questions.length < 2) {
+              toast("Must have at least 2 questions.");
+              return;
+            }
+
+            for (let index = 0; index < questions.length; index++) {
+              const q = questions[index];
+              if (!q.question.trim()) {
+                toast(`Question ${index + 1} is empty.`);
+                return;
+              }
+              if (q.options.some((opt) => !opt.trim())) {
+                toast(`Question ${index + 1} has an empty option.`);
+                return;
+              }
+              if (!q.correctAnswers || q.correctAnswers.length === 0) {
+                toast(`Question ${index + 1} has no correct answer selected.`);
+                return;
+              }
+            }
+
+            toast.promise(handleSubmit(), {
+              loading: "Saving quiz...",
+              error: "Error saving quiz.",
+              success: (data) => "Quiz saved.",
+            });
+          }}
         >
           <CustomText>
             <MaterialCommunityIcons name="content-save" size={20} />
