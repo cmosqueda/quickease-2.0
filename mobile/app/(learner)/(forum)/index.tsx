@@ -12,6 +12,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Link } from "expo-router";
 import { Post } from "@/types/user/types";
 import { useTrays } from "react-native-trays";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -22,6 +23,7 @@ import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
 export default function Page() {
   const { currentScheme } = useTheme();
+  const { isConnected } = useNetInfo();
 
   const useSearchTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
   const useNotificationTray = useTrays<MyTraysProps>(
@@ -48,6 +50,7 @@ export default function Page() {
     getNextPageParam: (lastPage) => lastPage?.nextCursor ?? null,
     retry: 3,
     refetchOnWindowFocus: false,
+    enabled: !!isConnected,
   });
 
   return (
@@ -59,31 +62,35 @@ export default function Page() {
     >
       <ForumHeader
         rightSideChildren={
-          <>
-            <Pressable
-              onPress={() =>
-                useSearchTray.push("SearchTray", {
-                  close: useSearchTray.pop,
-                })
-              }
-            >
-              <CustomText>
-                <FontAwesome5 name="search" size={20} />
-              </CustomText>
-            </Pressable>
+          isConnected && (
+            <>
+              <Pressable
+                disabled={!isConnected}
+                onPress={() =>
+                  useSearchTray.push("SearchTray", {
+                    close: useSearchTray.pop,
+                  })
+                }
+              >
+                <CustomText>
+                  <FontAwesome5 name="search" size={20} />
+                </CustomText>
+              </Pressable>
 
-            <Pressable
-              onPress={() =>
-                useNotificationTray.push("NotificationTray", {
-                  close: useNotificationTray.pop,
-                })
-              }
-            >
-              <CustomText>
-                <FontAwesome6 name="bell" size={22} />
-              </CustomText>
-            </Pressable>
-          </>
+              <Pressable
+                disabled={!isConnected}
+                onPress={() =>
+                  useNotificationTray.push("NotificationTray", {
+                    close: useNotificationTray.pop,
+                  })
+                }
+              >
+                <CustomText>
+                  <FontAwesome6 name="bell" size={22} />
+                </CustomText>
+              </Pressable>
+            </>
+          )
         }
       />
 
@@ -112,6 +119,7 @@ export default function Page() {
 
       <Link asChild href={"/post/create"}>
         <CustomPressable
+          disabled={!isConnected}
           variant="colorPrimary"
           className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
         >

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "quickease",
-    "slug": "quickease",
-    "version": "1.0.0",
+    "name": "QuickEase",
+    "slug": "QuickEase",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "quickease",

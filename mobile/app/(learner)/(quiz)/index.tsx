@@ -17,8 +17,10 @@ import { MyTraysProps } from "@/types/trays/trays";
 import { useRef, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 export default function Page() {
+  const { isConnected } = useNetInfo();
   const { user } = useAuth();
   const { currentScheme } = useTheme();
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
@@ -38,34 +40,36 @@ export default function Page() {
       <ForumHeader
         title="Quizzes"
         rightSideChildren={
-          <>
-            <Pressable
-              onPress={() =>
-                openTray("StudyToolsSelectionTray", {
-                  openGenerateFromNotes: () => {
-                    closeTray();
-                    openTray("GenerateFromNotesTray", {
-                      close: closeTray,
-                      type: "quiz",
-                    });
-                  },
-                  openUploadFile: () => {
-                    closeTray();
-                    openTray("GenerateFromNotesTray", {
-                      close: closeTray,
-                      type: "quiz",
-                    });
-                  },
-                  close: closeTray,
-                  type: "quiz",
-                })
-              }
-            >
-              <CustomText>
-                <MaterialCommunityIcons name="toolbox-outline" size={20} />
-              </CustomText>
-            </Pressable>
-          </>
+          isConnected && (
+            <>
+              <Pressable
+                onPress={() =>
+                  openTray("StudyToolsSelectionTray", {
+                    openGenerateFromNotes: () => {
+                      closeTray();
+                      openTray("GenerateFromNotesTray", {
+                        close: closeTray,
+                        type: "quiz",
+                      });
+                    },
+                    openUploadFile: () => {
+                      closeTray();
+                      openTray("GenerateFromNotesTray", {
+                        close: closeTray,
+                        type: "quiz",
+                      });
+                    },
+                    close: closeTray,
+                    type: "quiz",
+                  })
+                }
+              >
+                <CustomText>
+                  <MaterialCommunityIcons name="toolbox-outline" size={20} />
+                </CustomText>
+              </Pressable>
+            </>
+          )
         }
       />
       <CustomView
@@ -138,7 +142,10 @@ export default function Page() {
               }}
               key={quiz.id}
             >
-              <Pressable>
+              <Pressable
+                disabled={!isConnected}
+                className="disabled:opacity-70"
+              >
                 <CustomView className="p-6 rounded-xl gap-2">
                   {quiz.is_ai_generated && (
                     <View className="flex flex-row gap-4 items-center">
@@ -181,7 +188,10 @@ export default function Page() {
                   params: { id: quiz.id.toString() },
                 }}
               >
-                <Pressable>
+                <Pressable
+                  disabled={!isConnected}
+                  className="disabled:opacity-70"
+                >
                   <CustomView className="p-6 rounded-xl gap-2">
                     {quiz.is_ai_generated && (
                       <View className="flex flex-row gap-4 items-center">
@@ -217,7 +227,10 @@ export default function Page() {
                 }}
                 key={quiz.id}
               >
-                <Pressable>
+                <Pressable
+                  disabled={!isConnected}
+                  className="disabled:opacity-70"
+                >
                   <CustomView className="p-6 rounded-xl gap-2">
                     {quiz.is_ai_generated && (
                       <View className="flex flex-row gap-4 items-center">
@@ -241,16 +254,18 @@ export default function Page() {
             ))}
         </ScrollView>
       </PagerView>
-      <Link asChild href={"/(learner)/(quiz)/create"}>
-        <CustomPressable
-          variant="colorPrimary"
-          className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
-        >
-          <CustomText color="colorPrimaryContent">
-            <MaterialIcons name="post-add" size={32} />
-          </CustomText>
-        </CustomPressable>
-      </Link>
+      {isConnected && (
+        <Link asChild href={"/(learner)/(quiz)/create"}>
+          <CustomPressable
+            variant="colorPrimary"
+            className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+          >
+            <CustomText color="colorPrimaryContent">
+              <MaterialIcons name="post-add" size={32} />
+            </CustomText>
+          </CustomPressable>
+        </Link>
+      )}
     </SafeAreaView>
   );
 }

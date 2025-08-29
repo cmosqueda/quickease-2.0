@@ -6,21 +6,21 @@ import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import CustomPressable from "@/components/CustomPressable";
 
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+import { toast } from "sonner-native";
 import { Drawer } from "expo-router/drawer";
 import { useTrays } from "react-native-trays";
 import { useEffect } from "react";
 import { MyTraysProps } from "@/types/trays/trays";
 import { DrawerActions } from "@react-navigation/native";
+import { Pressable, View } from "react-native";
 import { setStatusBarStyle } from "expo-status-bar";
-import { Pressable, ToastAndroid, View } from "react-native";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 
 import _API_INSTANCE from "@/utils/axios";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { toast } from "sonner-native";
 
 function CustomDrawerContent(props: any) {
   const { currentScheme } = useTheme();

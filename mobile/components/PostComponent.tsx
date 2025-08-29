@@ -7,9 +7,11 @@ import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Post } from "@/types/user/types";
 import { Link } from "expo-router";
 import { useVote } from "@/hooks/useVote";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { Pressable, View } from "react-native";
 
 export default function PostComponent({ post }: { post: Post }) {
+  const { isConnected } = useNetInfo();
   const { mutate: voteOnPost, isPending } = useVote([["recent-posts"]]);
 
   return (
@@ -22,7 +24,10 @@ export default function PostComponent({ post }: { post: Post }) {
         asChild
         key={post.id}
       >
-        <Pressable className="flex-1">
+        <Pressable
+          className="flex-1 disabled:opacity-50"
+          disabled={!isConnected}
+        >
           <CustomView
             variant="colorBase100"
             className="flex flex-1 gap-2 p-4 rounded-xl"
@@ -58,41 +63,43 @@ export default function PostComponent({ post }: { post: Post }) {
           </CustomView>
         </Pressable>
       </Link>
-      <CustomView
-        variant="colorPrimary"
-        className="flex flex-row gap-4 items-center rounded-3xl px-6 py-4"
-      >
-        <Pressable
-          disabled={isPending}
-          onPress={() => voteOnPost({ post_id: post.id, vote_type: 1 })}
+      {isConnected && (
+        <CustomView
+          variant="colorPrimary"
+          className="flex flex-row gap-4 items-center rounded-3xl px-6 py-4"
         >
-          <CustomText color="colorPrimaryContent">
-            <MaterialIcons name="keyboard-arrow-up" size={24} />
-          </CustomText>
-        </Pressable>
+          <Pressable
+            disabled={isPending}
+            onPress={() => voteOnPost({ post_id: post.id, vote_type: 1 })}
+          >
+            <CustomText color="colorPrimaryContent">
+              <MaterialIcons name="keyboard-arrow-up" size={24} />
+            </CustomText>
+          </Pressable>
 
-        <CustomText variant="bold" color="colorPrimaryContent">
-          {post.vote_sum}
-        </CustomText>
-        <Pressable
-          disabled={isPending}
-          onPress={() => voteOnPost({ post_id: post.id, vote_type: -1 })}
-        >
-          <CustomText color="colorPrimaryContent">
-            <MaterialIcons name="keyboard-arrow-down" size={24} />
+          <CustomText variant="bold" color="colorPrimaryContent">
+            {post.vote_sum}
           </CustomText>
-        </Pressable>
+          <Pressable
+            disabled={isPending}
+            onPress={() => voteOnPost({ post_id: post.id, vote_type: -1 })}
+          >
+            <CustomText color="colorPrimaryContent">
+              <MaterialIcons name="keyboard-arrow-down" size={24} />
+            </CustomText>
+          </Pressable>
 
-        <View className="flex-1" />
-        <View className="flex flex-row gap-2 items-center">
-          <CustomText color="colorPrimaryContent">
-            <MaterialCommunityIcons name="comment" size={24} />
-          </CustomText>
-          <CustomText color="colorPrimaryContent">
-            {post.comments.length}
-          </CustomText>
-        </View>
-      </CustomView>
+          <View className="flex-1" />
+          <View className="flex flex-row gap-2 items-center">
+            <CustomText color="colorPrimaryContent">
+              <MaterialCommunityIcons name="comment" size={24} />
+            </CustomText>
+            <CustomText color="colorPrimaryContent">
+              {post.comments.length}
+            </CustomText>
+          </View>
+        </CustomView>
+      )}
     </CustomView>
   );
 }

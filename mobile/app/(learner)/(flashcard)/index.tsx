@@ -17,8 +17,10 @@ import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 export default function Page() {
+  const { isConnected } = useNetInfo();
   const { user } = useAuth();
   const { currentScheme } = useTheme();
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
@@ -37,34 +39,36 @@ export default function Page() {
       <ForumHeader
         title="Flashcards"
         rightSideChildren={
-          <>
-            <Pressable
-              onPress={() =>
-                openTray("StudyToolsSelectionTray", {
-                  openGenerateFromNotes: () => {
-                    closeTray();
-                    openTray("GenerateFromNotesTray", {
-                      close: closeTray,
-                      type: "flashcard",
-                    });
-                  },
-                  openUploadFile: () => {
-                    closeTray();
-                    openTray("GenerateFromNotesTray", {
-                      close: closeTray,
-                      type: "flashcard",
-                    });
-                  },
-                  close: closeTray,
-                  type: "flashcard",
-                })
-              }
-            >
-              <CustomText>
-                <MaterialCommunityIcons name="toolbox-outline" size={20} />
-              </CustomText>
-            </Pressable>
-          </>
+          isConnected && (
+            <>
+              <Pressable
+                onPress={() =>
+                  openTray("StudyToolsSelectionTray", {
+                    openGenerateFromNotes: () => {
+                      closeTray();
+                      openTray("GenerateFromNotesTray", {
+                        close: closeTray,
+                        type: "flashcard",
+                      });
+                    },
+                    openUploadFile: () => {
+                      closeTray();
+                      openTray("GenerateFromNotesTray", {
+                        close: closeTray,
+                        type: "flashcard",
+                      });
+                    },
+                    close: closeTray,
+                    type: "flashcard",
+                  })
+                }
+              >
+                <CustomText>
+                  <MaterialCommunityIcons name="toolbox-outline" size={20} />
+                </CustomText>
+              </Pressable>
+            </>
+          )
         }
       />
       <CustomView
@@ -137,7 +141,10 @@ export default function Page() {
               }}
               key={flashcard.id}
             >
-              <Pressable>
+              <Pressable
+                disabled={!isConnected}
+                className="disabled:opacity-70"
+              >
                 <CustomView className="p-6 rounded-xl gap-2">
                   {flashcard.is_ai_generated && (
                     <View className="flex flex-row gap-4 items-center">
@@ -180,7 +187,10 @@ export default function Page() {
                   params: { id: flashcard.id.toString() },
                 }}
               >
-                <Pressable>
+                <Pressable
+                  disabled={!isConnected}
+                  className="disabled:opacity-70"
+                >
                   <CustomView className="p-6 rounded-xl gap-2">
                     {flashcard.is_ai_generated && (
                       <View className="flex flex-row gap-4 items-center">
@@ -220,7 +230,10 @@ export default function Page() {
                 }}
                 key={flashcard.id}
               >
-                <Pressable>
+                <Pressable
+                  disabled={!isConnected}
+                  className="disabled:opacity-70"
+                >
                   <CustomView className="p-6 rounded-xl gap-2">
                     {flashcard.is_ai_generated && (
                       <View className="flex flex-row gap-4 items-center">
@@ -245,16 +258,18 @@ export default function Page() {
         </ScrollView>
       </PagerView>
 
-      <Link asChild href={"/(learner)/(flashcard)/create"}>
-        <CustomPressable
-          variant="colorPrimary"
-          className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
-        >
-          <CustomText color="colorPrimaryContent">
-            <MaterialIcons name="post-add" size={32} />
-          </CustomText>
-        </CustomPressable>
-      </Link>
+      {isConnected && (
+        <Link asChild href={"/(learner)/(flashcard)/create"}>
+          <CustomPressable
+            variant="colorPrimary"
+            className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+          >
+            <CustomText color="colorPrimaryContent">
+              <MaterialIcons name="post-add" size={32} />
+            </CustomText>
+          </CustomPressable>
+        </Link>
+      )}
     </SafeAreaView>
   );
 }
