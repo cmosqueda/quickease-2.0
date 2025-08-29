@@ -3,9 +3,11 @@ import dayjs from "dayjs";
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import useTimer from "@/hooks/useTimer";
+import PagerView from "react-native-pager-view";
 import formatTime from "@/utils/format_time";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomPressable from "@/components/CustomPressable";
 import CustomTextInput from "@/components/CustomTextInput";
 import CommentComponent from "@/components/CommentComponent";
@@ -15,14 +17,16 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { toast } from "sonner-native";
 import { Image } from "expo-image";
-import { Asset } from "expo-asset";
+import { router } from "expo-router";
 import { Picker } from "@expo/ui/jetpack-compose";
 import { useQuery } from "@tanstack/react-query";
 import { rgbaToHex } from "@/utils/colors";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { useComment } from "@/hooks/useComment";
 import { TimerPicker } from "react-native-timer-picker";
+import { Asset, useAssets } from "expo-asset";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Comment, Note, Notification, Post, User } from "../user/types";
 
 import {
@@ -39,14 +43,16 @@ import {
   Pressable,
   RefreshControl,
   ScrollView,
+  useWindowDimensions,
   View,
 } from "react-native";
 
 import _THEMES from "../theme/Themes";
 import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "../theme/TenTapThemes";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
+
+import { _AVATAR_ASSET_MAP } from "../user/avatars";
+import { _BADGE_ASSET_MAP, _BADGE_MAP } from "../user/badges";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
@@ -84,6 +90,10 @@ export type MyTraysProps = {
   };
   CommentOnPostTray: {
     post: Post;
+    close: () => void;
+  };
+  ViewOtherProfileTray: {
+    user: User;
     close: () => void;
   };
   StudyToolsSelectionTray: {
@@ -872,6 +882,197 @@ const _TRAYS = {
           </CustomPressable>
         </CustomView>
       );
+    },
+  },
+  ViewOtherProfileTray: {
+    component: ({ user, close }: { user: User; close: () => void }) => {
+      const pagerViewRef = useRef<PagerView>(null);
+
+      const { data: _USER } = useQuery({
+        enabled: !!user?.id,
+        queryKey: user?.id ? [user.id] : [],
+        queryFn: async () => {
+          try {
+            const { data } = await _API_INSTANCE.get(`/users/view/${user.id}`);
+
+            return data;
+          } catch (err) {
+            close();
+            throw err;
+          }
+        },
+        retry: 3,
+      });
+
+      const PostComponent = ({ post }: { post: Post }) => {
+        const { currentScheme } = useTheme();
+        const editor = useEditorBridge({
+          theme: {
+            webview: {
+              padding: 8,
+              backgroundColor: currentScheme.colorBase300,
+            },
+          },
+          bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
+          dynamicHeight: true,
+          editable: false,
+          initialContent: post.post_body,
+        });
+
+        if (editor) {
+          return (
+            <View>
+              <CustomText
+                variant="bold"
+                className="text-2xl"
+                color="colorBaseContent"
+              >
+                {post.title}
+              </CustomText>
+              <CustomView
+                key={post.id}
+                variant="colorBase300"
+                className="p-4 rounded-3xl"
+              >
+                <RichText editor={editor} />
+              </CustomView>
+            </View>
+          );
+        }
+      };
+
+      const Badges = ({ user }: { user: User }) => {
+        const badgeIds = Object.keys(_BADGE_ASSET_MAP);
+        const [assets] = useAssets(Object.values(_BADGE_ASSET_MAP));
+
+        if (!assets) return null;
+
+        return (
+          <ScrollView contentContainerClassName="flex flex-col gap-4">
+            {user?.badges.map(
+              (badge: { id: string; title: string; description: string }) => {
+                const badgeMeta = _BADGE_MAP[badge.id];
+
+                if (!badgeMeta) return null;
+
+                const index = badgeIds.indexOf(badge.id);
+                if (index === -1) return null;
+
+                const asset = assets[index];
+
+                return (
+                  <CustomView
+                    key={badge.id}
+                    variant="colorBase300"
+                    className="p-4 flex flex-row gap-4 items-center rounded-3xl"
+                  >
+                    <Image
+                      source={{ uri: asset.localUri ?? asset.uri }}
+                      style={{ width: 84, height: 84, aspectRatio: 1 }}
+                    />
+                    <View className="flex-1">
+                      <CustomText
+                        variant="bold"
+                        className="text-lg"
+                        color="colorBaseContent"
+                      >
+                        {badgeMeta.name}
+                      </CustomText>
+                      <CustomText color="colorBaseContent">
+                        {badgeMeta.description}
+                      </CustomText>
+                    </View>
+                  </CustomView>
+                );
+              }
+            )}
+          </ScrollView>
+        );
+      };
+
+      const Posts = ({ posts }: { posts: Post[] }) => {
+        if (posts.length === 0) {
+          return (
+            <CustomView className="flex items-center justify-center p-4">
+              <CustomText>No posts yet.</CustomText>
+            </CustomView>
+          );
+        }
+
+        return (
+          <ScrollView
+            contentContainerClassName="flex flex-col gap-4"
+            style={{ maxHeight: Dimensions.get("screen").height / 1.5 }}
+          >
+            {posts.map((post) => {
+              return <PostComponent post={post} key={post.id} />;
+            })}
+          </ScrollView>
+        );
+      };
+
+      const Avatar = ({ user }: { user: User }) => {
+        const { height } = useWindowDimensions();
+
+        const avatarIds = Object.keys(_AVATAR_ASSET_MAP);
+        const [assets] = useAssets(Object.values(_AVATAR_ASSET_MAP));
+
+        if (!assets) return null;
+
+        // Fallback if user.avatar is missing/invalid
+        const avatarId =
+          user?.avatar && avatarIds.includes(user.avatar)
+            ? user.avatar
+            : "blue";
+
+        const avatarIndex = avatarIds.indexOf(avatarId);
+        const avatarAsset = assets[avatarIndex];
+
+        return (
+          <View
+            style={{ height: height / 6 }}
+            className="flex gap-4 items-center justify-center"
+          >
+            {avatarAsset && (
+              <Image
+                source={{ uri: avatarAsset.localUri ?? avatarAsset.uri }}
+                style={{ aspectRatio: 1, width: 96, height: 96 }}
+              />
+            )}
+
+            <View className="items-center">
+              <CustomText variant="bold" className="text-3xl">
+                {user?.first_name} {user?.last_name}
+              </CustomText>
+            </View>
+          </View>
+        );
+      };
+
+      if (_USER) {
+        return (
+          <CustomView
+            variant="colorBase100"
+            className="rounded-tr-3xl rounded-tl-3xl p-4 gap-4"
+          >
+            <CustomText className="p-4">
+              <MaterialIcons
+                name="keyboard-arrow-left"
+                size={24}
+                onPress={close}
+              />
+            </CustomText>
+            <Avatar user={user} />
+            <PagerView
+              ref={pagerViewRef}
+              style={{ height: Dimensions.get("screen").height / 2, gap: 16 }}
+            >
+              <Badges key={0} user={_USER} />
+              <Posts key={1} posts={_USER.posts} />
+            </PagerView>
+          </CustomView>
+        );
+      }
     },
   },
   StudyToolsSelectionTray: {

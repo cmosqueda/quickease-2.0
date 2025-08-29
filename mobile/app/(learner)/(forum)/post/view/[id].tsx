@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import PagerView from "react-native-pager-view";
 import UserAvatar from "@/components/UserAvatar";
@@ -19,16 +20,21 @@ import { Comment, Post } from "@/types/user/types";
 import { useRef, useState } from "react";
 import { RichText, useEditorBridge } from "@10play/tentap-editor";
 import { Pressable, ScrollView, View } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 
 import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
 export default function Page() {
+  const { user } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { currentScheme } = useTheme();
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
     "DismissibleStickToTopTray"
+  );
+
+  const useViewProfileTray = useTrays<MyTraysProps>(
+    "DismissibleRoundedNoMarginAndSpacingTray"
   );
 
   const [index, setIndex] = useState(0);
@@ -37,6 +43,7 @@ export default function Page() {
   const { mutate: voteOnPost, isPending: isVotingPost } = useVote([
     ["view-post", id],
   ]);
+
   const {
     data: post,
     refetch,
@@ -127,8 +134,34 @@ export default function Page() {
             className="flex-1 gap-4 p-4 rounded-tr-3xl rounded-tl-3xl"
             key={0}
           >
-            <View className="gap-2">
-              <View className="flex flex-row gap-4 items-center">
+            {post.user!.id === user!.id && (
+              <Link asChild href={"/(learner)/(profile)"}>
+                <Pressable className="flex flex-row gap-4 items-center">
+                  <UserAvatar avatar={post.user?.avatar!} />
+                  <View>
+                    <CustomText variant="bold">
+                      {post.user?.first_name} {post.user?.last_name}
+                    </CustomText>
+                    <CustomText className="text-sm opacity-40">
+                      {dayjs(post.created_at)
+                        .format("hh:mm A / MMMM DD, YYYY")
+                        .toString()}
+                    </CustomText>
+                  </View>
+                </Pressable>
+              </Link>
+            )}
+
+            {post.user!.id !== user!.id && (
+              <Pressable
+                onPress={() => {
+                  useViewProfileTray.push("ViewOtherProfileTray", {
+                    close: () => useViewProfileTray.pop,
+                    user: post.user!,
+                  });
+                }}
+                className="flex flex-row gap-4 items-center"
+              >
                 <UserAvatar avatar={post.user?.avatar!} />
                 <View>
                   <CustomText variant="bold">
@@ -140,8 +173,8 @@ export default function Page() {
                       .toString()}
                   </CustomText>
                 </View>
-              </View>
-            </View>
+              </Pressable>
+            )}
 
             <View className="flex-1">
               <CustomText variant="bold" className="text-4xl">
