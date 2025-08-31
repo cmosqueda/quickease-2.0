@@ -17,11 +17,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Page() {
   const { isConnected } = useNetInfo();
   const { currentScheme } = useTheme();
   const { user } = useAuth();
+  const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
+    "DismissibleRoundedNoMarginAndSpacingTray"
+  );
 
   const [index, setIndex] = useState(0);
   const pagerViewRef = useRef<PagerView>(null);
@@ -33,7 +37,40 @@ export default function Page() {
         backgroundColor: currentScheme?.colorBase100,
       }}
     >
-      <ForumHeader title="Notes" />
+      <ForumHeader
+        title="Notes"
+        rightSideChildren={
+          isConnected && (
+            <>
+              <Pressable
+                onPress={() =>
+                  openTray("SummarizeNotesStudyToolsSelectionTray", {
+                    openUploadImage: () => {
+                      closeTray();
+                      openTray("GenerateFromImageTray", {
+                        close: closeTray,
+                        type: "summary-notes",
+                      });
+                    },
+                    openUploadDocument: () => {
+                      closeTray();
+                      openTray("GenerateFromDocumentTray", {
+                        close: closeTray,
+                        type: "summary-notes",
+                      });
+                    },
+                    close: closeTray,
+                  })
+                }
+              >
+                <CustomText>
+                  <MaterialCommunityIcons name="toolbox-outline" size={20} />
+                </CustomText>
+              </Pressable>
+            </>
+          )
+        }
+      />
       <CustomView
         variant="colorBase100"
         className="px-8 flex flex-row justify-evenly items-center relative gap-4"

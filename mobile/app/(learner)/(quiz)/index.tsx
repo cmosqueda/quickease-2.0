@@ -54,7 +54,7 @@ export default function Page() {
                     },
                     openUploadFile: () => {
                       closeTray();
-                      openTray("GenerateFromNotesTray", {
+                      openTray("GenerateFromDocumentTray", {
                         close: closeTray,
                         type: "quiz",
                       });
