@@ -1,3 +1,31 @@
+# `./avatars.ts`
+
+This file defines the avatar asset map used in the forum screens.  
+It relies on **expo-asset** (via `require`) for loading SVG assets.
+
+```ts
+export const _AVATAR_ASSET_MAP: Record<string, any> = {
+  blue: require("../../assets/images/avatars/blue.svg"),
+  green: require("../../assets/images/avatars/green.svg"),
+  orange: require("../../assets/images/avatars/orange.svg"),
+  purple: require("../../assets/images/avatars/purple.svg"),
+};
+```
+
+# ./badges
+
+This file defines the badge system:
+
+- Badge categories (`learningProgress`, `collaborationCommunity`, `milestonesAchievements`)
+- Badge mapping and assets
+- `checkBadges` function that fetches awarded badges from API
+
+# ./types
+
+This file defines enums and TypeScript interfaces for easy use in fastify backend.
+
+```ts
+// enums
 export enum ResolveType {
   IS_DELETED = "IS_DELETED",
   IS_HIDDEN = "IS_HIDDEN",
@@ -248,3 +276,4 @@ export interface UserToken {
 
   user: User;
 }
+```

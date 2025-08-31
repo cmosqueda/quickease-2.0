@@ -5,7 +5,6 @@ import {
   useQueryClient,
   type QueryKey,
 } from "@tanstack/react-query";
-import { ToastAndroid } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
 
