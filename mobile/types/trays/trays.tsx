@@ -110,29 +110,42 @@ export type MyTraysProps = {
 
 const _TRAYS = {
   SearchTray: {
-    component: ({ close }: { close: () => void }) => (
-      <CustomView
-        variant="colorBase100"
-        className="rounded-tr-3xl rounded-tl-3xl p-8 gap-4"
-      >
-        <Pressable onPress={close}>
-          <CustomText>
-            <MaterialIcons name="close" size={24} />
-          </CustomText>
-        </Pressable>
+    component: ({ close }: { close: () => void }) => {
+      const [query, setQuery] = useState("");
 
-        <CustomText variant="bold" className="text-4xl">
-          Search
-        </CustomText>
-        <View className="flex flex-row gap-2 items-center">
-          <CustomTextInput
-            className="rounded-xl flex-1"
-            autoFocus={true}
-            enterKeyHint="go"
-          />
-        </View>
-      </CustomView>
-    ),
+      return (
+        <CustomView
+          variant="colorBase100"
+          className="rounded-tr-3xl rounded-tl-3xl p-8 gap-4"
+        >
+          <Pressable onPress={close}>
+            <CustomText>
+              <MaterialIcons name="close" size={24} />
+            </CustomText>
+          </Pressable>
+
+          <CustomText variant="bold" className="text-4xl">
+            Search
+          </CustomText>
+          <View className="flex flex-row gap-2 items-center">
+            <CustomTextInput
+              className="rounded-xl flex-1"
+              autoFocus={true}
+              enterKeyHint="go"
+              value={query}
+              onChangeText={setQuery}
+              onSubmitEditing={() => {
+                router.push({
+                  pathname: "/search/[query]",
+                  params: { query: query },
+                });
+                close();
+              }}
+            />
+          </View>
+        </CustomView>
+      );
+    },
   },
   NotificationTray: {
     component: ({ close }: { close: () => void }) => {
@@ -869,7 +882,12 @@ const _TRAYS = {
               </View>
             </View>
           </View>
-          <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+          <KeyboardAvoidingView
+            style={{
+              minHeight: Dimensions.get("screen").height / 2,
+              maxHeight: Dimensions.get("screen").height / 1.5,
+            }}
+          >
             {editor && <RichText editor={editor} />}
           </KeyboardAvoidingView>
           <CustomPressable

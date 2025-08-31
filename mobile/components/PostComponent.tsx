@@ -10,7 +10,13 @@ import { useVote } from "@/hooks/useVote";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { Pressable, View } from "react-native";
 
-export default function PostComponent({ post }: { post: Post }) {
+export default function PostComponent({
+  post,
+  disableBottomBar = false,
+}: {
+  post: Post;
+  disableBottomBar?: boolean;
+}) {
   const { isConnected } = useNetInfo();
   const { mutate: voteOnPost, isPending } = useVote([["recent-posts"]]);
 
@@ -63,7 +69,7 @@ export default function PostComponent({ post }: { post: Post }) {
           </CustomView>
         </Pressable>
       </Link>
-      {isConnected && (
+      {isConnected && !disableBottomBar && (
         <CustomView
           variant="colorPrimary"
           className="flex flex-row gap-4 items-center rounded-3xl px-6 py-4"
