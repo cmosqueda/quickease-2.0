@@ -5,6 +5,7 @@ import LottieView from "lottie-react-native";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import CustomPressable from "@/components/CustomPressable";
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { Image } from "expo-image";
@@ -12,12 +13,12 @@ import { useAssets } from "expo-asset";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 import { checkAuthAndRedirect } from "@/utils/axios";
-import { useEffect, useRef, useState } from "react";
 import { useWindowDimensions, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
 
-import _BADGES_ANIMATION from "../assets/animations/badges.json";
 import _FORUM_ANIMATION from "../assets/animations/forums-community.json";
 import _THEME_ANIMATION from "../assets/animations/multi-themes.json";
+import _BADGES_ANIMATION from "../assets/animations/badges.json";
 import _GENERATION_ANIMATION from "../assets/animations/generate-study-materials.json";
 
 export default function Index() {

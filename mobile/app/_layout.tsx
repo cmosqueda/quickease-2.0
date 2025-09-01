@@ -1,6 +1,5 @@
-import * as SplashScreen from "expo-splash-screen";
 import useTheme from "@/hooks/useTheme";
-import _TRAYS from "@/types/trays/trays";
+import * as SplashScreen from "expo-splash-screen";
 
 import { Stack } from "expo-router";
 import { Toaster } from "sonner-native";
@@ -18,6 +17,9 @@ import {
   Gabarito_900Black,
   useFonts,
 } from "@expo-google-fonts/gabarito";
+
+import _TRAYS from "@/types/trays/trays";
+import _STACK_CONFIG from "@/types/trays/stack_config";
 
 import "../globals.css";
 
@@ -57,41 +59,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <QueryClientProvider client={client}>
-        <TrayProvider
-          trays={_TRAYS}
-          stackConfigs={{
-            DismissibleStickToTopTray: {
-              adjustForKeyboard: true,
-              dismissOnBackdropPress: true,
-              stickToTop: true,
-              trayStyles: {
-                backgroundColor: useTheme.getState().currentScheme.colorBase100,
-              },
-              backdropStyles: { backgroundColor: "rgba(0,0,0,0.7)" },
-            },
-            DismissibleRoundedNoMarginAndSpacingTray: {
-              dismissOnBackdropPress: true,
-              adjustForKeyboard: true,
-              trayStyles: {
-                borderBottomLeftRadius: 0,
-                borderBottomRightRadius: 0,
-                backgroundColor: useTheme.getState().currentScheme.colorBase100,
-              },
-              backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
-              horizontalSpacing: 0,
-            },
-            RoundedNoMarginAndSpacingTray: {
-              adjustForKeyboard: true,
-              trayStyles: {
-                borderBottomLeftRadius: 0,
-                borderBottomRightRadius: 0,
-                backgroundColor: useTheme.getState().currentScheme.colorBase100,
-              },
-              backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
-              horizontalSpacing: 0,
-            },
-          }}
-        >
+        <TrayProvider trays={_TRAYS} stackConfigs={_STACK_CONFIG}>
           <Stack
             screenOptions={{
               headerShown: false,

@@ -12,6 +12,7 @@ import { Image } from "expo-image";
 import { useQuery } from "@tanstack/react-query";
 import { useTrays } from "react-native-trays";
 import { useAssets } from "expo-asset";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { Post, User } from "@/types/user/types";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -114,13 +115,14 @@ const Badges = ({ user }: { user: User }) => {
 };
 
 const Posts = ({ user }: { user: User }) => {
+  const { isConnected } = useNetInfo();
   const { data, isFetching, isError } = useQuery<Post[]>({
     queryKey: [user.id, "user-posts"],
     queryFn: async () => {
       const { data } = await _API_INSTANCE.get<Post[]>("forum/");
       return data;
     },
-    enabled: Boolean(user.id),
+    enabled: !!isConnected,
     retry: 3,
   });
 
@@ -229,9 +231,10 @@ const Avatar = ({ user }: { user: User }) => {
 };
 
 export default function Page() {
-  const navigation = useNavigation();
-  const { currentScheme } = useTheme();
   const { user } = useAuth();
+  const { currentScheme } = useTheme();
+
+  const navigation = useNavigation();
   const pagerViewRef = useRef<PagerView>(null);
 
   const [index, setIndex] = useState(0);

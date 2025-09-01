@@ -9,6 +9,10 @@ export default function Layout() {
         name="post/view/[id]"
         options={{ animation: "fade_from_bottom" }}
       />
+      <Stack.Screen
+        name="search/[query]"
+        options={{ animation: "fade_from_bottom" }}
+      />
     </Stack>
   );
 }

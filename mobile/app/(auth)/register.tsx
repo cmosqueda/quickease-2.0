@@ -10,6 +10,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 
 import { toast } from "sonner-native";
 import { router } from "expo-router";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, View } from "react-native";
 import { useRef, useState } from "react";
@@ -18,6 +19,7 @@ import _API_INSTANCE from "@/utils/axios";
 
 export default function Page() {
   const { setUser } = useAuth();
+  const { isConnected } = useNetInfo();
   const { currentScheme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +32,11 @@ export default function Page() {
   const pageViewRef = useRef<PagerView>(null);
 
   const handleRegister = async () => {
+    if (!isConnected) {
+      toast("You're not connected to network connection.");
+      return;
+    }
+
     setIsRegistering(true);
 
     try {
@@ -66,14 +73,24 @@ export default function Page() {
         backgroundColor: currentScheme?.colorBase100,
       }}
     >
-      <CustomText>
-        <Entypo
-          name="chevron-left"
-          size={24}
-          className=""
-          onPress={() => router.replace("/")}
-        />
-      </CustomText>
+      {!isRegistering && (
+        <CustomText>
+          <Entypo
+            name="chevron-left"
+            size={24}
+            className=""
+            onPress={() => {
+              if (tabIndex == 1) {
+                setTabIndex(0);
+                pageViewRef.current?.setPage(0);
+              }
+
+              router.replace("/");
+            }}
+          />
+        </CustomText>
+      )}
+
       <View className="flex">
         <CustomText variant="black" className="text-5xl">
           Create your account

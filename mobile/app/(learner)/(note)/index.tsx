@@ -16,13 +16,16 @@ import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Page() {
+  const { isConnected } = useNetInfo();
   const { currentScheme } = useTheme();
+  const { user } = useAuth();
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
-  const { user } = useAuth();
 
   const [index, setIndex] = useState(0);
   const pagerViewRef = useRef<PagerView>(null);
@@ -34,7 +37,40 @@ export default function Page() {
         backgroundColor: currentScheme?.colorBase100,
       }}
     >
-      <ForumHeader title="Notes" />
+      <ForumHeader
+        title="Notes"
+        rightSideChildren={
+          isConnected && (
+            <>
+              <Pressable
+                onPress={() =>
+                  openTray("SummarizeNotesStudyToolsSelectionTray", {
+                    openUploadImage: () => {
+                      closeTray();
+                      openTray("GenerateFromImageTray", {
+                        close: closeTray,
+                        type: "summary-notes",
+                      });
+                    },
+                    openUploadDocument: () => {
+                      closeTray();
+                      openTray("GenerateFromDocumentTray", {
+                        close: closeTray,
+                        type: "summary-notes",
+                      });
+                    },
+                    close: closeTray,
+                  })
+                }
+              >
+                <CustomText>
+                  <MaterialCommunityIcons name="toolbox-outline" size={20} />
+                </CustomText>
+              </Pressable>
+            </>
+          )
+        }
+      />
       <CustomView
         variant="colorBase100"
         className="px-8 flex flex-row justify-evenly items-center relative gap-4"
@@ -104,7 +140,10 @@ export default function Page() {
               }}
               key={note.id}
             >
-              <Pressable>
+              <Pressable
+                className="disabled:opacity-70"
+                disabled={!isConnected}
+              >
                 <CustomView className="p-6 rounded-xl gap-2">
                   {note.is_ai_generated && (
                     <View className="flex flex-row gap-4 items-center">
@@ -147,7 +186,10 @@ export default function Page() {
                   params: { id: note.id.toString() },
                 }}
               >
-                <Pressable>
+                <Pressable
+                  className="disabled:opacity-70"
+                  disabled={!isConnected}
+                >
                   <CustomView className="p-6 rounded-xl gap-2">
                     {note.is_ai_generated && (
                       <View className="flex flex-row gap-4 items-center">
@@ -183,7 +225,10 @@ export default function Page() {
                 }}
                 key={note.id}
               >
-                <Pressable>
+                <Pressable
+                  disabled={!isConnected}
+                  className="disabled:opacity-70"
+                >
                   <CustomView className="p-6 rounded-xl gap-2">
                     {note.is_ai_generated && (
                       <View className="flex flex-row gap-4 items-center">
@@ -208,16 +253,18 @@ export default function Page() {
         </ScrollView>
       </PagerView>
 
-      <Link asChild href={"/(learner)/(note)/create"}>
-        <CustomPressable
-          variant="colorPrimary"
-          className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
-        >
-          <CustomText color="colorPrimaryContent">
-            <MaterialIcons name="post-add" size={32} />
-          </CustomText>
-        </CustomPressable>
-      </Link>
+      {isConnected && (
+        <Link asChild href={"/(learner)/(note)/create"}>
+          <CustomPressable
+            variant="colorPrimary"
+            className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+          >
+            <CustomText color="colorPrimaryContent">
+              <MaterialIcons name="post-add" size={32} />
+            </CustomText>
+          </CustomPressable>
+        </Link>
+      )}
     </SafeAreaView>
   );
 }

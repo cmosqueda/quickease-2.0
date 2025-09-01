@@ -3,26 +3,30 @@ import dayjs from "dayjs";
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import useTimer from "@/hooks/useTimer";
+import PagerView from "react-native-pager-view";
 import formatTime from "@/utils/format_time";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomPressable from "@/components/CustomPressable";
 import CustomTextInput from "@/components/CustomTextInput";
 import CommentComponent from "@/components/CommentComponent";
+import * as DocumentPicker from "expo-document-picker";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { toast } from "sonner-native";
 import { Image } from "expo-image";
-import { Asset } from "expo-asset";
+import { router } from "expo-router";
 import { Picker } from "@expo/ui/jetpack-compose";
 import { useQuery } from "@tanstack/react-query";
 import { rgbaToHex } from "@/utils/colors";
 import { useComment } from "@/hooks/useComment";
 import { TimerPicker } from "react-native-timer-picker";
+import { Asset, useAssets } from "expo-asset";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Comment, Note, Notification, Post, User } from "../user/types";
 
 import {
@@ -39,14 +43,16 @@ import {
   Pressable,
   RefreshControl,
   ScrollView,
+  useWindowDimensions,
   View,
 } from "react-native";
 
 import _THEMES from "../theme/Themes";
 import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "../theme/TenTapThemes";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
+
+import { _AVATAR_ASSET_MAP } from "../user/avatars";
+import { _BADGE_ASSET_MAP, _BADGE_MAP } from "../user/badges";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
@@ -86,43 +92,73 @@ export type MyTraysProps = {
     post: Post;
     close: () => void;
   };
+  ViewOtherProfileTray: {
+    user: User;
+    close: () => void;
+  };
   StudyToolsSelectionTray: {
     openGenerateFromNotes: () => void;
     openUploadFile: () => void;
     close: () => void;
     type: "quiz" | "flashcard";
   };
+  SummarizeNotesStudyToolsSelectionTray: {
+    openUploadDocument: () => void;
+    openUploadImage: () => void;
+    close: () => void;
+  };
   GenerateFromNotesTray: {
     close: () => void;
     type: "quiz" | "flashcard";
+  };
+  GenerateFromDocumentTray: {
+    close: () => void;
+    type: "quiz" | "flashcard" | "summary-notes";
+  };
+  GenerateFromImageTray: {
+    close: () => void;
+    type: "quiz" | "flashcard" | "summary-notes";
   };
 };
 
 const _TRAYS = {
   SearchTray: {
-    component: ({ close }: { close: () => void }) => (
-      <CustomView
-        variant="colorBase100"
-        className="rounded-tr-3xl rounded-tl-3xl p-8 gap-4"
-      >
-        <Pressable onPress={close}>
-          <CustomText>
-            <MaterialIcons name="close" size={24} />
-          </CustomText>
-        </Pressable>
+    component: ({ close }: { close: () => void }) => {
+      const [query, setQuery] = useState("");
 
-        <CustomText variant="bold" className="text-4xl">
-          Search
-        </CustomText>
-        <View className="flex flex-row gap-2 items-center">
-          <CustomTextInput
-            className="rounded-xl flex-1"
-            autoFocus={true}
-            enterKeyHint="go"
-          />
-        </View>
-      </CustomView>
-    ),
+      return (
+        <CustomView
+          variant="colorBase100"
+          className="rounded-tr-3xl rounded-tl-3xl p-8 gap-4"
+        >
+          <Pressable onPress={close}>
+            <CustomText>
+              <MaterialIcons name="close" size={24} />
+            </CustomText>
+          </Pressable>
+
+          <CustomText variant="bold" className="text-4xl">
+            Search
+          </CustomText>
+          <View className="flex flex-row gap-2 items-center">
+            <CustomTextInput
+              className="rounded-xl flex-1"
+              autoFocus={true}
+              enterKeyHint="go"
+              value={query}
+              onChangeText={setQuery}
+              onSubmitEditing={() => {
+                router.push({
+                  pathname: "/search/[query]",
+                  params: { query: query },
+                });
+                close();
+              }}
+            />
+          </View>
+        </CustomView>
+      );
+    },
   },
   NotificationTray: {
     component: ({ close }: { close: () => void }) => {
@@ -859,7 +895,12 @@ const _TRAYS = {
               </View>
             </View>
           </View>
-          <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+          <KeyboardAvoidingView
+            style={{
+              minHeight: Dimensions.get("screen").height / 2,
+              maxHeight: Dimensions.get("screen").height / 1.5,
+            }}
+          >
             {editor && <RichText editor={editor} />}
           </KeyboardAvoidingView>
           <CustomPressable
@@ -874,6 +915,197 @@ const _TRAYS = {
       );
     },
   },
+  ViewOtherProfileTray: {
+    component: ({ user, close }: { user: User; close: () => void }) => {
+      const pagerViewRef = useRef<PagerView>(null);
+
+      const { data: _USER } = useQuery({
+        enabled: !!user?.id,
+        queryKey: user?.id ? [user.id] : [],
+        queryFn: async () => {
+          try {
+            const { data } = await _API_INSTANCE.get(`/users/view/${user.id}`);
+
+            return data;
+          } catch (err) {
+            close();
+            throw err;
+          }
+        },
+        retry: 3,
+      });
+
+      const PostComponent = ({ post }: { post: Post }) => {
+        const { currentScheme } = useTheme();
+        const editor = useEditorBridge({
+          theme: {
+            webview: {
+              padding: 8,
+              backgroundColor: currentScheme.colorBase300,
+            },
+          },
+          bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
+          dynamicHeight: true,
+          editable: false,
+          initialContent: post.post_body,
+        });
+
+        if (editor) {
+          return (
+            <View>
+              <CustomText
+                variant="bold"
+                className="text-2xl"
+                color="colorBaseContent"
+              >
+                {post.title}
+              </CustomText>
+              <CustomView
+                key={post.id}
+                variant="colorBase300"
+                className="p-4 rounded-3xl"
+              >
+                <RichText editor={editor} />
+              </CustomView>
+            </View>
+          );
+        }
+      };
+
+      const Badges = ({ user }: { user: User }) => {
+        const badgeIds = Object.keys(_BADGE_ASSET_MAP);
+        const [assets] = useAssets(Object.values(_BADGE_ASSET_MAP));
+
+        if (!assets) return null;
+
+        return (
+          <ScrollView contentContainerClassName="flex flex-col gap-4">
+            {user?.badges.map(
+              (badge: { id: string; title: string; description: string }) => {
+                const badgeMeta = _BADGE_MAP[badge.id];
+
+                if (!badgeMeta) return null;
+
+                const index = badgeIds.indexOf(badge.id);
+                if (index === -1) return null;
+
+                const asset = assets[index];
+
+                return (
+                  <CustomView
+                    key={badge.id}
+                    variant="colorBase300"
+                    className="p-4 flex flex-row gap-4 items-center rounded-3xl"
+                  >
+                    <Image
+                      source={{ uri: asset.localUri ?? asset.uri }}
+                      style={{ width: 84, height: 84, aspectRatio: 1 }}
+                    />
+                    <View className="flex-1">
+                      <CustomText
+                        variant="bold"
+                        className="text-lg"
+                        color="colorBaseContent"
+                      >
+                        {badgeMeta.name}
+                      </CustomText>
+                      <CustomText color="colorBaseContent">
+                        {badgeMeta.description}
+                      </CustomText>
+                    </View>
+                  </CustomView>
+                );
+              }
+            )}
+          </ScrollView>
+        );
+      };
+
+      const Posts = ({ posts }: { posts: Post[] }) => {
+        if (posts.length === 0) {
+          return (
+            <CustomView className="flex items-center justify-center p-4">
+              <CustomText>No posts yet.</CustomText>
+            </CustomView>
+          );
+        }
+
+        return (
+          <ScrollView
+            contentContainerClassName="flex flex-col gap-4"
+            style={{ maxHeight: Dimensions.get("screen").height / 1.5 }}
+          >
+            {posts.map((post) => {
+              return <PostComponent post={post} key={post.id} />;
+            })}
+          </ScrollView>
+        );
+      };
+
+      const Avatar = ({ user }: { user: User }) => {
+        const { height } = useWindowDimensions();
+
+        const avatarIds = Object.keys(_AVATAR_ASSET_MAP);
+        const [assets] = useAssets(Object.values(_AVATAR_ASSET_MAP));
+
+        if (!assets) return null;
+
+        // Fallback if user.avatar is missing/invalid
+        const avatarId =
+          user?.avatar && avatarIds.includes(user.avatar)
+            ? user.avatar
+            : "blue";
+
+        const avatarIndex = avatarIds.indexOf(avatarId);
+        const avatarAsset = assets[avatarIndex];
+
+        return (
+          <View
+            style={{ height: height / 6 }}
+            className="flex gap-4 items-center justify-center"
+          >
+            {avatarAsset && (
+              <Image
+                source={{ uri: avatarAsset.localUri ?? avatarAsset.uri }}
+                style={{ aspectRatio: 1, width: 96, height: 96 }}
+              />
+            )}
+
+            <View className="items-center">
+              <CustomText variant="bold" className="text-3xl">
+                {user?.first_name} {user?.last_name}
+              </CustomText>
+            </View>
+          </View>
+        );
+      };
+
+      if (_USER) {
+        return (
+          <CustomView
+            variant="colorBase100"
+            className="rounded-tr-3xl rounded-tl-3xl p-4 gap-4"
+          >
+            <CustomText className="p-4">
+              <MaterialIcons
+                name="keyboard-arrow-left"
+                size={24}
+                onPress={close}
+              />
+            </CustomText>
+            <Avatar user={user} />
+            <PagerView
+              ref={pagerViewRef}
+              style={{ height: Dimensions.get("screen").height / 2, gap: 16 }}
+            >
+              <Badges key={0} user={_USER} />
+              <Posts key={1} posts={_USER.posts} />
+            </PagerView>
+          </CustomView>
+        );
+      }
+    },
+  },
   StudyToolsSelectionTray: {
     component: ({
       openGenerateFromNotes,
@@ -881,8 +1113,8 @@ const _TRAYS = {
       close,
       type,
     }: {
-      openGenerateFromNotes: void;
-      openUploadFile: void;
+      openGenerateFromNotes: () => void;
+      openUploadFile: () => void;
       close: () => void;
       type: "quiz" | "flashcard";
     }) => {
@@ -908,22 +1140,24 @@ const _TRAYS = {
           <Pressable
             style={{ backgroundColor: currentScheme.colorBase200 }}
             className="p-6 rounded-xl flex flex-row gap-6 items-center"
+            onPress={openGenerateFromNotes}
           >
             <CustomText>
               <MaterialCommunityIcons name="note-multiple" size={32} />
             </CustomText>
-            <Pressable onPress={openGenerateFromNotes} className="flex-1">
+            <Pressable className="flex-1">
               <CustomText className="text-xl" variant="black">
                 Select from notes
               </CustomText>
               <CustomText className="opacity-60">
-                Generate a quiz from selecting one of your notes.
+                Generate a {type} from selecting one of your notes.
               </CustomText>
             </Pressable>
           </Pressable>
           <Pressable
             style={{ backgroundColor: currentScheme.colorBase200 }}
             className="p-6 rounded-xl flex flex-row gap-6 items-center"
+            onPress={openUploadFile}
           >
             <CustomText>
               <MaterialCommunityIcons name="file-upload" size={32} />
@@ -933,7 +1167,74 @@ const _TRAYS = {
                 Upload file
               </CustomText>
               <CustomText className="opacity-60">
-                Generate a quiz by uploading a document.
+                Generate a {type} by uploading a document.
+              </CustomText>
+            </View>
+          </Pressable>
+        </CustomView>
+      );
+    },
+  },
+  SummarizeNotesStudyToolsSelectionTray: {
+    component: ({
+      openUploadDocument,
+      openUploadImage,
+      close,
+    }: {
+      openUploadDocument: () => void;
+      openUploadImage: () => void;
+      close: () => void;
+    }) => {
+      const { currentScheme } = useTheme();
+
+      return (
+        <CustomView
+          variant="colorBase100"
+          className="rounded-tr-3xl rounded-tl-3xl px-4 py-8 gap-4"
+        >
+          <View className="flex flex-row gap-4 items-center">
+            <CustomText>
+              <MaterialIcons
+                name="keyboard-arrow-left"
+                size={24}
+                onPress={close}
+              />
+            </CustomText>
+            <CustomText variant="bold" className="text-xl">
+              Notes Study Tools
+            </CustomText>
+          </View>
+          <Pressable
+            style={{ backgroundColor: currentScheme.colorBase200 }}
+            className="p-6 rounded-xl flex flex-row gap-6 items-center"
+            onPress={openUploadDocument}
+          >
+            <CustomText>
+              <MaterialCommunityIcons name="file-upload" size={32} />
+            </CustomText>
+            <View className="flex-1">
+              <CustomText className="text-xl" variant="black">
+                Upload document
+              </CustomText>
+              <CustomText className="opacity-60">
+                Generate a summary note by uploading a document.
+              </CustomText>
+            </View>
+          </Pressable>
+          <Pressable
+            style={{ backgroundColor: currentScheme.colorBase200 }}
+            className="p-6 rounded-xl flex flex-row gap-6 items-center"
+            onPress={openUploadImage}
+          >
+            <CustomText>
+              <MaterialCommunityIcons name="file-upload" size={32} />
+            </CustomText>
+            <View className="flex-1">
+              <CustomText className="text-xl" variant="black">
+                Upload image
+              </CustomText>
+              <CustomText className="opacity-60">
+                Generate a summary note by uploading an image.
               </CustomText>
             </View>
           </Pressable>
@@ -1005,6 +1306,23 @@ const _TRAYS = {
 
       const tabs = [
         <>
+          <View className="flex flex-row gap-4 items-center">
+            <CustomText>
+              <MaterialIcons
+                name="keyboard-arrow-left"
+                size={24}
+                onPress={close}
+              />
+            </CustomText>
+            <View>
+              <CustomText variant="bold" className="text-xl">
+                Generate {type === "quiz" ? "quiz" : "flashcards"} from notes
+              </CustomText>
+              <CustomText className="text-sm opacity-60">
+                Select a note
+              </CustomText>
+            </View>
+          </View>
           <ScrollView contentContainerClassName="gap-4">
             {user?.notes
               .filter((note: Note) => note.is_ai_generated === false)
@@ -1073,6 +1391,404 @@ const _TRAYS = {
           variant="colorBase100"
           className="rounded-tr-3xl rounded-tl-3xl px-4 py-8 gap-4"
         >
+          {tabs[index]}
+        </CustomView>
+      );
+    },
+  },
+  GenerateFromDocumentTray: {
+    component: ({
+      close,
+      type,
+    }: {
+      close: () => void;
+      type: "quiz" | "flashcard" | "summary-notes";
+    }) => {
+      const [document, setDocument] =
+        useState<DocumentPicker.DocumentPickerAsset>();
+
+      const handlePick = async () => {
+        setDocument(undefined);
+
+        try {
+          const document = await DocumentPicker.getDocumentAsync({
+            type: [
+              "application/msword",
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "application/pdf",
+            ],
+            multiple: false,
+          });
+
+          if (document.canceled === false) {
+            setDocument(document.assets[0]);
+            console.log(document.assets);
+          } else {
+            toast("Pick atleast one file.");
+            close();
+          }
+        } catch (err) {
+          toast("Error picking document file.");
+        }
+      };
+
+      useEffect(() => {
+        handlePick();
+      }, []);
+
+      const handleGenerateQuizFromDocument = async () => {
+        if (!document) {
+          toast("Please pick a document first.");
+          return;
+        }
+
+        const extension = document.name.split(".").pop()?.toLowerCase();
+
+        try {
+          setIndex(1);
+          const formData = new FormData();
+
+          formData.append("file", {
+            uri: document.uri,
+            name: document.name,
+            type:
+              document.mimeType ||
+              (extension === "pdf"
+                ? "application/pdf"
+                : extension === "docx"
+                  ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  : "application/octet-stream"),
+          } as any);
+
+          const response = await _API_INSTANCE.post(
+            "ai/generate-quiz-from-pdf",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+              timeout: 10 * 60 * 1000,
+            }
+          );
+
+          if (response.status === 200) {
+            const data = response.data;
+
+            await AsyncStorage.setItem(
+              "app-ai-generated-quiz",
+              JSON.stringify(data)
+            );
+
+            router.push("/(learner)/(quiz)/ai/generated");
+          } else {
+            console.error("Upload failed:", response.data.message);
+            toast("Upload failed.");
+          }
+        } catch (error) {
+          console.error("Upload error:", error);
+          toast("Something went wrong uploading file.");
+        } finally {
+          setIndex(0);
+          setDocument(undefined);
+          close();
+        }
+      };
+
+      const handleGenerateFlashcardsFromDocument = async () => {
+        if (!document) {
+          toast("Please pick a document first.");
+          return;
+        }
+
+        const extension = document.name.split(".").pop()?.toLowerCase();
+
+        try {
+          setIndex(1);
+          const formData = new FormData();
+
+          formData.append("file", {
+            uri: document.uri,
+            name: document.name,
+            type:
+              document.mimeType ||
+              (extension === "pdf"
+                ? "application/pdf"
+                : extension === "docx"
+                  ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  : "application/octet-stream"),
+          } as any);
+
+          const response = await _API_INSTANCE.post(
+            "ai/generate-flashcards-from-pdf",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+              timeout: 10 * 60 * 1000,
+            }
+          );
+
+          if (response.status === 200) {
+            const data = response.data;
+
+            await AsyncStorage.setItem(
+              "app-ai-generated-flashcards",
+              JSON.stringify(data)
+            );
+
+            router.push("/(learner)/(flashcard)/ai/generated");
+          } else {
+            console.error("Upload failed:", response.data.message);
+            toast("Upload failed.");
+          }
+        } catch (error) {
+          console.error("Upload error:", error);
+          toast("Something went wrong uploading file.");
+        } finally {
+          setIndex(0);
+          setDocument(undefined);
+          close();
+        }
+      };
+
+      const handleGenerateSummaryNotesFromDocument = async () => {
+        if (!document) {
+          toast("Please pick a document first.");
+          return;
+        }
+
+        const extension = document.name.split(".").pop()?.toLowerCase();
+
+        try {
+          setIndex(1);
+          const formData = new FormData();
+
+          formData.append("file", {
+            uri: document.uri,
+            name: document.name,
+            type:
+              document.mimeType ||
+              (extension === "pdf"
+                ? "application/pdf"
+                : extension === "docx"
+                  ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  : "application/octet-stream"),
+          } as any);
+
+          const response = await _API_INSTANCE.post(
+            "ai/generate-notes-from-pdf",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+              timeout: 10 * 60 * 1000,
+            }
+          );
+
+          if (response.status === 200) {
+            const data = response.data;
+
+            await AsyncStorage.setItem(
+              "app-ai-generated-note",
+              JSON.stringify(data)
+            );
+
+            router.push("/(learner)/(note)/ai/generated");
+          } else {
+            console.error("Upload failed:", response.data.message);
+            toast("Upload failed.");
+          }
+        } catch (error) {
+          console.error("Upload error:", error);
+          toast("Something went wrong uploading file.");
+        } finally {
+          setIndex(0);
+          setDocument(undefined);
+          close();
+        }
+      };
+
+      const [index, setIndex] = useState(0);
+      const tabs = [
+        <>
+          <View className="flex flex-row gap-4 items-center">
+            <CustomText>
+              <MaterialIcons
+                name="keyboard-arrow-left"
+                size={24}
+                onPress={close}
+              />
+            </CustomText>
+            <View>
+              {type === "summary-notes" ? (
+                <CustomText variant="bold" className="text-xl">
+                  Generate summary notes from document
+                </CustomText>
+              ) : (
+                <CustomText variant="bold" className="text-xl">
+                  Generate {type === "quiz" ? "quiz" : "flashcards"} from
+                  document
+                </CustomText>
+              )}
+            </View>
+          </View>
+          {document && (
+            <>
+              <CustomView
+                variant="colorBase200"
+                className="flex flex-row gap-4 items-center p-4 rounded-3xl"
+              >
+                <CustomText>
+                  <MaterialCommunityIcons name="file" size={28} />
+                </CustomText>
+                <View className="flex-1 items-center">
+                  <CustomText className="text-lg flex-1" variant="bold">
+                    {document.name}
+                  </CustomText>
+                </View>
+              </CustomView>
+              <CustomPressable
+                variant="colorBase300"
+                className="items-center justify-center rounded-2xl"
+                onPress={() => {
+                  if (type === "quiz") {
+                    handleGenerateQuizFromDocument();
+                  }
+
+                  if (type === "flashcard") {
+                    handleGenerateFlashcardsFromDocument();
+                  }
+
+                  if (type === "summary-notes") {
+                    handleGenerateSummaryNotesFromDocument();
+                  }
+                }}
+              >
+                {type === "summary-notes" ? (
+                  <CustomText>Generate summary notes</CustomText>
+                ) : (
+                  <CustomText>Generate {type}</CustomText>
+                )}
+              </CustomPressable>
+            </>
+          )}
+        </>,
+        <>
+          <View className="py-8 items-center justify-center">
+            <CustomText>
+              <ActivityIndicator
+                size={72}
+                color={useTheme.getState().currentScheme.colorPrimary}
+              />
+            </CustomText>
+            <CustomText variant="bold" className="text-xl">
+              Generating...
+            </CustomText>
+          </View>
+        </>,
+      ];
+
+      return (
+        <CustomView
+          variant="colorBase100"
+          className="rounded-tr-3xl rounded-tl-3xl px-4 py-8 gap-4"
+        >
+          {tabs[index]}
+        </CustomView>
+      );
+    },
+  },
+  GenerateFromImageTray: {
+    component: ({
+      close,
+      type,
+    }: {
+      close: () => void;
+      type: "quiz" | "flashcard" | "summary-notes";
+    }) => {
+      const [document, setDocument] =
+        useState<DocumentPicker.DocumentPickerAsset>();
+
+      const handlePick = async () => {
+        setDocument(undefined);
+
+        try {
+          const document = await DocumentPicker.getDocumentAsync({
+            type: ["image/jpeg", "image/png", "image/jpg"],
+            multiple: false,
+          });
+
+          if (document.canceled === false) {
+            setDocument(document.assets[0]);
+            console.log(document.assets);
+          } else {
+            toast("Pick atleast one file.");
+            close();
+          }
+        } catch (err) {
+          toast("Error picking document file.");
+        }
+      };
+
+      useEffect(() => {
+        handlePick();
+      }, []);
+
+      const handleGenerateSummaryNotesFromImage = async () => {
+        if (!document) {
+          toast("Please pick a image first.");
+          return;
+        }
+
+        try {
+          setIndex(1);
+          const formData = new FormData();
+
+          formData.append("file", {
+            uri: document.uri,
+            name: document.name,
+            type: document.mimeType,
+          } as any);
+
+          const response = await _API_INSTANCE.post(
+            "ai/generate-notes-from-image",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+              timeout: 10 * 60 * 1000,
+            }
+          );
+
+          if (response.status === 200) {
+            const data = response.data;
+
+            await AsyncStorage.setItem(
+              "app-ai-generated-note",
+              JSON.stringify(data)
+            );
+
+            router.push("/(learner)/(note)/ai/generated");
+          } else {
+            console.error("Upload failed:", response.data.message);
+            toast("Upload failed.");
+          }
+        } catch (error) {
+          console.error("Upload error:", error);
+          toast("Something went wrong uploading file.");
+        } finally {
+          setIndex(0);
+          setDocument(undefined);
+          close();
+        }
+      };
+
+      const [index, setIndex] = useState(0);
+      const tabs = [
+        <>
           <View className="flex flex-row gap-4 items-center">
             <CustomText>
               <MaterialIcons
@@ -1085,11 +1801,55 @@ const _TRAYS = {
               <CustomText variant="bold" className="text-xl">
                 Generate {type === "quiz" ? "quiz" : "flashcards"} from notes
               </CustomText>
-              <CustomText className="text-sm opacity-60">
-                Select a note
-              </CustomText>
             </View>
           </View>
+          {document && (
+            <>
+              <CustomView
+                variant="colorBase200"
+                className="flex flex-row gap-4 items-center p-4 rounded-3xl"
+              >
+                <CustomText>
+                  <MaterialCommunityIcons name="file" size={28} />
+                </CustomText>
+                <View className="flex-1 items-center">
+                  <CustomText className="text-lg flex-1" variant="bold">
+                    {document.name}
+                  </CustomText>
+                </View>
+              </CustomView>
+              <CustomPressable
+                variant="colorBase300"
+                className="items-center justify-center rounded-2xl"
+                onPress={() => {
+                  handleGenerateSummaryNotesFromImage();
+                }}
+              >
+                <CustomText>Generate summary note</CustomText>
+              </CustomPressable>
+            </>
+          )}
+        </>,
+        <>
+          <View className="py-8 items-center justify-center">
+            <CustomText>
+              <ActivityIndicator
+                size={72}
+                color={useTheme.getState().currentScheme.colorPrimary}
+              />
+            </CustomText>
+            <CustomText variant="bold" className="text-xl">
+              Generating...
+            </CustomText>
+          </View>
+        </>,
+      ];
+
+      return (
+        <CustomView
+          variant="colorBase100"
+          className="rounded-tr-3xl rounded-tl-3xl px-4 py-8 gap-4"
+        >
           {tabs[index]}
         </CustomView>
       );
