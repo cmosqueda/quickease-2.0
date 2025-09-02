@@ -10,7 +10,13 @@ import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, router } from "expo-router";
-import { View, Pressable, RefreshControl, ScrollView } from "react-native";
+import {
+  View,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  FlatList,
+} from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
 
@@ -53,6 +59,8 @@ export default function Page() {
     enabled: !!query,
   });
 
+  const posts = data?.pages.flatMap((page) => page.posts) ?? [];
+
   return (
     <SafeAreaView
       className="flex flex-1"
@@ -81,23 +89,33 @@ export default function Page() {
         className="p-4 rounded-tr-3xl rounded-tl-3xl"
         variant="colorBase300"
       >
-        {data && (
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={isFetching && !isFetchingNextPage}
-                onRefresh={refetch}
-              />
+        <FlatList
+          data={posts}
+          keyExtractor={(post) => post.id.toString()}
+          renderItem={({ item }) => (
+            <PostComponent post={item} disableBottomBar />
+          )}
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching && !isFetchingNextPage}
+              onRefresh={refetch}
+            />
+          }
+          contentContainerStyle={{ gap: 16 }}
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
             }
-            contentContainerClassName="gap-4 flex flex-col"
-          >
-            {data?.pages.flatMap((page) =>
-              page.posts.map((post: Post) => (
-                <PostComponent post={post} key={post.id} disableBottomBar />
-              ))
-            )}
-          </ScrollView>
-        )}
+          }}
+          onEndReachedThreshold={0.2}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <CustomText className="text-center py-4">
+                Loading more...
+              </CustomText>
+            ) : null
+          }
+        />
       </CustomView>
     </SafeAreaView>
   );

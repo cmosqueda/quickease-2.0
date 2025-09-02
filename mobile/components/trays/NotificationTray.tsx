@@ -1,11 +1,10 @@
 import useAuth from "@/hooks/useAuth";
-
+import useTheme from "@/hooks/useTheme";
 import CustomText from "../CustomText";
 import CustomView from "../CustomView";
 
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { useTheme } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import {
   Dimensions,
