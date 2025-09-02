@@ -11,10 +11,10 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Image } from "expo-image";
 import { useAssets } from "expo-asset";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, router } from "expo-router";
+import { Link, Redirect, router } from "expo-router";
 import { checkAuthAndRedirect } from "@/utils/axios";
 import { useWindowDimensions, View } from "react-native";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import _FORUM_ANIMATION from "../assets/animations/forums-community.json";
 import _THEME_ANIMATION from "../assets/animations/multi-themes.json";
@@ -83,7 +83,7 @@ export default function Index() {
   const [isChecking, setIsChecking] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const check = async () => {
       setIsChecking(true);
 
@@ -91,7 +91,6 @@ export default function Index() {
         const loggedIn = await checkAuthAndRedirect();
         if (loggedIn) {
           setLoggedIn(true);
-          return router.replace("/(learner)");
         }
       } catch (err) {
       } finally {
@@ -123,21 +122,7 @@ export default function Index() {
   }
 
   if (loggedIn) {
-    return (
-      <SafeAreaView
-        className="flex flex-1 items-center justify-center"
-        style={{
-          backgroundColor: currentScheme?.colorBase100,
-        }}
-      >
-        <LottieView
-          source={animations[1]}
-          autoPlay
-          loop
-          style={{ height: height / 2 }}
-        />
-      </SafeAreaView>
-    );
+    return <Redirect href={"/(learner)/(profile)"} />;
   }
 
   if (!loggedIn && !isChecking) {

@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import * as SplashScreen from "expo-splash-screen";
 
@@ -29,6 +30,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const { currentScheme } = useTheme();
+  const { user } = useAuth();
   const [loaded, error] = useFonts({
     Gabarito_400Regular,
     Gabarito_500Medium,
@@ -68,10 +70,12 @@ export default function RootLayout() {
           >
             <Stack.Screen name="index" />
             <Stack.Screen name="(auth)" />
-            <Stack.Screen
-              name="(learner)"
-              options={{ animation: "fade_from_bottom" }}
-            />
+            <Stack.Protected guard={user?.id ? true : false}>
+              <Stack.Screen
+                name="(learner)"
+                options={{ animation: "fade_from_bottom" }}
+              />
+            </Stack.Protected>
           </Stack>
         </TrayProvider>
         <Toaster

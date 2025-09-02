@@ -255,6 +255,7 @@ function CustomDrawerContent(props: any) {
 
 export default function Layout() {
   const { currentScheme } = useTheme();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (currentScheme.colorscheme === "light") {
@@ -272,12 +273,14 @@ export default function Layout() {
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Drawer.Screen name="(forum)" />
-      <Drawer.Screen name="(note)" />
-      <Drawer.Screen name="(quiz)" />
-      <Drawer.Screen name="(settings)" />
-      <Drawer.Screen name="(profile)" />
-      <Drawer.Screen name="(flashcard)" />
+      <Drawer.Protected guard={user?.id ? true : false}>
+        <Drawer.Screen name="(forum)" />
+        <Drawer.Screen name="(note)" />
+        <Drawer.Screen name="(quiz)" />
+        <Drawer.Screen name="(settings)" />
+        <Drawer.Screen name="(profile)" />
+        <Drawer.Screen name="(flashcard)" />
+      </Drawer.Protected>
     </Drawer>
   );
 }
