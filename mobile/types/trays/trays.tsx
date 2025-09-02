@@ -21,6 +21,7 @@ import StudyToolsSelectionTray from "@/components/trays/StudyToolsSelectionTray"
 import GenerateFromDocumentTray from "@/components/trays/GenerateFromDocumentTray";
 import ViewPostAttachmentsTray from "@/components/trays/ViewPostAttachmentsTray";
 import SummarizeNotesStudyToolsSelectionTray from "@/components/trays/SummarizeNotesStudyToolsSelectionTray";
+import ChangeEmailTray from "@/components/trays/ChangeEmailTray";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
@@ -38,11 +39,9 @@ export type MyTraysProps = {
   ChangeThemesTray: { close: () => void };
   ChangeAvatarTray: { avatars: Asset[]; close: () => void };
   ChangeNameTray: {
-    firstName: string;
-    setFirstName: Dispatch<SetStateAction<string>>;
-    lastName: string;
-    setLastName: Dispatch<SetStateAction<string>>;
-
+    close: () => void;
+  };
+  ChangeEmailTray: {
     close: () => void;
   };
   RepliesTray: {
@@ -111,6 +110,7 @@ const _TRAYS = {
   ChangeNameTray: {
     component: ChangeNameTray,
   },
+  ChangeEmailTray: { component: ChangeEmailTray },
   RepliesTray: {
     component: RepliesTray,
   },

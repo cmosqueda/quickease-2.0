@@ -100,7 +100,7 @@ export default function Page() {
               pagerViewRef.current?.setPage(0);
               return;
             }
-            router.back();
+            router.replace("/(learner)/(flashcard)");
           }}
         >
           <CustomText>

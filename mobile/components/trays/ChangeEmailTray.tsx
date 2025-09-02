@@ -13,12 +13,11 @@ import { useState } from "react";
 
 import _API_INSTANCE from "@/utils/axios";
 
-const ChangeNameTray = ({ close }: { close: () => void }) => {
+const ChangeEmailTray = ({ close }: { close: () => void }) => {
   const { user } = useAuth();
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const [firstName, setFirstName] = useState(user?.first_name.toString());
-  const [lastName, setLastName] = useState(user?.last_name.toString());
+  const [email, setEmail] = useState(user?.email!);
 
   const handleUpdate = async () => {
     setIsUpdating(true);
@@ -26,10 +25,9 @@ const ChangeNameTray = ({ close }: { close: () => void }) => {
 
     try {
       const { data } = await _API_INSTANCE.put(
-        "/users/edit-name",
+        "/users/edit-email",
         {
-          firstName,
-          lastName,
+          email,
         },
         {
           timeout: 8 * 60 * 1000,
@@ -39,15 +37,14 @@ const ChangeNameTray = ({ close }: { close: () => void }) => {
       useAuth.setState({
         user: {
           ...temp,
-          first_name: data.user.first_name,
-          last_name: data.user.last_name,
+          email: data.user.email,
         },
       });
 
       close();
-      toast.success("Name updated!");
+      toast.success("Email updated!");
     } catch {
-      toast.error("Error updating name.");
+      toast.error("Error updating email.");
     } finally {
       setIsUpdating(false);
     }
@@ -69,28 +66,18 @@ const ChangeNameTray = ({ close }: { close: () => void }) => {
           </CustomText>
           <View>
             <CustomText variant="bold" className="text-xl">
-              Change name
+              Change email
             </CustomText>
           </View>
         </View>
       </View>
       <View className="gap-1">
         <CustomText className="text-sm" style={{ opacity: 0.5 }}>
-          First Name
+          Email
         </CustomText>
         <CustomTextInput
-          value={firstName}
-          onChangeText={setFirstName}
-          className="rounded-xl"
-        />
-      </View>
-      <View className="gap-1">
-        <CustomText className="text-sm" style={{ opacity: 0.5 }}>
-          Last Name
-        </CustomText>
-        <CustomTextInput
-          value={lastName}
-          onChangeText={setLastName}
+          value={email}
+          onChangeText={setEmail}
           className="rounded-xl"
         />
       </View>
@@ -106,4 +93,4 @@ const ChangeNameTray = ({ close }: { close: () => void }) => {
   );
 };
 
-export default ChangeNameTray;
+export default ChangeEmailTray;

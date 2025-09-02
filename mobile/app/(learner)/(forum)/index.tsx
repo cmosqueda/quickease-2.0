@@ -16,10 +16,9 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Pressable, RefreshControl, ScrollView } from "react-native";
+import { FlatList, Pressable, RefreshControl, ScrollView } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
-import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
 export default function Page() {
   const { currentScheme } = useTheme();
@@ -99,21 +98,24 @@ export default function Page() {
         variant="colorBase300"
       >
         {data && (
-          <ScrollView
+          <FlatList
+            data={data.pages.flatMap((page) => page.posts)}
+            keyExtractor={(post) => post.id.toString()}
+            renderItem={({ item }) => <PostComponent post={item} />}
             refreshControl={
               <RefreshControl
                 refreshing={isFetching && !isFetchingNextPage}
                 onRefresh={refetch}
               />
             }
-            contentContainerClassName="gap-4"
-          >
-            {data?.pages.flatMap((page) =>
-              page.posts.map((post: Post) => (
-                <PostComponent post={post} key={post.id} />
-              ))
-            )}
-          </ScrollView>
+            contentContainerStyle={{ gap: 16 }}
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+              }
+            }}
+            onEndReachedThreshold={0.2}
+          />
         )}
       </CustomView>
 

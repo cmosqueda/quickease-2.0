@@ -20,6 +20,8 @@ export default function PostComponent({
   const { isConnected } = useNetInfo();
   const { mutate: voteOnPost, isPending } = useVote([["recent-posts"]]);
 
+  if (!post) return null;
+
   return (
     <CustomView variant="colorBase100" className="rounded-3xl">
       <Link
@@ -28,36 +30,31 @@ export default function PostComponent({
           params: { id: post.id },
         }}
         asChild
-        key={post.id}
+        className="rounded-3xl"
       >
         <Pressable
-          className="flex-1 disabled:opacity-50"
+          className="disabled:opacity-50 rounded-3xl"
           disabled={!isConnected}
         >
-          <CustomView
-            variant="colorBase100"
-            className="flex flex-1 gap-2 p-4 rounded-xl"
-          >
+          <CustomView variant="colorBase100" className="gap-2 p-4 rounded-3xl">
             <View className="flex flex-row gap-3 items-center">
+              <UserAvatar avatar={post.user?.avatar!} />
               <CustomText color="colorBaseContent">
-                <View className="flex flex-row gap-3 items-center">
-                  <UserAvatar avatar={post.user?.avatar!} />
-                  <CustomText color="colorBaseContent">
-                    {post.user?.first_name} {post.user?.last_name}
-                  </CustomText>
-                </View>
+                {post.user?.first_name} {post.user?.last_name}
               </CustomText>
             </View>
-            <CustomText className="text-3xl" variant="bold">
+
+            <CustomText className="text-2xl" variant="bold">
               {post.title}
             </CustomText>
+
             {post.tags.length > 0 && (
-              <View className="flex flex-row gap-2 items-center">
+              <View className="flex flex-row flex-wrap gap-2">
                 {post.tags.map((tag) => (
                   <CustomView
                     key={tag.tag_id}
                     variant="colorPrimary"
-                    className="px-6 py-1 rounded-3xl"
+                    className="px-4 py-1 rounded-3xl"
                   >
                     <CustomText color="colorPrimaryContent">
                       {tag.tag.tag_name}
@@ -69,10 +66,11 @@ export default function PostComponent({
           </CustomView>
         </Pressable>
       </Link>
+
       {isConnected && !disableBottomBar && (
         <CustomView
           variant="colorPrimary"
-          className="flex flex-row gap-4 items-center rounded-3xl px-6 py-4"
+          className="flex flex-row gap-4 items-center px-6 py-4 rounded-3xl"
         >
           <Pressable
             disabled={isPending}
@@ -86,6 +84,7 @@ export default function PostComponent({
           <CustomText variant="bold" color="colorPrimaryContent">
             {post.vote_sum}
           </CustomText>
+
           <Pressable
             disabled={isPending}
             onPress={() => voteOnPost({ post_id: post.id, vote_type: -1 })}
@@ -96,6 +95,7 @@ export default function PostComponent({
           </Pressable>
 
           <View className="flex-1" />
+
           <View className="flex flex-row gap-2 items-center">
             <CustomText color="colorPrimaryContent">
               <MaterialCommunityIcons name="comment" size={24} />
