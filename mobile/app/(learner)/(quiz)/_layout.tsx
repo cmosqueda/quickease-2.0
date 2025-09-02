@@ -5,10 +5,10 @@ export default function Layout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="create" />
-      <Stack.Screen name="edit/[id]" />
-      <Stack.Screen name="view/[id]" />
-      <Stack.Screen name="answer/[id]" />
-      <Stack.Screen name="ai/generated" />
+      <Stack.Screen name="edit" />
+      <Stack.Screen name="view" />
+      <Stack.Screen name="answer" />
+      <Stack.Screen name="ai" />
     </Stack>
   );
 }

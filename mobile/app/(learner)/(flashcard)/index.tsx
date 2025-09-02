@@ -13,11 +13,11 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Link } from "expo-router";
 import { useTrays } from "react-native-trays";
 import { Flashcard } from "@/types/user/types";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
-import { useNetInfo } from "@react-native-community/netinfo";
 
 export default function Page() {
   const { isConnected } = useNetInfo();

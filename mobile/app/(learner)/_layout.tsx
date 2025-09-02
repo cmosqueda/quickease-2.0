@@ -272,12 +272,12 @@ export default function Layout() {
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Drawer.Screen name="(flashcard)" />
       <Drawer.Screen name="(forum)" />
       <Drawer.Screen name="(note)" />
       <Drawer.Screen name="(quiz)" />
       <Drawer.Screen name="(settings)" />
       <Drawer.Screen name="(profile)" />
+      <Drawer.Screen name="(flashcard)" />
     </Drawer>
   );
 }
