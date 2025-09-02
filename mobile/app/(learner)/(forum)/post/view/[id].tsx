@@ -44,11 +44,7 @@ export default function Page() {
     ["view-post", id],
   ]);
 
-  const {
-    data: post,
-    refetch,
-    isFetching,
-  } = useQuery({
+  const { data: post } = useQuery({
     queryKey: ["view-post", id],
     queryFn: async () => {
       try {
@@ -176,7 +172,7 @@ export default function Page() {
               </Pressable>
             )}
 
-            <View className="flex-1">
+            <View className="flex-1" key={0}>
               <CustomText variant="bold" className="text-4xl">
                 {post.title}
               </CustomText>
@@ -209,20 +205,36 @@ export default function Page() {
               </Pressable>
 
               <View className="flex-1" />
-              <Pressable
-                onPress={() => {
-                  openTray("CommentOnPostTray", {
-                    close: closeTray,
-                    post: post,
-                  });
-                }}
-                className="flex flex-row gap-2 items-center"
-              >
-                <CustomText color="colorPrimaryContent">
-                  <MaterialCommunityIcons name="comment" size={24} />
-                </CustomText>
-                <CustomText color="colorPrimaryContent">Comment</CustomText>
-              </Pressable>
+              <View className="flex flex-row items-center gap-4">
+                <Pressable
+                  onPress={() => {
+                    openTray("CommentOnPostTray", {
+                      close: closeTray,
+                      post: post,
+                    });
+                  }}
+                  className="flex flex-row gap-2 items-center"
+                >
+                  <CustomText color="colorPrimaryContent">
+                    <MaterialCommunityIcons name="comment" size={24} />
+                  </CustomText>
+                </Pressable>
+                {post.attachments.length > 0 && (
+                  <Pressable
+                    onPress={() => {
+                      openTray("ViewPostAttachmentsTray", {
+                        close: closeTray,
+                        post: post,
+                      });
+                    }}
+                    className="flex flex-row gap-2 items-center"
+                  >
+                    <CustomText color="colorPrimaryContent">
+                      <MaterialCommunityIcons name="view-list" size={24} />
+                    </CustomText>
+                  </Pressable>
+                )}
+              </View>
             </CustomView>
           </CustomView>
           <View className="p-4 gap-4" key={1}>

@@ -6,6 +6,7 @@ export default function Layout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="create" />
       <Stack.Screen name="view/[id]" />
+      <Stack.Screen name="view/others/[id]" />
       <Stack.Screen name="ai/generated" />
     </Stack>
   );

@@ -270,7 +270,6 @@ export default function Layout() {
         headerShown: false,
         drawerStatusBarAnimation: "slide",
       }}
-      initialRouteName="(forum)"
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen name="(flashcard)" />
