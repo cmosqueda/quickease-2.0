@@ -91,7 +91,7 @@ export default function Index() {
         const loggedIn = await checkAuthAndRedirect();
         if (loggedIn) {
           setLoggedIn(true);
-          return router.replace("/(learner)/(forum)");
+          return router.replace("/(learner)");
         }
       } catch (err) {
       } finally {

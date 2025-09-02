@@ -73,43 +73,44 @@ const Badges = ({ user }: { user: User }) => {
 
   return (
     <ScrollView contentContainerClassName="flex flex-col gap-4">
-      {user?.badges.map(
-        (badge: { id: string; title: string; description: string }) => {
-          const badgeMeta = _BADGE_MAP[badge.id];
+      {user.badges &&
+        user?.badges.map(
+          (badge: { id: string; title: string; description: string }) => {
+            const badgeMeta = _BADGE_MAP[badge.id];
 
-          if (!badgeMeta) return null;
+            if (!badgeMeta) return null;
 
-          const index = badgeIds.indexOf(badge.id);
-          if (index === -1) return null;
+            const index = badgeIds.indexOf(badge.id);
+            if (index === -1) return null;
 
-          const asset = assets[index];
+            const asset = assets[index];
 
-          return (
-            <CustomView
-              key={badge.id}
-              variant="colorBase300"
-              className="p-4 flex flex-row gap-4 items-center rounded-3xl"
-            >
-              <Image
-                source={{ uri: asset.localUri ?? asset.uri }}
-                style={{ width: 84, height: 84, aspectRatio: 1 }}
-              />
-              <View className="flex-1">
-                <CustomText
-                  variant="bold"
-                  className="text-lg"
-                  color="colorBaseContent"
-                >
-                  {badgeMeta.name}
-                </CustomText>
-                <CustomText color="colorBaseContent">
-                  {badgeMeta.description}
-                </CustomText>
-              </View>
-            </CustomView>
-          );
-        }
-      )}
+            return (
+              <CustomView
+                key={badge.id}
+                variant="colorBase300"
+                className="p-4 flex flex-row gap-4 items-center rounded-3xl"
+              >
+                <Image
+                  source={{ uri: asset.localUri ?? asset.uri }}
+                  style={{ width: 84, height: 84, aspectRatio: 1 }}
+                />
+                <View className="flex-1">
+                  <CustomText
+                    variant="bold"
+                    className="text-lg"
+                    color="colorBaseContent"
+                  >
+                    {badgeMeta.name}
+                  </CustomText>
+                  <CustomText color="colorBaseContent">
+                    {badgeMeta.description}
+                  </CustomText>
+                </View>
+              </CustomView>
+            );
+          }
+        )}
     </ScrollView>
   );
 };
@@ -144,7 +145,7 @@ const Posts = ({ user }: { user: User }) => {
 
   if (data.length === 0) {
     return (
-      <CustomView className="flex items-center justify-center p-4">
+      <CustomView className="flex items-center justify-center p-4 rounded-3xl">
         <CustomText>No posts yet.</CustomText>
       </CustomView>
     );

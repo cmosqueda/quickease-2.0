@@ -12,11 +12,11 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Note } from "@/types/user/types";
 import { Link } from "expo-router";
 import { useTrays } from "react-native-trays";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
-import { useNetInfo } from "@react-native-community/netinfo";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Page() {

@@ -10,13 +10,15 @@ import { toast } from "sonner-native";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router, useLocalSearchParams } from "expo-router";
+
 import {
   RichText,
   Toolbar,
   useEditorBridge,
   useEditorContent,
 } from "@10play/tentap-editor";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+
 import {
   View,
   Pressable,
@@ -34,8 +36,6 @@ export default function Page() {
   const { user, editNote } = useAuth();
   const { width } = useWindowDimensions();
   const { currentScheme } = useTheme();
-
-  const navigation = useNavigation();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
