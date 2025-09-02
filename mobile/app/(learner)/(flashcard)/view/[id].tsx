@@ -19,6 +19,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { View, Pressable, ActivityIndicator } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function Page() {
   const { currentScheme } = useTheme();
@@ -106,25 +107,27 @@ export default function Page() {
             <MaterialIcons name="keyboard-arrow-left" size={36} />
           </CustomText>
         </Pressable>
-        <Pressable
-          onPress={() =>
-            router.push({
-              pathname: "/(learner)/(flashcard)/edit/[id]",
-              params: { id: id ?? "" },
-            })
-          }
-        >
-          <CustomText>
-            <MaterialCommunityIcons name="note-edit" size={24} />
-          </CustomText>
-        </Pressable>
+        {user?.id === flashcardData.user_id && (
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/(learner)/(flashcard)/edit/[id]",
+                params: { id: id ?? "" },
+              })
+            }
+          >
+            <CustomText>
+              <MaterialCommunityIcons name="note-edit" size={24} />
+            </CustomText>
+          </Pressable>
+        )}
       </View>
 
       <PagerView ref={pagerViewRef} style={{ flex: 1 }} scrollEnabled={false}>
         <View className="flex-1 gap-4" key={0}>
           <View className="gap-2">
             <View className="flex flex-row gap-4 items-center">
-              <View className="w-[2.5rem] aspect-square rounded-3xl bg-red-600" />
+              <UserAvatar />
               <CustomView variant="colorBase200">
                 <CustomText variant="bold">
                   {user?.first_name ?? "Unknown"} {user?.last_name ?? "User"}

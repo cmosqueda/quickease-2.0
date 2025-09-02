@@ -5,14 +5,19 @@ import { useAssets } from "expo-asset";
 import { ViewStyle } from "react-native";
 
 import { FontAwesome6 } from "@expo/vector-icons";
+import useAuth from "@/hooks/useAuth";
 
 type Props = {
-  avatar: string;
+  avatar?: string;
   size?: number;
   style?: ViewStyle;
 };
 
-export default function UserAvatar({ avatar, size = 28, style }: Props) {
+export default function UserAvatar({
+  avatar = useAuth.getState().user?.avatar,
+  size = 28,
+  style,
+}: Props) {
   const [assets] = useAssets([
     require("../assets/images/avatars/blue.svg"),
     require("../assets/images/avatars/orange.svg"),

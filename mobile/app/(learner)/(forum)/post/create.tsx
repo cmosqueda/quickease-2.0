@@ -1,20 +1,21 @@
 import useTheme from "@/hooks/useTheme";
-import _FONTS from "@/types/theme/Font";
-import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
-import CustomTextInput from "@/components/CustomTextInput";
 import CustomView from "@/components/CustomView";
+import CustomPressable from "@/components/CustomPressable";
+import CustomTextInput from "@/components/CustomTextInput";
 
+import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import AntDesign from "@expo/vector-icons/AntDesign";
 
+import { router } from "expo-router";
 import { useTrays } from "react-native-trays";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { Pressable, View } from "react-native";
-import { router } from "expo-router";
+
+import _FONTS from "@/types/theme/Font";
 
 export default function Page() {
   const tagsTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
