@@ -23,6 +23,7 @@ import ViewPostAttachmentsTray from "@/components/trays/ViewPostAttachmentsTray"
 import GenerateFromDocumentTray from "@/components/trays/GenerateFromDocumentTray";
 import PostAttachmentsSelectionTray from "@/components/trays/PostAttachmentsSelectionTray";
 import SummarizeNotesStudyToolsSelectionTray from "@/components/trays/SummarizeNotesStudyToolsSelectionTray";
+import ContextMenuTray from "@/components/trays/ContextMenuTray";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
@@ -77,6 +78,7 @@ export type MyTraysProps = {
     type: "quiz" | "flashcard" | "summary-notes";
   };
   GenerateFromImageTray: {
+    close: () => void;
     type: "quiz" | "flashcard" | "summary-notes";
   };
   ViewPostAttachmentsTray: {
@@ -91,6 +93,11 @@ export type MyTraysProps = {
     selectedQuizzes: Quiz[];
     setSelectedQuizzes: Dispatch<SetStateAction<Quiz[]>>;
     close: () => void;
+  };
+  ContextMenuTray: {
+    type: "note" | "flashcard" | "quiz";
+    close: () => void;
+    id: string;
   };
 };
 
@@ -151,6 +158,7 @@ const _TRAYS = {
   PostAttachmentsSelectionTray: {
     component: PostAttachmentsSelectionTray,
   },
+  ContextMenuTray: { component: ContextMenuTray },
 };
 
 export default _TRAYS;

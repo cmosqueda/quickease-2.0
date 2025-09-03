@@ -23,3 +23,13 @@ export function editItem<T extends { id: string }>(
     }
   }
 }
+
+export function deleteItem<T extends { id: string }>(
+  state: any,
+  key: "notes" | "quizzes" | "flashcards",
+  id: string
+) {
+  if (state.user && state.user[key]) {
+    state.user[key] = state.user[key].filter((x: T) => x.id !== id);
+  }
+}

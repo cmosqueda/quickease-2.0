@@ -26,6 +26,9 @@ export default function Page() {
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
+  const { push: openContextMenu, pop: closeContextMenu } =
+    useTrays<MyTraysProps>("ContextMenuTray");
+
   const pagerViewRef = useRef<PagerView>(null);
   const [index, setIndex] = useState(0);
 
@@ -142,6 +145,13 @@ export default function Page() {
               key={flashcard.id}
             >
               <Pressable
+                onLongPress={() =>
+                  openContextMenu("ContextMenuTray", {
+                    close: closeContextMenu,
+                    type: "flashcard",
+                    id: flashcard.id,
+                  })
+                }
                 disabled={!isConnected}
                 className="disabled:opacity-70"
               >
@@ -188,6 +198,13 @@ export default function Page() {
                 }}
               >
                 <Pressable
+                  onLongPress={() =>
+                    openContextMenu("ContextMenuTray", {
+                      close: closeContextMenu,
+                      type: "flashcard",
+                      id: flashcard.id,
+                    })
+                  }
                   disabled={!isConnected}
                   className="disabled:opacity-70"
                 >
@@ -231,6 +248,13 @@ export default function Page() {
                 key={flashcard.id}
               >
                 <Pressable
+                  onLongPress={() =>
+                    openContextMenu("ContextMenuTray", {
+                      close: closeContextMenu,
+                      type: "flashcard",
+                      id: flashcard.id,
+                    })
+                  }
                   disabled={!isConnected}
                   className="disabled:opacity-70"
                 >
