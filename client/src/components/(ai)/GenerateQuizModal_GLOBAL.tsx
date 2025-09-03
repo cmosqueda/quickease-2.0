@@ -15,19 +15,14 @@ import {
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { toast } from "sonner";
+import type { Note } from "@/types/types";
 
 const GenerateQuizzesFromNotes = ({
   notes,
   navigate,
   setIsGenerating,
 }: {
-  notes: {
-    id: string;
-    title: string;
-    date: string;
-    link: string;
-    created_at: string;
-  }[];
+  notes: Note[];
   navigate: NavigateFunction;
   setIsGenerating: Dispatch<SetStateAction<boolean>>;
 }) => {
@@ -301,17 +296,7 @@ const GenerateQuizzesFromPDF = ({
   );
 };
 
-export default function GenerateQuizModal({
-  notes,
-}: {
-  notes: {
-    id: string;
-    title: string;
-    date: string;
-    link: string;
-    created_at: string;
-  }[];
-}) {
+export default function GenerateQuizModal({ notes }: { notes: Note[] }) {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   const [isGenerating, setIsGenerating] = useState(false);

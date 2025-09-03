@@ -16,15 +16,12 @@ import LearnerForumPage from "./routes/(learner)/(dashboard)/LearnerForum";
 import LearnerLayout from "./routes/(learner)/LearnerLayout";
 import LearnerLibraryPage from "./routes/(learner)/(dashboard)/LearnerLibrary";
 import LearnerNotePage from "./routes/(learner)/(note)/LearnerNote";
-import LearnerSummarizePage from "./routes/(learner)/(dashboard)/LearnerSummarize";
 import LearnerProfilePage from "./routes/(learner)/(profile)/LearnerProfile";
 import LearnerSettingsPage from "./routes/(learner)/(settings)/LearnerSettings";
 import LearnerTimerPage from "./routes/(learner)/(dashboard)/LearnerTimer";
 import LearnerPostPage from "./routes/(learner)/(post)/LearnerPost";
-import LearnerQuizzes from "./routes/(learner)/(dashboard)/LearnerQuizzes";
 import LearnerCreateFlashcardPage from "./routes/(learner)/(flashcard)/create/LearnerCreateFlashcard";
 import LearnerFlashcardPage from "./routes/(learner)/(flashcard)/LearnerFlashcard";
-import LearnerFlashcardsPage from "./routes/(learner)/(dashboard)/LearnerFlashcards";
 import LearnerQuizPage from "./routes/(learner)/(quiz)/LearnerQuiz";
 import LearnerCreateQuizPage from "./routes/(learner)/(quiz)/create/LearnerCreateQuiz";
 import LearnerCreateNotePage from "./routes/(learner)/(note)/create/LearnerCreateNote";
@@ -99,7 +96,6 @@ const LearnerRoutes: RouteObject = {
       Component: LearnerLibraryPage,
       loader: loadLearnerResources,
     },
-    { path: "summarize", Component: LearnerSummarizePage },
     {
       path: "profile",
       Component: LearnerProfilePage,
@@ -248,7 +244,6 @@ const LearnerRoutes: RouteObject = {
     {
       path: "flashcards",
       children: [
-        { index: true, Component: LearnerFlashcardsPage },
         {
           path: "view/:id",
           Component: LearnerViewFlashcardPage,
@@ -323,7 +318,6 @@ const LearnerRoutes: RouteObject = {
     {
       path: "quizzes",
       children: [
-        { index: true, Component: LearnerQuizzes },
         {
           path: ":id",
           Component: LearnerQuizPage,
