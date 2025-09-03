@@ -478,6 +478,12 @@ const ChangeAvatarModal = () => {
     "/assets/images/avatars/green.svg",
     "/assets/images/avatars/orange.svg",
     "/assets/images/avatars/purple.svg",
+    "/assets/images/avatars/black_green.svg",
+    "/assets/images/avatars/dark_blue.svg",
+    "/assets/images/avatars/gold.svg",
+    "/assets/images/avatars/hot_pink.svg",
+    "/assets/images/avatars/red.svg",
+    "/assets/images/avatars/turquoise.svg",
   ];
 
   const handleUpdate = async () => {
@@ -531,7 +537,7 @@ const ChangeAvatarModal = () => {
           />
           <h3 className="font-bold text-lg">Change avatar</h3>
         </div>
-        <div className="grid grid-cols-4 items-center justify-center gap-4">
+        <div className="grid grid-cols-5 items-center justify-center gap-4">
           {avatars.map((avatar) => (
             <button
               className="relative transition-all duration-300 delay-0 hover:scale-110 cursor-pointer hover:brightness-125"

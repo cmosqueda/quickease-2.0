@@ -22,7 +22,18 @@ const ChangeAvatarTray = ({
   close: () => void;
 }) => {
   const { user, setUser } = useAuth();
-  const avatarIndex = ["blue", "green", "orange", "purple"];
+  const avatarIndex = [
+    "blue",
+    "green",
+    "orange",
+    "purple",
+    "black_green",
+    "dark_blue",
+    "gold",
+    "hot_pink",
+    "red",
+    "turquoise",
+  ];
 
   const initialIndex = user ? avatarIndex.indexOf(user?.avatar!) : 0;
   const [selectedAvatar, setSelectedAvatar] = useState(
