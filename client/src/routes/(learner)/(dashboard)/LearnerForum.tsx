@@ -24,32 +24,9 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useVote } from "@/hooks/useVote";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
+import type { Post } from "@/types/types";
 
-const Post = ({
-  post,
-}: {
-  post: {
-    user_id: string;
-    id: string;
-    title: string;
-    post_body: string;
-    created_at: string;
-    vote_sum: number;
-    user_vote: number;
-    user: {
-      avatar: string;
-      id: string;
-      first_name: string;
-      last_name: string;
-    };
-    tags: {
-      tag_id: string;
-      post_id: string;
-      tag: { id: string; tag_name: string };
-    }[];
-    comments: { id: string }[];
-  };
-}) => {
+const Post = ({ post }: { post: Post }) => {
   const { mutate: vote } = useVote();
   const { setPost } = useReport();
   const { user } = useAuth();
@@ -86,14 +63,14 @@ const Post = ({
         <div className="flex flex-row gap-2 items-center">
           <img
             src={
-              post.user.avatar
-                ? `/assets/images/avatars/${post.user.avatar}.svg`
+              post.user?.avatar
+                ? `/assets/images/avatars/${post.user?.avatar}.svg`
                 : "/assets/images/avatars/blue.svg"
             }
             className="w-[2rem] aspect-square"
           />
           <NavLink
-            to={`/learner/profile/${post.user.id}`}
+            to={`/learner/profile/${post.user?.id}`}
             className="font-semibold"
           >
             {fullName}
@@ -124,7 +101,7 @@ const Post = ({
       <NavLink
         to={`/learner/post/${post.id}`}
         viewTransition
-        className="transition-all duration-300 p-4 rounded-3xl bg-base-100 hover:bg-base-300 border border-base-200 hover:shadow"
+        className="transition-all duration-300 p-4 rounded-3xl bg-base-100 hover:bg-base-300 border border-base-300 shadow"
       >
         <h1 className="text-3xl font-bold mb-2">{post.title || "Untitled"}</h1>
         <EditorProvider
@@ -145,7 +122,7 @@ const Post = ({
 
       {/* Footer */}
       <div className="flex flex-row gap-2">
-        <div className="flex flex-row items-center gap-2 p-3 rounded-3xl bg-base-100 border border-base-200">
+        <div className="flex flex-row items-center gap-2 p-3 rounded-3xl bg-base-100 border border-base-300 shadow">
           <ChevronUp
             className={clsx(
               "cursor-pointer hover:text-green-500",
@@ -165,13 +142,13 @@ const Post = ({
         <NavLink
           to={`/learner/post/${post.id}`}
           viewTransition
-          className="flex flex-row items-center gap-2 px-6 py-3 rounded-3xl bg-base-100 border border-base-200 cursor-pointer hover:bg-base-300 transition"
+          className="flex flex-row items-center gap-2 px-6 py-3 rounded-3xl bg-base-100 border border-base-300 cursor-pointer hover:bg-base-300 transition shadow"
         >
           <MessageCircle />
           <p className="text-sm">{post.comments?.length ?? 0}</p>
         </NavLink>
         <button
-          className="flex flex-row items-center gap-2 px-6 py-3 rounded-3xl bg-base-100 border border-base-200 cursor-pointer hover:bg-base-300 transition"
+          className="flex flex-row items-center gap-2 px-6 py-3 rounded-3xl bg-base-100 border border-base-300 cursor-pointer hover:bg-base-300 transition shadow"
           onClick={async () => {
             await navigator.clipboard.writeText(
               `https://quickease.online/learner/post/${post.id}`
@@ -238,7 +215,7 @@ export default function LearnerForumPage() {
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto">
       <div className="flex flex-row items-center justify-between gap-8">
-        <label className="input w-full lg:w-fit">
+        <label className="input w-full lg:w-fit border-base-300">
           <Search size={24} />
           <input
             type="search"
@@ -258,7 +235,7 @@ export default function LearnerForumPage() {
             onClick={() => {
               navigate("/learner/post/");
             }}
-            className="btn btn-neutral"
+            className="btn btn-neutral mx-2"
             disabled={!user?.is_verified}
           >
             <Plus />

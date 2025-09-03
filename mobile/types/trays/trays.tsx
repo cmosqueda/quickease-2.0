@@ -1,14 +1,15 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 
 import { Asset } from "expo-asset";
-import { Comment, Post, User } from "../user/types";
 import { Dispatch, SetStateAction } from "react";
+import { Comment, Flashcard, Note, Post, Quiz, User } from "../user/types";
 
 import TagsTray from "@/components/trays/TagsTray";
 import SearchTray from "@/components/trays/SearchTray";
 import RepliesTray from "@/components/trays/RepliesTray";
 import PomodoroTray from "@/components/trays/PomodoroTray";
 import ChangeNameTray from "@/components/trays/ChangeNameTray";
+import ChangeEmailTray from "@/components/trays/ChangeEmailTray";
 import ChangeThemesTray from "@/components/trays/ChangeThemesTray";
 import ChangeAvatarTray from "@/components/trays/ChangeAvatarTray";
 import NotificationTray from "@/components/trays/NotificationTray";
@@ -18,10 +19,10 @@ import ViewOtherProfileTray from "@/components/trays/ViewOtherProfileTray";
 import GenerateFromNotesTray from "@/components/trays/GenerateFromNotesTray";
 import GenerateFromImageTray from "@/components/trays/GenerateFromImageTray";
 import StudyToolsSelectionTray from "@/components/trays/StudyToolsSelectionTray";
-import GenerateFromDocumentTray from "@/components/trays/GenerateFromDocumentTray";
 import ViewPostAttachmentsTray from "@/components/trays/ViewPostAttachmentsTray";
+import GenerateFromDocumentTray from "@/components/trays/GenerateFromDocumentTray";
+import PostAttachmentsSelectionTray from "@/components/trays/PostAttachmentsSelectionTray";
 import SummarizeNotesStudyToolsSelectionTray from "@/components/trays/SummarizeNotesStudyToolsSelectionTray";
-import ChangeEmailTray from "@/components/trays/ChangeEmailTray";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
@@ -82,6 +83,15 @@ export type MyTraysProps = {
     close: () => void;
     post: Post;
   };
+  PostAttachmentsSelectionTray: {
+    selectedFlashcards: Flashcard[];
+    setSelectedFlashcards: Dispatch<SetStateAction<Flashcard[]>>;
+    selectedNotes: Note[];
+    setSelectedNotes: Dispatch<SetStateAction<Note[]>>;
+    selectedQuizzes: Quiz[];
+    setSelectedQuizzes: Dispatch<SetStateAction<Quiz[]>>;
+    close: () => void;
+  };
 };
 
 const _TRAYS = {
@@ -137,6 +147,9 @@ const _TRAYS = {
   },
   ViewPostAttachmentsTray: {
     component: ViewPostAttachmentsTray,
+  },
+  PostAttachmentsSelectionTray: {
+    component: PostAttachmentsSelectionTray,
   },
 };
 

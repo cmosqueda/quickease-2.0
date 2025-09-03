@@ -20,28 +20,13 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-
-type CommentCardProps = {
-  id: string;
-  comment_body: string;
-  created_at: string;
-  user: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    avatar: string;
-  };
-  replies: CommentCardProps[];
-  user_vote: number;
-  vote_sum: number;
-};
+import type { Comment } from "@/types/types";
 
 const CommentCard = ({
   comment,
   post_id,
 }: {
-  comment: CommentCardProps;
+  comment: Comment;
   post_id: string;
 }) => {
   const queryClient = useQueryClient();
@@ -148,8 +133,8 @@ const CommentCard = ({
         <div className="flex flex-row gap-4 items-start">
           <img
             src={
-              comment.user.avatar
-                ? `/assets/images/avatars/${comment.user.avatar}.svg`
+              comment.user?.avatar
+                ? `/assets/images/avatars/${comment.user?.avatar}.svg`
                 : "/assets/images/avatars/blue.svg"
             }
             className="w-[36px] aspect-square rounded-full bg-base-300"
@@ -157,14 +142,14 @@ const CommentCard = ({
           <div className="flex flex-col flex-1">
             <NavLink
               className={"font-bold"}
-              to={`/learner/profile/${comment.user.id}`}
+              to={`/learner/profile/${comment.user?.id}`}
             >
               {comment?.user?.first_name} {comment?.user?.last_name}
             </NavLink>
             <p className="text-base-content/40">
               {dayjs(comment?.created_at).format("MMMM DD, YYYY / h:mm A")}
             </p>
-            <div className="my-2 bg-base-100 p-4 rounded-3xl">
+            <div className="my-2 bg-base-100 p-4 rounded-3xl border border-base-300 shadow">
               <EditorProvider
                 content={comment?.comment_body || ""}
                 extensions={_TIPTAP_EXTENSIONS}
@@ -172,7 +157,7 @@ const CommentCard = ({
               />
             </div>
             <div className="flex flex-row gap-2">
-              <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-200">
+              <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-300 shadow">
                 <ChevronUp
                   className={clsx(
                     "cursor-pointer hover:text-green-500",
@@ -191,31 +176,34 @@ const CommentCard = ({
               </div>
               {user.is_verified && (
                 <button
-                  onClick={() => setReplyBoxVisibility((prev) => !prev)}
-                  className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300"
+                  onClick={() => {
+                    setIsEditing(false);
+                    setReplyBoxVisibility((prev) => !prev);
+                  }}
+                  className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-300 shadow cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300"
                 >
                   <MessageCircle />
                   <p>{comment?.replies?.length ?? 0}</p>
                 </button>
               )}
 
-              {comment.user.id == user!.id && (
+              {comment.user?.id == user!.id && (
                 <button
                   onClick={() => {
                     setIsEditing(true);
                     setReplyBoxVisibility((prev) => !prev);
                   }}
-                  className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300"
+                  className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300 border-base-300 shadow"
                 >
                   <Edit />
                 </button>
               )}
               <details className="dropdown dropdown-top">
-                <summary className="py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer list-none">
+                <summary className="py-4 px-6 rounded-3xl bg-base-100 border cursor-pointer list-none border-base-300 shadow">
                   <Ellipsis />
                 </summary>
                 <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 border border-base-200 shadow my-2">
-                  {comment.user.id == user!.id && (
+                  {comment.user?.id == user!.id && (
                     <li>
                       <button onClick={() => handleDeleteComment(comment.id)}>
                         Delete

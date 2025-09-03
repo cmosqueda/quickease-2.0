@@ -5,6 +5,9 @@ import CustomView from "../CustomView";
 
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
+import { Notification, NotificationType } from "@/types/user/types";
+
+import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   Dimensions,
@@ -69,15 +72,35 @@ const NotificationTray = ({ close }: { close: () => void }) => {
           />
         }
         renderItem={({ item }) => (
-          <CustomView
-            variant="colorBase200"
-            className="p-6 flex flex-row gap-4 items-center rounded-xl"
+          <Pressable
+            onPress={() => {
+              if (item.type === NotificationType.COMMENTED) {
+                router.push({
+                  pathname: "/(learner)/(forum)/post/view/[id]",
+                  params: { id: item.resource_id! },
+                });
+                close();
+              }
+
+              if (item.type === NotificationType.REPLIED) {
+                router.push({
+                  pathname: "/(learner)/(forum)/post/view/[id]",
+                  params: { id: item.resource_id! },
+                });
+                close();
+              }
+            }}
           >
-            <CustomText>
-              <MaterialIcons name="notifications" size={24} />
-            </CustomText>
-            <CustomText className="flex-1">{item.message}</CustomText>
-          </CustomView>
+            <CustomView
+              variant="colorBase200"
+              className="p-6 flex flex-row gap-4 items-center rounded-xl"
+            >
+              <CustomText>
+                <MaterialIcons name="notifications" size={24} />
+              </CustomText>
+              <CustomText className="flex-1">{item.message}</CustomText>
+            </CustomView>
+          </Pressable>
         )}
       />
     </CustomView>

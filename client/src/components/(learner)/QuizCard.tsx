@@ -2,10 +2,11 @@ import dayjs from "dayjs";
 import clsx from "clsx";
 
 import { NavLink } from "react-router";
+
 type BaseProps = {
   title: string;
   term: number;
-  date: string;
+  date: Date;
 };
 
 type LinkProps = {
@@ -36,7 +37,7 @@ export default function QuizCard({
       <NavLink
         to={`/learner/quizzes/${link}`}
         className={clsx(
-          "flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 cursor-pointer"
+          "flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 cursor-pointer border border-base-300 shadow"
         )}
       >
         <div className="flex flex-row justify-between items-center">
@@ -53,7 +54,7 @@ export default function QuizCard({
     <div
       onClick={onClick}
       className={clsx(
-        "flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 cursor-pointer",
+        "flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 cursor-pointer border border-base-300 shadow",
         "hover:bg-base-200 transition"
       )}
     >

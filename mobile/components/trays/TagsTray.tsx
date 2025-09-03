@@ -5,7 +5,7 @@ import CustomTextInput from "../CustomTextInput";
 
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Dimensions, View, Pressable } from "react-native";
 
 const TagsTray = ({
@@ -17,6 +17,15 @@ const TagsTray = ({
   setTags: Dispatch<SetStateAction<any>>;
   close: () => void;
 }) => {
+  const [tag, setTag] = useState("");
+
+  const addTag = () => {
+    if (!tag.trim()) return;
+    setTags((prev: any) => [...prev, tag.trim()]);
+    setTag("");
+    close();
+  };
+
   return (
     <CustomView
       variant="colorBase100"
@@ -36,11 +45,19 @@ const TagsTray = ({
       <View className="gap-2">
         <CustomText>Add tag</CustomText>
         <View className="flex flex-row gap-4 items-center">
-          <CustomTextInput className="rounded-xl flex-1" />
+          <CustomTextInput
+            className="rounded-xl flex-1"
+            value={tag}
+            onChangeText={setTag}
+            enterKeyHint="done"
+            onSubmitEditing={addTag}
+          />
           <CustomPressable
             variant="colorBase200"
             style={{ paddingHorizontal: 16, paddingVertical: 16 }}
             className="rounded-3xl"
+            s
+            onPress={addTag}
           >
             <MaterialCommunityIcons name="plus" />
           </CustomPressable>
@@ -49,6 +66,17 @@ const TagsTray = ({
       {tags && tags.length > 0 && (
         <View className="gap-2">
           <CustomText>Tags</CustomText>
+          <View className="flex flex-row flex-wrap gap-2">
+            {tags.map((tag, idx) => (
+              <CustomView
+                key={idx}
+                variant="colorPrimary"
+                className="px-8 py-2 rounded-full"
+              >
+                <CustomText color="colorPrimaryContent">{tag}</CustomText>
+              </CustomView>
+            ))}
+          </View>
         </View>
       )}
     </CustomView>

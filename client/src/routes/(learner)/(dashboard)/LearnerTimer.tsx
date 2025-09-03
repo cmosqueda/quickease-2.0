@@ -46,7 +46,7 @@ export default function LearnerTimerPage() {
             rhythm.
           </p>
         </div>
-        <fieldset className="fieldset bg-base-100 border-base-300 rounded-box w-full lg:w-[16rem] border p-4">
+        <fieldset className="fieldset bg-base-100 border-base-300 shadow rounded-box w-full lg:w-[16rem] border p-4">
           <legend className="fieldset-legend">
             Popup pomodoro timer options
           </legend>
@@ -63,7 +63,7 @@ export default function LearnerTimerPage() {
       </div>
       <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4">
         {cards.map((card) => (
-          <div className="flex flex-row items-center gap-4 p-4 bg-base-100 rounded-3xl">
+          <div className="flex flex-row items-center gap-4 p-4 bg-base-100 rounded-3xl border-base-300 border shadow">
             {card.icon}
             <div className="flex flex-col">
               <h1 className="font-medium">{card.title}</h1>
@@ -74,7 +74,7 @@ export default function LearnerTimerPage() {
       </div>
       <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4">
         <h1 className="text-xl lg:hidden block">Settings</h1>
-        <div className="flex flex-col gap-2 p-4 bg-base-100 rounded-3xl">
+        <div className="flex flex-col gap-2 p-4 bg-base-100 rounded-3xl border border-base-300 shadow">
           <div className="flex flex-row gap-2">
             <Clock />
             <h1>Study session</h1>
@@ -94,7 +94,7 @@ export default function LearnerTimerPage() {
             </fieldset>
           </div>
         </div>
-        <div className="flex flex-col gap-2 p-4 bg-base-100 rounded-3xl">
+        <div className="flex flex-col gap-2 p-4 bg-base-100 rounded-3xl border border-base-300 shadow">
           <div className="flex flex-row gap-2">
             <Coffee />
             <h1>Short break session</h1>

@@ -16,34 +16,31 @@ import LearnerForumPage from "./routes/(learner)/(dashboard)/LearnerForum";
 import LearnerLayout from "./routes/(learner)/LearnerLayout";
 import LearnerLibraryPage from "./routes/(learner)/(dashboard)/LearnerLibrary";
 import LearnerNotePage from "./routes/(learner)/(note)/LearnerNote";
-import LearnerSummarizePage from "./routes/(learner)/(dashboard)/LearnerSummarize";
 import LearnerProfilePage from "./routes/(learner)/(profile)/LearnerProfile";
 import LearnerSettingsPage from "./routes/(learner)/(settings)/LearnerSettings";
 import LearnerTimerPage from "./routes/(learner)/(dashboard)/LearnerTimer";
 import LearnerPostPage from "./routes/(learner)/(post)/LearnerPost";
-import LearnerQuizzes from "./routes/(learner)/(dashboard)/LearnerQuizzes";
-import LearnerCreateFlashcardPage from "./routes/(learner)/(flashcard)/LearnerCreateFlashcard";
+import LearnerCreateFlashcardPage from "./routes/(learner)/(flashcard)/create/LearnerCreateFlashcard";
 import LearnerFlashcardPage from "./routes/(learner)/(flashcard)/LearnerFlashcard";
-import LearnerFlashcardsPage from "./routes/(learner)/(dashboard)/LearnerFlashcards";
 import LearnerQuizPage from "./routes/(learner)/(quiz)/LearnerQuiz";
-import LearnerCreateQuizPage from "./routes/(learner)/(quiz)/LearnerCreateQuiz";
-import LearnerCreateNotePage from "./routes/(learner)/(note)/LearnerCreateNote";
-import LearnerAnswerQuizPage from "./routes/(learner)/(quiz)/LearnerAnswerQuiz";
-import LearnerEditQuizPage from "./routes/(learner)/(quiz)/LearnerEditQuiz";
-import LearnerQuizAttemptPage from "./routes/(learner)/(quiz)/LearnerViewAttempt";
-import LearnerAICreateNotePage from "./routes/(learner)/(note)/LearnerAICreateNote";
-import LearnerAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIFlashcard";
-import LearnerEditFlashcardPage from "./routes/(learner)/(flashcard)/LearnerEditFlashcard";
-import LearnerEditAIFlashcardPage from "./routes/(learner)/(flashcard)/LearnerAIEditFlashcard";
-import LearnerAIEditQuizPage from "./routes/(learner)/(quiz)/LearnerAIEditQuiz";
-import LearnerEditPostPage from "./routes/(learner)/(post)/LearnerEditPost";
-import LearnerCreatePostPage from "./routes/(learner)/(post)/LearnerCreatePost";
+import LearnerCreateQuizPage from "./routes/(learner)/(quiz)/create/LearnerCreateQuiz";
+import LearnerCreateNotePage from "./routes/(learner)/(note)/create/LearnerCreateNote";
+import LearnerAnswerQuizPage from "./routes/(learner)/(quiz)/answer/LearnerAnswerQuiz";
+import LearnerEditQuizPage from "./routes/(learner)/(quiz)/edit/LearnerEditQuiz";
+import LearnerQuizAttemptPage from "./routes/(learner)/(quiz)/view_attempt/LearnerViewAttempt";
+import LearnerAICreateNotePage from "./routes/(learner)/(note)/ai/LearnerAICreateNote";
+import LearnerAIFlashcardPage from "./routes/(learner)/(flashcard)/ai/LearnerAIFlashcard";
+import LearnerEditFlashcardPage from "./routes/(learner)/(flashcard)/edit/LearnerEditFlashcard";
+import LearnerEditAIFlashcardPage from "./routes/(learner)/(flashcard)/ai/LearnerAIEditFlashcard";
+import LearnerAIEditQuizPage from "./routes/(learner)/(quiz)/ai/LearnerAIEditQuiz";
+import LearnerEditPostPage from "./routes/(learner)/(post)/edit/LearnerEditPost";
+import LearnerCreatePostPage from "./routes/(learner)/(post)/create/LearnerCreatePost";
 import LearnerSearchPage from "./routes/(learner)/(search)/LearnerSearch";
-import LearnerViewNotePage from "./routes/(learner)/(note)/LearnerViewNote";
-import LearnerViewFlashcardPage from "./routes/(learner)/(flashcard)/LearnerViewFlashcard";
+import LearnerViewNotePage from "./routes/(learner)/(note)/view/LearnerViewNote";
+import LearnerViewFlashcardPage from "./routes/(learner)/(flashcard)/view/LearnerViewFlashcard";
 import LearnerHydrationFallback from "./routes/(learner)/LearnerHydrationFallback";
 import LearnerErrorFallback from "./routes/(learner)/LearnerErrorFallback";
-import LearnerViewProfilePage from "./routes/(learner)/(profile)/LearnerViewProfile";
+import LearnerViewProfilePage from "./routes/(learner)/(profile)/view/LearnerViewProfile";
 
 // admin pages
 import AdminLayout from "./routes/(admin)/AdminLayout";
@@ -99,7 +96,6 @@ const LearnerRoutes: RouteObject = {
       Component: LearnerLibraryPage,
       loader: loadLearnerResources,
     },
-    { path: "summarize", Component: LearnerSummarizePage },
     {
       path: "profile",
       Component: LearnerProfilePage,
@@ -248,7 +244,6 @@ const LearnerRoutes: RouteObject = {
     {
       path: "flashcards",
       children: [
-        { index: true, Component: LearnerFlashcardsPage },
         {
           path: "view/:id",
           Component: LearnerViewFlashcardPage,
@@ -323,7 +318,6 @@ const LearnerRoutes: RouteObject = {
     {
       path: "quizzes",
       children: [
-        { index: true, Component: LearnerQuizzes },
         {
           path: ":id",
           Component: LearnerQuizPage,

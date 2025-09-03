@@ -5,7 +5,7 @@ import type { MouseEventHandler } from "react";
 
 type BaseProps = {
   title: string;
-  date?: string;
+  date?: Date;
   style?: string;
 };
 
@@ -42,7 +42,7 @@ export default function NoteCard({
         to={`/learner/note/${link}`}
         className={clsx(
           style,
-          "flex flex-col justify-between w-[24rem] min-h-[16rem] p-4 rounded-3xl bg-base-100",
+          "flex flex-col justify-between w-[24rem] min-h-[16rem] p-4 rounded-3xl bg-base-100 border border-base-300 shadow disabled:bg-base-300 disabled:cursor-not-allowed",
           "transition-all delay-0 duration-300 hover:shadow cursor-pointer"
         )}
       >
@@ -58,7 +58,7 @@ export default function NoteCard({
       disabled={disabled}
       className={clsx(
         style,
-        "flex flex-col justify-between w-[24rem] min-h-[16rem] p-4 rounded-3xl bg-base-100 disabled:bg-base-300 disabled:cursor-not-allowed",
+        "flex flex-col justify-between w-[24rem] min-h-[16rem] p-4 rounded-3xl bg-base-100 border border-base-300 shadow disabled:bg-base-300 disabled:cursor-not-allowed",
         "transition-all delay-0 duration-300 hover:shadow cursor-pointer"
       )}
     >

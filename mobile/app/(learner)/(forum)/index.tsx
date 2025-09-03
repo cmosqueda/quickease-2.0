@@ -10,13 +10,12 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { Link } from "expo-router";
-import { Post } from "@/types/user/types";
 import { useTrays } from "react-native-trays";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { FlatList, Pressable, RefreshControl, ScrollView } from "react-native";
+import { FlatList, Pressable, RefreshControl } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
 
