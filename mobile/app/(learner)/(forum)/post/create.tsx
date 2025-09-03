@@ -49,6 +49,7 @@ export default function Page() {
         }}
         className="text-4xl"
         placeholder="Title"
+        multiline
       />
       <View className="flex flex-row">
         <CustomPressable
@@ -72,6 +73,7 @@ export default function Page() {
           fontFamily: _FONTS.Gabarito_400Regular,
         }}
         placeholder="Questions?"
+        multiline
       />
       <View className="flex-1" />
       <CustomView className="rounded-3xl flex flex-row gap-4 items-center">

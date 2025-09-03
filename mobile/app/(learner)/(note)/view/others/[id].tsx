@@ -92,6 +92,7 @@ export default function Page() {
           placeholder="Title"
           value={title}
           onChangeText={setTitle}
+          multiline
         />
         <RichText editor={editor} />
       </SafeAreaView>

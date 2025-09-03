@@ -211,6 +211,7 @@ export default function Page() {
               placeholder="Title"
               value={title}
               onChangeText={setTitle}
+              multiline
             />
             <CustomTextInput
               style={{
