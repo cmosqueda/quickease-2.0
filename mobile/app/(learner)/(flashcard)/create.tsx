@@ -145,6 +145,7 @@ export default function Page() {
               placeholder="Title"
               value={title}
               onChangeText={setTitle}
+              multiline
             />
             <CustomTextInput
               style={{
@@ -158,6 +159,7 @@ export default function Page() {
               textAlignVertical="top"
               value={description}
               onChangeText={setDescription}
+              multiline
             />
           </View>
           <CustomPressable

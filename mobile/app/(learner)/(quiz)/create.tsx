@@ -143,6 +143,7 @@ export default function Page() {
           placeholder="Title"
           value={quizTitle}
           onChangeText={setQuizTitle}
+          multiline
         />
         <CustomTextInput
           style={{
