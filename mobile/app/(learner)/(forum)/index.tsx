@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
@@ -18,10 +19,13 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { FlatList, Pressable, RefreshControl } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
+import { useEffect } from "react";
+import { toast } from "sonner-native";
 
 export default function Page() {
   const { currentScheme } = useTheme();
   const { isConnected } = useNetInfo();
+  const { user } = useAuth();
 
   const useSearchTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
   const useNotificationTray = useTrays<MyTraysProps>(
@@ -51,6 +55,12 @@ export default function Page() {
     enabled: !!isConnected,
   });
 
+  useEffect(() => {
+    if (!user?.is_verified) {
+      toast("Verify your email to post.", { duration: 120000 });
+    }
+  }, [user?.is_verified]);
+
   return (
     <SafeAreaView
       className="flex flex-1"
@@ -75,18 +85,20 @@ export default function Page() {
                 </CustomText>
               </Pressable>
 
-              <Pressable
-                disabled={!isConnected}
-                onPress={() =>
-                  useNotificationTray.push("NotificationTray", {
-                    close: useNotificationTray.pop,
-                  })
-                }
-              >
-                <CustomText>
-                  <FontAwesome6 name="bell" size={22} />
-                </CustomText>
-              </Pressable>
+              {user?.is_verified && (
+                <Pressable
+                  disabled={!isConnected}
+                  onPress={() =>
+                    useNotificationTray.push("NotificationTray", {
+                      close: useNotificationTray.pop,
+                    })
+                  }
+                >
+                  <CustomText>
+                    <FontAwesome6 name="bell" size={22} />
+                  </CustomText>
+                </Pressable>
+              )}
             </>
           )
         }
@@ -118,17 +130,19 @@ export default function Page() {
         )}
       </CustomView>
 
-      <Link asChild href={"/post/create"}>
-        <CustomPressable
-          disabled={!isConnected}
-          variant="colorPrimary"
-          className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
-        >
-          <CustomText color="colorPrimaryContent">
-            <MaterialIcons name="post-add" size={32} />
-          </CustomText>
-        </CustomPressable>
-      </Link>
+      {user?.is_verified && (
+        <Link asChild href={"/post/create"}>
+          <CustomPressable
+            disabled={!isConnected}
+            variant="colorPrimary"
+            className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+          >
+            <CustomText color="colorPrimaryContent">
+              <MaterialIcons name="post-add" size={32} />
+            </CustomText>
+          </CustomPressable>
+        </Link>
+      )}
     </SafeAreaView>
   );
 }

@@ -17,8 +17,6 @@ import { useLocalSearchParams, router } from "expo-router";
 import { ScrollView, Pressable, View, ActivityIndicator } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
-import { Quiz } from "@/types/user/types";
-import { toast } from "sonner-native";
 
 export default function LearnerQuizPage() {
   const { currentScheme } = useTheme();
@@ -58,50 +56,15 @@ export default function LearnerQuizPage() {
     });
   };
 
-  const handleDeleteQuiz = async ({ quiz }: { quiz: Quiz }) => {
-    try {
-      const { status } = await _API_INSTANCE.delete(`/quiz/delete`, {
-        data: { quiz_id: quiz?.id },
-      });
-      if (status === 200) {
-        toast("Quiz deleted.");
-        router.back();
-      }
-    } catch {
-      toast("Failed to delete quizData.");
-    }
-  };
-
-  const handleVisibility = async ({
-    quiz,
-    visibility,
-  }: {
-    quiz: Quiz;
-    visibility: boolean;
-  }) => {
-    try {
-      const { status } = await _API_INSTANCE.put("/quiz/toggle-visibility", {
-        visibility,
-        quiz_id: quiz?.id,
-      });
-      if (status === 200) {
-        setQuizVisibility(visibility);
-        toast("Quiz visibility updated.");
-      }
-    } catch {
-      toast("Error updating visibility.");
-    }
-  };
-
   const renderAttempts = () =>
-    quizData?.attempts.map((entry, index) => {
+    quizData?.attempts.map((entry: any, index: any) => {
       const totalQuestions = entry.answer_data.length;
-      const correctCount = entry.answer_data.reduce((acc, item) => {
+      const correctCount = entry.answer_data.reduce((acc: any, item: any) => {
         const { correctAnswers } = item.question;
         const userAnswers = item.user_answer;
         const isCorrect =
           correctAnswers.length === userAnswers.length &&
-          correctAnswers.every((ans) => userAnswers.includes(ans));
+          correctAnswers.every((ans: any) => userAnswers.includes(ans));
         return acc + (isCorrect ? 1 : 0);
       }, 0);
 
@@ -130,14 +93,14 @@ export default function LearnerQuizPage() {
     });
 
   const renderLeaderboard = () =>
-    quizData?.leaderboard.map((entry, index) => {
+    quizData?.leaderboard.map((entry: any, index: any) => {
       const totalQuestions = entry.answer_data.length;
-      const correctCount = entry.answer_data.reduce((acc, item) => {
+      const correctCount = entry.answer_data.reduce((acc: any, item: any) => {
         const { correctAnswers } = item.question;
         const userAnswers = item.user_answer;
         const isCorrect =
           correctAnswers.length === userAnswers.length &&
-          correctAnswers.every((ans) => userAnswers.includes(ans));
+          correctAnswers.every((ans: any) => userAnswers.includes(ans));
         return acc + (isCorrect ? 1 : 0);
       }, 0);
 
@@ -258,14 +221,14 @@ export default function LearnerQuizPage() {
       <PagerView
         style={{ flex: 1 }}
         ref={pagerViewRef}
-        onPageScroll={(e) => {
+        onPageSelected={(e) => {
           setTabIndex(e.nativeEvent.position);
         }}
       >
-        <ScrollView className="flex flex-col gap-4" key={0}>
+        <ScrollView contentContainerClassName="flex flex-col gap-4" key={0}>
           {renderAttempts()}
         </ScrollView>
-        <ScrollView className="flex flex-col gap-4" key={1}>
+        <ScrollView contentContainerClassName="flex flex-col gap-4" key={1}>
           {renderLeaderboard()}
         </ScrollView>
       </PagerView>

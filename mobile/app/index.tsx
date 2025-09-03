@@ -11,10 +11,10 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Image } from "expo-image";
 import { useAssets } from "expo-asset";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, Redirect, router } from "expo-router";
+import { Link, Redirect } from "expo-router";
 import { checkAuthAndRedirect } from "@/utils/axios";
 import { useWindowDimensions, View } from "react-native";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import _FORUM_ANIMATION from "../assets/animations/forums-community.json";
 import _THEME_ANIMATION from "../assets/animations/multi-themes.json";
@@ -133,7 +133,12 @@ export default function Index() {
           backgroundColor: currentScheme?.colorBase100,
         }}
       >
-        <PagerView ref={pageViewRef} style={{ flex: 1 }} initialPage={0}>
+        <PagerView
+          ref={pageViewRef}
+          style={{ flex: 1 }}
+          initialPage={0}
+          onPageSelected={(e) => setIndex(e.nativeEvent.position)}
+        >
           {data.map((item, index) => (
             <View key={index} className="flex-1 gap-8 p-4">
               {item.image && (
@@ -191,25 +196,27 @@ export default function Index() {
               </CustomPressable>
             </Link>
           </View>
-          <CustomPressable
-            variant="colorBase200"
-            className="rounded-3xl"
-            onPress={() => {
-              setIndex(0);
-
-              if (index !== 5) {
-                setIndex(index + 1);
-              } else {
+          {index !== 4 && (
+            <CustomPressable
+              variant="colorBase200"
+              className="rounded-3xl"
+              onPress={() => {
                 setIndex(0);
-              }
 
-              pageViewRef.current?.setPage(index);
-            }}
-          >
-            <CustomText>
-              <MaterialIcons name="keyboard-arrow-right" size={18} />
-            </CustomText>
-          </CustomPressable>
+                if (index !== 4) {
+                  setIndex(index + 1);
+                } else {
+                  setIndex(0);
+                }
+
+                pageViewRef.current?.setPage(index);
+              }}
+            >
+              <CustomText>
+                <MaterialIcons name="keyboard-arrow-right" size={18} />
+              </CustomText>
+            </CustomPressable>
+          )}
         </View>
       </SafeAreaView>
     );
