@@ -31,6 +31,14 @@ const _STACK_CONFIG = {
     backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
     horizontalSpacing: 0,
   },
+  ContextMenuTray: {
+    dismissOnBackdropPress: true,
+    adjustForKeyboard: true,
+    backdropStyles: { backgroundColor: "rgba(0,0,0,0.5)" },
+    trayStyles: {
+      marginBottom: 16,
+    },
+  },
 };
 
 export default _STACK_CONFIG;

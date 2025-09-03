@@ -8,16 +8,16 @@ import ForumHeader from "@/components/ForumHeader";
 import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Link } from "expo-router";
 import { Quiz } from "@/types/user/types";
 import { useTrays } from "react-native-trays";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { useRef, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNetInfo } from "@react-native-community/netinfo";
 
 export default function Page() {
   const { isConnected } = useNetInfo();
@@ -26,8 +26,11 @@ export default function Page() {
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
-  const pagerViewRef = useRef<PagerView>(null);
 
+  const { push: openContextMenu, pop: closeContextMenu } =
+    useTrays<MyTraysProps>("ContextMenuTray");
+
+  const pagerViewRef = useRef<PagerView>(null);
   const [index, setIndex] = useState(0);
 
   return (
@@ -145,6 +148,13 @@ export default function Page() {
               <Pressable
                 disabled={!isConnected}
                 className="disabled:opacity-70"
+                onLongPress={() =>
+                  openContextMenu("ContextMenuTray", {
+                    close: closeContextMenu,
+                    type: "quiz",
+                    id: quiz.id,
+                  })
+                }
               >
                 <CustomView className="p-6 rounded-xl gap-2">
                   {quiz.is_ai_generated && (
@@ -191,6 +201,13 @@ export default function Page() {
                 <Pressable
                   disabled={!isConnected}
                   className="disabled:opacity-70"
+                  onLongPress={() =>
+                    openContextMenu("ContextMenuTray", {
+                      close: closeContextMenu,
+                      type: "quiz",
+                      id: quiz.id,
+                    })
+                  }
                 >
                   <CustomView className="p-6 rounded-xl gap-2">
                     {quiz.is_ai_generated && (
@@ -230,6 +247,13 @@ export default function Page() {
                 <Pressable
                   disabled={!isConnected}
                   className="disabled:opacity-70"
+                  onLongPress={() =>
+                    openContextMenu("ContextMenuTray", {
+                      close: closeContextMenu,
+                      type: "quiz",
+                      id: quiz.id,
+                    })
+                  }
                 >
                   <CustomView className="p-6 rounded-xl gap-2">
                     {quiz.is_ai_generated && (

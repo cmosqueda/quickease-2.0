@@ -16,8 +16,8 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Pressable, ScrollView, View } from "react-native";
 
 export default function Page() {
   const { isConnected } = useNetInfo();
@@ -26,6 +26,9 @@ export default function Page() {
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
+
+  const { push: openContextMenu, pop: closeContextMenu } =
+    useTrays<MyTraysProps>("ContextMenuTray");
 
   const [index, setIndex] = useState(0);
   const pagerViewRef = useRef<PagerView>(null);
@@ -143,6 +146,13 @@ export default function Page() {
               <Pressable
                 className="disabled:opacity-70"
                 disabled={!isConnected}
+                onLongPress={() =>
+                  openContextMenu("ContextMenuTray", {
+                    close: closeContextMenu,
+                    type: "note",
+                    id: note.id,
+                  })
+                }
               >
                 <CustomView className="p-6 rounded-xl gap-2">
                   {note.is_ai_generated && (
@@ -189,6 +199,13 @@ export default function Page() {
                 <Pressable
                   className="disabled:opacity-70"
                   disabled={!isConnected}
+                  onLongPress={() =>
+                    openContextMenu("ContextMenuTray", {
+                      close: closeContextMenu,
+                      type: "note",
+                      id: note.id,
+                    })
+                  }
                 >
                   <CustomView className="p-6 rounded-xl gap-2">
                     {note.is_ai_generated && (
@@ -228,6 +245,13 @@ export default function Page() {
                 <Pressable
                   disabled={!isConnected}
                   className="disabled:opacity-70"
+                  onLongPress={() =>
+                    openContextMenu("ContextMenuTray", {
+                      close: closeContextMenu,
+                      type: "note",
+                      id: note.id,
+                    })
+                  }
                 >
                   <CustomView className="p-6 rounded-xl gap-2">
                     {note.is_ai_generated && (

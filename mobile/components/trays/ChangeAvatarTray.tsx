@@ -21,20 +21,25 @@ const ChangeAvatarTray = ({
   avatars: Asset[];
   close: () => void;
 }) => {
-  const [selectedAvatar, setSelectedAvatar] = useState(0);
-  const avatarIndex = ["blue.svg", "green.svg", "orange.svg", "purple.svg"];
+  const { user, setUser } = useAuth();
+  const avatarIndex = ["blue", "green", "orange", "purple"];
+
+  const initialIndex = user ? avatarIndex.indexOf(user?.avatar!) : 0;
+  const [selectedAvatar, setSelectedAvatar] = useState(
+    initialIndex >= 0 ? initialIndex : 0
+  );
 
   const [isSaving, setIsSaving] = useState(false);
 
   const handleUpdate = async () => {
     setIsSaving(true);
-    const temp = useAuth.getState().user as User;
+    const temp = user as User;
 
     try {
       const { status } = await _API_INSTANCE.put(
         "/users/change-avatar",
         {
-          avatar_id: avatarIndex[selectedAvatar]?.replace(".svg", ""),
+          avatar_id: avatarIndex[selectedAvatar],
         },
         {
           timeout: 8 * 60 * 1000,
@@ -42,16 +47,10 @@ const ChangeAvatarTray = ({
       );
 
       if (status === 200) {
-        useAuth.setState({
-          user: {
-            ...temp,
-            avatar: avatarIndex[selectedAvatar]!.replace(".svg", ""),
-          },
-        });
-
+        setUser({ ...temp, avatar: avatarIndex[selectedAvatar] });
         close();
       }
-    } catch (err) {
+    } catch (err: any) {
       toast(err.message || "Error updating avatar.");
     } finally {
       setIsSaving(false);
@@ -74,7 +73,7 @@ const ChangeAvatarTray = ({
             className="relative"
             onPress={() => setSelectedAvatar(index)}
           >
-            {selectedAvatar == index && (
+            {selectedAvatar === index && (
               <CustomText color="colorBase300" className="absolute top-0 z-50">
                 <MaterialCommunityIcons name="check-circle" size={24} />
               </CustomText>
@@ -87,6 +86,7 @@ const ChangeAvatarTray = ({
           </Pressable>
         ))}
       </View>
+
       <CustomPressable
         variant="colorBase200"
         className="rounded-3xl items-center"

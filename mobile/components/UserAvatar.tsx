@@ -35,7 +35,7 @@ export default function UserAvatar({
   const avatarSource = avatarMap[avatar!] ?? assets?.[0];
 
   if (avatarSource) {
-    return <Image source={avatarSource} style={{ width: 28, height: 28 }} />;
+    return <Image source={avatarSource} style={{ width: size, height: size }} />;
   }
 
   return <FontAwesome6 name="user-circle" size={size} style={style} />;
