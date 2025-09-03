@@ -1,7 +1,8 @@
-import useTheme from "@/hooks/useTheme";
 import React from "react";
+import useTheme from "@/hooks/useTheme";
+import Animated from "react-native-reanimated";
 
-import { View, ViewProps, ViewStyle } from "react-native";
+import { ViewProps, ViewStyle } from "react-native";
 
 const bgVariants = [
   "colorBase100",
@@ -32,7 +33,7 @@ const CustomView: React.FC<CustomViewProps> = ({
   const { currentScheme } = useTheme();
 
   return (
-    <View
+    <Animated.View
       style={[
         {
           backgroundColor: variant && currentScheme![variant],
@@ -42,7 +43,7 @@ const CustomView: React.FC<CustomViewProps> = ({
       {...rest}
     >
       {children}
-    </View>
+    </Animated.View>
   );
 };
 
