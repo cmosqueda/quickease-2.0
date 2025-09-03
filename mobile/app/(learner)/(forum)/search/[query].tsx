@@ -5,18 +5,14 @@ import PostComponent from "@/components/PostComponent";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { Post } from "@/types/user/types";
 import { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, router } from "expo-router";
 import {
-  View,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  FlatList,
-} from "react-native";
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { View, Pressable, RefreshControl, FlatList } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
 
@@ -24,6 +20,8 @@ export default function Page() {
   const { currentScheme } = useTheme();
   const { query } = useLocalSearchParams<{ query: string }>();
   const [sort, setSort] = useState("newest");
+
+  const insets = useSafeAreaInsets();
 
   const {
     data,
@@ -101,7 +99,7 @@ export default function Page() {
               onRefresh={refetch}
             />
           }
-          contentContainerStyle={{ gap: 16 }}
+          contentContainerStyle={{ gap: 16, paddingBottom: insets.bottom + 128 }}
           onEndReached={() => {
             if (hasNextPage && !isFetchingNextPage) {
               fetchNextPage();

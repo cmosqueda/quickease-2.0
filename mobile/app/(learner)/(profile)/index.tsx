@@ -16,7 +16,7 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { Post, User } from "@/types/user/types";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "expo-router";
+import { Link, useNavigation } from "expo-router";
 import { DrawerActions } from "@react-navigation/native";
 import { useRef, useState } from "react";
 import { RichText, useEditorBridge } from "@10play/tentap-editor";
@@ -45,22 +45,30 @@ const PostComponent = ({ post }: { post: Post }) => {
 
   if (editor) {
     return (
-      <View>
-        <CustomText
-          variant="bold"
-          className="text-2xl"
-          color="colorBaseContent"
-        >
-          {post.title}
-        </CustomText>
-        <CustomView
-          key={post.id}
-          variant="colorBase300"
-          className="p-4 rounded-3xl"
-        >
-          <RichText editor={editor} />
-        </CustomView>
-      </View>
+      <Link
+        asChild
+        href={{
+          pathname: "/(learner)/(forum)/post/view/[id]",
+          params: { id: post.id },
+        }}
+      >
+        <Pressable>
+          <CustomText
+            variant="bold"
+            className="text-2xl"
+            color="colorBaseContent"
+          >
+            {post.title}
+          </CustomText>
+          <CustomView
+            key={post.id}
+            variant="colorBase300"
+            className="p-4 rounded-3xl"
+          >
+            <RichText editor={editor} />
+          </CustomView>
+        </Pressable>
+      </Link>
     );
   }
 };

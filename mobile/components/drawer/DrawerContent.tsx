@@ -18,6 +18,7 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import _API_INSTANCE from "@/utils/axios";
 import PomodoroComponent from "./PomodoroTimer";
 import useSettings from "@/hooks/useSettings";
+import UserAvatar from "../UserAvatar";
 
 const links = [
   {
@@ -93,9 +94,7 @@ export default function CustomDrawerContent(props: any) {
         }}
         onPress={() => props.navigation.navigate("(profile)")}
       >
-        <CustomText color="colorBaseContent">
-          <MaterialIcons name="account-circle" size={36} />
-        </CustomText>
+        <UserAvatar size={32} />
         <CustomText variant="bold" className="text-xl" color="colorBaseContent">
           {user?.first_name} {user?.last_name}
         </CustomText>
