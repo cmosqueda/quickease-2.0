@@ -25,7 +25,7 @@ export default function NotesTab({ notes }: { notes: Note[] }) {
     <>
       {/* Header: Search + Create */}
       <div className="flex flex-row justify-between items-center gap-4">
-        <label className="input w-full lg:w-fit flex items-center gap-2">
+        <label className="input w-full lg:w-fit flex items-center gap-2 border border-base-300">
           <Search size={20} />
           <input
             type="search"

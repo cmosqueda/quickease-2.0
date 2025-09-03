@@ -2,7 +2,6 @@
 import FlashcardTab from "@/components/(learner)/FlashcardTab";
 import NotesTab from "@/components/(learner)/NotesTab";
 import QuizTab from "@/components/(learner)/QuizTab";
-import NotificationsDropdown from "@/components/(learner)/NotificationsDropdown";
 import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
 import clsx from "clsx";
 

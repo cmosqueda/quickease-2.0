@@ -13,6 +13,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { NavLink } from "react-router";
+import type { PostAttachment } from "@/types/types";
 
 const PostCard = ({ data }: { data: any }) => {
   const { mutate: vote } = useVote(["post"]);
@@ -65,69 +66,53 @@ const PostCard = ({ data }: { data: any }) => {
         <>
           <h1 className="font-bold text-xl">Attachments</h1>
           <div className="flex flex-row gap-4 items-center">
-            {data.attachments.map(
-              (attachment: {
-                resource_type: string;
-                note_id: string;
-                note: {
-                  title: string;
-                };
-                quiz_id: string;
-                quiz: {
-                  title: string;
-                };
-                flashcard_id: string;
-                flashcard: {
-                  title: string;
-                };
-              }) => {
-                switch (attachment.resource_type) {
-                  case "NOTE":
-                    return (
-                      <NavLink
-                        to={`/learner/note/view/${attachment.note_id}`}
-                        className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
-                      >
-                        <Notebook />
-                        <h1 className="text-2xl font-bold">
-                          {attachment.note.title}
-                        </h1>
-                      </NavLink>
-                    );
-                  case "QUIZ":
-                    return (
-                      <NavLink
-                        to={`/learner/quizzes/${attachment.quiz_id}`}
-                        className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
-                      >
-                        <GalleryVertical />
-                        <h1 className="text-2xl font-bold">
-                          {attachment.quiz.title}
-                        </h1>
-                      </NavLink>
-                    );
-                  case "FLASHCARD":
-                    return (
-                      <NavLink
-                        to={`/learner/flashcards/view/${attachment.flashcard_id}`}
-                        className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
-                      >
-                        <GalleryVertical />
-                        <h1 className="text-2xl font-bold">
-                          {attachment.flashcard.title}
-                        </h1>
-                      </NavLink>
-                    );
-                    break;
-                }
+            {data.attachments.map((attachment: PostAttachment) => {
+              switch (attachment.resource_type) {
+                case "NOTE":
+                  return (
+                    <NavLink
+                      to={`/learner/note/view/${attachment.note_id}`}
+                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                    >
+                      <Notebook />
+                      <h1 className="text-2xl font-bold">
+                        {attachment.note?.title}
+                      </h1>
+                    </NavLink>
+                  );
+                case "QUIZ":
+                  return (
+                    <NavLink
+                      to={`/learner/quizzes/${attachment.quiz_id}`}
+                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                    >
+                      <GalleryVertical />
+                      <h1 className="text-2xl font-bold">
+                        {attachment.quiz?.title}
+                      </h1>
+                    </NavLink>
+                  );
+                case "FLASHCARD":
+                  return (
+                    <NavLink
+                      to={`/learner/flashcards/view/${attachment.flashcard_id}`}
+                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                    >
+                      <GalleryVertical />
+                      <h1 className="text-2xl font-bold">
+                        {attachment.flashcard?.title}
+                      </h1>
+                    </NavLink>
+                  );
+                  break;
               }
-            )}
+            })}
           </div>
         </>
       )}
 
       <div className="flex flex-row gap-2">
-        <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-200">
+        <div className="flex flex-row gap-2 p-4 rounded-3xl bg-base-100 border border-base-300 shadow">
           <ChevronUp
             className={clsx(
               "cursor-pointer hover:text-green-500",
@@ -144,7 +129,7 @@ const PostCard = ({ data }: { data: any }) => {
             onClick={() => handlePostVote(-1)}
           />
         </div>
-        <div className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-200 cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300">
+        <div className="flex flex-row gap-2 py-4 px-6 rounded-3xl bg-base-100 border border-base-300 shadow cursor-pointer transition-all delay-0 duration-300 hover:bg-base-300">
           <MessageCircle />
           <p>{data?.comments?.length ?? 0}</p>
         </div>

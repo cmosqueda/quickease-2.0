@@ -77,7 +77,7 @@ export default function QuizTab({ quizzes }: { quizzes: Quiz[] }) {
             <QuizCard
               key={quiz.id}
               link={quiz.id}
-              date={quiz.date}
+              date={quiz.created_at}
               title={quiz.title}
               term={quiz.quiz_content.length}
             />

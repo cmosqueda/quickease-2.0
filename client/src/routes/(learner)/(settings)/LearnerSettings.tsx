@@ -27,6 +27,7 @@ const AppearanceSettings = () => {
   return (
     <div className="flex flex-col gap-2">
       <h1 className="text-xl">Themes</h1>
+      <div className="divider my-1" />
       <div className="my-2 flex flex-col gap-2">
         <ThemeBox floating={false} />
       </div>
@@ -142,7 +143,7 @@ const AccountSettings = () => {
           ) as HTMLDialogElement;
           modal.showModal();
         }}
-        className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all"
+        className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all border border-base-300 shadow"
       >
         <User />
         <p>Change avatar</p>
@@ -154,7 +155,7 @@ const AccountSettings = () => {
           ) as HTMLDialogElement;
           modal.showModal();
         }}
-        className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all"
+        className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all border border-base-300 shadow"
       >
         <Mail />
         <p>Change email address</p>
@@ -166,21 +167,21 @@ const AccountSettings = () => {
           ) as HTMLDialogElement;
           modal.showModal();
         }}
-        className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all"
+        className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all border border-base-300 shadow"
       >
         <UserCircle />
         <p>Change name</p>
       </button>
       <button
         onClick={handleRequestChangePassword}
-        className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all"
+        className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all border border-base-300 shadow"
       >
         <Lock />
         <p>Request to change password</p>
       </button>
       <button
         onClick={handleRequestVerification}
-        className="flex flex-row items-center gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all disabled:bg-base-300/50 disabled:cursor-not-allowed"
+        className="flex flex-row items-center gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all disabled:bg-base-300/50 disabled:cursor-not-allowed border border-base-300 shadow disabled:shadow-none"
         disabled={user?.is_verified}
       >
         <MailCheck />
@@ -194,7 +195,7 @@ const AccountSettings = () => {
 
       <h1 className="text-xl mt-4">Privacy</h1>
       <div className="divider my-1" />
-      <div className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all items-center justify-between">
+      <div className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all items-center justify-between border border-base-300 shadow">
         <div className="flex flex-row gap-4 items-center">
           <Eye />
           <div>
@@ -280,7 +281,7 @@ const ChangeNameModal = () => {
 
   return (
     <dialog id="change-name-modal" className="modal">
-      <div className="modal-box flex flex-col">
+      <div className="modal-box flex flex-col rounded-3xl border shadow border-base-300">
         <div className="flex flex-row gap-2 items-center">
           <X
             className="my-2 cursor-pointer"
@@ -408,7 +409,7 @@ const ChangeEmailModal = () => {
 
   return (
     <dialog id="change-email-modal" className="modal">
-      <div className="modal-box flex flex-col">
+      <div className="modal-box flex flex-col border border-base-300 shadow rounded-xl">
         <div className="flex flex-row gap-2 items-center">
           <X
             className="my-2 cursor-pointer"
@@ -516,7 +517,7 @@ const ChangeAvatarModal = () => {
 
   return (
     <dialog id="change-avatar-modal" className="modal">
-      <div className="modal-box flex flex-col gap-6">
+      <div className="modal-box flex flex-col gap-6 border border-base-300 shadow">
         <div className="flex flex-row gap-2 items-center">
           <X
             className="my-2 cursor-pointer"

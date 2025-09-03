@@ -7,6 +7,7 @@ import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Notification, NotificationType } from "@/types/user/types";
 
+import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   Dimensions,
@@ -17,7 +18,6 @@ import {
 } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
-import { router } from "expo-router";
 
 const NotificationTray = ({ close }: { close: () => void }) => {
   const { user } = useAuth();

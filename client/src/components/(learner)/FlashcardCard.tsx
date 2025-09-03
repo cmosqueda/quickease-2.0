@@ -34,7 +34,7 @@ export default function FlashcardCard({
     <Wrapper
       {...wrapperProps}
       className={clsx(
-        "flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 transition-all duration-300 hover:shadow cursor-pointer",
+        "flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 transition-all duration-300 hover:shadow cursor-pointer border-base-300 border shadow",
         className
       )}
     >
