@@ -11,7 +11,13 @@ import { Note } from "@/types/user/types";
 import { toast } from "sonner-native";
 import { router } from "expo-router";
 import { useState } from "react";
-import { View, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import {
+  View,
+  ScrollView,
+  Pressable,
+  ActivityIndicator,
+  useWindowDimensions,
+} from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
 
@@ -23,6 +29,7 @@ const GenerateFromNotesTray = ({
   type: "quiz" | "flashcard";
 }) => {
   const { user } = useAuth();
+  const { height } = useWindowDimensions();
 
   const [index, setIndex] = useState(0);
 
@@ -153,6 +160,7 @@ const GenerateFromNotesTray = ({
     <CustomView
       variant="colorBase100"
       className="rounded-tr-3xl rounded-tl-3xl px-4 py-8 gap-4"
+      style={{ maxHeight: height / 1.2 }}
     >
       {tabs[index]}
     </CustomView>

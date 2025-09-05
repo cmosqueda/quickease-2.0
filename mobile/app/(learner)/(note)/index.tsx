@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
+import ListItem from "@/components/ListItem";
 import PagerView from "react-native-pager-view";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
@@ -17,7 +18,7 @@ import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable } from "react-native";
 
 export default function Page() {
   const { isConnected } = useNetInfo();
@@ -32,6 +33,21 @@ export default function Page() {
 
   const [index, setIndex] = useState(0);
   const pagerViewRef = useRef<PagerView>(null);
+
+  const tabs = [
+    { label: "All", items: user?.notes },
+    {
+      label: "By recent",
+      items: [...(user?.notes ?? [])].sort(
+        (a: Note, b: Note) =>
+          dayjs(b.updated_at).valueOf() - dayjs(a.updated_at).valueOf()
+      ),
+    },
+    {
+      label: "AI - Generated",
+      items: user?.notes.filter((note: Note) => note.is_ai_generated === true),
+    },
+  ];
 
   return (
     <SafeAreaView
@@ -128,153 +144,17 @@ export default function Page() {
           setIndex(e.nativeEvent.position);
         }}
       >
-        <ScrollView
-          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
-          className="rounded-tr-3xl rounded-tl-3xl"
-          style={{ backgroundColor: currentScheme.colorBase300 }}
-          key={0}
-        >
-          {user?.notes.map((note: Note) => (
-            <Link
-              asChild
-              href={{
-                pathname: "/(learner)/(note)/view/[id]",
-                params: { id: note.id },
-              }}
-              key={note.id}
-            >
-              <Pressable
-                className="disabled:opacity-70"
-                disabled={!isConnected}
-                onLongPress={() =>
-                  openContextMenu("ContextMenuTray", {
-                    close: closeContextMenu,
-                    type: "note",
-                    id: note.id,
-                  })
-                }
-              >
-                <CustomView className="p-6 rounded-xl gap-2">
-                  {note.is_ai_generated && (
-                    <View className="flex flex-row gap-4 items-center">
-                      <CustomText>
-                        <MaterialIcons name="info" size={18} />
-                      </CustomText>
-                      <CustomText>AI-Generated</CustomText>
-                    </View>
-                  )}
-                  <CustomText className="text-sm opacity-40">
-                    {dayjs(note.updated_at)
-                      .format("hh:mm A / MMMM DD, YYYY")
-                      .toString()}
-                  </CustomText>
-                  <CustomText variant="bold" className="text-3xl">
-                    {note.title}
-                  </CustomText>
-                </CustomView>
-              </Pressable>
-            </Link>
-          ))}
-        </ScrollView>
-        <ScrollView
-          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
-          className="rounded-tr-3xl rounded-tl-3xl"
-          style={{ backgroundColor: currentScheme.colorBase300 }}
-          key={1}
-        >
-          {[...(user?.notes ?? [])]
-            .sort(
-              (a: Note, b: Note) =>
-                dayjs(b.updated_at).valueOf() - dayjs(a.updated_at).valueOf()
-            )
-            .map((note: Note) => (
-              <Link
-                asChild
-                key={note.id}
-                href={{
-                  pathname: "/(learner)/(note)/view/[id]",
-                  params: { id: note.id.toString() },
-                }}
-              >
-                <Pressable
-                  className="disabled:opacity-70"
-                  disabled={!isConnected}
-                  onLongPress={() =>
-                    openContextMenu("ContextMenuTray", {
-                      close: closeContextMenu,
-                      type: "note",
-                      id: note.id,
-                    })
-                  }
-                >
-                  <CustomView className="p-6 rounded-xl gap-2">
-                    {note.is_ai_generated && (
-                      <View className="flex flex-row gap-4 items-center">
-                        <MaterialIcons name="info" size={18} />
-                        <CustomText>AI-Generated</CustomText>
-                      </View>
-                    )}
-                    <CustomText className="text-sm opacity-40">
-                      {dayjs(note.updated_at).format("hh:mm A / MMMM DD, YYYY")}
-                    </CustomText>
-                    <CustomText variant="bold" className="text-3xl">
-                      {note.title}
-                    </CustomText>
-                  </CustomView>
-                </Pressable>
-              </Link>
-            ))}
-        </ScrollView>
-        <ScrollView
-          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
-          className="rounded-tr-3xl rounded-tl-3xl"
-          style={{ backgroundColor: currentScheme.colorBase300 }}
-          key={2}
-        >
-          {user?.notes
-            .filter((note: Note) => note.is_ai_generated === true)
-            .map((note: Note) => (
-              <Link
-                asChild
-                href={{
-                  pathname: "/(learner)/(note)/view/[id]",
-                  params: { id: note.id },
-                }}
-                key={note.id}
-              >
-                <Pressable
-                  disabled={!isConnected}
-                  className="disabled:opacity-70"
-                  onLongPress={() =>
-                    openContextMenu("ContextMenuTray", {
-                      close: closeContextMenu,
-                      type: "note",
-                      id: note.id,
-                    })
-                  }
-                >
-                  <CustomView className="p-6 rounded-xl gap-2">
-                    {note.is_ai_generated && (
-                      <View className="flex flex-row gap-4 items-center">
-                        <CustomText>
-                          <MaterialIcons name="info" size={18} />
-                        </CustomText>
-                        <CustomText>AI-Generated</CustomText>
-                      </View>
-                    )}
-                    <CustomText className="text-sm opacity-40">
-                      {dayjs(note.updated_at)
-                        .format("hh:mm A / MMMM DD, YYYY")
-                        .toString()}
-                    </CustomText>
-                    <CustomText variant="bold" className="text-3xl">
-                      {note.title}
-                    </CustomText>
-                  </CustomView>
-                </Pressable>
-              </Link>
-            ))}
-        </ScrollView>
+        {tabs.map((tab, i) => (
+          <ListItem
+            key={i}
+            items={tab.items as Note[]}
+            isConnected={isConnected ?? false}
+            openContextMenu={openContextMenu}
+            closeContextMenu={closeContextMenu}
+            background={currentScheme.colorBase300}
+            type={"note"}
+          />
+        ))}
       </PagerView>
 
       {isConnected && (

@@ -3,19 +3,20 @@ import CustomView from "../CustomView";
 import CustomText from "../CustomText";
 import * as Clipboard from "expo-clipboard";
 
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 import { toast } from "sonner-native";
 import { Pressable } from "react-native";
+import { Flashcard, Note, Quiz } from "@/types/user/types";
 
 import _API_INSTANCE from "@/utils/axios";
 
 const ContextMenuTray = ({
-  id,
+  data,
   type,
   close,
 }: {
-  id: string;
+  data: Note | Flashcard | Quiz;
   type: "note" | "flashcard" | "quiz";
   close: () => void;
 }) => {
@@ -24,11 +25,11 @@ const ContextMenuTray = ({
   const handleDeleteNote = async () => {
     try {
       const { status } = await _API_INSTANCE.delete("/notes/delete", {
-        data: { note_id: id },
+        data: { note_id: data.id },
       });
 
       if (status === 200) {
-        deleteNote(id);
+        deleteNote(data.id);
         toast.success("Note deleted.");
         close();
       }
@@ -42,12 +43,12 @@ const ContextMenuTray = ({
     try {
       const { status } = await _API_INSTANCE.delete(`/quiz/delete`, {
         data: {
-          quiz_id: id,
+          quiz_id: data.id,
         },
       });
 
       if (status === 200) {
-        deleteQuiz(id);
+        deleteQuiz(data.id);
         toast.success("Quiz deleted.");
         close();
       }
@@ -61,12 +62,12 @@ const ContextMenuTray = ({
     try {
       const { status } = await _API_INSTANCE.delete("/flashcard/delete", {
         data: {
-          flashcard_id: id,
+          flashcard_id: data.id,
         },
       });
 
       if (status === 200) {
-        deleteFlashcard(id);
+        deleteFlashcard(data.id);
         toast.success("Flashcard deleted.");
         close();
       }
@@ -75,19 +76,85 @@ const ContextMenuTray = ({
     }
   };
 
+  const handleToggleVisibility = async () => {
+    const { editNote, editQuiz, editFlashcard } = useAuth.getState();
+
+    const prevVisibility = data.is_public;
+    const newVisibility = !prevVisibility;
+
+    const optimisticUpdate = () => {
+      if (type === "note") editNote({ id: data.id, is_public: newVisibility });
+      if (type === "flashcard")
+        editFlashcard({ id: data.id, is_public: newVisibility });
+      if (type === "quiz") editQuiz({ id: data.id, is_public: newVisibility });
+    };
+
+    const rollbackUpdate = () => {
+      if (type === "note") {
+        editNote({ id: data.id, is_public: prevVisibility });
+      }
+      if (type === "flashcard") {
+        editFlashcard({ id: data.id, is_public: prevVisibility });
+      }
+      if (type === "quiz") {
+        editQuiz({ id: data.id, is_public: prevVisibility });
+      }
+    };
+
+    try {
+      optimisticUpdate();
+
+      if (type === "note") {
+        await _API_INSTANCE.patch(
+          "/notes/toggle-visibility",
+          { visibility: newVisibility, note_id: data.id },
+          { timeout: 8 * 60 * 1000 }
+        );
+        toast.success("Note visibility updated.");
+      }
+
+      if (type === "flashcard") {
+        await _API_INSTANCE.put(
+          "/flashcard/toggle-visibility",
+          { visibility: newVisibility, flashcard_id: data.id },
+          { timeout: 8 * 60 * 1000 }
+        );
+        toast.success("Flashcard visibility updated.");
+      }
+
+      if (type === "quiz") {
+        await _API_INSTANCE.put(
+          "/quiz/toggle-visibility",
+          {
+            visibility: newVisibility,
+            quiz_id: data.id,
+          },
+          { timeout: 8 * 60 * 1000 }
+        );
+
+        toast.success("Quiz visibility updated.");
+      }
+
+      close();
+    } catch {
+      rollbackUpdate();
+      toast.error("Error updating visibility.");
+    }
+  };
+
   const handleShare = async () => {
     if (type === "note") {
-      const string = `https://quickease.online/learner/note/${id}`;
+      const string = `https://quickease.online/learner/note/${data.id}`;
       await Clipboard.setStringAsync(string);
     }
 
     if (type === "flashcard") {
-      const string = `https://quickease.online/learner/flashcards/${id}`;
+      const string = `https://quickease.online/learner/flashcards/${data.id}`;
       await Clipboard.setStringAsync(string);
     }
 
     if (type === "quiz") {
-      const string = `https://quickease.online/learner/quizzes/${id}`;
+      const string = `https://quickease.online/learner/quizzes/${data.id}`;
       await Clipboard.setStringAsync(string);
     }
 
@@ -97,6 +164,18 @@ const ContextMenuTray = ({
 
   return (
     <CustomView className="p-4 rounded-3xl gap-2" variant="colorBase100">
+      <Pressable
+        className="p-4 rounded-3xl flex flex-row gap-4 items-center"
+        onPress={handleToggleVisibility}
+      >
+        <CustomText>
+          <MaterialCommunityIcons
+            name={data.is_public ? "eye-off" : "eye"}
+            size={24}
+          />
+        </CustomText>
+        <CustomText>Set to {data.is_public ? "private" : "public"}</CustomText>
+      </Pressable>
       <Pressable
         className="p-4 rounded-3xl flex flex-row gap-4 items-center"
         onPress={() => {
