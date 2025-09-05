@@ -13,7 +13,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
-import { useLocalSearchParams, router } from "expo-router";
+import { useLocalSearchParams, router, Link } from "expo-router";
 import { ScrollView, Pressable, View, ActivityIndicator } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
@@ -69,26 +69,36 @@ export default function LearnerQuizPage() {
       }, 0);
 
       return (
-        <CustomView
+        <Link
+          href={{
+            pathname: "/(learner)/(quiz)/attempt/[id]",
+            params: { id: entry.id },
+          }}
           key={entry.id}
-          variant="colorBase100"
-          className="flex flex-row justify-between items-center p-4 rounded-2xl"
+          asChild
         >
-          <CustomView className="flex flex-row gap-4">
-            <CustomText>{index + 1}</CustomText>
-            <CustomView>
+          <Pressable>
+            <CustomView
+              variant="colorBase100"
+              className="flex flex-row justify-between items-center p-4 rounded-2xl"
+            >
+              <CustomView className="flex flex-row gap-4">
+                <CustomText>{index + 1}</CustomText>
+                <CustomView>
+                  <CustomText variant="bold" className="text-xl">
+                    {user?.first_name} {user?.last_name}
+                  </CustomText>
+                  <CustomText>
+                    {dayjs(entry.completed_at).format("MMMM DD YYYY / hh:mm A")}
+                  </CustomText>
+                </CustomView>
+              </CustomView>
               <CustomText variant="bold" className="text-xl">
-                {user?.first_name} {user?.last_name}
-              </CustomText>
-              <CustomText>
-                {dayjs(entry.completed_at).format("MMMM DD YYYY / hh:mm A")}
+                {correctCount}/{totalQuestions}
               </CustomText>
             </CustomView>
-          </CustomView>
-          <CustomText variant="bold" className="text-xl">
-            {correctCount}/{totalQuestions}
-          </CustomText>
-        </CustomView>
+          </Pressable>
+        </Link>
       );
     });
 

@@ -24,13 +24,14 @@ export default function ListItemCard({
   openContextMenu: ReturnType<typeof useTrays>["push"];
   closeContextMenu: ReturnType<typeof useTrays>["pop"];
 }) {
+  const getPathname = (type: "note" | "flashcard" | "quiz") =>
+    `/(learner)/(${type})/view/[id]`;
+
   return (
     <Link
       asChild
       href={{
-        pathname: `/(
-          learner
-        )/(${type})/view/[id]` as any,
+        pathname: getPathname(type) as any,
         params: { id: item.id },
       }}
     >
