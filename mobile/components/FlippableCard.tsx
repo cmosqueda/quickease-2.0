@@ -2,15 +2,19 @@ import clsx from "clsx";
 import useTheme from "@/hooks/useTheme";
 import CustomText from "./CustomText";
 
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet } from "react-native";
 
 export default function FlippableCard({
+  flipped,
+  setFlipped,
   front,
   back,
   height = "h-48",
   classNames,
 }: {
+  flipped: boolean;
+  setFlipped: Dispatch<SetStateAction<boolean>>;
   front: string;
   back: string;
   height?: string;
@@ -18,7 +22,6 @@ export default function FlippableCard({
 }) {
   const { currentScheme } = useTheme();
 
-  const [flipped, setFlipped] = useState(false);
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   const frontInterpolate = animatedValue.interpolate({
@@ -30,24 +33,16 @@ export default function FlippableCard({
     outputRange: ["180deg", "360deg"],
   });
 
-  const flipCard = () => {
-    if (flipped) {
-      Animated.spring(animatedValue, {
-        toValue: 0,
-        friction: 8,
-        tension: 10,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      Animated.spring(animatedValue, {
-        toValue: 180,
-        friction: 8,
-        tension: 10,
-        useNativeDriver: true,
-      }).start();
-    }
-    setFlipped(!flipped);
-  };
+  const flipCard = () => setFlipped(!flipped);
+
+  useEffect(() => {
+    Animated.spring(animatedValue, {
+      toValue: flipped ? 180 : 0,
+      friction: 8,
+      tension: 10,
+      useNativeDriver: true,
+    }).start();
+  }, [animatedValue, flipped]);
 
   return (
     <Pressable

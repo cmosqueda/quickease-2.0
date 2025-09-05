@@ -49,13 +49,6 @@ export default function LearnerQuizPage() {
     });
   };
 
-  const handleEditQuiz = () => {
-    router.push({
-      pathname: "/(learner)/(quiz)/edit/[id]",
-      params: { id: id },
-    });
-  };
-
   const renderAttempts = () =>
     quizData?.attempts.map((entry: any, index: any) => {
       const totalQuestions = entry.answer_data.length;
@@ -163,11 +156,6 @@ export default function LearnerQuizPage() {
         <Pressable onPress={() => router.back()}>
           <CustomText>
             <MaterialIcons name="keyboard-arrow-left" size={36} />
-          </CustomText>
-        </Pressable>
-        <Pressable onPress={handleEditQuiz}>
-          <CustomText>
-            <MaterialCommunityIcons name="layers-edit" size={28} />
           </CustomText>
         </Pressable>
       </CustomView>

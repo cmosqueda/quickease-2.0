@@ -245,7 +245,7 @@ export default function Page() {
       <ForumHeader title="Settings" />
       <CustomView
         variant="colorBase300"
-        className="flex-col gap-6 flex-1 px-4 py-4"
+        className="flex-col gap-6 flex-1 px-4 py-4 rounded-tl-3xl rounded-tr-3xl"
       >
         <AccountSettings />
         <PrivacySettings />

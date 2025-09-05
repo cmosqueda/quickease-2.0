@@ -73,14 +73,14 @@ const StudyToolsSelectionTray = ({
         <CustomText>
           <MaterialCommunityIcons name="note-multiple" size={32} />
         </CustomText>
-        <Pressable className="flex-1">
+        <View className="flex-1">
           <CustomText className="text-xl" variant="black">
             Select from notes
           </CustomText>
           <CustomText className="opacity-60">
             Generate a {type} from selecting one of your notes.
           </CustomText>
-        </Pressable>
+        </View>
       </Pressable>
       <Pressable
         style={{ backgroundColor: currentScheme.colorBase200 }}
