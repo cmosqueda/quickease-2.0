@@ -126,12 +126,10 @@ export default function Page() {
               </Pressable>
             )}
 
-            <View className="flex-1" key={0}>
-              <CustomText variant="bold" className="text-4xl">
-                {post?.title}
-              </CustomText>
-              <CustomRichText content={post.post_body} />
-            </View>
+            <CustomText variant="bold" className="text-4xl">
+              {post?.title}
+            </CustomText>
+            <CustomRichText content={post.post_body} />
           </CustomView>
 
           {post?.comments && post.comments.length > 0 && (

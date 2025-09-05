@@ -61,11 +61,12 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <QueryClientProvider client={client}>
-        <TrayProvider trays={_TRAYS} stackConfigs={_STACK_CONFIG} >
+        <TrayProvider trays={_TRAYS} stackConfigs={_STACK_CONFIG} key={"tray"}>
           <Stack
             screenOptions={{
               headerShown: false,
               animation: "fade_from_bottom",
+              headerTransparent: false,
             }}
           >
             <Stack.Screen name="index" />

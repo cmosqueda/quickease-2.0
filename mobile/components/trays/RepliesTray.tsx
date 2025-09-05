@@ -6,7 +6,7 @@ import CommentComponent from "../CommentComponent";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 import { Comment } from "@/types/user/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   ScrollView,
@@ -26,6 +26,8 @@ const RepliesTray = ({
 }) => {
   const { height } = useWindowDimensions();
   const [content, setContent] = useState("");
+
+  const [comments, setComments] = useState(comment);
 
   const { mutate: createComment } = useComment([
     ["view-post", comment.post_id],
@@ -53,6 +55,10 @@ const RepliesTray = ({
       }
     );
   };
+
+  useEffect(() => {
+    setComments(comment);
+  }, [comment]);
 
   return (
     <CustomView
@@ -96,7 +102,7 @@ const RepliesTray = ({
       </View>
       {comment.replies && comment.replies.length > 0 && (
         <ScrollView contentContainerClassName="gap-4">
-          {comment.replies.map((reply: Comment) => (
+          {comments.replies.map((reply: Comment) => (
             <CommentComponent
               key={reply.id}
               comment={reply}
