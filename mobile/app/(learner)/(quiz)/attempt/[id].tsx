@@ -1,13 +1,13 @@
 import dayjs from "dayjs";
 import useTheme from "@/hooks/useTheme";
 
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { useQuery } from "@tanstack/react-query";
+import { QuizAttempt } from "@/types/user/types";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, View, Pressable } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { ScrollView, View, Text, Pressable } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
 import CustomText from "@/components/CustomText";
@@ -23,7 +23,9 @@ export default function Page() {
     queryKey: ["quiz-view-attempt", id],
     queryFn: async () => {
       try {
-        const { data } = await _API_INSTANCE.get(`/quiz/attempt/${id}`);
+        const { data } = await _API_INSTANCE.get<QuizAttempt>(
+          `/quiz/attempt/${id}`
+        );
 
         return data;
       } catch (err) {
@@ -66,18 +68,23 @@ export default function Page() {
               <MaterialIcons name="keyboard-arrow-left" size={36} />
             </CustomText>
           </Pressable>
-          <View className="items-end">
+          <View className="items-end gap-2">
             <CustomText className="text-xs opacity-60">
               {dayjs(data.started_at).format("MMM DD, YYYY h:mm A")}
             </CustomText>
-            <CustomText className="text-xl" variant="bold">
-              Score: {correctCount}/{totalQuestions}
-            </CustomText>
+            <CustomView
+              className="px-8 py-2 rounded-3xl"
+              variant="colorBase300"
+            >
+              <CustomText className="text-xl" variant="bold">
+                {correctCount}/{totalQuestions}
+              </CustomText>
+            </CustomView>
           </View>
         </CustomView>
 
-        <View className="gap-4">
-          {data.is_ai_generated && (
+        <View className="gap-2">
+          {data.quiz.is_ai_generated && (
             <View className="flex-row items-center gap-2">
               <CustomText className="opacity-60">
                 <MaterialIcons name="info" size={16} />
@@ -91,9 +98,11 @@ export default function Page() {
             <CustomText className="text-3xl" variant="black">
               {data.quiz.title}
             </CustomText>
-            <CustomText className="opacity-60">
-              {data.quiz.description || "No description provided"}
-            </CustomText>
+            {data.quiz.description && (
+              <CustomText className="opacity-60">
+                {data.quiz.description}
+              </CustomText>
+            )}
           </View>
         </View>
 
