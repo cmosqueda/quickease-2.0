@@ -1,18 +1,15 @@
 import dayjs from "dayjs";
-import useTheme from "@/hooks/useTheme";
 import CustomText from "./CustomText";
 import CustomView from "./CustomView";
 import UserAvatar from "./UserAvatar";
+import CustomRichText from "./CustomRichText";
 
 import { Comment } from "@/types/user/types";
 import { useTrays } from "react-native-trays";
 import { MyTraysProps } from "@/types/trays/trays";
 import { View, Pressable } from "react-native";
 import { useVoteOnComment } from "@/hooks/useVote";
-import { useEditorBridge, RichText } from "@10play/tentap-editor";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-
-import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
 export default function CommentComponent({
   comment,
@@ -23,26 +20,12 @@ export default function CommentComponent({
   invalidateKey: (string | number)[];
   disableCommentBtn?: boolean;
 }) {
-  const { currentScheme } = useTheme();
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
-    "DismissibleRoundedNoMarginAndSpacingTray"
+    "DismissibleStickToTopTray"
   );
 
   const { mutate: voteOnComment, isPending: isVotingComment } =
     useVoteOnComment([invalidateKey]);
-
-  const editor = useEditorBridge({
-    theme: {
-      webview: {
-        padding: 8,
-        backgroundColor: currentScheme.colorBase100,
-      },
-    },
-    bridgeExtensions: [..._EDITOR_BRIDGE_EXTENSIONS],
-    dynamicHeight: true,
-    editable: false,
-    initialContent: comment ? comment.comment_body : "",
-  });
 
   return (
     <CustomView className="rounded-3xl flex-1" variant="colorBase100">
@@ -61,11 +44,9 @@ export default function CommentComponent({
           </View>
         </View>
       </View>
-      {editor && (
-        <View className="px-4">
-          <RichText editor={editor} />
-        </View>
-      )}
+      <View className="px-4">
+        <CustomRichText content={comment.comment_body} />
+      </View>
 
       <CustomView
         variant="colorPrimary"

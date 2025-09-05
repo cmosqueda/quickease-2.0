@@ -6,7 +6,6 @@ import {
   OrderedListBridge,
   CodeBridge,
   BlockquoteBridge,
-  CoreBridge,
 } from "@10play/tentap-editor";
 
 const GabaritoFont = `
@@ -30,7 +29,6 @@ export const _HEADING_BRIDGE_THEME = `
     h1, h2, h3, h4, p {
         color: ${useTheme.getState().currentScheme.colorBaseContent};
     }
-        
     h1 {
         font-size: 2.25rem;
     }

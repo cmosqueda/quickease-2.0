@@ -137,12 +137,25 @@ export default function Page() {
                         className="p-4 rounded-3xl flex-1"
                         variant={isCorrect ? "colorSuccess" : "colorBase200"}
                       >
-                        <CustomText>{option}</CustomText>
+                        <CustomText
+                          color={
+                            isCorrect
+                              ? "colorPrimaryContent"
+                              : "colorBaseContent"
+                          }
+                        >
+                          {option}
+                        </CustomText>
                         {isUserChoice && !isCorrect && (
-                          <CustomText>(your answer)</CustomText>
+                          <CustomText color="colorSuccessContent">
+                            (your answer)
+                          </CustomText>
                         )}
                         {isCorrect && (
-                          <CustomText className="text-xs opacity-60">
+                          <CustomText
+                            color="colorSuccessContent"
+                            className="text-xs opacity-60"
+                          >
                             (Correct)
                           </CustomText>
                         )}
