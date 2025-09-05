@@ -30,6 +30,7 @@ const GenerateFromNotesTray = ({
 }) => {
   const { user } = useAuth();
   const { height } = useWindowDimensions();
+  const { currentScheme } = useTheme();
 
   const [index, setIndex] = useState(0);
 
@@ -144,10 +145,7 @@ const GenerateFromNotesTray = ({
     <>
       <View className="py-8 items-center justify-center">
         <CustomText>
-          <ActivityIndicator
-            size={72}
-            color={useTheme.getState().currentScheme.colorPrimary}
-          />
+          <ActivityIndicator size={72} color={currentScheme.colorPrimary} />
         </CustomText>
         <CustomText variant="bold" className="text-xl">
           Generating...

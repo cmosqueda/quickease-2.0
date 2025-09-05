@@ -5,6 +5,7 @@ import PostComponent from "@/components/PostComponent";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
+import { toast } from "sonner-native";
 import { useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, router } from "expo-router";
@@ -39,6 +40,11 @@ export default function Page() {
         params: { query, page: pageParam, limit, sort },
         timeout: 5 * 60 * 1000,
       });
+
+      if (data.posts.length === 0) {
+        toast("No results found.");
+        router.back();
+      }
 
       return {
         posts: data.posts,
@@ -99,7 +105,10 @@ export default function Page() {
               onRefresh={refetch}
             />
           }
-          contentContainerStyle={{ gap: 16, paddingBottom: insets.bottom + 128 }}
+          contentContainerStyle={{
+            gap: 16,
+            paddingBottom: insets.bottom + 128,
+          }}
           onEndReached={() => {
             if (hasNextPage && !isFetchingNextPage) {
               fetchNextPage();

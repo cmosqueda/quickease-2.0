@@ -21,7 +21,7 @@ const GabaritoFont = `
     }
 `;
 
-export const _HEADING_BRIDGE_THEME = `
+export const _HEADING_BRIDGE_THEME = () => `
     ${GabaritoFont}
     * {
         font-family: 'Gabarito', Gabarito, sans-serif;
@@ -34,7 +34,7 @@ export const _HEADING_BRIDGE_THEME = `
     }
 `;
 
-export const _BULLET_LIST_BRIDGE_THEME = `
+export const _BULLET_LIST_BRIDGE_THEME = () => `
     ul {
         color: ${useTheme.getState().currentScheme.colorBaseContent};
         list-style: disc;
@@ -43,8 +43,8 @@ export const _BULLET_LIST_BRIDGE_THEME = `
     }
 `;
 
-export const _ORDERED_LIST_BRIDGE_THEME = `
-   ul {
+export const _ORDERED_LIST_BRIDGE_THEME = () => `
+    ul {
         color: ${useTheme.getState().currentScheme.colorBaseContent};
         list-style: decimal;
         padding-left: 1rem;
@@ -52,13 +52,13 @@ export const _ORDERED_LIST_BRIDGE_THEME = `
     }
 `;
 
-export const _CODEBLOCK_BRIDGE_THEME = `
+export const _CODEBLOCK_BRIDGE_THEME = () => `
     code {
         background-color: ${useTheme.getState().currentScheme.colorBase300};
     }
 `;
 
-export const _BLOCKQUOTE_BRIDGE_THEME = `
+export const _BLOCKQUOTE_BRIDGE_THEME = () => `
     blockquote {
         color: ${useTheme.getState().currentScheme.colorBaseContent};
         padding: 1rem;
@@ -70,13 +70,20 @@ export const _BLOCKQUOTE_BRIDGE_THEME = `
     }
 `;
 
-const _EDITOR_BRIDGE_EXTENSIONS = [
-  ...TenTapStartKit,
-  HeadingBridge.configureCSS(_HEADING_BRIDGE_THEME),
-  BulletListBridge.configureCSS(_BULLET_LIST_BRIDGE_THEME),
-  OrderedListBridge.configureCSS(_ORDERED_LIST_BRIDGE_THEME),
-  CodeBridge.configureCSS(_CODEBLOCK_BRIDGE_THEME),
-  BlockquoteBridge.configureCSS(_BLOCKQUOTE_BRIDGE_THEME),
-];
+// build editor extensions
+export const _EDITOR_BRIDGE_EXTENSIONS = () => {
+  const base = Array.isArray(TenTapStartKit)
+    ? TenTapStartKit
+    : TenTapStartKit
+      ? [TenTapStartKit]
+      : [];
 
-export default _EDITOR_BRIDGE_EXTENSIONS;
+  return [
+    ...base,
+    HeadingBridge.configureCSS(_HEADING_BRIDGE_THEME()),
+    BulletListBridge.configureCSS(_BULLET_LIST_BRIDGE_THEME()),
+    OrderedListBridge.configureCSS(_ORDERED_LIST_BRIDGE_THEME()),
+    CodeBridge.configureCSS(_CODEBLOCK_BRIDGE_THEME()),
+    BlockquoteBridge.configureCSS(_BLOCKQUOTE_BRIDGE_THEME()),
+  ];
+};

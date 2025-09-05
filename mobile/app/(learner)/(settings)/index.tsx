@@ -39,7 +39,6 @@ const AccountSettings = () => {
 
       toast.success("Mail sent!");
     } catch (err) {
-      console.log(err);
       toast.error("Mail failed to send.");
     } finally {
       setIsRequesting(false);

@@ -128,7 +128,6 @@ export default function Page() {
       }
     } catch (err) {
       toast("Error submitting quiz.");
-      console.log(err);
     } finally {
       setIsSubmitting(false);
     }

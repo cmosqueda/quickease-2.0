@@ -21,6 +21,7 @@ const GenerateFromDocumentTray = ({
   close: () => void;
   type: "quiz" | "flashcard" | "summary-notes";
 }) => {
+  const { currentScheme } = useTheme();
   const [document, setDocument] =
     useState<DocumentPicker.DocumentPickerAsset>();
 
@@ -39,7 +40,6 @@ const GenerateFromDocumentTray = ({
 
       if (document.canceled === false) {
         setDocument(document.assets[0]);
-        console.log(document.assets);
       } else {
         toast("Pick atleast one file.");
         close();
@@ -290,10 +290,7 @@ const GenerateFromDocumentTray = ({
     <>
       <View className="py-8 items-center justify-center">
         <CustomText>
-          <ActivityIndicator
-            size={72}
-            color={useTheme.getState().currentScheme.colorPrimary}
-          />
+          <ActivityIndicator size={72} color={currentScheme.colorPrimary} />
         </CustomText>
         <CustomText variant="bold" className="text-xl">
           Generating...

@@ -21,7 +21,7 @@ export default function CommentComponent({
   disableCommentBtn?: boolean;
 }) {
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
-    "DismissibleStickToTopTray"
+    "DismissibleRoundedNoMarginAndSpacingTray"
   );
 
   const { mutate: voteOnComment, isPending: isVotingComment } =

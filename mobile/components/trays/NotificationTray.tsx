@@ -20,6 +20,7 @@ import {
 import _API_INSTANCE from "@/utils/axios";
 
 const NotificationTray = ({ close }: { close: () => void }) => {
+  const { currentScheme } = useTheme();
   const { user } = useAuth();
   const { data, isFetching, refetch } = useQuery({
     queryKey: [user?.id, "user-notifications"],
@@ -63,12 +64,10 @@ const NotificationTray = ({ close }: { close: () => void }) => {
           <RefreshControl
             refreshing={isFetching}
             onRefresh={refetch}
-            tintColor={useTheme.getState().currentScheme.colorPrimaryContent}
-            titleColor={useTheme.getState().currentScheme.colorPrimaryContent}
-            colors={[useTheme.getState().currentScheme.colorPrimaryContent]}
-            progressBackgroundColor={
-              useTheme.getState().currentScheme.colorPrimary
-            }
+            tintColor={currentScheme.colorPrimaryContent}
+            titleColor={currentScheme.colorPrimaryContent}
+            colors={[currentScheme.colorPrimaryContent]}
+            progressBackgroundColor={currentScheme.colorPrimary}
           />
         }
         renderItem={({ item }) => (

@@ -2,7 +2,7 @@ import clsx from "clsx";
 import useTheme from "@/hooks/useTheme";
 import CustomText from "./CustomText";
 
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet } from "react-native";
 
 export default function FlippableCard({

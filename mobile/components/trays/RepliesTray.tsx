@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { useComment } from "@/hooks/useComment";
 import { toast } from "sonner-native";
+import useTheme from "@/hooks/useTheme";
 
 const RepliesTray = ({
   comment,
@@ -24,6 +25,7 @@ const RepliesTray = ({
   comment: Comment;
   close: () => void;
 }) => {
+  const { currentScheme } = useTheme();
   const { height } = useWindowDimensions();
   const [content, setContent] = useState("");
 
@@ -61,10 +63,13 @@ const RepliesTray = ({
   }, [comment]);
 
   return (
-    <CustomView
-      variant="colorBase100"
+    <KeyboardAvoidingView
+      behavior="height"
+      style={{
+        maxHeight: height / 1.2,
+        backgroundColor: currentScheme.colorBase100,
+      }}
       className="rounded-tr-3xl rounded-tl-3xl px-4 py-4 pb-4 gap-4"
-      style={{ maxHeight: height / 1.5 }}
     >
       <View className="flex flex-row gap-2 items-center">
         <CustomTextInput
@@ -119,7 +124,7 @@ const RepliesTray = ({
           <CustomText className="text-xl">No replies.</CustomText>
         </View>
       )}
-    </CustomView>
+    </KeyboardAvoidingView>
   );
 };
 

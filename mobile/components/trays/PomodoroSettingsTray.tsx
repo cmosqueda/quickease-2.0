@@ -14,6 +14,7 @@ import { TimerPicker } from "react-native-timer-picker";
 
 const PomodoroSettingsTray = ({ back }: { back: () => void }) => {
   const { settings, setSettings } = useTimer();
+  const { currentScheme } = useTheme();
 
   const [index, setIndex] = useState(0);
 
@@ -39,9 +40,9 @@ const PomodoroSettingsTray = ({ back }: { back: () => void }) => {
         initialValue={{ seconds: studyTime }}
         onDurationChange={(e) => setStudyTime(e.minutes)}
         styles={{
-          backgroundColor: useTheme.getState().currentScheme.colorBase100,
+          backgroundColor: currentScheme.colorBase100,
           text: {
-            color: useTheme.getState().currentScheme.colorBaseContent,
+            color: currentScheme.colorBaseContent,
           },
         }}
       />
@@ -55,9 +56,9 @@ const PomodoroSettingsTray = ({ back }: { back: () => void }) => {
         initialValue={{ seconds: shortBreakTime }}
         onDurationChange={(e) => setShortBreakTime(e.minutes)}
         styles={{
-          backgroundColor: useTheme.getState().currentScheme.colorBase100,
+          backgroundColor: currentScheme.colorBase100,
           text: {
-            color: useTheme.getState().currentScheme.colorBaseContent,
+            color: currentScheme.colorBaseContent,
           },
         }}
       />
