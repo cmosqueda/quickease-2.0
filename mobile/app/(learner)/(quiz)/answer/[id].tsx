@@ -9,20 +9,14 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { Quiz } from "@/types/user/types";
+import { toast } from "sonner-native";
 import { Switch } from "@expo/ui/jetpack-compose";
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  ToastAndroid,
-  Pressable,
-  View,
-  Alert,
-  ActivityIndicator,
-} from "react-native";
+import { useEffect, useRef, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
-import { toast } from "sonner-native";
+import { Pressable, View, Alert, ActivityIndicator } from "react-native";
 
 interface QuizQuestion {
   question: string;
@@ -36,9 +30,11 @@ interface UserAnswer {
   user_answer: number[];
 }
 
-export default function LearnerAnswerQuizPage() {
+export default function Page() {
   const { currentScheme } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
+
+  const startTime = useRef(new Date());
 
   const { data: quizData, isFetching } = useQuery<Quiz>({
     queryKey: ["answer-quiz", id],
@@ -89,7 +85,13 @@ export default function LearnerAnswerQuizPage() {
 
   const handleSubmit = async () => {
     if (!quizData) return;
+
+    const completionTime = new Date();
     setIsSubmitting(true);
+
+    const duration = Math.floor(
+      (completionTime.getTime() - startTime.current.getTime()) / 1000
+    );
 
     const correctCount = userAnswers.reduce((acc, ans) => {
       const correct = ans.question.correctAnswers;
@@ -106,9 +108,14 @@ export default function LearnerAnswerQuizPage() {
         {
           quiz_id: quizData.id,
           answer_data: userAnswers,
+          started_at: startTime.current.toISOString(),
+          completed_at: completionTime.toISOString(),
+          duration,
           score: correctCount,
         },
-        { timeout: 8 * 60 * 1000 }
+        {
+          timeout: 8 * 60 * 1000,
+        }
       );
 
       if (status === 200) {
@@ -119,8 +126,9 @@ export default function LearnerAnswerQuizPage() {
           params: { id: data.id },
         });
       }
-    } catch {
+    } catch (err) {
       toast("Error submitting quiz.");
+      console.log(err);
     } finally {
       setIsSubmitting(false);
     }

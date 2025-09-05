@@ -234,7 +234,7 @@ const GenerateFromDocumentTray = ({
         <CustomText>
           <MaterialIcons name="keyboard-arrow-left" size={24} onPress={close} />
         </CustomText>
-        <View>
+        <View className="flex-1 items-center">
           {type === "summary-notes" ? (
             <CustomText variant="bold" className="text-xl">
               Generate summary notes from document
