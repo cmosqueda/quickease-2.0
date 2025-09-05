@@ -13,14 +13,31 @@ import { useState } from "react";
 import { TimerPicker } from "react-native-timer-picker";
 
 const PomodoroSettingsTray = ({ back }: { back: () => void }) => {
-  const { settings } = useTimer();
+  const { settings, setSettings } = useTimer();
 
   const [index, setIndex] = useState(0);
+
+  const [studyTime, setStudyTime] = useState(settings.study);
+  const [shortBreakTime, setShortBreakTime] = useState(settings.shortBreak);
+
+  const handleSave = async () => {
+    if (studyTime === 0) {
+      return;
+    }
+
+    if (shortBreakTime === 0) {
+      return;
+    }
+
+    setSettings(studyTime, shortBreakTime);
+  };
 
   const tabs = [
     <View key={0} className="flex gap-4">
       <TimerPicker
-        initialValue={{ seconds: settings.study }}
+        hideSeconds
+        initialValue={{ seconds: studyTime }}
+        onDurationChange={(e) => setStudyTime(e.minutes)}
         styles={{
           backgroundColor: useTheme.getState().currentScheme.colorBase100,
           text: {
@@ -34,7 +51,9 @@ const PomodoroSettingsTray = ({ back }: { back: () => void }) => {
     </View>,
     <View key={1} className="flex gap-4">
       <TimerPicker
-        initialValue={{ seconds: settings.shortBreak }}
+        hideSeconds
+        initialValue={{ seconds: shortBreakTime }}
+        onDurationChange={(e) => setShortBreakTime(e.minutes)}
         styles={{
           backgroundColor: useTheme.getState().currentScheme.colorBase100,
           text: {
@@ -82,6 +101,7 @@ const PomodoroSettingsTray = ({ back }: { back: () => void }) => {
       <CustomPressable
         variant="colorBase200"
         className="rounded-3xl justify-center items-center"
+        onPress={handleSave}
       >
         <CustomText>Save</CustomText>
       </CustomPressable>
