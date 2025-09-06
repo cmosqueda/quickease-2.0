@@ -4,39 +4,31 @@ import useTheme from "@/hooks/useTheme";
 import UserAvatar from "@/components/UserAvatar";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
+import PostActionBar from "@/components/PostActionBar";
 import CustomRichText from "@/components/CustomRichText";
 import CommentComponent from "@/components/CommentComponent";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { useVote } from "@/hooks/useVote";
 import { useQuery } from "@tanstack/react-query";
 import { useTrays } from "react-native-trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { Comment, Post } from "@/types/user/types";
+import { RefreshControl } from "react-native-gesture-handler";
 import { Pressable, ScrollView, View } from "react-native";
 import { Link, router, useLocalSearchParams } from "expo-router";
 
 import _API_INSTANCE from "@/utils/axios";
-import { RefreshControl } from "react-native-gesture-handler";
 
 export default function Page() {
   const { user } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { currentScheme } = useTheme();
-  const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
-    "DismissibleStickToTopTray"
-  );
 
   const useViewProfileTray = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
-
-  const { mutate: voteOnPost, isPending: isVotingPost } = useVote([
-    ["view-post", id],
-  ]);
 
   const {
     data: post,
@@ -149,63 +141,7 @@ export default function Page() {
           )}
         </ScrollView>
 
-        <CustomView
-          variant="colorPrimary"
-          className="flex flex-row gap-4 items-center px-8 py-4 rounded-tl-3xl rounded-tr-3xl"
-        >
-          <Pressable
-            disabled={isVotingPost}
-            onPress={() => voteOnPost({ post_id: id, vote_type: -1 })}
-          >
-            <CustomText color="colorPrimaryContent">
-              <MaterialIcons name="keyboard-arrow-up" size={24} />
-            </CustomText>
-          </Pressable>
-
-          <CustomText variant="bold" color="colorPrimaryContent">
-            {post?.vote_sum}
-          </CustomText>
-          <Pressable
-            disabled={isVotingPost}
-            onPress={() => voteOnPost({ post_id: id, vote_type: -1 })}
-          >
-            <CustomText color="colorPrimaryContent">
-              <MaterialIcons name="keyboard-arrow-down" size={24} />
-            </CustomText>
-          </Pressable>
-
-          <View className="flex-1" />
-          <View className="flex flex-row items-center gap-4">
-            <Pressable
-              onPress={() => {
-                openTray("CommentOnPostTray", {
-                  close: closeTray,
-                  post: post!,
-                });
-              }}
-              className="flex flex-row gap-2 items-center"
-            >
-              <CustomText color="colorPrimaryContent">
-                <MaterialCommunityIcons name="comment" size={24} />
-              </CustomText>
-            </Pressable>
-            {post?.attachments && post?.attachments.length > 0 && (
-              <Pressable
-                onPress={() => {
-                  openTray("ViewPostAttachmentsTray", {
-                    close: closeTray,
-                    post: post!,
-                  });
-                }}
-                className="flex flex-row gap-2 items-center"
-              >
-                <CustomText color="colorPrimaryContent">
-                  <MaterialCommunityIcons name="view-list" size={24} />
-                </CustomText>
-              </Pressable>
-            )}
-          </View>
-        </CustomView>
+        <PostActionBar post={post} id={id} />
       </SafeAreaView>
     );
   }

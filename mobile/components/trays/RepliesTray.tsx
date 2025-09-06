@@ -3,6 +3,7 @@ import CustomText from "../CustomText";
 import CustomView from "../CustomView";
 import CustomTextInput from "../CustomTextInput";
 import CommentComponent from "../CommentComponent";
+
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 import { toast } from "sonner-native";
@@ -33,11 +34,7 @@ const RepliesTray = ({
   const { height } = useWindowDimensions();
   const [content, setContent] = useState("");
 
-  const {
-    data: post,
-    refetch,
-    isRefetching,
-  } = useQuery({
+  const { data: post, refetch } = useQuery({
     queryKey: ["view-post", comment.post_id],
     queryFn: async () => {
       const { data } = await _API_INSTANCE.get<Post>(
