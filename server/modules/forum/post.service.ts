@@ -54,6 +54,7 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
     },
     orderBy: {
       created_at: "desc",
+      updated_at: "desc",
     },
     include: {
       user: {

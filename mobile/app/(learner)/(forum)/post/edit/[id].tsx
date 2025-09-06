@@ -8,14 +8,17 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { toast } from "sonner-native";
-import { router } from "expo-router";
 import { useTrays } from "react-native-trays";
 import { checkBadges } from "@/types/user/badges";
+import { useEditPost } from "@/hooks/useEditPost";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
-import { useQueryClient } from "@tanstack/react-query";
+import { useDeletePost } from "@/hooks/useDeletePost";
 import { useEffect, useState } from "react";
-import { Flashcard, Note, Quiz } from "@/types/user/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { router, useLocalSearchParams } from "expo-router";
+import { Flashcard, Note, Post, Quiz, Tag } from "@/types/user/types";
+
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -37,14 +40,27 @@ import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
 export default function Page() {
   const queryClient = useQueryClient();
-
   const tagsTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
   const selectionTray = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
-  const { currentScheme } = useTheme();
+
+  const { id } = useLocalSearchParams<{ id: string }>();
   const { width } = useWindowDimensions();
+  const { currentScheme } = useTheme();
+
+  const { mutate: updatePost, isPending: updatingPost } = useEditPost();
+  const { mutate: deletePost, isPending: deletingPost } = useDeletePost();
+
   const [isToolbarHidden, setToolbarVisibility] = useState(true);
+
+  const { data: post } = useQuery({
+    queryKey: ["view-post", id],
+    queryFn: async () => {
+      const { data } = await _API_INSTANCE.get<Post>(`/forum/post/${id}`);
+      return data;
+    },
+  });
 
   const [title, setTitle] = useState("");
 
@@ -62,7 +78,7 @@ export default function Page() {
 
   const editorContent = useEditorContent(editor, { type: "html" });
 
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
   const [selectedQuizzes, setSelectedQuizzes] = useState<Quiz[]>([]);
   const [selectedFlashcards, setSelectedFlashcards] = useState<Flashcard[]>([]);
@@ -83,53 +99,39 @@ export default function Page() {
     setIsSaving(true);
 
     try {
-      const attachments = [
-        ...selectedNotes.map((n) => ({
-          resource_type: "NOTE" as const,
-          resource_id: n.id,
-        })),
-        ...selectedFlashcards.map((f) => ({
-          resource_type: "FLASHCARD" as const,
-          resource_id: f.id,
-        })),
-        ...selectedQuizzes.map((q) => ({
-          resource_type: "QUIZ" as const,
-          resource_id: q.id,
-        })),
-      ];
+      updatePost({ body: editorContent, title: title, post_id: id });
 
-      const { status, data } = await _API_INSTANCE.post(
-        "/forum/post/create",
-        {
-          body: editorContent,
-          title,
-          attachments,
-          tags: tags,
-        },
-        {
-          timeout: 8 * 60 * 1000,
-        }
-      );
+      await checkBadges();
+      queryClient.invalidateQueries({ queryKey: ["recent-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["view-post", id] });
 
-      if (status === 200) {
-        await checkBadges();
-        queryClient.invalidateQueries({ queryKey: ["recent-posts"] });
-        toast.success("Post created successfully.");
+      toast.success("Post updated.");
 
-        router.push({
-          pathname: "/(learner)/(forum)/post/view/[id]",
-          params: { id: data.id },
-        });
-      } else if (status === 400 && data.toxic) {
-        toast.error(data.message);
-      } else {
-        toast.error("Failed to create post. Try again.");
-      }
+      router.push({
+        pathname: "/(learner)/(forum)/post/view/[id]",
+        params: { id: id },
+      });
     } catch (err: any) {
       console.error(err);
       toast.error(err?.response?.data?.message || "An error occurred.");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      deletePost({ post_id: id });
+
+      await checkBadges();
+      queryClient.invalidateQueries({ queryKey: ["recent-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["view-post", id] });
+
+      toast.success("Post deleted.");
+
+      router.back();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "An error occurred.");
     }
   };
 
@@ -157,6 +159,43 @@ export default function Page() {
     };
   }, []); // used for hiding the toolbar | might be unstable, tabanggg buset nga tiptap kinia.
 
+  useEffect(() => {
+    if (!post) return;
+
+    setTitle(post.title);
+
+    setTags(post.tags?.map((t) => t.tag) ?? []);
+
+    const notes: Note[] = [];
+    const flashcards: Flashcard[] = [];
+    const quizzes: Quiz[] = [];
+
+    post.attachments?.forEach((a) => {
+      if (a.resource_type === "NOTE" && a.note) notes.push(a.note);
+      if (a.resource_type === "FLASHCARD" && a.flashcard)
+        flashcards.push(a.flashcard);
+      if (a.resource_type === "QUIZ" && a.quiz) quizzes.push(a.quiz);
+    });
+
+    setSelectedNotes(notes);
+    setSelectedFlashcards(flashcards);
+    setSelectedQuizzes(quizzes);
+
+    if (post.post_body) {
+      editor.setContent(post.post_body);
+    }
+  }, [post]);
+
+  if (!post) {
+    return (
+      <SafeAreaView
+        className="flex flex-1 p-4 gap-2"
+        edges={["left", "right", "top"]}
+        style={{ backgroundColor: currentScheme.colorBase100 }}
+      ></SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView
       className="flex flex-1 p-4 gap-2"
@@ -169,16 +208,28 @@ export default function Page() {
             <MaterialIcons name="keyboard-arrow-left" size={36} />
           </CustomText>
         </Pressable>
-        <CustomPressable
-          className="rounded-3xl disabled:opacity-60"
-          variant="colorBase300"
-          disabled={isSaving}
-          onPress={handleSave}
-        >
-          <CustomText>
-            <MaterialCommunityIcons name="send" size={20} />
-          </CustomText>
-        </CustomPressable>
+        <View className="flex flex-row gap-4 items-center">
+          <CustomPressable
+            onPress={handleDelete}
+            className="rounded-3xl disabled:opacity-60"
+            variant="colorBase300"
+            disabled={deletingPost}
+          >
+            <CustomText>
+              <MaterialCommunityIcons name="delete" size={20} />
+            </CustomText>
+          </CustomPressable>
+          <CustomPressable
+            className="rounded-3xl disabled:opacity-60"
+            variant="colorBase300"
+            disabled={isSaving}
+            onPress={handleSave}
+          >
+            <CustomText>
+              <MaterialCommunityIcons name="send" size={20} />
+            </CustomText>
+          </CustomPressable>
+        </View>
       </View>
       <CustomTextInput
         style={{
@@ -192,7 +243,7 @@ export default function Page() {
         value={title}
         onChangeText={setTitle}
       />
-      <View className="flex flex-row gap-2">
+      <View className="hidden flex-row gap-2">
         <CustomPressable
           variant="colorBase300"
           className="rounded-3xl flex flex-row gap-3 items-center"

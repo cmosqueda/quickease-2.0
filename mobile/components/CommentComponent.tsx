@@ -102,34 +102,36 @@ export default function CommentComponent({
 
           <CustomView
             variant="colorPrimary"
-            className="flex flex-row gap-4 items-center rounded-3xl px-6 py-4"
+            className="flex flex-row gap-4 items-center rounded-3xl px-4 py-4"
           >
-            <Pressable
-              className="disabled:opacity-30"
-              disabled={isVotingComment}
-              onPress={() =>
-                voteOnComment({ comment_id: comment.id, vote_type: 1 })
-              }
-            >
-              <CustomText color="colorPrimaryContent">
-                <MaterialIcons name="keyboard-arrow-up" size={24} />
-              </CustomText>
-            </Pressable>
+            <View className="flex flex-row gap-2 items-center">
+              <Pressable
+                className="disabled:opacity-30"
+                disabled={isVotingComment}
+                onPress={() =>
+                  voteOnComment({ comment_id: comment.id, vote_type: 1 })
+                }
+              >
+                <CustomText color="colorPrimaryContent">
+                  <MaterialIcons name="keyboard-arrow-up" size={24} />
+                </CustomText>
+              </Pressable>
 
-            <CustomText variant="bold" color="colorPrimaryContent">
-              {comment.vote_sum}
-            </CustomText>
-
-            <Pressable
-              disabled={isVotingComment}
-              onPress={() =>
-                voteOnComment({ comment_id: comment.id, vote_type: -1 })
-              }
-            >
-              <CustomText color="colorPrimaryContent">
-                <MaterialIcons name="keyboard-arrow-down" size={24} />
+              <CustomText variant="bold" color="colorPrimaryContent">
+                {comment.vote_sum}
               </CustomText>
-            </Pressable>
+
+              <Pressable
+                disabled={isVotingComment}
+                onPress={() =>
+                  voteOnComment({ comment_id: comment.id, vote_type: -1 })
+                }
+              >
+                <CustomText color="colorPrimaryContent">
+                  <MaterialIcons name="keyboard-arrow-down" size={24} />
+                </CustomText>
+              </Pressable>
+            </View>
 
             <View className="flex-1" />
 
