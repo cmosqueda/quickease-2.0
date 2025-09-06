@@ -3,16 +3,13 @@ import useTheme from "@/hooks/useTheme";
 import { StyleProp, ViewStyle } from "react-native";
 
 import {
-  CoreEditorActionType,
-  EditorMessage,
   RecursivePartial,
   RichText,
   useEditorBridge,
-  useEditorContent,
 } from "@10play/tentap-editor";
 
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function CustomRichText({
   content,

@@ -20,6 +20,23 @@ import { View, ScrollView, Pressable } from "react-native";
 import _FONTS from "@/types/theme/Font";
 import _API_INSTANCE from "@/utils/axios";
 
+/*
+  _DONT TOUCH
+  Used for mapping flashcards & making it flippable
+*/
+const Card = ({ card }: { card: { front: string; back: string } }) => {
+  const [flipped, setFlipped] = useState(false);
+
+  return (
+    <FlippableCard
+      front={card.front}
+      back={card.back}
+      flipped={flipped}
+      setFlipped={setFlipped}
+    />
+  );
+};
+
 export default function Page() {
   const { user, addFlashcard } = useAuth();
   const { currentScheme } = useTheme();
@@ -96,6 +113,7 @@ export default function Page() {
         <CustomPressable
           className="flex flex-row gap-2 items-center rounded-3xl"
           variant="colorBase200"
+          disabled={isSaving}
           onPress={() => {
             if (cards.length < 2) {
               toast("The flashcards must contain at least 2.");
@@ -118,13 +136,13 @@ export default function Page() {
       <View className="flex flex-row gap-2">
         <CustomView
           className="rounded-full flex-1"
-          variant={index == 0 ? "colorPrimary" : "colorBase300"}
+          variant={index === 0 ? "colorPrimary" : "colorBase300"}
           style={{ height: 6 }}
         />
         <CustomView
           className="rounded-full flex-1"
           style={{ height: 6 }}
-          variant={index == 1 ? "colorPrimary" : "colorBase300"}
+          variant={index === 1 ? "colorPrimary" : "colorBase300"}
         />
       </View>
       <PagerView
@@ -159,7 +177,6 @@ export default function Page() {
               textAlignVertical="top"
               value={description}
               onChangeText={setDescription}
-              multiline
             />
           </View>
           <CustomPressable
@@ -219,7 +236,7 @@ export default function Page() {
             contentContainerClassName="gap-4"
           >
             {cards.map((card, index) => (
-              <FlippableCard front={card.front} back={card.back} key={index} />
+              <Card card={card} key={index} />
             ))}
           </ScrollView>
         </View>

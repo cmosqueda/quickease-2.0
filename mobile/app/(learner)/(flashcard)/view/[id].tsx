@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import PagerView from "react-native-pager-view";
+import UserAvatar from "@/components/UserAvatar";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import FlippableCard from "@/components/FlippableCard";
@@ -19,7 +20,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { View, Pressable, ActivityIndicator } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
-import UserAvatar from "@/components/UserAvatar";
 
 export default function Page() {
   const { currentScheme } = useTheme();
@@ -30,7 +30,6 @@ export default function Page() {
     data: flashcardData,
     isFetching,
     isError,
-    error,
   } = useQuery({
     queryKey: ["view-flashcard", id],
     queryFn: async () => {
@@ -75,11 +74,6 @@ export default function Page() {
         <CustomText variant="bold" className="text-red-600">
           Failed to load flashcard.
         </CustomText>
-        {__DEV__ && (
-          <CustomText className="text-xs opacity-50">
-            {(error as Error)?.message}
-          </CustomText>
-        )}
       </SafeAreaView>
     );
   }

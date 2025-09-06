@@ -20,6 +20,23 @@ import { View, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import _API_INSTANCE from "@/utils/axios";
 import _FONTS from "@/types/theme/Font";
 
+/*
+  _DONT TOUCH
+  Used for mapping flashcards & making it flippable
+*/
+const Card = ({ card }: { card: { front: string; back: string } }) => {
+  const [flipped, setFlipped] = useState(false);
+
+  return (
+    <FlippableCard
+      front={card.front}
+      back={card.back}
+      flipped={flipped}
+      setFlipped={setFlipped}
+    />
+  );
+};
+
 export default function Page() {
   const { currentScheme } = useTheme();
   const { id: flashcardId } = useLocalSearchParams<{ id?: string }>();
@@ -284,11 +301,7 @@ export default function Page() {
               contentContainerClassName="gap-4"
             >
               {cards.map((card, index) => (
-                <FlippableCard
-                  front={card.front}
-                  back={card.back}
-                  key={index}
-                />
+                <Card card={card} key={index} />
               ))}
             </ScrollView>
           ) : (

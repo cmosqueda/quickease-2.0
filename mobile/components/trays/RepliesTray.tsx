@@ -1,12 +1,17 @@
+import useTheme from "@/hooks/useTheme";
 import CustomText from "../CustomText";
 import CustomView from "../CustomView";
 import CustomTextInput from "../CustomTextInput";
 import CommentComponent from "../CommentComponent";
-
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
-import { Comment } from "@/types/user/types";
-import { useEffect, useState } from "react";
+import { toast } from "sonner-native";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useComment } from "@/hooks/useComment";
+import { Comment, Post } from "@/types/user/types";
+import { findCommentById } from "@/utils/comment";
+
 import {
   View,
   ScrollView,
@@ -14,9 +19,8 @@ import {
   useWindowDimensions,
   Pressable,
 } from "react-native";
-import { useComment } from "@/hooks/useComment";
-import { toast } from "sonner-native";
-import useTheme from "@/hooks/useTheme";
+
+import _API_INSTANCE from "@/utils/axios";
 
 const RepliesTray = ({
   comment,
@@ -29,7 +33,23 @@ const RepliesTray = ({
   const { height } = useWindowDimensions();
   const [content, setContent] = useState("");
 
-  const [comments, setComments] = useState(comment);
+  const {
+    data: post,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["view-post", comment.post_id],
+    queryFn: async () => {
+      const { data } = await _API_INSTANCE.get<Post>(
+        `/forum/post/${comment.post_id}`
+      );
+      return data;
+    },
+  });
+
+  const liveComment = post
+    ? findCommentById(post.comments, comment.id)
+    : comment;
 
   const { mutate: createComment } = useComment([
     ["view-post", comment.post_id],
@@ -40,7 +60,6 @@ const RepliesTray = ({
       toast("Empty comment?");
       return;
     }
-
     createComment(
       {
         body: content,
@@ -48,8 +67,9 @@ const RepliesTray = ({
         post_id: comment.post_id,
       },
       {
-        onSuccess: () => {
-          close();
+        onSuccess: async () => {
+          setContent("");
+          await refetch();
         },
         onError: () => {
           toast.error("Error commenting.");
@@ -57,10 +77,6 @@ const RepliesTray = ({
       }
     );
   };
-
-  useEffect(() => {
-    setComments(comment);
-  }, [comment]);
 
   return (
     <KeyboardAvoidingView
@@ -105,9 +121,10 @@ const RepliesTray = ({
           </View>
         </View>
       </View>
-      {comment.replies && comment.replies.length > 0 && (
+
+      {liveComment?.replies && liveComment.replies.length > 0 ? (
         <ScrollView contentContainerClassName="gap-4">
-          {comments.replies.map((reply: Comment) => (
+          {liveComment.replies.map((reply: Comment) => (
             <CommentComponent
               key={reply.id}
               comment={reply}
@@ -115,8 +132,7 @@ const RepliesTray = ({
             />
           ))}
         </ScrollView>
-      )}
-      {comment.replies && comment.replies.length === 0 && (
+      ) : (
         <View className="items-center justify-center gap-2">
           <CustomText>
             <MaterialCommunityIcons name="emoticon-sad" size={48} />

@@ -71,19 +71,13 @@ export const _BLOCKQUOTE_BRIDGE_THEME = () => `
 `;
 
 // build editor extensions
-export const _EDITOR_BRIDGE_EXTENSIONS = () => {
-  const base = Array.isArray(TenTapStartKit)
-    ? TenTapStartKit
-    : TenTapStartKit
-      ? [TenTapStartKit]
-      : [];
+const _EDITOR_BRIDGE_EXTENSIONS = [
+  ...TenTapStartKit,
+  HeadingBridge.configureCSS(_HEADING_BRIDGE_THEME()),
+  BulletListBridge.configureCSS(_BULLET_LIST_BRIDGE_THEME()),
+  OrderedListBridge.configureCSS(_ORDERED_LIST_BRIDGE_THEME()),
+  CodeBridge.configureCSS(_CODEBLOCK_BRIDGE_THEME()),
+  BlockquoteBridge.configureCSS(_BLOCKQUOTE_BRIDGE_THEME()),
+];
 
-  return [
-    ...base,
-    HeadingBridge.configureCSS(_HEADING_BRIDGE_THEME()),
-    BulletListBridge.configureCSS(_BULLET_LIST_BRIDGE_THEME()),
-    OrderedListBridge.configureCSS(_ORDERED_LIST_BRIDGE_THEME()),
-    CodeBridge.configureCSS(_CODEBLOCK_BRIDGE_THEME()),
-    BlockquoteBridge.configureCSS(_BLOCKQUOTE_BRIDGE_THEME()),
-  ];
-};
+export default _EDITOR_BRIDGE_EXTENSIONS;
