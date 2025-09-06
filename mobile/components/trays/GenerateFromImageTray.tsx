@@ -21,6 +21,7 @@ const GenerateFromImageTray = ({
   close: () => void;
   type: "quiz" | "flashcard" | "summary-notes";
 }) => {
+  const { currentScheme } = useTheme();
   const [document, setDocument] =
     useState<DocumentPicker.DocumentPickerAsset>();
 
@@ -35,7 +36,6 @@ const GenerateFromImageTray = ({
 
       if (document.canceled === false) {
         setDocument(document.assets[0]);
-        console.log(document.assets);
       } else {
         toast("Pick atleast one file.");
         close();
@@ -142,10 +142,7 @@ const GenerateFromImageTray = ({
     <>
       <View className="py-8 items-center justify-center">
         <CustomText>
-          <ActivityIndicator
-            size={72}
-            color={useTheme.getState().currentScheme.colorPrimary}
-          />
+          <ActivityIndicator size={72} color={currentScheme.colorPrimary} />
         </CustomText>
         <CustomText variant="bold" className="text-xl">
           Generating...

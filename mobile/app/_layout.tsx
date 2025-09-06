@@ -61,11 +61,12 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <QueryClientProvider client={client}>
-        <TrayProvider trays={_TRAYS} stackConfigs={_STACK_CONFIG}>
+        <TrayProvider trays={_TRAYS} stackConfigs={_STACK_CONFIG} key={"tray"}>
           <Stack
             screenOptions={{
               headerShown: false,
               animation: "fade_from_bottom",
+              headerTransparent: false,
             }}
           >
             <Stack.Screen name="index" />
@@ -81,7 +82,7 @@ export default function RootLayout() {
         <Toaster
           position="top-center"
           swipeToDismissDirection="left"
-          theme={currentScheme.colorscheme == "dark" ? "light" : "dark"}
+          theme={currentScheme.colorscheme === "dark" ? "light" : "dark"}
           style={{
             backgroundColor: currentScheme.colorPrimary,
           }}

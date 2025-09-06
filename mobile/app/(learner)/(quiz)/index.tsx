@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
+import ListItem from "@/components/ListItem";
 import PagerView from "react-native-pager-view";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
@@ -13,11 +14,11 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { Quiz } from "@/types/user/types";
 import { useTrays } from "react-native-trays";
+import { Pressable } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { useRef, useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
 
 export default function Page() {
   const { isConnected } = useNetInfo();
@@ -32,6 +33,23 @@ export default function Page() {
 
   const pagerViewRef = useRef<PagerView>(null);
   const [index, setIndex] = useState(0);
+
+  const tabs = [
+    { label: "All", items: user?.quizzes },
+    {
+      label: "By recent",
+      items: [...(user?.quizzes ?? [])].sort(
+        (a: Quiz, b: Quiz) =>
+          dayjs(b.updated_at).valueOf() - dayjs(a.updated_at).valueOf()
+      ),
+    },
+    {
+      label: "AI - Generated",
+      items: user?.quizzes.filter(
+        (note: Quiz) => note.is_ai_generated === true
+      ),
+    },
+  ];
 
   return (
     <SafeAreaView
@@ -130,154 +148,19 @@ export default function Page() {
           setIndex(e.nativeEvent.position);
         }}
       >
-        <ScrollView
-          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
-          className="rounded-tr-3xl rounded-tl-3xl"
-          style={{ backgroundColor: currentScheme.colorBase300 }}
-          key={0}
-        >
-          {user?.quizzes.map((quiz: Quiz) => (
-            <Link
-              asChild
-              href={{
-                pathname: "/(learner)/(quiz)/view/[id]",
-                params: { id: quiz.id },
-              }}
-              key={quiz.id}
-            >
-              <Pressable
-                disabled={!isConnected}
-                className="disabled:opacity-70"
-                onLongPress={() =>
-                  openContextMenu("ContextMenuTray", {
-                    close: closeContextMenu,
-                    type: "quiz",
-                    id: quiz.id,
-                  })
-                }
-              >
-                <CustomView className="p-6 rounded-xl gap-2">
-                  {quiz.is_ai_generated && (
-                    <View className="flex flex-row gap-4 items-center">
-                      <CustomText>
-                        <MaterialIcons name="info" size={18} />
-                      </CustomText>
-                      <CustomText>AI-Generated</CustomText>
-                    </View>
-                  )}
-                  <CustomText className="text-sm opacity-40">
-                    {dayjs(quiz.updated_at)
-                      .format("hh:mm A / MMMM DD, YYYY")
-                      .toString()}
-                  </CustomText>
-                  <CustomText variant="bold" className="text-3xl">
-                    {quiz.title}
-                  </CustomText>
-                </CustomView>
-              </Pressable>
-            </Link>
-          ))}
-        </ScrollView>
-        <ScrollView
-          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
-          className="rounded-tr-3xl rounded-tl-3xl"
-          style={{ backgroundColor: currentScheme.colorBase300 }}
-          key={1}
-        >
-          {[...(user?.quizzes ?? [])]
-            .sort(
-              (a: Quiz, b: Quiz) =>
-                dayjs(b.updated_at).valueOf() - dayjs(a.updated_at).valueOf()
-            )
-            .map((quiz: Quiz) => (
-              <Link
-                asChild
-                key={quiz.id}
-                href={{
-                  pathname: "/(learner)/(quiz)/view/[id]",
-                  params: { id: quiz.id.toString() },
-                }}
-              >
-                <Pressable
-                  disabled={!isConnected}
-                  className="disabled:opacity-70"
-                  onLongPress={() =>
-                    openContextMenu("ContextMenuTray", {
-                      close: closeContextMenu,
-                      type: "quiz",
-                      id: quiz.id,
-                    })
-                  }
-                >
-                  <CustomView className="p-6 rounded-xl gap-2">
-                    {quiz.is_ai_generated && (
-                      <View className="flex flex-row gap-4 items-center">
-                        <MaterialIcons name="info" size={18} />
-                        <CustomText>AI-Generated</CustomText>
-                      </View>
-                    )}
-                    <CustomText className="text-sm opacity-40">
-                      {dayjs(quiz.updated_at).format("hh:mm A / MMMM DD, YYYY")}
-                    </CustomText>
-                    <CustomText variant="bold" className="text-3xl">
-                      {quiz.title}
-                    </CustomText>
-                  </CustomView>
-                </Pressable>
-              </Link>
-            ))}
-        </ScrollView>
-        <ScrollView
-          contentContainerClassName="flex flex-col gap-4 px-4 py-4"
-          className="rounded-tr-3xl rounded-tl-3xl"
-          style={{ backgroundColor: currentScheme.colorBase300 }}
-          key={2}
-        >
-          {user?.quizzes
-            .filter((quiz: Quiz) => quiz.is_ai_generated === true)
-            .map((quiz: Quiz) => (
-              <Link
-                asChild
-                href={{
-                  pathname: "/(learner)/(quiz)/view/[id]",
-                  params: { id: quiz.id },
-                }}
-                key={quiz.id}
-              >
-                <Pressable
-                  disabled={!isConnected}
-                  className="disabled:opacity-70"
-                  onLongPress={() =>
-                    openContextMenu("ContextMenuTray", {
-                      close: closeContextMenu,
-                      type: "quiz",
-                      id: quiz.id,
-                    })
-                  }
-                >
-                  <CustomView className="p-6 rounded-xl gap-2">
-                    {quiz.is_ai_generated && (
-                      <View className="flex flex-row gap-4 items-center">
-                        <CustomText>
-                          <MaterialIcons name="info" size={18} />
-                        </CustomText>
-                        <CustomText>AI-Generated</CustomText>
-                      </View>
-                    )}
-                    <CustomText className="text-sm opacity-40">
-                      {dayjs(quiz.updated_at)
-                        .format("hh:mm A / MMMM DD, YYYY")
-                        .toString()}
-                    </CustomText>
-                    <CustomText variant="bold" className="text-3xl">
-                      {quiz.title}
-                    </CustomText>
-                  </CustomView>
-                </Pressable>
-              </Link>
-            ))}
-        </ScrollView>
+        {tabs.map((tab, i) => (
+          <ListItem
+            key={i}
+            items={tab.items as Quiz[]}
+            isConnected={isConnected ?? false}
+            openContextMenu={openContextMenu}
+            closeContextMenu={closeContextMenu}
+            background={currentScheme.colorBase300}
+            type={"quiz"}
+          />
+        ))}
       </PagerView>
+
       {isConnected && (
         <Link asChild href={"/(learner)/(quiz)/create"}>
           <CustomPressable

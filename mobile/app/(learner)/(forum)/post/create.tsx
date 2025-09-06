@@ -10,11 +10,11 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { toast } from "sonner-native";
 import { router } from "expo-router";
 import { useTrays } from "react-native-trays";
-import { useEffect, useState } from "react";
-import { QueryClient } from "@tanstack/react-query";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Flashcard, Note, Quiz } from "@/types/user/types";
 import {
   Keyboard,
@@ -36,7 +36,7 @@ import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
 export default function Page() {
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
 
   const tagsTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
   const selectionTray = useTrays<MyTraysProps>(

@@ -26,13 +26,14 @@ const CommentOnPostTray = ({
   post: Post;
   close: () => void;
 }) => {
+  const { currentScheme } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const editor = useEditorBridge({
     theme: {
       webview: {
         padding: 8,
-        backgroundColor: useTheme.getState().currentScheme.colorBase100,
+        backgroundColor: currentScheme.colorBase100,
       },
     },
     bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
@@ -43,9 +44,7 @@ const CommentOnPostTray = ({
     type: "html",
   });
 
-  const { mutate: createComment, isPending } = useComment([
-    ["view-post", post.id],
-  ]);
+  const { mutate: createComment } = useComment([["view-post", post.id]]);
 
   const handleSubmit = () => {
     if (!editorContent) {
@@ -95,8 +94,8 @@ const CommentOnPostTray = ({
       </View>
       <KeyboardAvoidingView
         style={{
-          minHeight: Dimensions.get("screen").height / 2,
-          maxHeight: Dimensions.get("screen").height / 1.5,
+          minHeight: Dimensions.get("screen").height / 3,
+          maxHeight: Dimensions.get("screen").height / 2.5,
         }}
       >
         {editor && <RichText editor={editor} />}

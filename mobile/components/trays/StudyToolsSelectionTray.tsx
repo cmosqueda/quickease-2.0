@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import CustomText from "../CustomText";
 import CustomView from "../CustomView";
@@ -18,6 +19,38 @@ const StudyToolsSelectionTray = ({
   type: "quiz" | "flashcard";
 }) => {
   const { currentScheme } = useTheme();
+  const { user } = useAuth();
+
+  if (!user?.is_verified) {
+    return (
+      <CustomView
+        variant="colorBase100"
+        className="rounded-tr-3xl rounded-tl-3xl px-4 py-8 gap-4"
+      >
+        <View className="flex flex-row gap-4 items-center">
+          <CustomText>
+            <MaterialIcons
+              name="keyboard-arrow-left"
+              size={24}
+              onPress={close}
+            />
+          </CustomText>
+        </View>
+        <View className="gap-2 items-center justify-center">
+          <CustomText>
+            <MaterialCommunityIcons name="alert-circle" size={64} />
+          </CustomText>
+          <CustomText className="text-4xl text-center" variant="bold">
+            Verify your email
+          </CustomText>
+          <CustomText className="text-center opacity-70">
+            To use AI Study Tools, verify your email. This helps us prevent
+            fraudulent activity & spam.
+          </CustomText>
+        </View>
+      </CustomView>
+    );
+  }
 
   return (
     <CustomView
@@ -40,14 +73,14 @@ const StudyToolsSelectionTray = ({
         <CustomText>
           <MaterialCommunityIcons name="note-multiple" size={32} />
         </CustomText>
-        <Pressable className="flex-1">
+        <View className="flex-1">
           <CustomText className="text-xl" variant="black">
             Select from notes
           </CustomText>
           <CustomText className="opacity-60">
             Generate a {type} from selecting one of your notes.
           </CustomText>
-        </Pressable>
+        </View>
       </Pressable>
       <Pressable
         style={{ backgroundColor: currentScheme.colorBase200 }}

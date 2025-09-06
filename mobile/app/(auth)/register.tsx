@@ -56,7 +56,6 @@ export default function Page() {
         router.replace("/(learner)/(forum)");
       }
     } catch (err: any) {
-      console.log(err);
       toast.error(
         err.response.data.message || "Error registering, please try again."
       );

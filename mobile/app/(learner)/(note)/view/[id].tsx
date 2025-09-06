@@ -7,7 +7,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { Note } from "@/types/user/types";
 import { toast } from "sonner-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
@@ -24,11 +24,11 @@ import {
   Pressable,
   KeyboardAvoidingView,
   useWindowDimensions,
+  Keyboard,
 } from "react-native";
 
 import _FONTS from "@/types/theme/Font";
 import _API_INSTANCE from "@/utils/axios";
-import _GENERATION_ANIMATION from "../../../../assets/animations/generate-study-materials.json";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
 export default function Page() {
@@ -39,6 +39,7 @@ export default function Page() {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [isToolbarHidden, setToolbarVisibility] = useState(true);
 
   const editor = useEditorBridge({
     theme: {
@@ -105,6 +106,30 @@ export default function Page() {
     }
   };
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        if (editor.getEditorState().isFocused) {
+          setToolbarVisibility(false);
+        }
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        if (editor.getEditorState().isFocused) {
+          setToolbarVisibility(true);
+        }
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []); // used for hiding the toolbar | might be unstable, tabanggg buset nga tiptap kinia.
+
   if (isFetching) {
     return (
       <SafeAreaView
@@ -164,7 +189,7 @@ export default function Page() {
           <Toolbar
             editor={editor}
             shouldHideDisabledToolbarItems
-            hidden={false}
+            hidden={isToolbarHidden}
           />
         </KeyboardAvoidingView>
       </SafeAreaView>

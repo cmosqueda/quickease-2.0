@@ -9,6 +9,7 @@ import { Link } from "expo-router";
 import { useVote } from "@/hooks/useVote";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { Pressable, View } from "react-native";
+import useAuth from "@/hooks/useAuth";
 
 export default function PostComponent({
   post,
@@ -17,6 +18,7 @@ export default function PostComponent({
   post: Post;
   disableBottomBar?: boolean;
 }) {
+  const { user } = useAuth();
   const { isConnected } = useNetInfo();
   const { mutate: voteOnPost, isPending } = useVote([["recent-posts"]]);
 
@@ -96,13 +98,42 @@ export default function PostComponent({
 
           <View className="flex-1" />
 
-          <View className="flex flex-row gap-2 items-center">
-            <CustomText color="colorPrimaryContent">
-              <MaterialCommunityIcons name="comment" size={24} />
-            </CustomText>
-            <CustomText color="colorPrimaryContent">
-              {post.comments.length}
-            </CustomText>
+          <View className="flex flex-row items-center gap-4">
+            {post.user?.id === user?.id && (
+              <Link
+                href={{
+                  pathname: "/post/edit/[id]",
+                  params: { id: post.id },
+                }}
+                asChild
+                className="rounded-3xl"
+              >
+                <Pressable className="flex flex-row gap-2 items-center">
+                  <CustomText color="colorPrimaryContent">
+                    <MaterialCommunityIcons name="clipboard-edit" size={24} />
+                  </CustomText>
+                  <CustomText color="colorPrimaryContent">Edit</CustomText>
+                </Pressable>
+              </Link>
+            )}
+
+            <Link
+              href={{
+                pathname: "/post/view/[id]",
+                params: { id: post.id },
+              }}
+              asChild
+              className="rounded-3xl"
+            >
+              <Pressable className="flex flex-row gap-2 items-center">
+                <CustomText color="colorPrimaryContent">
+                  <MaterialCommunityIcons name="comment" size={24} />
+                </CustomText>
+                <CustomText color="colorPrimaryContent">
+                  {post.comments.length}
+                </CustomText>
+              </Pressable>
+            </Link>
           </View>
         </CustomView>
       )}

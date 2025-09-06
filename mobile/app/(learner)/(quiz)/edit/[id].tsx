@@ -271,6 +271,7 @@ export default function Page() {
               placeholder="Title"
               value={quizTitle}
               onChangeText={setQuizTitle}
+              multiline
             />
             <CustomTextInput
               style={{
@@ -344,6 +345,11 @@ export default function Page() {
                     />
                     <Switch
                       variant="checkbox"
+                      elementColors={{
+                        checkmarkColor: currentScheme.colorPrimary,
+                        checkedColor: currentScheme.colorPrimary,
+                      }}
+                      color={currentScheme.colorBase100}
                       value={q.correctAnswers.includes(oIndex)}
                       onValueChange={() =>
                         handleCorrectAnswerToggle(index, oIndex)

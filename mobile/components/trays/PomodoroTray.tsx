@@ -18,13 +18,14 @@ const PomodoroTray = ({
   close: () => void;
   openSettings: () => void;
 }) => {
+  const { currentScheme } = useTheme();
   const { isRunning, mode, pause, reset, start, time } = useTimer();
 
   const colors: any = [
-    rgbaToHex(useTheme.getState().currentScheme.colorPrimary) as any,
-    rgbaToHex(useTheme.getState().currentScheme.colorSecondary) as any,
-    rgbaToHex(useTheme.getState().currentScheme.colorBase300) as any,
-    rgbaToHex(useTheme.getState().currentScheme.colorBase200) as any,
+    rgbaToHex(currentScheme.colorPrimary) as any,
+    rgbaToHex(currentScheme.colorSecondary) as any,
+    rgbaToHex(currentScheme.colorBase300) as any,
+    rgbaToHex(currentScheme.colorBase200) as any,
   ];
 
   return (
@@ -58,7 +59,7 @@ const PomodoroTray = ({
           colorsTime={[60, 30, 15, 0]}
           isSmoothColorTransition={true}
           strokeLinecap="round"
-          trailColor={useTheme.getState().currentScheme.colorBase300 as any}
+          trailColor={currentScheme.colorBase300 as any}
         >
           {({ remainingTime }) => (
             <CustomText variant="black" className="text-3xl">

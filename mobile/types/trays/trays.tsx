@@ -9,6 +9,8 @@ import SearchTray from "@/components/trays/SearchTray";
 import RepliesTray from "@/components/trays/RepliesTray";
 import PomodoroTray from "@/components/trays/PomodoroTray";
 import ChangeNameTray from "@/components/trays/ChangeNameTray";
+import EditCommentTray from "@/components/trays/EditCommentTray";
+import ContextMenuTray from "@/components/trays/ContextMenuTray";
 import ChangeEmailTray from "@/components/trays/ChangeEmailTray";
 import ChangeThemesTray from "@/components/trays/ChangeThemesTray";
 import ChangeAvatarTray from "@/components/trays/ChangeAvatarTray";
@@ -23,7 +25,6 @@ import ViewPostAttachmentsTray from "@/components/trays/ViewPostAttachmentsTray"
 import GenerateFromDocumentTray from "@/components/trays/GenerateFromDocumentTray";
 import PostAttachmentsSelectionTray from "@/components/trays/PostAttachmentsSelectionTray";
 import SummarizeNotesStudyToolsSelectionTray from "@/components/trays/SummarizeNotesStudyToolsSelectionTray";
-import ContextMenuTray from "@/components/trays/ContextMenuTray";
 
 export type MyTraysProps = {
   SearchTray: { close: () => void };
@@ -52,6 +53,10 @@ export type MyTraysProps = {
   };
   CommentOnPostTray: {
     post: Post;
+    close: () => void;
+  };
+  EditCommentTray: {
+    comment: Comment;
     close: () => void;
   };
   ViewOtherProfileTray: {
@@ -133,6 +138,9 @@ const _TRAYS = {
   },
   CommentOnPostTray: {
     component: CommentOnPostTray,
+  },
+  EditCommentTray: {
+    component: EditCommentTray,
   },
   ViewOtherProfileTray: {
     component: ViewOtherProfileTray,

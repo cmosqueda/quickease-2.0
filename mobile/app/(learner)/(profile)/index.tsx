@@ -96,7 +96,7 @@ const Badges = ({ user }: { user: User }) => {
             return (
               <CustomView
                 key={badge.id}
-                variant="colorBase300"
+                variant="colorBase100"
                 className="p-4 flex flex-row gap-4 items-center rounded-3xl"
               >
                 <Image
@@ -170,6 +170,7 @@ const Posts = ({ user }: { user: User }) => {
 
 const Avatar = ({ user }: { user: User }) => {
   const { height } = useWindowDimensions();
+  const { currentScheme } = useTheme();
 
   const avatarIds = Object.keys(_AVATAR_ASSET_MAP);
   const [assets] = useAssets(Object.values(_AVATAR_ASSET_MAP));
@@ -204,7 +205,7 @@ const Avatar = ({ user }: { user: User }) => {
         <CustomText
           className="bottom-0 absolute z-50 p-1 rounded-full"
           style={{
-            backgroundColor: useTheme.getState().currentScheme.colorBase300,
+            backgroundColor: currentScheme.colorBase300,
           }}
         >
           <MaterialCommunityIcons name="account-edit-outline" size={16} />

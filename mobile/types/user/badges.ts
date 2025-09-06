@@ -97,7 +97,6 @@ export async function checkBadges() {
 
     const { awarded } = data;
 
-    console.log(awarded);
   } catch (err) {
     console.error("Badge check failed", err);
   }
