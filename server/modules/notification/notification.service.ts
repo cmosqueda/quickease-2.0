@@ -81,7 +81,7 @@ export async function testNotification(user_id: string) {
     return false;
   }
 
-  _EXPO_PUSH_SERVICE.chunkPushNotifications([
+  _EXPO_PUSH_SERVICE.sendPushNotificationsAsync([
     {
       to: user.push_token,
       sound: "default",

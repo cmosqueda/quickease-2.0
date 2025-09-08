@@ -39,6 +39,11 @@ export default function Layout() {
         await _API_INSTANCE.post("/notifications/update-push-token", {
           token: token,
         });
+        const { status, data } = await _API_INSTANCE.post(
+          "/notifications/test-push-notification",
+          {}
+        );
+        console.log(status, data);
       })
       .catch((error: any) => {
         toast.error("Allow permission to send notifications.");
