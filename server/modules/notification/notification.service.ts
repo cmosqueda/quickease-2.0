@@ -72,6 +72,9 @@ export async function testNotification(user_id: string) {
       last_name: true,
       push_token: true,
     },
+    where: {
+      id: user_id,
+    },
   });
 
   if (!user.push_token) {
