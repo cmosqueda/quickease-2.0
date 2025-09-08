@@ -99,15 +99,31 @@ export default function CustomDrawerContent(props: any) {
           {user?.first_name} {user?.last_name}
         </CustomText>
       </CustomPressable>
-      <View
-        className="border-b h-1 my-2 mx-4"
-        style={{
-          borderColor: currentScheme.colorBaseContent,
-          opacity: 0.2,
-        }}
-      />
       <View className="gap-4">
-        {links.map((link) => {
+        {links.slice(0, 1).map((link) => {
+          return (
+            <DrawerItem
+              key={link.href}
+              onPress={() => props.navigation.navigate(link.href)}
+              label={link.label}
+              activeTintColor={currentScheme.colorBaseContent}
+              activeBackgroundColor={currentScheme.colorBase300}
+              inactiveBackgroundColor={currentScheme.colorBase100}
+              inactiveTintColor={currentScheme.colorBaseContent}
+              icon={() => (
+                <CustomText>
+                  <AntDesign name={link.icon} size={24} />
+                </CustomText>
+              )}
+            />
+          );
+        })}
+      </View>
+      <CustomText className="text-2xl px-4" variant="bold">
+        Library
+      </CustomText>
+      <View className="gap-4">
+        {links.slice(1, 4).map((link) => {
           return (
             <DrawerItem
               key={link.href}
@@ -129,6 +145,8 @@ export default function CustomDrawerContent(props: any) {
       <View className="flex-1" />
       <View className="flex-1" />
       <View className="flex-1" />
+      <View className="flex-1" />
+
       {!pomodoroInDrawerVisibility && (
         <>
           <View className="flex-1" />
@@ -148,7 +166,7 @@ export default function CustomDrawerContent(props: any) {
             });
             props.navigation.dispatch(DrawerActions.closeDrawer());
           }}
-          className="flex-1 rounded-full"
+          className="flex-1 rounded-full items-center justify-center"
           variant="colorBase100"
         >
           <CustomText>
@@ -156,7 +174,7 @@ export default function CustomDrawerContent(props: any) {
           </CustomText>
         </CustomPressable>
         <CustomPressable
-          className="flex-1 rounded-full"
+          className="flex-1 rounded-full items-center justify-center"
           variant="colorBase100"
           onPress={() => props.navigation.navigate("(settings)")}
         >
@@ -165,7 +183,7 @@ export default function CustomDrawerContent(props: any) {
           </CustomText>
         </CustomPressable>
         <CustomPressable
-          className="flex flex-row gap-2 rounded-full items-center"
+          className="flex flex-row gap-2 rounded-full items-center justify-center"
           variant="colorBase100"
           onPress={() => {
             handleLogout();

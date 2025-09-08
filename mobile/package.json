@@ -55,6 +55,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.5",
+    "react-native-collapsible": "^1.6.2",
     "react-native-countdown-circle-timer": "^3.2.1",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-pager-view": "^6.9.1",
