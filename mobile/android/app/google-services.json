@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "418849215752",
+    "project_id": "quickease-476e0",
+    "storage_bucket": "quickease-476e0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:418849215752:android:abc5ef7c8772f8b52b08bd",
+        "android_client_info": {
+          "package_name": "com.mirimomekiku.quickease"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzo73OlXBO5_l-t8KSVfdrnxgH4-vqtus"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

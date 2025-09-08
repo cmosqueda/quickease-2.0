@@ -4,6 +4,8 @@ import {
   get_user_notifications,
   mark_notification_as_read,
   mark_notification_as_unread,
+  send_test_notification,
+  update_push_token,
 } from "./notification.controller";
 
 export default async function notificationRoutes(fastify: FastifyInstance) {
@@ -25,5 +27,15 @@ export default async function notificationRoutes(fastify: FastifyInstance) {
   fastify.put("/mark-as-unread", {
     preHandler: [fastify.authenticate],
     handler: mark_notification_as_unread,
+  });
+
+  fastify.post("/update-push-token", {
+    preHandler: [fastify.authenticate],
+    handler: update_push_token,
+  });
+
+  fastify.post("/test-push-notification", {
+    preHandler: [fastify.authenticate],
+    handler: send_test_notification,
   });
 }

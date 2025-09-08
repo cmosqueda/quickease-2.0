@@ -1,4 +1,5 @@
 import db_client from "../../utils/client";
+import _EXPO_PUSH_SERVICE from "../../utils/expo";
 
 export async function getUserNotifications(user_id: string) {
   const notifications = await db_client.notification.findMany({
@@ -46,6 +47,45 @@ export async function markNotificationAsUnread(notification_id: string) {
       id: notification_id,
     },
   });
+
+  return true;
+}
+
+// Used for EXPO PUSH TOKENS NOTIFICATIONS (EACH DEVICE AND UPSERT), only one token
+export async function addPushToken(token: string, user_id: string) {
+  await db_client.user.update({
+    data: {
+      push_token: token,
+    },
+    where: {
+      id: user_id,
+    },
+  });
+  return true;
+}
+
+// API TEST
+export async function testNotification(user_id: string) {
+  const user = await db_client.user.findFirst({
+    select: {
+      first_name: true,
+      last_name: true,
+      push_token: true,
+    },
+  });
+
+  if (!user.push_token) {
+    return false;
+  }
+
+  _EXPO_PUSH_SERVICE.chunkPushNotifications([
+    {
+      to: user.push_token,
+      sound: "default",
+      title: "Welcome to QuickEase",
+      body: `Hello there, ${user.first_name} ${user.last_name}.`,
+    },
+  ]);
 
   return true;
 }

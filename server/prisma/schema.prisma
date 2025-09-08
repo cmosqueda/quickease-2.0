@@ -24,6 +24,7 @@ model User {
   updated_at  DateTime @default(now())
   is_admin    Boolean  @default(false)
   is_verified Boolean  @default(false)
+  push_tokens String?
 
   flashcards             Flashcard[]
   notes                  Note[]
