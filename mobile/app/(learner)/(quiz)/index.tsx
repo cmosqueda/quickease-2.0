@@ -13,13 +13,13 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Quiz } from "@/types/user/types";
+import { router } from "expo-router";
 import { useTrays } from "react-native-trays";
 import { Pressable } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { useRef, useState } from "react";
-import { router } from "expo-router";
 
 export default function Page() {
   const { isConnected } = useNetInfo();
@@ -31,6 +31,7 @@ export default function Page() {
 
   const { push: openContextMenu, pop: closeContextMenu } =
     useTrays<MyTraysProps>("ContextMenuTray");
+  const useSearchTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
 
   const pagerViewRef = useRef<PagerView>(null);
   const [index, setIndex] = useState(0);
@@ -63,7 +64,14 @@ export default function Page() {
         title="Quizzes"
         rightSideChildren={
           <>
-            <Pressable>
+            <Pressable
+              onPress={() =>
+                useSearchTray.push("SearchTray", {
+                  close: useSearchTray.pop,
+                  type: "quiz",
+                })
+              }
+            >
               <CustomText>
                 <FontAwesome5 name="search" size={20} />
               </CustomText>

@@ -27,7 +27,10 @@ import PostAttachmentsSelectionTray from "@/components/trays/PostAttachmentsSele
 import SummarizeNotesStudyToolsSelectionTray from "@/components/trays/SummarizeNotesStudyToolsSelectionTray";
 
 export type MyTraysProps = {
-  SearchTray: { close: () => void };
+  SearchTray: {
+    close: () => void;
+    type: "note" | "quiz" | "flashcard" | "forum";
+  };
   NotificationTray: { close: () => void };
   PomodoroTray: {
     close: () => void;

@@ -77,6 +77,7 @@ export default function Page() {
                 onPress={() =>
                   useSearchTray.push("SearchTray", {
                     close: useSearchTray.pop,
+                    type: "forum",
                   })
                 }
               >

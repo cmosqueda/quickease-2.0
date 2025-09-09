@@ -8,8 +8,48 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 
-const SearchTray = ({ close }: { close: () => void }) => {
+const SearchTray = ({
+  close,
+  type,
+}: {
+  close: () => void;
+  type: "note" | "quiz" | "flashcard" | "forum";
+}) => {
   const [query, setQuery] = useState("");
+
+  const handleRedirect = () => {
+    if (type === "forum") {
+      router.push({
+        pathname: "/(learner)/(forum)/search/[query]",
+        params: { query: query },
+      });
+      close();
+    }
+
+    if (type === "note") {
+      router.push({
+        pathname: "/(learner)/(note)/search/[query]",
+        params: { query: query },
+      });
+      close();
+    }
+
+    if (type === "flashcard") {
+      router.push({
+        pathname: "/(learner)/(flashcard)/search/[query]",
+        params: { query: query },
+      });
+      close();
+    }
+
+    if (type === "quiz") {
+      router.push({
+        pathname: "/(learner)/(quiz)/search/[query]",
+        params: { query: query },
+      });
+      close();
+    }
+  };
 
   return (
     <CustomView
@@ -32,13 +72,7 @@ const SearchTray = ({ close }: { close: () => void }) => {
           enterKeyHint="go"
           value={query}
           onChangeText={setQuery}
-          onSubmitEditing={() => {
-            router.push({
-              pathname: "/search/[query]",
-              params: { query: query },
-            });
-            close();
-          }}
+          onSubmitEditing={handleRedirect}
         />
       </View>
     </CustomView>

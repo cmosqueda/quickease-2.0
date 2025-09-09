@@ -8,6 +8,7 @@ export default function Layout() {
       <Stack.Screen name="edit" />
       <Stack.Screen name="view" />
       <Stack.Screen name="ai" />
+      <Stack.Screen name="search" />
     </Stack>
   );
 }
