@@ -1,4 +1,5 @@
 import db_client from "../../utils/client";
+import _EXPO_PUSH_SERVICE from "../../utils/expo";
 
 import { sendNotification } from "../../utils/notification";
 
@@ -160,6 +161,11 @@ export async function deletePost(
     },
     select: {
       title: true,
+      user: {
+        select: {
+          push_token: true,
+        },
+      },
     },
   });
 
@@ -168,6 +174,17 @@ export async function deletePost(
       id: post_id,
     },
   });
+
+  if (post.user.push_token) {
+    await _EXPO_PUSH_SERVICE.sendPushNotificationsAsync([
+      {
+        to: post.user.push_token,
+        sound: "default",
+        title: "About your post",
+        body: `Your post named ${post.title} has been deleted due to many reports.`,
+      },
+    ]);
+  }
 
   await sendNotification({
     actorId: admin_id,
@@ -192,6 +209,7 @@ export async function deleteComment(
       post: {
         select: { title: true },
       },
+      user: { select: { push_token: true } },
     },
   });
 
@@ -200,6 +218,17 @@ export async function deleteComment(
       id: comment_id,
     },
   });
+
+  if (commentOnPost.user.push_token) {
+    await _EXPO_PUSH_SERVICE.sendPushNotificationsAsync([
+      {
+        to: commentOnPost.user.push_token,
+        sound: "default",
+        title: "About your comment",
+        body: `Your comment on post named ${commentOnPost.post.title} has been deleted due to many reports.`,
+      },
+    ]);
+  }
 
   await sendNotification({
     actorId: admin_id,
@@ -222,6 +251,7 @@ export async function resolvePost(
     },
     select: {
       title: true,
+      user: { select: { push_token: true } },
     },
   });
 
@@ -233,6 +263,17 @@ export async function resolvePost(
       id: post_id,
     },
   });
+
+  if (post.user.push_token) {
+    await _EXPO_PUSH_SERVICE.sendPushNotificationsAsync([
+      {
+        to: post.user.push_token,
+        sound: "default",
+        title: "About your post",
+        body: `Your post named ${post.title} has been deleted due to many reports.`,
+      },
+    ]);
+  }
 
   await sendNotification({
     actorId: admin_id,

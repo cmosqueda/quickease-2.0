@@ -135,10 +135,10 @@ export default function Page() {
         <Link asChild href={"/post/create"}>
           <CustomPressable
             disabled={!isConnected}
-            variant="colorPrimary"
-            className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+            variant="colorSecondary"
+            className="absolute bottom-8 right-8 rounded-full px-4 py-4 flex-row items-center gap-2 shadow"
           >
-            <CustomText color="colorPrimaryContent">
+            <CustomText color="colorSecondaryContent">
               <MaterialIcons name="post-add" size={32} />
             </CustomText>
           </CustomPressable>
