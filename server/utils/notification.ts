@@ -1,6 +1,7 @@
 import db_client from "../utils/client";
 
 import { NotificationType } from "@prisma/client";
+import _EXPO_PUSH_SERVICE from "./expo";
 
 export async function sendNotification({
   recipientId,
@@ -20,7 +21,7 @@ export async function sendNotification({
   if (recipientId === actorId) return;
 
   try {
-    return await db_client.notification.upsert({
+    await db_client.notification.upsert({
       where: {
         recipient_id_actor_id_type_resource_id: {
           recipient_id: recipientId,

@@ -1,4 +1,5 @@
 import db_client from "../../utils/client";
+import _EXPO_PUSH_SERVICE from "../../utils/expo";
 
 import { sendNotification } from "../../utils/notification";
 
@@ -23,18 +24,30 @@ export async function commentOnPost(
     },
     include: {
       user: {
-        select: { first_name: true, last_name: true },
+        select: { first_name: true, last_name: true, push_token: true },
       },
     },
   });
 
   const post = await db_client.post.findUnique({
     where: { id: post_id },
-    select: { user_id: true },
+    select: { user_id: true, user: true },
   });
 
   if (post) {
     const actorName = `${comment.user.first_name} ${comment.user.last_name}`;
+
+    if (post.user.push_token) {
+      await _EXPO_PUSH_SERVICE.sendPushNotificationsAsync([
+        {
+          to: post.user.push_token,
+          sound: "default",
+          body: `${comment.comment_body}`,
+          title: `${actorName} commented on your post.`,
+        },
+      ]);
+    }
+
     await sendNotification({
       recipientId: post.user_id,
       actorId: user_id,

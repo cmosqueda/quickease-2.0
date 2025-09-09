@@ -12,8 +12,13 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./secrets/google-services.json",
       "adaptiveIcon": {
+<<<<<<< HEAD
         "foregroundImage": "./assets/images-2/adaptive-icon.png",
+=======
+        "foregroundImage": "./assets/images/adaptive_icon.png",
+>>>>>>> upstream/main
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -29,21 +34,33 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash_icon.png",
           "resizeMode": "contain",
           "backgroundColor": "#FFFFFF"
         }
       ],
       "expo-font",
+      "expo-notifications",
       [
         "expo-asset",
         {
-          "assets": ["images/", "animations/", "videos/", "audio/"]
+          "assets": [
+            "assets/images/",
+            "assets/animations/",
+            "assets/videos/",
+            "assets/audio/"
+          ]
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "27dc15c7-33c9-4332-bef2-bb65f6078c6b"
+      }
     }
   }
 }

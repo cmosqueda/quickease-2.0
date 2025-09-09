@@ -66,45 +66,42 @@ const _THEMES: Themes = {
     prefersdark: false,
     colorscheme: "light",
 
-    colorBase100: "#f9f6f2", // oklch(97% 0.013 17.38)
-    colorBase200: "#f1e8e1", // oklch(93% 0.032 17.717)
-    colorBase300: "#e5d9cf", // oklch(88% 0.062 18.334)
-    colorBaseContent: "#3f2e2a", // oklch(39% 0.141 25.723)
+    colorBase100: "rgba(249, 246, 242, 1)",
+    colorBase200: "rgba(241, 232, 225, 1)",
+    colorBase300: "rgba(229, 217, 207, 1)",
+    colorBaseContent: "rgba(63, 46, 42, 1)",
 
-    colorPrimary: "#5bb4df", // oklch(76% 0.188 70.08)
-    colorPrimaryContent: "#f8fcff", // oklch(98% 0.022 95.277)
+    colorPrimary: "rgba(91, 180, 223, 1)",
+    colorPrimaryContent: "rgba(248, 252, 255, 1)",
 
-    colorSecondary: "#c66eaa", // oklch(70% 0.213 47.604)
-    colorSecondaryContent: "#fcf9ff", // oklch(98% 0.016 73.684)
+    colorSecondary: "rgba(198, 110, 170, 1)",
+    colorSecondaryContent: "rgba(252, 249, 255, 1)",
 
-    colorAccent: "#60a0ff", // oklch(76% 0.233 130.85)
-    colorAccentContent: "#fbfaff", // oklch(98% 0.031 120.757)
+    colorAccent: "rgba(96, 160, 255, 1)",
+    colorAccentContent: "rgba(251, 250, 255, 1)",
 
-    colorNeutral: "#7c4c3a", // oklch(57% 0.245 27.325)
-    colorNeutralContent: "#f9f6f2", // oklch(97% 0.013 17.38)
+    colorNeutral: "rgba(124, 76, 58, 1)",
+    colorNeutralContent: "rgba(249, 246, 242, 1)",
 
-    colorInfo: "#4a88f7", // oklch(70% 0.165 254.624)
-    colorInfoContent: "#2e2c64", // oklch(28% 0.091 267.935)
+    colorInfo: "rgba(74, 136, 247, 1)",
+    colorInfoContent: "rgba(46, 44, 100, 1)",
 
-    colorSuccess: "#48c57e", // oklch(76% 0.177 163.223)
-    colorSuccessContent: "#1f3f2e", // oklch(26% 0.051 172.552)
+    colorSuccess: "rgba(72, 197, 126, 1)",
+    colorSuccessContent: "rgba(31, 63, 46, 1)",
 
-    colorWarning: "#ffc14d", // oklch(75% 0.183 55.934)
-    colorWarningContent: "#45341e", // oklch(26% 0.079 36.259)
+    colorWarning: "rgba(255, 193, 77, 1)",
+    colorWarningContent: "rgba(69, 52, 30, 1)",
 
-    colorError: "#f35879", // oklch(71% 0.202 349.761)
-    colorErrorContent: "#4c2022", // oklch(28% 0.109 3.907)
+    colorError: "rgba(243, 88, 121, 1)",
+    colorErrorContent: "rgba(76, 32, 34, 1)",
 
-    // Border radius
     radiusSelector: "0rem",
     radiusField: "0.5rem",
     radiusBox: "0.25rem",
 
-    // Sizes
     sizeSelector: "0.25rem",
     sizeField: "0.25rem",
 
-    // Border size
     border: "1px",
   },
   dark: {

@@ -99,24 +99,6 @@ export default function PostComponent({
           <View className="flex-1" />
 
           <View className="flex flex-row items-center gap-4">
-            {post.user?.id === user?.id && (
-              <Link
-                href={{
-                  pathname: "/post/edit/[id]",
-                  params: { id: post.id },
-                }}
-                asChild
-                className="rounded-3xl"
-              >
-                <Pressable className="flex flex-row gap-2 items-center">
-                  <CustomText color="colorPrimaryContent">
-                    <MaterialCommunityIcons name="clipboard-edit" size={24} />
-                  </CustomText>
-                  <CustomText color="colorPrimaryContent">Edit</CustomText>
-                </Pressable>
-              </Link>
-            )}
-
             <Link
               href={{
                 pathname: "/post/view/[id]",

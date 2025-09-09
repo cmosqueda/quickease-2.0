@@ -4,6 +4,7 @@ import useTheme from "@/hooks/useTheme";
 import UserAvatar from "@/components/UserAvatar";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
+import Collapsible from "react-native-collapsible";
 import PostActionBar from "@/components/PostActionBar";
 import CustomRichText from "@/components/CustomRichText";
 import CommentComponent from "@/components/CommentComponent";
@@ -20,11 +21,17 @@ import { Pressable, ScrollView, View } from "react-native";
 import { Link, router, useLocalSearchParams } from "expo-router";
 
 import _API_INSTANCE from "@/utils/axios";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useState } from "react";
+import clsx from "clsx";
+import RotatingArrow from "@/components/buttons/RotatingArrow";
 
 export default function Page() {
   const { user } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { currentScheme } = useTheme();
+
+  const [isAttachmentsCollapsed, setAttachmentsCollapse] = useState(false);
 
   const useViewProfileTray = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
@@ -56,16 +63,40 @@ export default function Page() {
           backgroundColor: currentScheme.colorBase300,
         }}
       >
-        <Pressable
-          onPress={() => {
-            router.back();
-          }}
-          className="px-4"
-        >
-          <CustomText>
-            <MaterialIcons name="keyboard-arrow-left" size={36} />
-          </CustomText>
-        </Pressable>
+        <View className="flex flex-row gap-4 items-center justify-between px-4">
+          <Pressable
+            onPress={() => {
+              router.back();
+            }}
+          >
+            <CustomText>
+              <MaterialIcons name="keyboard-arrow-left" size={36} />
+            </CustomText>
+          </Pressable>
+          <View className="flex flex-row gap-4 items-center">
+            {post.user?.id === user?.id && (
+              <Link
+                href={{
+                  pathname: "/post/edit/[id]",
+                  params: { id: post.id },
+                }}
+                asChild
+                className="rounded-3xl"
+              >
+                <Pressable className="flex flex-row gap-2 items-center">
+                  <CustomText>
+                    <MaterialCommunityIcons name="clipboard-edit" size={24} />
+                  </CustomText>
+                </Pressable>
+              </Link>
+            )}
+            <Pressable className="flex flex-row gap-2 items-center">
+              <CustomText>
+                <MaterialIcons name="flag" size={24} />
+              </CustomText>
+            </Pressable>
+          </View>
+        </View>
 
         <ScrollView
           contentContainerClassName="p-4 gap-4"
@@ -124,6 +155,113 @@ export default function Page() {
             <CustomRichText content={post.post_body} />
           </CustomView>
 
+          <Pressable onPress={() => setAttachmentsCollapse((prev) => !prev)}>
+            <CustomView
+              variant="colorBase100"
+              className="gap-2 rounded-3xl p-4"
+            >
+              <View className="flex flex-row justify-between items-center">
+                <CustomText variant="bold" className="text-sm">
+                  Attachments
+                </CustomText>
+                <RotatingArrow isCollapsed={isAttachmentsCollapsed} />
+              </View>
+
+              <Collapsible
+                collapsed={isAttachmentsCollapsed}
+                style={{ gap: 12 }}
+              >
+                {post.attachments.map((attachment) => {
+                  switch (attachment.resource_type) {
+                    case "NOTE":
+                      return (
+                        <Pressable
+                          key={attachment.id}
+                          onPress={() => {
+                            router.push({
+                              pathname: "/(learner)/(note)/view/others/[id]",
+                              params: { id: attachment.note!.id },
+                            });
+                          }}
+                          className="flex flex-row gap-4 items-center"
+                        >
+                          <CustomText>
+                            <MaterialCommunityIcons name="note" size={28} />
+                          </CustomText>
+                          <CustomView
+                            variant="colorBase200"
+                            className="p-4 rounded-3xl flex-1"
+                          >
+                            <CustomText className="text-xl" variant="bold">
+                              {attachment.note?.title}
+                            </CustomText>
+                          </CustomView>
+                        </Pressable>
+                      );
+                    case "FLASHCARD":
+                      return (
+                        <Pressable
+                          key={attachment.id}
+                          onPress={() => {
+                            router.push({
+                              pathname: "/(learner)/(flashcard)/view/[id]",
+                              params: { id: attachment.flashcard!.id },
+                            });
+                          }}
+                          className="flex flex-row gap-4 items-center"
+                        >
+                          <CustomText>
+                            <MaterialCommunityIcons
+                              name="view-column"
+                              size={28}
+                            />
+                          </CustomText>
+                          <CustomView
+                            variant="colorBase200"
+                            className="p-4 rounded-3xl flex-1"
+                          >
+                            <CustomText className="text-xl" variant="bold">
+                              {attachment.flashcard?.title}
+                            </CustomText>
+                          </CustomView>
+                        </Pressable>
+                      );
+                    case "QUIZ":
+                      return (
+                        <Pressable
+                          key={attachment.id}
+                          onPress={() => {
+                            router.push({
+                              pathname: "/(learner)/(quiz)/view/[id]",
+                              params: { id: attachment.quiz!.id },
+                            });
+                          }}
+                          className="flex flex-row gap-4 items-center"
+                        >
+                          <CustomText>
+                            <MaterialCommunityIcons
+                              name="head-question"
+                              size={28}
+                            />
+                          </CustomText>
+                          <CustomView
+                            variant="colorBase200"
+                            className="p-4 rounded-3xl flex-1"
+                          >
+                            <CustomText className="text-xl" variant="bold">
+                              {attachment.quiz?.title}
+                            </CustomText>
+                          </CustomView>
+                        </Pressable>
+                      );
+                  }
+                })}
+              </Collapsible>
+            </CustomView>
+          </Pressable>
+
+          <PostActionBar post={post} id={id} />
+
           {post?.comments && post.comments.length > 0 && (
             <>
               <CustomText className="text-2xl" variant="bold">
@@ -140,8 +278,6 @@ export default function Page() {
             </>
           )}
         </ScrollView>
-
-        <PostActionBar post={post} id={id} />
       </SafeAreaView>
     );
   }

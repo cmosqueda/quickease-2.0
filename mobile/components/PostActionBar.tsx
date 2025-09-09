@@ -27,7 +27,7 @@ export default function PostActionBar({
   return (
     <CustomView
       variant="colorPrimary"
-      className="flex flex-row gap-4 items-center px-8 py-4 rounded-tl-3xl rounded-tr-3xl"
+      className="flex flex-row gap-4 items-center px-8 py-4 rounded-3xl"
     >
       <Pressable
         disabled={isVotingPost}
@@ -73,7 +73,7 @@ export default function PostActionBar({
                 post: post!,
               });
             }}
-            className="flex flex-row gap-2 items-center"
+            className="hidden flex-row gap-2 items-center"
           >
             <CustomText color="colorPrimaryContent">
               <MaterialCommunityIcons name="view-list" size={24} />

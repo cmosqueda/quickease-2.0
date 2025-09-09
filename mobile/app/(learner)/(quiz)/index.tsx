@@ -6,12 +6,12 @@ import PagerView from "react-native-pager-view";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import ForumHeader from "@/components/ForumHeader";
+import FloatingButton from "@/components/buttons/FloatingButton";
 import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { Link } from "expo-router";
 import { Quiz } from "@/types/user/types";
 import { useTrays } from "react-native-trays";
 import { Pressable } from "react-native";
@@ -19,6 +19,7 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MyTraysProps } from "@/types/trays/trays";
 import { useRef, useState } from "react";
+import { router } from "expo-router";
 
 export default function Page() {
   const { isConnected } = useNetInfo();
@@ -61,36 +62,13 @@ export default function Page() {
       <ForumHeader
         title="Quizzes"
         rightSideChildren={
-          isConnected && (
-            <>
-              <Pressable
-                onPress={() =>
-                  openTray("StudyToolsSelectionTray", {
-                    openGenerateFromNotes: () => {
-                      closeTray();
-                      openTray("GenerateFromNotesTray", {
-                        close: closeTray,
-                        type: "quiz",
-                      });
-                    },
-                    openUploadFile: () => {
-                      closeTray();
-                      openTray("GenerateFromDocumentTray", {
-                        close: closeTray,
-                        type: "quiz",
-                      });
-                    },
-                    close: closeTray,
-                    type: "quiz",
-                  })
-                }
-              >
-                <CustomText>
-                  <MaterialCommunityIcons name="toolbox-outline" size={20} />
-                </CustomText>
-              </Pressable>
-            </>
-          )
+          <>
+            <Pressable>
+              <CustomText>
+                <FontAwesome5 name="search" size={20} />
+              </CustomText>
+            </Pressable>
+          </>
         }
       />
       <CustomView
@@ -161,18 +139,50 @@ export default function Page() {
         ))}
       </PagerView>
 
-      {isConnected && (
-        <Link asChild href={"/(learner)/(quiz)/create"}>
+      <FloatingButton
+        option_one={
           <CustomPressable
-            variant="colorPrimary"
-            className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+            className="rounded-full"
+            style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+            onPress={() =>
+              openTray("StudyToolsSelectionTray", {
+                openGenerateFromNotes: () => {
+                  closeTray();
+                  openTray("GenerateFromNotesTray", {
+                    close: closeTray,
+                    type: "quiz",
+                  });
+                },
+                openUploadFile: () => {
+                  closeTray();
+                  openTray("GenerateFromDocumentTray", {
+                    close: closeTray,
+                    type: "quiz",
+                  });
+                },
+                close: closeTray,
+                type: "quiz",
+              })
+            }
           >
             <CustomText color="colorPrimaryContent">
-              <MaterialIcons name="post-add" size={32} />
+              <MaterialCommunityIcons name="toolbox" size={24} />
             </CustomText>
           </CustomPressable>
-        </Link>
-      )}
+        }
+        option_two={
+          <CustomPressable
+            className="rounded-full"
+            style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+            onPress={() => router.push("/(learner)/(quiz)/create")}
+          >
+            <CustomText color="colorPrimaryContent">
+              <MaterialIcons name="note-add" size={24} />
+            </CustomText>
+          </CustomPressable>
+        }
+        main_func={() => router.push("/(learner)/(quiz)/create")}
+      />
     </SafeAreaView>
   );
 }

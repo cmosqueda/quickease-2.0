@@ -208,7 +208,7 @@ export default function Page() {
             <MaterialIcons name="keyboard-arrow-left" size={36} />
           </CustomText>
         </Pressable>
-        <View className="flex flex-row gap-4 items-center">
+        <View className="flex flex-row gap-2 items-center">
           <CustomPressable
             onPress={handleDelete}
             className="rounded-3xl disabled:opacity-60"

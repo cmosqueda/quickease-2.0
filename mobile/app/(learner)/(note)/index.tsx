@@ -11,14 +11,15 @@ import CustomPressable from "@/components/CustomPressable";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { Note } from "@/types/user/types";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useTrays } from "react-native-trays";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Pressable } from "react-native";
+import FloatingButton from "@/components/buttons/FloatingButton";
 
 export default function Page() {
   const { isConnected } = useNetInfo();
@@ -59,35 +60,13 @@ export default function Page() {
       <ForumHeader
         title="Notes"
         rightSideChildren={
-          isConnected && (
-            <>
-              <Pressable
-                onPress={() =>
-                  openTray("SummarizeNotesStudyToolsSelectionTray", {
-                    openUploadImage: () => {
-                      closeTray();
-                      openTray("GenerateFromImageTray", {
-                        close: closeTray,
-                        type: "summary-notes",
-                      });
-                    },
-                    openUploadDocument: () => {
-                      closeTray();
-                      openTray("GenerateFromDocumentTray", {
-                        close: closeTray,
-                        type: "summary-notes",
-                      });
-                    },
-                    close: closeTray,
-                  })
-                }
-              >
-                <CustomText>
-                  <MaterialCommunityIcons name="toolbox-outline" size={20} />
-                </CustomText>
-              </Pressable>
-            </>
-          )
+          <>
+            <Pressable>
+              <CustomText>
+                <FontAwesome5 name="search" size={20} />
+              </CustomText>
+            </Pressable>
+          </>
         }
       />
       <CustomView
@@ -157,18 +136,49 @@ export default function Page() {
         ))}
       </PagerView>
 
-      {isConnected && (
-        <Link asChild href={"/(learner)/(note)/create"}>
+      <FloatingButton
+        option_one={
           <CustomPressable
-            variant="colorPrimary"
-            className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+            className="rounded-full"
+            style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+            onPress={() =>
+              openTray("SummarizeNotesStudyToolsSelectionTray", {
+                openUploadImage: () => {
+                  closeTray();
+                  openTray("GenerateFromImageTray", {
+                    close: closeTray,
+                    type: "summary-notes",
+                  });
+                },
+                openUploadDocument: () => {
+                  closeTray();
+                  openTray("GenerateFromDocumentTray", {
+                    close: closeTray,
+                    type: "summary-notes",
+                  });
+                },
+                close: closeTray,
+              })
+            }
           >
             <CustomText color="colorPrimaryContent">
-              <MaterialIcons name="post-add" size={32} />
+              <MaterialCommunityIcons name="toolbox" size={24} />
             </CustomText>
           </CustomPressable>
-        </Link>
-      )}
+        }
+        option_two={
+          <CustomPressable
+            className="rounded-full"
+            style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+            onPress={() => router.push("/(learner)/(note)/create")}
+          >
+            <CustomText color="colorPrimaryContent">
+              <MaterialIcons name="note-add" size={24} />
+            </CustomText>
+          </CustomPressable>
+        }
+        main_func={() => router.push("/(learner)/(note)/create")}
+      />
     </SafeAreaView>
   );
 }

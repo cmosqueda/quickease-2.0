@@ -1,9 +1,11 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import {
+  addPushToken,
   deleteNotification,
   getUserNotifications,
   markNotificationAsRead,
   markNotificationAsUnread,
+  testNotification,
 } from "./notification.service";
 
 export async function get_user_notifications(
@@ -83,6 +85,53 @@ export async function mark_notification_as_unread(
   } catch (err) {
     reply.code(500).send({
       message: "Notification not updated.",
+      errors: err,
+    });
+  }
+}
+
+// Used for EXPO PUSH TOKENS NOTIFICATIONS (EACH DEVICE AND UPSERT), only one token
+export async function update_push_token(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const { token } = request.body as {
+    token: string;
+  };
+
+  try {
+    await addPushToken(token, request.user.id);
+
+    reply.code(200).send({
+      updated: true,
+    });
+  } catch (err) {
+    reply.code(500).send({
+      message: "Notification push token not updated.",
+      errors: err,
+    });
+  }
+}
+
+export async function send_test_notification(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const result = testNotification(request.user.id);
+
+    if (!result) {
+      return reply.code(500).send({
+        message: "User has not registered a push notification token.",
+      });
+    }
+
+    reply.code(200).send({
+      sent: true,
+    });
+  } catch (err) {
+    reply.code(500).send({
+      message: "User has not registered a push notification token.",
       errors: err,
     });
   }
