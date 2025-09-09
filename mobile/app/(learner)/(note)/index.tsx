@@ -6,20 +6,21 @@ import PagerView from "react-native-pager-view";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import ForumHeader from "@/components/ForumHeader";
+import FloatingButton from "@/components/buttons/FloatingButton";
 import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Note } from "@/types/user/types";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { useTrays } from "react-native-trays";
+import { Pressable } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
-import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Pressable } from "react-native";
-import FloatingButton from "@/components/buttons/FloatingButton";
 
 export default function Page() {
   const { isConnected } = useNetInfo();
@@ -28,6 +29,7 @@ export default function Page() {
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
+  const useSearchTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
 
   const { push: openContextMenu, pop: closeContextMenu } =
     useTrays<MyTraysProps>("ContextMenuTray");
@@ -61,7 +63,14 @@ export default function Page() {
         title="Notes"
         rightSideChildren={
           <>
-            <Pressable>
+            <Pressable
+              onPress={() =>
+                useSearchTray.push("SearchTray", {
+                  close: useSearchTray.pop,
+                  type: "note",
+                })
+              }
+            >
               <CustomText>
                 <FontAwesome5 name="search" size={20} />
               </CustomText>
