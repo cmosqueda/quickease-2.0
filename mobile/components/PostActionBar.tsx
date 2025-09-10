@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import CustomView from "./CustomView";
 import CustomText from "./CustomText";
 
@@ -16,6 +17,7 @@ export default function PostActionBar({
   post: Post;
   id: string;
 }) {
+  const { user } = useAuth();
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
     "DismissibleStickToTopTray"
   );
@@ -60,6 +62,7 @@ export default function PostActionBar({
             });
           }}
           className="flex flex-row gap-2 items-center"
+          style={{ display: user?.is_verified ? "flex" : "none" }}
         >
           <CustomText color="colorPrimaryContent">
             <MaterialCommunityIcons name="comment" size={24} />

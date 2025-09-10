@@ -136,12 +136,14 @@ export default function Page() {
             </CustomView>
           </View>
 
-          <CustomText variant="black" className="text-4xl">
-            {flashcardData?.title ?? "Untitled"}
-          </CustomText>
+          <CustomView variant="colorBase100" className="p-6 rounded-3xl">
+            <CustomText variant="black" className="text-4xl">
+              {flashcardData?.title ?? "Untitled"}
+            </CustomText>
+          </CustomView>
 
           {flashcardData?.description && (
-            <CustomView variant="colorBase100" className="p-4 rounded-3xl">
+            <CustomView variant="colorBase100" className="p-6 rounded-3xl">
               <CustomText>{flashcardData.description}</CustomText>
             </CustomView>
           )}
@@ -149,14 +151,16 @@ export default function Page() {
           <View className="flex-1" />
           {totalFlashcards > 0 && (
             <CustomPressable
-              variant="colorBase300"
+              variant="colorPrimary"
               className="rounded-3xl items-center"
               onPress={() => {
                 setTabIndex(1);
                 pagerViewRef.current?.setPage(1);
               }}
             >
-              <CustomText>View flashcards</CustomText>
+              <CustomText color="colorPrimaryContent">
+                View flashcards
+              </CustomText>
             </CustomPressable>
           )}
         </View>

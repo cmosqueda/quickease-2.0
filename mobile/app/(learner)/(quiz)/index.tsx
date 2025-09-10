@@ -53,6 +53,48 @@ export default function Page() {
     },
   ];
 
+  if (user?.quizzes.length === 0) {
+    return (
+      <SafeAreaView
+        className="flex flex-1"
+        style={{
+          backgroundColor: currentScheme?.colorBase100,
+        }}
+      >
+        <ForumHeader
+          title="Quizzes"
+          rightSideChildren={
+            <>
+              <Pressable
+                onPress={() =>
+                  useSearchTray.push("SearchTray", {
+                    close: useSearchTray.pop,
+                    type: "note",
+                  })
+                }
+              >
+                <CustomText>
+                  <FontAwesome5 name="search" size={20} />
+                </CustomText>
+              </Pressable>
+            </>
+          }
+        />
+        <CustomView
+          variant="colorBase300"
+          className="flex flex-1 flex-col gap-2 rounded-tl-3xl rounded-tr-3xl items-center justify-center"
+        >
+          <CustomText>
+            <MaterialCommunityIcons name="emoticon-sad" size={64} />
+          </CustomText>
+          <CustomText variant="bold" className="text-xl">
+            No quiz yet.
+          </CustomText>
+        </CustomView>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView
       className="flex flex-1"

@@ -1,22 +1,25 @@
 import useTheme from "@/hooks/useTheme";
-import _API_INSTANCE from "@/utils/axios";
-
-import CustomPressable from "@/components/CustomPressable";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
+import Collapsible from "react-native-collapsible";
+import RotatingArrow from "@/components/buttons/RotatingArrow";
+import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { Quiz } from "@/types/user/types";
 import { toast } from "sonner-native";
-import { Switch } from "@expo/ui/jetpack-compose";
 import { useQuery } from "@tanstack/react-query";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearProgress, Switch } from "@expo/ui/jetpack-compose";
 import { useEffect, useRef, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { Pressable, View, Alert, ActivityIndicator } from "react-native";
+
+import _API_INSTANCE from "@/utils/axios";
+import { ScrollView } from "react-native-gesture-handler";
 
 interface QuizQuestion {
   question: string;
@@ -35,6 +38,7 @@ export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const startTime = useRef(new Date());
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const { data: quizData, isFetching } = useQuery<Quiz>({
     queryKey: ["answer-quiz", id],
@@ -163,11 +167,17 @@ export default function Page() {
       <View className="flex flex-row justify-between items-center">
         <Pressable
           onPress={() => {
-            Alert.alert(
-              "Are you sure?",
-              "By clicking yes, you agree to abandon your attempt."
-            );
-            router.back();
+            toast("Abandon attempt?", {
+              action: { label: "NO", onClick: () => toast.dismiss() },
+              actionButtonStyle: {
+                backgroundColor: currentScheme.colorSecondary,
+                borderWidth: 0,
+              },
+              actionButtonTextStyle: {
+                color: currentScheme.colorSecondaryContent,
+              },
+              cancel: { label: "YES", onClick: () => router.back() },
+            });
           }}
         >
           <CustomText>
@@ -187,68 +197,126 @@ export default function Page() {
         </CustomPressable>
       </View>
 
-      <CustomView
-        variant="colorBase100"
-        className="flex-row gap-4 p-4 rounded-3xl"
-      >
-        <View className="flex-1 gap-4">
-          {currentQuestion ? (
-            <CustomView className="gap-2">
-              <CustomText variant="black" className="text-xl">
-                {questionIndex + 1}. {currentQuestion.question}
+      <ScrollView contentContainerClassName="gap-4">
+        <Pressable onPress={() => setIsCollapsed((prev) => !prev)}>
+          <CustomView variant="colorBase100" className="gap-2 rounded-3xl p-4">
+            <View className="flex flex-row justify-between items-center">
+              <CustomText variant="bold" className="text-sm">
+                Questions
               </CustomText>
-              <CustomText>
-                {currentQuestion.description || "No description"}
-              </CustomText>
-              {currentQuestion.correctAnswers.length > 1 && (
-                <CustomText color="colorBaseContent" className="text-sm">
-                  (Multiple answers allowed)
-                </CustomText>
-              )}
-              <CustomView variant="colorBase200" className="rounded-xl p-4">
-                {currentQuestion.options.map((opt, oIdx) => (
+              <RotatingArrow isCollapsed={isCollapsed} />
+            </View>
+            <Collapsible
+              collapsed={isCollapsed}
+              style={{
+                gap: 12,
+                flexDirection: "row",
+                flexWrap: "wrap",
+              }}
+            >
+              {quizData.quiz_content.map((_, index) => {
+                const hasAnswer = userAnswers[index]?.user_answer.length > 0;
+
+                return (
                   <Pressable
-                    key={oIdx}
-                    onPress={() => handleOptionToggle(questionIndex, oIdx)}
-                    className="flex flex-row gap-1 items-center"
+                    key={index}
+                    style={{
+                      backgroundColor:
+                        questionIndex === index
+                          ? currentScheme.colorPrimary
+                          : hasAnswer
+                            ? currentScheme.colorSuccess
+                            : currentScheme.colorBase200,
+                    }}
+                    className="px-8 py-4 rounded-3xl"
+                    onPress={() => setQuestionIndex(index)}
                   >
-                    <Switch
-                      variant="checkbox"
-                      value={userAnswers[questionIndex]?.user_answer.includes(
-                        oIdx
-                      )}
-                    />
-                    <CustomText className="flex-1">{opt}</CustomText>
+                    {hasAnswer && (
+                      <CustomText color="colorSuccessContent">
+                        {index + 1}
+                      </CustomText>
+                    )}
+                    {!hasAnswer && (
+                      <CustomText
+                        color={
+                          questionIndex === index
+                            ? "colorPrimaryContent"
+                            : "colorBaseContent"
+                        }
+                      >
+                        {index + 1}
+                      </CustomText>
+                    )}
                   </Pressable>
-                ))}
+                );
+              })}
+            </Collapsible>
+          </CustomView>
+        </Pressable>
+
+        <CustomView
+          variant="colorBase100"
+          className="flex-row gap-4 p-4 rounded-3xl"
+        >
+          <View className="flex-1 gap-4">
+            {currentQuestion ? (
+              <CustomView className="gap-2">
+                <CustomText variant="black" className="text-xl">
+                  {questionIndex + 1}. {currentQuestion.question}
+                </CustomText>
+                <CustomText>
+                  {currentQuestion.description || "No description"}
+                </CustomText>
+                {currentQuestion.correctAnswers.length > 1 && (
+                  <CustomText color="colorBaseContent" className="text-sm">
+                    (Multiple answers allowed)
+                  </CustomText>
+                )}
+                <CustomView variant="colorBase200" className="rounded-xl p-4">
+                  {currentQuestion.options.map((opt, oIdx) => (
+                    <Pressable
+                      key={oIdx}
+                      onPress={() => handleOptionToggle(questionIndex, oIdx)}
+                      className="flex flex-row gap-1 items-center"
+                    >
+                      <Switch
+                        variant="checkbox"
+                        value={userAnswers[questionIndex]?.user_answer.includes(
+                          oIdx
+                        )}
+                      />
+                      <CustomText className="flex-1">{opt}</CustomText>
+                    </Pressable>
+                  ))}
+                </CustomView>
               </CustomView>
-            </CustomView>
-          ) : (
-            <CustomText>No question found</CustomText>
+            ) : (
+              <CustomText>No question found</CustomText>
+            )}
+          </View>
+        </CustomView>
+
+        <View className="flex flex-row gap-2 justify-end self-end">
+          {questionIndex > 0 && (
+            <CustomPressable
+              onPress={() => setQuestionIndex((p) => p - 1)}
+              variant="colorBase300"
+              className="rounded-3xl px-4 py-2"
+            >
+              <CustomText>Previous</CustomText>
+            </CustomPressable>
+          )}
+          {questionIndex < quizData.quiz_content.length - 1 && (
+            <CustomPressable
+              onPress={() => setQuestionIndex((p) => p + 1)}
+              variant="colorPrimary"
+              className="rounded-3xl px-4 py-2"
+            >
+              <CustomText color="colorPrimaryContent">Next</CustomText>
+            </CustomPressable>
           )}
         </View>
-      </CustomView>
-
-      <View className="flex flex-row gap-2 justify-end self-end">
-        {questionIndex > 0 && (
-          <CustomPressable
-            onPress={() => setQuestionIndex((p) => p - 1)}
-            variant="colorBase300"
-            className="rounded-3xl px-4 py-2"
-          >
-            <CustomText>Previous</CustomText>
-          </CustomPressable>
-        )}
-        {questionIndex < quizData.quiz_content.length - 1 && (
-          <CustomPressable
-            onPress={() => setQuestionIndex((p) => p + 1)}
-            variant="colorPrimary"
-            className="rounded-3xl px-4 py-2"
-          >
-            <CustomText color="colorPrimaryContent">Next</CustomText>
-          </CustomPressable>
-        )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

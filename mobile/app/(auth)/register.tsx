@@ -197,6 +197,7 @@ export default function Page() {
           <Pressable
             className="flex flex-row gap-2"
             onPress={() => router.push("/(auth)/login")}
+            disabled={isRegistering}
           >
             <CustomText className="opacity-70">
               Already have an account?

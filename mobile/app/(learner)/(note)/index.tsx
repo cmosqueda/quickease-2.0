@@ -16,7 +16,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Note } from "@/types/user/types";
 import { router } from "expo-router";
 import { useTrays } from "react-native-trays";
-import { Pressable } from "react-native";
+import { Pressable, View } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { MyTraysProps } from "@/types/trays/trays";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -51,6 +51,46 @@ export default function Page() {
       items: user?.notes.filter((note: Note) => note.is_ai_generated === true),
     },
   ];
+
+  if (user?.notes.length === 0) {
+    return (
+      <SafeAreaView
+        className="flex flex-1"
+        style={{
+          backgroundColor: currentScheme?.colorBase100,
+        }}
+      >
+        <ForumHeader
+          title="Notes"
+          rightSideChildren={
+            <>
+              <Pressable
+                onPress={() =>
+                  useSearchTray.push("SearchTray", {
+                    close: useSearchTray.pop,
+                    type: "note",
+                  })
+                }
+              >
+                <CustomText>
+                  <FontAwesome5 name="search" size={20} />
+                </CustomText>
+              </Pressable>
+            </>
+          }
+        />
+        <CustomView
+          variant="colorBase300"
+          className="flex flex-1 flex-col gap-2 rounded-tl-3xl rounded-tr-3xl items-center justify-center"
+        >
+          <CustomText>
+            <MaterialCommunityIcons name="emoticon-sad" size={64} />
+          </CustomText>
+          <CustomText variant="bold" className="text-xl">No notes yet.</CustomText>
+        </CustomView>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView

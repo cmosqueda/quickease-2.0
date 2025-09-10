@@ -34,7 +34,7 @@ const PostComponent = ({ post }: { post: Post }) => {
     theme: {
       webview: {
         padding: 8,
-        backgroundColor: currentScheme.colorBase300,
+        backgroundColor: currentScheme.colorBase100,
       },
     },
     bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
@@ -62,7 +62,7 @@ const PostComponent = ({ post }: { post: Post }) => {
           </CustomText>
           <CustomView
             key={post.id}
-            variant="colorBase300"
+            variant="colorBase100"
             className="p-4 rounded-3xl"
           >
             <RichText editor={editor} />
@@ -78,6 +78,14 @@ const Badges = ({ user }: { user: User }) => {
   const [assets] = useAssets(Object.values(_BADGE_ASSET_MAP));
 
   if (!assets) return null;
+
+  if (!user.badges) {
+    return (
+      <CustomView className="flex items-center justify-center p-4 rounded-3xl">
+        <CustomText>No badges yet.</CustomText>
+      </CustomView>
+    );
+  }
 
   return (
     <ScrollView contentContainerClassName="flex flex-col gap-4">

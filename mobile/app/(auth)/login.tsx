@@ -112,9 +112,6 @@ export default function Page() {
             secureTextEntry={true}
           />
         </View>
-        <Pressable className="self-end">
-          <CustomText className="opacity-70">Forgot password?</CustomText>
-        </Pressable>
         <View className="flex flex-col gap-4">
           <CustomPressable
             variant="colorPrimary"

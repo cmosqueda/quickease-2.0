@@ -6,11 +6,14 @@ import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
 import Collapsible from "react-native-collapsible";
 import PostActionBar from "@/components/PostActionBar";
+import RotatingArrow from "@/components/buttons/RotatingArrow";
 import CustomRichText from "@/components/CustomRichText";
 import CommentComponent from "@/components/CommentComponent";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTrays } from "react-native-trays";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,17 +24,13 @@ import { Pressable, ScrollView, View } from "react-native";
 import { Link, router, useLocalSearchParams } from "expo-router";
 
 import _API_INSTANCE from "@/utils/axios";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
-import clsx from "clsx";
-import RotatingArrow from "@/components/buttons/RotatingArrow";
 
 export default function Page() {
   const { user } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { currentScheme } = useTheme();
 
-  const [isAttachmentsCollapsed, setAttachmentsCollapse] = useState(false);
+  const [isAttachmentsCollapsed, setAttachmentsCollapse] = useState(true);
 
   const useViewProfileTray = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
