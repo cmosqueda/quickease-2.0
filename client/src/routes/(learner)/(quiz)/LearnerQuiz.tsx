@@ -16,38 +16,9 @@ import {
 import { useEffect, useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
+import type { Quiz } from "@/types/types";
 
-interface QuizData {
-  id: string;
-  user_id: string;
-  quiz_content: {
-    question: string;
-    description?: string;
-    options: string[];
-    correctAnswers: number[];
-  }[];
-  title: string;
-  description?: string;
-  is_public: boolean | null;
-  created_at: string;
-  updated_at: string;
-  is_ai_generated: boolean;
-  is_randomized: boolean;
-  timed_quiz: string;
-  attempts: {
-    id: string;
-    duration: number;
-    score: number;
-    started_at: string;
-    completed_at: string;
-    user_id: string;
-    answer_data: {
-      question: {
-        correctAnswers: number[];
-      };
-      user_answer: number[];
-    }[];
-  }[];
+interface QuizData extends Quiz {
   leaderboard: {
     id: string;
     duration: number;
@@ -127,7 +98,7 @@ export default function LearnerQuizPage() {
   const renderAttempts = () =>
     data.attempts.map((entry, index) => {
       const totalQuestions = entry.answer_data.length;
-      const correctCount = entry.answer_data.reduce((acc, item) => {
+      const correctCount = entry.answer_data.reduce((acc: any, item: any) => {
         const { correctAnswers } = item.question;
         const userAnswers = item.user_answer;
         const isCorrect =
@@ -139,7 +110,7 @@ export default function LearnerQuizPage() {
       return (
         <div
           key={entry.id}
-          className="flex flex-row justify-between items-center bg-base-100 p-4 rounded-2xl"
+          className="flex flex-row justify-between items-center bg-base-100 p-4 rounded-2xl border border-base-300 shadow"
         >
           <div className="flex flex-row gap-4">
             <p>{index + 1}</p>
@@ -174,7 +145,7 @@ export default function LearnerQuizPage() {
       return (
         <div
           key={entry.id}
-          className="flex flex-row justify-between items-center bg-base-100 p-4 rounded-2xl"
+          className="flex flex-row justify-between items-center bg-base-100 p-4 rounded-2xl border border-base-300 shadow"
         >
           <div className="flex flex-row gap-4">
             <p>{index + 1}</p>
@@ -215,7 +186,7 @@ export default function LearnerQuizPage() {
                 <summary className="list-none">
                   <EllipsisVertical />
                 </summary>
-                <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4">
+                <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm border border-base-300 my-4 ">
                   <li>
                     <a
                       onClick={() => {
@@ -246,7 +217,7 @@ export default function LearnerQuizPage() {
         </div>
       </div>
 
-      <div className="p-8 rounded-xl bg-base-100">
+      <div className="p-8 rounded-xl bg-base-100 border border-base-300 shadow">
         {data.is_ai_generated && (
           <div className="flex flex-row items-center gap-2">
             <Info size={16} className="text-sm text-base-content/50" />

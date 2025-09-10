@@ -76,7 +76,7 @@ export default function LearnerViewFlashcardPage() {
             <summary className="list-none">
               <EllipsisVertical />
             </summary>
-            <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4">
+            <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4 border border-base-300">
               <li>
                 <button>Report this flashcard</button>
               </li>

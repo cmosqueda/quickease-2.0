@@ -65,7 +65,7 @@ const User = ({ user, posts }: { user: any; posts: any }) => {
             <NavLink
               to={`/learner/post/${post.id}`}
               viewTransition
-              className="transition-all duration-300 p-4 rounded-3xl bg-base-100 hover:bg-base-300 border border-base-200 hover:shadow flex flex-col gap-4"
+              className="transition-all duration-300 p-4 rounded-3xl bg-base-100 hover:bg-base-300 border border-base-300 shadow hover:shadow flex flex-col gap-4"
             >
               <EditorProvider
                 content={post.post_body}
@@ -85,14 +85,14 @@ const User = ({ user, posts }: { user: any; posts: any }) => {
     </>,
     <>
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-row gap-4 bg-base-100 p-8 rounded-3xl items-center">
+        <div className="flex flex-row gap-4 bg-base-100 p-8 rounded-3xl items-center border border-base-300 shadow">
           <Crown size={36} />
           <div className="flex flex-col">
             <p>Notes created</p>
             <h1 className="font-bold text-4xl">0</h1>
           </div>
         </div>
-        <div className="flex flex-row gap-4 bg-base-100 p-8 rounded-3xl items-center">
+        <div className="flex flex-row gap-4 bg-base-100 p-8 rounded-3xl items-center border border-base-300 shadow">
           <GalleryVertical size={36} />
           <div className="flex flex-col">
             <p>Flashcards created</p>
@@ -105,7 +105,7 @@ const User = ({ user, posts }: { user: any; posts: any }) => {
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
-      <div className="bg-base-100 p-8 flex flex-row gap-4 rounded-3xl">
+      <div className="bg-base-100 p-8 flex flex-row gap-4 rounded-3xl border-base-300 shadow">
         <img
           src={
             user.avatar

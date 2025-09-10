@@ -226,7 +226,7 @@ const CommentCard = ({
                 <EditorContent
                   editor={editor}
                   className={clsx(
-                    "prose bg-base-100 rounded-xl p-4 border focus:outline-none outline-none border-transparent focus:border-transparent focus:ring-0"
+                    "prose bg-base-100 rounded-xl p-4 border focus:outline-none outline-none border-base-200 shadow focus:border-transparent focus:ring-0 "
                   )}
                   placeholder="Comment"
                 />

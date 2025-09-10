@@ -72,9 +72,9 @@ const PostCard = ({ data }: { data: any }) => {
                   return (
                     <NavLink
                       to={`/learner/note/view/${attachment.note_id}`}
-                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300 border border-base-300 shadow"
                     >
-                      <Notebook />
+                      <Notebook size={24} className="shrink-0" />
                       <h1 className="text-2xl font-bold">
                         {attachment.note?.title}
                       </h1>
@@ -84,9 +84,9 @@ const PostCard = ({ data }: { data: any }) => {
                   return (
                     <NavLink
                       to={`/learner/quizzes/${attachment.quiz_id}`}
-                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300 border border-base-300 shadow"
                     >
-                      <GalleryVertical />
+                      <GalleryVertical size={24} className="shrink-0" />
                       <h1 className="text-2xl font-bold">
                         {attachment.quiz?.title}
                       </h1>
@@ -96,9 +96,9 @@ const PostCard = ({ data }: { data: any }) => {
                   return (
                     <NavLink
                       to={`/learner/flashcards/view/${attachment.flashcard_id}`}
-                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300"
+                      className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300 border border-base-300 shadow"
                     >
-                      <GalleryVertical />
+                      <GalleryVertical size={24} className="shrink-0" />
                       <h1 className="text-2xl font-bold">
                         {attachment.flashcard?.title}
                       </h1>

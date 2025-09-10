@@ -99,11 +99,11 @@ export default function LearnerFlashcardPage() {
         />
         <div className="flex flex-row gap-6 items-center">
           <Edit className="cursor-pointer" onClick={() => navigate("edit")} />
-          <details className="dropdown dropdown-end cursor-pointer">
+          <details className="dropdown dropdown-end cursor-pointer ">
             <summary className="list-none">
               <EllipsisVertical />
             </summary>
-            <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4">
+            <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4 border border-base-300 shadow">
               <li>
                 <button onClick={handleDelete}>Delete</button>
               </li>

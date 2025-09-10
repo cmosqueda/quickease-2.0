@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FlippableCard from "@/components/(learner)/FlippableCard";
+import type { Flashcard } from "@/types/types";
 import _API_INSTANCE from "@/utils/axios";
 import { checkBadges } from "@/utils/badges";
 
@@ -10,13 +11,7 @@ import { toast } from "sonner";
 
 export default function LearnerEditFlashcardPage() {
   const navigate = useNavigate();
-  const data = useLoaderData() as {
-    id: string;
-    user_id: string;
-    title: string;
-    description: string | null;
-    flashcards: { front: string; back: string }[];
-  };
+  const data = useLoaderData() as Flashcard;
 
   const [title, setTitle] = useState(data.title);
   const [description, setDescription] = useState(data.description || "");
@@ -163,7 +158,7 @@ export default function LearnerEditFlashcardPage() {
       {cards.length > 0 && (
         <div className="flex flex-col gap-4">
           <h1 className="text-3xl font-bold">Flashcards</h1>
-          {cards.map((card, index) => (
+          {cards.map((card: any, index: any) => (
             <div
               key={index}
               className="flex flex-col gap-4 bg-base-100 p-6 rounded-3xl border border-base-300 shadow"

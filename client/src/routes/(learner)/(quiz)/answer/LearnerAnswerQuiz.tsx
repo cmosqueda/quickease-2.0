@@ -190,7 +190,7 @@ export default function LearnerAnswerQuizPage() {
           </button>
         </div>
       </div>
-      <div className="collapse collapse-arrow">
+      <div className="collapse collapse-arrow border border-base-300 shadow">
         <input type="checkbox" />
         <div className="collapse-title bg-base-100">
           <h1>Quiz Details</h1>
@@ -220,7 +220,7 @@ export default function LearnerAnswerQuizPage() {
                 userAnswers[index].user_answer.length > 0
                   ? "bg-base-content/50"
                   : null,
-                "flex flex-col items-center justify-center p-4 rounded-xl w-[3rem] h-[3rem] aspect-square hover:bg-base-content/40 cursor-pointer bg-base-100"
+                "flex flex-col items-center justify-center p-4 rounded-xl w-[3rem] h-[3rem] aspect-square hover:bg-base-content/40 cursor-pointer bg-base-100 border border-base-300 shadow"
               )}
               onClick={() => setQuestionIndex(index)}
             >
@@ -249,7 +249,7 @@ export default function LearnerAnswerQuizPage() {
                   (Multiple answers)
                 </p>
               )}
-              <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-base-100 my-2">
+              <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-base-100 my-2 border border-base-300 shadow">
                 {currentQuestion.options.map((option, i) => (
                   <div className="flex flex-row gap-2 items-center" key={i}>
                     <input
