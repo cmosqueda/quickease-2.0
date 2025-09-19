@@ -40,6 +40,20 @@ export default function Page() {
   const startTime = useRef(new Date());
   const [isCollapsed, setIsCollapsed] = useState(true);
 
+  /**
+   * Custom hook that fetches quiz data using React Query
+   * @remarks
+   * This query fetches a specific quiz by its ID from the API
+   *
+   * @param {string} id - The ID of the quiz to fetch
+   * @returns {UseQueryResult<Quiz>} Object containing:
+   * - data: The fetched quiz data of type Quiz
+   * - isFetching: Boolean indicating if the query is currently fetching
+   *
+   * @example
+   * const { data: quizData, isFetching } = useQuery<Quiz>({...})
+   *
+   */
   const { data: quizData, isFetching } = useQuery<Quiz>({
     queryKey: ["answer-quiz", id],
     queryFn: async () => {
@@ -58,7 +72,7 @@ export default function Page() {
   useEffect(() => {
     if (quizData?.quiz_content) {
       setUserAnswers(
-        quizData.quiz_content.map((q) => ({
+        quizData.quiz_content.map((q: any) => ({
           question: q,
           user_answer: [],
         }))
@@ -214,7 +228,7 @@ export default function Page() {
                 flexWrap: "wrap",
               }}
             >
-              {quizData.quiz_content.map((_, index) => {
+              {quizData.quiz_content.map((_: any, index: number) => {
                 const hasAnswer = userAnswers[index]?.user_answer.length > 0;
 
                 return (

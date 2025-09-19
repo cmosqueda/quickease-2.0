@@ -31,6 +31,18 @@ export default function Page() {
   const [tabIndex, setTabIndex] = useState(0);
   const pageViewRef = useRef<PagerView>(null);
 
+  /**
+   * Handles user registration by sending user details to the backend API.
+   * Displays a toast notification if there is no network connection.
+   * Sets the registering state while the request is in progress.
+   * On successful registration (HTTP 201), sets the user data and navigates to the forum page.
+   * On error, displays an error toast with the response message or a default error message.
+   * Always resets the registering state after the process completes.
+   *
+   * @async
+   * @function handleRegister
+   * @returns {Promise<void>} Resolves when registration process is complete.
+   */
   const handleRegister = async () => {
     if (!isConnected) {
       toast("You're not connected to network connection.");

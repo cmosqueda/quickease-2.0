@@ -22,6 +22,33 @@ type _useAuth = {
   deleteFlashcard: (id: string) => void;
 };
 
+/**
+ * Custom hook for managing authentication and user-related data using Zustand, Immer, and persistent storage.
+ *
+ * @remarks
+ * This hook provides state management for the authenticated user and CRUD operations for notes, quizzes, and flashcards.
+ * State is persisted in AsyncStorage under the key "quickease-auth", but only the `user` property is persisted.
+ *
+ * @returns Zustand store with the following properties and methods:
+ * - `user`: The currently authenticated user (or `undefined`).
+ * - `setUser(user)`: Sets the authenticated user.
+ * - `addNote(note)`: Adds a new note to the state.
+ * - `editNote(updatedNote)`: Updates an existing note in the state.
+ * - `deleteNote(id)`: Deletes a note by its ID.
+ * - `addQuiz(quiz)`: Adds a new quiz to the state.
+ * - `editQuiz(updatedQuiz)`: Updates an existing quiz in the state.
+ * - `deleteQuiz(id)`: Deletes a quiz by its ID.
+ * - `addFlashcard(flashcard)`: Adds a new flashcard to the state.
+ * - `editFlashcard(updatedFlashcard)`: Updates an existing flashcard in the state.
+ * - `deleteFlashcard(id)`: Deletes a flashcard by its ID.
+ *
+ * @example
+ * ```tsx
+ * const { user, setUser, addNote } = useAuth();
+ * setUser({ id: 1, name: "Alice" });
+ * addNote({ id: 1, content: "My first note" });
+ * ```
+ */
 const useAuth = create<_useAuth>()(
   persist(
     immer((set, get) => ({

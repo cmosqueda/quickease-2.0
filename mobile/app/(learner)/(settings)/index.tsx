@@ -2,6 +2,7 @@ import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import CustomText from "@/components/CustomText";
 import CustomView from "@/components/CustomView";
+import useSettings from "@/hooks/useSettings";
 import ForumHeader from "@/components/ForumHeader";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -15,8 +16,25 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, View } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
-import useSettings from "@/hooks/useSettings";
 
+/**
+ * AccountSettings component provides UI and logic for managing user account settings.
+ *
+ * Features:
+ * - Allows users to change their name and email via trays.
+ * - Enables users to request password change and email verification.
+ * - Displays verification option only if the user's email is not verified.
+ * - Shows success or error toasts based on API responses.
+ * - Disables action buttons while requests are in progress.
+ *
+ * Utilizes:
+ * - `useAuth` for accessing current user information.
+ * - `useTrays` for managing tray modals.
+ * - `_API_INSTANCE` for sending requests to backend.
+ * - `toast` for user notifications.
+ *
+ * @returns {JSX.Element} The rendered account settings UI.
+ */
 const AccountSettings = () => {
   const { user } = useAuth();
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
@@ -137,6 +155,16 @@ const AccountSettings = () => {
   );
 };
 
+/**
+ * PrivacySettings component allows users to toggle the visibility of their profile.
+ *
+ * - Displays a switch to set profile visibility (public/private).
+ * - Updates the user's profile visibility via an API call.
+ * - Handles optimistic UI updates and error rollback.
+ * - Shows success or error toasts based on the API response.
+ *
+ * @returns {JSX.Element} The rendered privacy settings UI.
+ */
 const PrivacySettings = () => {
   const { user, setUser } = useAuth();
   const { currentScheme } = useTheme();
@@ -181,6 +209,18 @@ const PrivacySettings = () => {
   );
 };
 
+/**
+ * Renders the customization settings screen for the learner's settings section.
+ *
+ * This component provides options for:
+ * - Changing the app theme via a tray modal.
+ * - Enabling or disabling the Pomodoro timer in the drawer.
+ *
+ * It utilizes custom hooks for theme and settings management, and displays UI elements
+ * such as pressable buttons, switches, and icons for user interaction.
+ *
+ * @returns {JSX.Element} The customization settings UI.
+ */
 const CustomizationSettings = () => {
   const { currentScheme } = useTheme();
   const { pomodoroInDrawerVisibility, setPomodoroInDrawerVisibility } =

@@ -3,6 +3,12 @@ import _EXPO_PUSH_SERVICE from "../../utils/expo";
 
 import { sendNotification } from "../../utils/notification";
 
+/**
+ * Retrieves all comments associated with a specific post.
+ *
+ * @param post_id - The unique identifier of the post for which to fetch comments.
+ * @returns A promise that resolves to an array of comment objects related to the specified post.
+ */
 export async function getComments(post_id: string) {
   const comments = await db_client.comment.findMany({
     where: { post_id: post_id },
@@ -11,6 +17,17 @@ export async function getComments(post_id: string) {
   return comments;
 }
 
+/**
+ * Adds a comment to a post and sends notifications to the post owner if applicable.
+ *
+ * - Creates a new comment associated with the specified post and user.
+ * - If the post owner is not the commenting user, sends a push notification and an in-app notification to the post owner.
+ *
+ * @param body - The content of the comment.
+ * @param post_id - The ID of the post to comment on.
+ * @param user_id - The ID of the user making the comment.
+ * @returns The created comment object, including selected user fields.
+ */
 export async function commentOnPost(
   body: string,
   post_id: string,
@@ -63,6 +80,13 @@ export async function commentOnPost(
   return comment;
 }
 
+/**
+ * Updates the body of a comment with the specified ID.
+ *
+ * @param body - The new content for the comment.
+ * @param comment_id - The unique identifier of the comment to update.
+ * @returns A promise that resolves to the updated comment object.
+ */
 export async function updateComment(body: string, comment_id: string) {
   const comment = await db_client.comment.update({
     data: {
@@ -76,6 +100,12 @@ export async function updateComment(body: string, comment_id: string) {
   return comment;
 }
 
+/**
+ * Deletes a comment from the database by its unique identifier.
+ *
+ * @param comment_id - The unique identifier of the comment to be deleted.
+ * @returns A promise that resolves to `true` if the deletion was successful.
+ */
 export async function deleteComment(comment_id: string) {
   await db_client.comment.delete({
     where: { id: comment_id },
@@ -84,6 +114,18 @@ export async function deleteComment(comment_id: string) {
   return true;
 }
 
+/**
+ * Replies to a specific comment on a forum post.
+ *
+ * This function creates a reply to the given comment, sends a push notification to the original comment's author
+ * (if they are not the replier), and triggers an internal notification event.
+ *
+ * @param body - The content of the reply.
+ * @param comment_id - The ID of the comment being replied to.
+ * @param user_id - The ID of the user making the reply.
+ * @param post_id - The ID of the post associated with the comment.
+ * @returns An object indicating the reply was successful.
+ */
 export async function replyOnComment(
   body: string,
   comment_id: string,

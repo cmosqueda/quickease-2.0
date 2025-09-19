@@ -24,6 +24,19 @@ export default function Page() {
   const { push: openContextMenu, pop: closeContextMenu } =
     useTrays<MyTraysProps>("ContextMenuTray");
 
+  /**
+   * Filters and sorts the user's notes based on the provided query and sort order.
+   *
+   * - If there are no notes or the query is empty, displays a toast notification and navigates back.
+   * - Filters notes by matching the query against the note's title or content (HTML tags are stripped from content).
+   * - Sorts the filtered notes by creation date, either newest or oldest first, depending on the `sort` value.
+   *
+   * @returns {Note[]} The filtered and sorted array of notes.
+   *
+   * @dependency user?.notes - The list of notes to filter and sort.
+   * @dependency query - The search query string.
+   * @dependency sort - The sort order, either "newest" or "oldest".
+   */
   const filteredNotes = useMemo(() => {
     if (!user?.notes || !query) {
       toast.info("No notes found.");

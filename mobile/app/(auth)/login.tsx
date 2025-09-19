@@ -22,6 +22,19 @@ export default function Page() {
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
+  /**
+   * Handles the login process for the user.
+   *
+   * - Checks for network connectivity and required credentials.
+   * - Sends a login request to the API with the provided email and password.
+   * - If the user is an admin, displays a toast message and prevents mobile login.
+   * - If login is successful and the user is not an admin:
+   *   - Fetches notes, flashcards, and quizzes in parallel.
+   *   - Updates the authentication state with user data and fetched resources.
+   *   - Navigates to the learner forum route.
+   * - Displays appropriate toast messages for errors or missing information.
+   * - Manages the logging-in state throughout the process.
+   */
   const handleLogin = async () => {
     if (!isConnected) {
       toast("You're not connected to network connection.");

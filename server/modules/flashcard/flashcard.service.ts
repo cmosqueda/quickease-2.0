@@ -1,5 +1,12 @@
 import db_client from "../../utils/client";
 
+/**
+ * Retrieves all flashcards associated with a specific user.
+ *
+ * @param user_id - The unique identifier of the user whose flashcards are to be fetched.
+ * @returns A promise that resolves to an array of flashcards belonging to the user.
+ * @throws Will throw an error if the database query fails.
+ */
 export async function getUserFlashcards(user_id: string) {
   try {
     return await db_client.flashcard.findMany({
@@ -10,6 +17,13 @@ export async function getUserFlashcards(user_id: string) {
   }
 }
 
+/**
+ * Retrieves a flashcard for a user by its unique identifier.
+ *
+ * @param flashcard_id - The unique identifier of the flashcard to retrieve.
+ * @returns A promise that resolves to the flashcard object if found, or `null` if not found.
+ * @throws Will throw an error if the database query fails.
+ */
 export async function getUserFlashcard(flashcard_id: string) {
   try {
     return await db_client.flashcard.findFirst({
@@ -20,6 +34,17 @@ export async function getUserFlashcard(flashcard_id: string) {
   }
 }
 
+/**
+ * Creates a new user flashcard set in the database.
+ *
+ * @param title - The title of the flashcard set.
+ * @param description - A description of the flashcard set.
+ * @param flashcards - An array of flashcard objects, each containing a `front` and `back` string.
+ * @param is_ai_generated - Indicates whether the flashcards are AI-generated.
+ * @param user_id - The ID of the user creating the flashcard set.
+ * @returns The created flashcard set object from the database.
+ * @throws Will throw an error if the database operation fails.
+ */
 export async function createUserFlashcard(
   title: string,
   description: string,
@@ -42,6 +67,17 @@ export async function createUserFlashcard(
   }
 }
 
+/**
+ * Updates an existing flashcard for a specific user.
+ *
+ * @param title - The new title of the flashcard.
+ * @param description - The new description of the flashcard.
+ * @param flashcards - An array of flashcard objects containing `front` and `back` text.
+ * @param user_id - The ID of the user who owns the flashcard.
+ * @param flashcard_id - The ID of the flashcard to update.
+ * @returns A promise that resolves to the updated flashcard object.
+ * @throws Will throw an error if the update operation fails.
+ */
 export async function updateUserFlashcard(
   title: string,
   description: string,
@@ -66,6 +102,13 @@ export async function updateUserFlashcard(
   }
 }
 
+/**
+ * Deletes a user flashcard from the database by its ID.
+ *
+ * @param flashcard_id - The unique identifier of the flashcard to delete.
+ * @returns A promise that resolves to `true` if the deletion was successful.
+ * @throws Will throw an error if the deletion fails.
+ */
 export async function deleteUserFlashcard(flashcard_id: string) {
   try {
     await db_client.flashcard.delete({
@@ -77,6 +120,16 @@ export async function deleteUserFlashcard(flashcard_id: string) {
   }
 }
 
+/**
+ * Toggles the visibility of a flashcard between public and private.
+ *
+ * Retrieves the current visibility state (`is_public`) of the flashcard with the given ID,
+ * inverts it, and updates the flashcard record in the database.
+ *
+ * @param flashcard_id - The unique identifier of the flashcard to update.
+ * @returns A promise that resolves to `true` if the operation succeeds.
+ * @throws Throws an error if the database operation fails.
+ */
 export async function toggleFlashcardVisibility(flashcard_id: string) {
   try {
     const current = await db_client.flashcard.findUnique({

@@ -25,6 +25,25 @@ import adminMailRoutes from "./modules/admin/admin.mail.route";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { server } from "./server";
 
+/**
+ * Initializes Fastify server configuration including environment variables, cookies, JWT, CORS, multipart handling, and route registration.
+ *
+ * @async
+ * @function
+ * @returns {Promise<void>} Resolves when all configurations and routes are registered.
+ *
+ * @remarks
+ * - Loads environment variables using `fastifyEnv` and validates required keys.
+ * - Registers cookie handling with secret from environment.
+ * - Configures JWT authentication with cookie support and expiration.
+ * - Sets up CORS with a whitelist of allowed origins and credentials.
+ * - Enables multipart file uploads with size and file count limits.
+ * - Adds hooks for JWT handling and authentication, including admin-only access.
+ * - Registers API routes for users, authentication, notes, flashcards, quizzes, forums, AI, mail, notifications, badges, and admin modules.
+ * - Provides a test route for API health checking.
+ *
+ * @throws {Error} Throws if environment validation fails or registration of plugins/routes encounters an error.
+ */
 export default async function initializeFastifyConfig() {
   /*
     - Configuration for dotenv files

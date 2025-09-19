@@ -26,6 +26,29 @@ export default function Page() {
 
   const insets = useSafeAreaInsets();
 
+  /**
+   * Fetches forum search results using infinite pagination.
+   *
+   * Utilizes `useInfiniteQuery` to retrieve posts based on the provided search `query` and `sort` order.
+   * Each page fetches a limited number of posts (`limit = 10`) from the `/forum/search` endpoint.
+   * If no posts are found, displays a toast notification and navigates back.
+   *
+   * @param {string} query - The search query string.
+   * @param {string} sort - The sorting order for the search results.
+   * @returns {{
+   *   data: InfiniteData<{ posts: Post[]; total: number; query: string; page: number; limit: number; sort: string; nextCursor?: number }>,
+   *   isFetching: boolean,
+   *   fetchNextPage: () => void,
+   *   hasNextPage: boolean,
+   *   isFetchingNextPage: boolean,
+   *   refetch: () => void
+   * }} - Infinite query result and control functions.
+   *
+   * @remarks
+   * - Automatically retries failed requests up to 3 times.
+   * - Disables refetching on window focus.
+   * - Only enabled when `query` is truthy.
+   */
   const {
     data,
     isFetching,

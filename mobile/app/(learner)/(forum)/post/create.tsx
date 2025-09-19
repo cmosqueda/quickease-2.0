@@ -16,6 +16,7 @@ import { MyTraysProps } from "@/types/trays/trays";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Flashcard, Note, Quiz } from "@/types/user/types";
+
 import {
   Keyboard,
   KeyboardAvoidingView,

@@ -1,3 +1,7 @@
+/*
+ * Schema on the Prisma, converted to types para dali ra ang pag ctrl+space. naay auto suggestions and type safety napud.
+ */
+
 export enum ResolveType {
   IS_DELETED = "IS_DELETED",
   IS_HIDDEN = "IS_HIDDEN",
@@ -33,7 +37,6 @@ export enum TokenType {
   VERIFY_EMAIL = "VERIFY_EMAIL",
 }
 
-// models
 export interface User {
   id: string;
   password: string;

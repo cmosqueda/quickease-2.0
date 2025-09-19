@@ -7,15 +7,17 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { toast } from "sonner-native";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useState } from "react";f
+
 import {
   RichText,
   Toolbar,
   useEditorBridge,
   useEditorContent,
 } from "@10play/tentap-editor";
+
 import {
   View,
   Pressable,

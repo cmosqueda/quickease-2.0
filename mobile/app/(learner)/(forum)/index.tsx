@@ -32,6 +32,24 @@ export default function Page() {
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
 
+  /**
+   * Fetches recent forum posts using infinite pagination.
+   *
+   * Utilizes `useInfiniteQuery` to handle fetching, pagination, and caching of recent posts.
+   * - Fetches posts from `/forum/posts/recent` endpoint with a cursor-based pagination.
+   * - Limits each page to 6 posts.
+   * - Handles automatic retries (up to 3 times) and disables refetch on window focus.
+   * - Only enabled when the user is connected (`isConnected`).
+   *
+   * @returns {
+   *   data: Paginated forum posts data,
+   *   isFetching: Indicates if the initial fetch is in progress,
+   *   fetchNextPage: Function to fetch the next page,
+   *   hasNextPage: Indicates if there is a next page,
+   *   isFetchingNextPage: Indicates if the next page is being fetched,
+   *   refetch: Function to manually refetch the data
+   * }
+   */
   const {
     data,
     isFetching,

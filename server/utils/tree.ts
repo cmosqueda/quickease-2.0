@@ -1,5 +1,15 @@
 import { FlatComment, NestedComment } from "./types";
 
+/**
+ * Builds a nested comment tree from a flat list of comments.
+ *
+ * Each comment is mapped to its parent, forming a hierarchical structure.
+ * The function also calculates the vote sum and the current user's vote for each comment.
+ *
+ * @param comments - Array of flat comments to be nested.
+ * @param user_id - The ID of the user to determine their vote on each comment.
+ * @returns An array of nested comments representing the root-level comments and their replies.
+ */
 export function buildCommentTree(
   comments: FlatComment[],
   user_id: string

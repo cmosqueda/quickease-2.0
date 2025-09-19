@@ -6,6 +6,19 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import _API_INSTANCE from "@/utils/axios";
 
+/**
+ * Custom hook for editing a forum post.
+ *
+ * This hook provides a mutation for updating a post's title and body via an API call.
+ * On successful mutation, it invalidates and refetches relevant queries to ensure UI consistency.
+ * Handles errors by logging and displaying a toast notification.
+ *
+ * @returns {UseMutationResult} Mutation object for editing a post.
+ *
+ * @example
+ * const editPostMutation = useEditPost();
+ * editPostMutation.mutate({ post_id: "123", title: "New Title", body: "Updated body" });
+ */
 export function useEditPost() {
   const queryClient = useQueryClient();
 

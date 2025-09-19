@@ -84,6 +84,17 @@ export default function Index() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useLayoutEffect(() => {
+    /**
+     * Asynchronously checks user authentication status and updates the UI accordingly.
+     *
+     * - Sets the checking state to `true` while the authentication check is in progress.
+     * - Calls `checkAuthAndRedirect` to verify if the user is logged in.
+     * - If the user is authenticated, updates the logged-in state.
+     * - Ensures the checking state is reset to `false` after the process completes, regardless of success or failure.
+     *
+     * @async
+     * @returns {Promise<void>} Resolves when the authentication check is complete.
+     */
     const check = async () => {
       setIsChecking(true);
 

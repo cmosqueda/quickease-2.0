@@ -24,6 +24,18 @@ export default function Page() {
   const { push: openContextMenu, pop: closeContextMenu } =
     useTrays<MyTraysProps>("ContextMenuTray");
 
+  /**
+   * Memoized function that filters and sorts the user's flashcards based on the search query and sort order.
+   * - If no flashcards or query are present, displays a toast notification and navigates back.
+   * - Filters flashcards whose titles include the query string (case-insensitive).
+   * - Sorts the filtered results by creation date, either newest or oldest first.
+   *
+   * @returns {Flashcard[]} The filtered and sorted array of flashcards.
+   *
+   * @dependency user?.flashcards - The user's flashcards to filter and sort.
+   * @dependency query - The search query string.
+   * @dependency sort - The sort order, either "newest" or another value for oldest.
+   */
   const filteredFlashcards = useMemo(() => {
     if (!user?.flashcards || !query) {
       toast.info("No flashcards found.");

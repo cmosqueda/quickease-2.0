@@ -22,6 +22,32 @@ import {
 import { vote_on_post, vote_on_comment } from "./vote.controller";
 import { report_comment, report_post } from "./report.controller";
 
+/**
+ * Registers forum-related routes on the provided Fastify instance.
+ *
+ * @param fastify - The Fastify instance to register routes on.
+ *
+ * @route `GET /` - Get posts for the authenticated user.
+ * @route `GET /post/:post_id` - Get a specific post by ID.
+ * @route `PUT /post/update` - Update an existing post.
+ * @route `GET /posts/recent` - Get recent posts.
+ * @route `POST /comments/view` - View comments on a post.
+ * @route `POST /post/create` - Create a new post.
+ * @route `POST /post/comment` - Add a comment to a post.
+ * @route `POST /post/vote` - Vote on a post.
+ * @route `POST /post/comment/reply` - Reply to a comment.
+ * @route `POST /post/comment/vote` - Vote on a comment.
+ * @route `PUT /post/comment/update` - Update a comment.
+ * @route `DELETE /post/comment/delete` - Delete a comment.
+ * @route `POST /post/tag` - Add a tag to a post.
+ * @route `DELETE /post/delete` - Delete a post.
+ * @route `PUT /post/toggle-visibility` - Toggle post visibility.
+ * @route `GET /search` - Search posts.
+ * @route `PUT /post/report` - Report a post.
+ * @route `PUT /comment/report` - Report a comment.
+ *
+ * All routes require authentication via the `fastify.authenticate` preHandler.
+ */
 export default async function forumRoutes(fastify: FastifyInstance) {
   fastify.get("/", {
     preHandler: [fastify.authenticate],

@@ -43,6 +43,17 @@ export default function Page() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useLayoutEffect(() => {
+    /**
+     * Asynchronously retrieves and parses AI-generated quiz content from AsyncStorage.
+     *
+     * - If content exists, updates state with the quiz title, description, questions, and full content.
+     * - If no content is found, initializes state with a default empty question.
+     * - Handles JSON parsing errors by logging and navigating back.
+     * - Ensures loading state is updated after completion.
+     *
+     * @async
+     * @returns {Promise<void>} Resolves when content is loaded and state is updated.
+     */
     const getGeneratedContent = async () => {
       try {
         const _CONTENT = await AsyncStorage.getItem("app-ai-generated-quiz");

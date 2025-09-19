@@ -9,6 +9,23 @@ import {
   view_profile,
 } from "./user.controller";
 
+/**
+ * Registers user-related routes for the Fastify instance.
+ *
+ * @param fastify - The Fastify instance to register routes on.
+ *
+ * @remarks
+ * All routes require authentication via the `fastify.authenticate` preHandler.
+ *
+ * @routes
+ * @route `GET /` - Retrieves the authenticated user's information.
+ * @route `GET /check` - Checks the authenticated user's status.
+ * @route `GET /view/:user_id` - Views the profile of a user by ID.
+ * @route `PUT /edit-name` - Edits the authenticated user's name.
+ * @route `PUT /edit-email` - Edits the authenticated user's email.
+ * @route `PUT /toggle-visibility` - Toggles the authenticated user's visibility.
+ * @route `PUT /change-avatar` - Changes the authenticated user's avatar.
+ */
 export default async function userRoutes(fastify: FastifyInstance) {
   fastify.get("/", {
     preHandler: [fastify.authenticate],

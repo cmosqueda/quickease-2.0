@@ -11,6 +11,23 @@ type CommentInput = {
   parent_comment_id?: string;
 };
 
+/**
+ * Custom hook for creating comments or replies on forum posts.
+ *
+ * @param keysToInvalidate - Array of query keys to invalidate after a successful mutation. Defaults to `[["view-post"]]`.
+ * @returns A mutation object from `react-query` for posting comments, including success and error handlers.
+ *
+ * @remarks
+ * - Handles both new comments and replies to existing comments.
+ * - Invalidates provided query keys on success to refresh relevant data.
+ * - Displays a toast notification on error.
+ *
+ * @example
+ * ```tsx
+ * const { mutate: postComment, isLoading } = useComment();
+ * postComment({ body: "Nice post!", post_id: 123 });
+ * ```
+ */
 export function useComment(keysToInvalidate: QueryKey[] = [["view-post"]]) {
   const queryClient = useQueryClient();
 

@@ -10,6 +10,23 @@ import {
   get_quiz_attempt,
 } from "./quiz.controller";
 
+/**
+ * Registers quiz-related routes for the Fastify instance.
+ *
+ * @param fastify - The Fastify instance to register routes on.
+ *
+ * @routes
+ * @route `GET /` - Retrieves quizzes for the authenticated user.
+ * @route `GET /:quiz_id` - Retrieves a specific quiz by its ID.
+ * @route `GET /attempt/:attempt_id` - Retrieves a specific quiz attempt by its ID.
+ * @route `POST /submit` - Submits a quiz attempt.
+ * @route `POST /create` - Creates a new quiz for the user.
+ * @route `PUT /update` - Updates an existing quiz.
+ * @route `PUT /toggle-visibility` - Toggles the visibility of a quiz.
+ * @route `DELETE /delete` - Deletes a quiz.
+ *
+ * All routes require authentication via the `fastify.authenticate` preHandler.
+ */
 export default async function quizRoutes(fastify: FastifyInstance) {
   fastify.get("/", {
     preHandler: [fastify.authenticate],

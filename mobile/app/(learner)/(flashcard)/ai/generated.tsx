@@ -21,10 +21,10 @@ import { View, ScrollView, Pressable } from "react-native";
 import _FONTS from "@/types/theme/Font";
 import _API_INSTANCE from "@/utils/axios";
 
-/*
-  _DONT TOUCH
-  Used for mapping flashcards & making it flippable
-*/
+/**
+ *  _DONT TOUCH
+ * Used for mapping flashcards & making it flippable
+ */
 const Card = ({
   card,
   index,

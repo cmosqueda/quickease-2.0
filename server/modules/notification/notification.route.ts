@@ -8,6 +8,22 @@ import {
   update_push_token,
 } from "./notification.controller";
 
+/**
+ * Registers notification-related routes for the Fastify instance.
+ *
+ * @param fastify - The Fastify instance to register routes on.
+ *
+ * @remarks
+ * All routes require authentication via the `fastify.authenticate` preHandler.
+ *
+ * @routes
+ * @route `GET /` - Retrieves user notifications.
+ * @route `DELETE /delete` - Deletes a notification.
+ * @route `PUT /mark-as-read` - Marks a notification as read.
+ * @route `PUT /mark-as-unread` - Marks a notification as unread.
+ * @route `POST /update-push-token` - Updates the user's push notification token.
+ * @route `POST /test-push-notification` - Sends a test push notification.
+ */
 export default async function notificationRoutes(fastify: FastifyInstance) {
   fastify.get("/", {
     preHandler: [fastify.authenticate],

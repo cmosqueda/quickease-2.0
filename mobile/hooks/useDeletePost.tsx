@@ -5,6 +5,19 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import _API_INSTANCE from "@/utils/axios";
 
+/**
+ * Custom hook to handle deletion of a forum post using React Query's mutation.
+ *
+ * This hook provides a mutation function that deletes a post by its `post_id`.
+ * On successful deletion, it invalidates the relevant queries to ensure UI consistency.
+ * On error, it logs the error and displays a toast notification.
+ *
+ * @returns {UseMutationResult} Mutation object for deleting a post.
+ *
+ * @example
+ * const deletePostMutation = useDeletePost();
+ * deletePostMutation.mutate({ post_id: "123" });
+ */
 export function useDeletePost() {
   const queryClient = useQueryClient();
 

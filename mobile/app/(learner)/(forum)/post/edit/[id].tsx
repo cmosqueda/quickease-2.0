@@ -54,6 +54,21 @@ export default function Page() {
 
   const [isToolbarHidden, setToolbarVisibility] = useState(true);
 
+  /**
+   * Fetches the forum post data for the given `id` using React Query.
+   *
+   * @remarks
+   * Utilizes the `useQuery` hook to asynchronously retrieve a post from the API endpoint `/forum/post/${id}`.
+   * The query is identified by the key `["view-post", id]`.
+   *
+   * @returns
+   * An object containing the post data, accessible via the `data` property.
+   *
+   * @example
+   * ```tsx
+   * const { data: post } = useQuery({ ... });
+   * ```
+   */
   const { data: post } = useQuery({
     queryKey: ["view-post", id],
     queryFn: async () => {

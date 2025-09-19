@@ -28,6 +28,14 @@ import { _BADGE_ASSET_MAP, _BADGE_MAP } from "@/types/user/badges";
 import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
+/**
+ * Renders a post preview component with title and rich text body.
+ * The post body is displayed using a read-only rich text editor.
+ * When pressed, navigates to the detailed post view page.
+ *
+ * @param post - The post object containing title, body, and id.
+ * @returns A clickable post preview component.
+ */
 const PostComponent = ({ post }: { post: Post }) => {
   const { currentScheme } = useTheme();
   const editor = useEditorBridge({
@@ -73,6 +81,16 @@ const PostComponent = ({ post }: { post: Post }) => {
   }
 };
 
+/**
+ * Displays a list of badges earned by the user.
+ *
+ * - If the user has no badges, shows a message indicating no badges are available.
+ * - For each badge, displays its image, name, and description.
+ * - Badge images are loaded from local assets mapped by badge IDs.
+ *
+ * @param user - The user object containing badge information.
+ * @returns A scrollable view of badge cards or a message if no badges exist.
+ */
 const Badges = ({ user }: { user: User }) => {
   const badgeIds = Object.keys(_BADGE_ASSET_MAP);
   const [assets] = useAssets(Object.values(_BADGE_ASSET_MAP));
@@ -131,6 +149,15 @@ const Badges = ({ user }: { user: User }) => {
   );
 };
 
+/**
+ * Displays a list of posts for a given user.
+ *
+ * Fetches posts from the API when the device is connected to the internet.
+ * Handles loading, error, and empty states gracefully.
+ *
+ * @param user - The user whose posts are to be displayed.
+ * @returns A React component that renders the user's posts, or appropriate UI for loading, error, or empty states.
+ */
 const Posts = ({ user }: { user: User }) => {
   const { isConnected } = useNetInfo();
   const { data, isFetching, isError } = useQuery<Post[]>({
@@ -176,6 +203,17 @@ const Posts = ({ user }: { user: User }) => {
   );
 };
 
+/**
+ * Displays the user's avatar and profile information.
+ *
+ * - Shows the avatar image based on the user's selected avatar.
+ * - Allows the user to open a tray to change their avatar.
+ * - Displays the user's full name.
+ * - If the user has created flashcards and quizzes, shows a summary of their counts.
+ *
+ * @param user - The user object containing profile and avatar information.
+ * @returns A React element displaying the avatar and profile details.
+ */
 const Avatar = ({ user }: { user: User }) => {
   const { height } = useWindowDimensions();
   const { currentScheme } = useTheme();

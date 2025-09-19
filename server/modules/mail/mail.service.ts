@@ -4,6 +4,21 @@ import dayjs from "dayjs";
 
 import { randomBytes } from "crypto";
 
+/**
+ * Sends an email to the user with a link to request an email change.
+ *
+ * This function generates a secure token, stores it in the database with an expiration time,
+ * and sends an HTML email to the user's current email address. The email contains a link
+ * that allows the user to proceed with changing their email address.
+ *
+ * @param user_id - The unique identifier of the user requesting the email change.
+ * @returns The result of the email sending operation, or `false` if sending fails.
+ *
+ * @remarks
+ * - The token is valid for 24 hours.
+ * - The email includes a button linking to the email change page with the token and current email.
+ * - Uses Gmail via Nodemailer for sending emails.
+ */
 export async function requestChangeEmail(user_id: string) {
   const user = await db_client.user.findUnique({
     where: { id: user_id },
@@ -184,6 +199,22 @@ export async function requestChangeEmail(user_id: string) {
   }
 }
 
+/**
+ * Sends a password change request email to the user with a secure token.
+ *
+ * This function generates a password reset token, stores it in the database,
+ * and sends an email to the user containing a link to change their password.
+ *
+ * @param user_id - The unique identifier of the user requesting a password change.
+ * @returns The result of the email sending operation, or `false` if sending fails.
+ *
+ * @throws Will not throw; returns `false` on failure.
+ *
+ * @remarks
+ * - The password reset token expires in 24 hours.
+ * - The email includes a link with the user's email and the generated token.
+ * - Uses Gmail via Nodemailer for sending emails.
+ */
 export async function requestChangePassword(user_id: string) {
   const user = await db_client.user.findUnique({
     where: { id: user_id },
@@ -292,6 +323,19 @@ export async function requestChangePassword(user_id: string) {
   }
 }
 
+/**
+ * Sends a verification email to the user with the specified `user_id`.
+ *
+ * This function performs the following steps:
+ * 1. Retrieves the user from the database.
+ * 2. Generates a random verification token.
+ * 3. Stores the token in the database with an expiration time of 24 hours.
+ * 4. Constructs an HTML email containing a verification link.
+ * 5. Sends the email to the user's registered email address using Nodemailer.
+ *
+ * @param user_id - The unique identifier of the user to verify.
+ * @returns The result of the email sending operation (`info` object from Nodemailer) if successful, or `false` if an error occurs.
+ */
 export async function requestVerifyEmail(user_id: string) {
   const user = await db_client.user.findUnique({
     where: { id: user_id },
@@ -399,6 +443,17 @@ export async function requestVerifyEmail(user_id: string) {
   }
 }
 
+/**
+ * Sends a password reset request email to the specified user.
+ *
+ * This function generates a secure token, stores it in the database with an expiration time,
+ * and sends an HTML email containing a password reset link to the user's email address.
+ *
+ * @param email - The email address of the user requesting a password reset.
+ * @returns The result of the email sending operation, or `false` if sending fails.
+ *
+ * @throws Will not throw; returns `false` on failure.
+ */
 export async function requestForgotPassword(email: string) {
   const user = await db_client.user.findUnique({
     where: { email },

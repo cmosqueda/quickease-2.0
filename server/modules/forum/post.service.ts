@@ -6,6 +6,15 @@ import _AI from "../../utils/ai";
 import { buildCommentTree } from "../../utils/tree";
 import { Prisma } from "@prisma/client";
 
+/**
+ * Validates whether a user owns a specific resource (NOTE, QUIZ, or FLASHCARD).
+ *
+ * @param tx - The Prisma transaction client used to query the database.
+ * @param user_id - The ID of the user whose ownership is being validated.
+ * @param resource_type - The type of resource to check ownership for ("NOTE", "QUIZ", or "FLASHCARD").
+ * @param resource_id - The ID of the resource to check.
+ * @returns A promise that resolves to `true` if the user owns the resource, otherwise `false`.
+ */
 async function validateOwnership(
   tx: Prisma.TransactionClient,
   user_id: string,
@@ -33,6 +42,12 @@ async function validateOwnership(
   }
 }
 
+/**
+ * Retrieves all posts created by a specific user.
+ *
+ * @param user_id - The unique identifier of the user whose posts are to be fetched.
+ * @returns A promise that resolves to an array of posts belonging to the specified user.
+ */
 export async function getUserPosts(user_id: string) {
   const posts = await db_client.post.findMany({
     where: { user_id: user_id },
@@ -41,6 +56,18 @@ export async function getUserPosts(user_id: string) {
   return posts;
 }
 
+/**
+ * Retrieves a paginated list of recent public forum posts from the last 7 days.
+ *
+ * Each post includes user information, votes, tags, and top-level comments with their replies and vote counts.
+ * Supports cursor-based pagination.
+ *
+ * @param cursor - Optional. The ID of the post to start fetching from (for pagination).
+ * @param limit - Optional. The maximum number of posts to return (default is 10).
+ * @returns An object containing:
+ *   - posts: Array of posts with aggregated vote sums and the current user's vote.
+ *   - nextCursor: The ID to use as the cursor for the next page, or null if there are no more posts.
+ */
 export async function getRecentPosts(cursor?: string | null, limit = 10) {
   const cutoffDate = dayjs.extend(utc).utc().subtract(7, "day").toDate();
 
@@ -121,6 +148,16 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
   };
 }
 
+/**
+ * Retrieves a forum post by its ID, including related data such as tags, attachments,
+ * user information, votes, and nested comments. Also calculates vote summary and the
+ * current user's vote on the post.
+ *
+ * @param post_id - The unique identifier of the post to retrieve.
+ * @param user_id - The unique identifier of the user requesting the post (used for filtering votes and comments).
+ * @returns A promise that resolves to the post object with related data, vote summary, user vote, and nested comments,
+ *          or `null` if the post does not exist.
+ */
 export async function getPost(post_id: string, user_id: string) {
   const post = await db_client.post.findFirst({
     where: { id: post_id },
@@ -202,6 +239,21 @@ export async function getPost(post_id: string, user_id: string) {
   };
 }
 
+/**
+ * Creates a new forum post with optional attachments and tags.
+ * 
+ * This function analyzes the post content for toxicity using an AI model before creation.
+ * If the post is deemed toxic or likely to be rejected, it returns an object indicating toxicity.
+ * Otherwise, it creates the post, associates any provided attachments and tags, and returns the created post.
+ * 
+ * @param body - The main content of the post.
+ * @param title - The title of the post.
+ * @param user_id - The ID of the user creating the post.
+ * @param attachments - Optional array of resources to attach to the post. Each attachment must specify a resource type ("NOTE", "QUIZ", or "FLASHCARD") and a resource ID.
+ * @param tags - Optional array of tag names to associate with the post.
+ * @returns The created post object, or `{ toxic: true }` if the post is considered toxic.
+ * @throws If the user does not own an attached resource, an error is thrown.
+ */
 export async function createPost(
   body: string,
   title: string,
@@ -303,6 +355,25 @@ export async function createPost(
   });
 }
 
+/**
+ * Updates an existing forum post with new content, title, and optional attachments.
+ * 
+ * This function performs the following steps within a database transaction:
+ * - Verifies that the post exists and the user is authorized to update it.
+ * - Removes all existing attachments from the post.
+ * - Validates ownership of each new attachment and adds them to the post.
+ * - Updates the post's title, body, and updated timestamp.
+ * 
+ * @param body - The new content/body of the post.
+ * @param title - The new title of the post.
+ * @param post_id - The unique identifier of the post to update.
+ * @param user_id - The unique identifier of the user attempting the update.
+ * @param attachments - Optional array of resources to attach to the post. Each attachment must specify its type and resource ID.
+ * 
+ * @throws {Error} If the post does not exist, the user is not authorized, or any attachment is invalid or unauthorized.
+ * 
+ * @returns The updated post object.
+ */
 export async function updatePost(
   body: string,
   title: string,
@@ -372,6 +443,16 @@ export async function updatePost(
   });
 }
 
+/**
+ * Adds tags to a post by upserting post-tag relationships in the database.
+ *
+ * For each provided tag ID, this function attempts to create a relationship between
+ * the tag and the post. If the relationship already exists, it does nothing (empty update).
+ *
+ * @param post_id - The unique identifier of the post to which tags will be added.
+ * @param tag_ids - An array of tag IDs to associate with the post.
+ * @returns A promise that resolves to an array of post-tag relationship objects.
+ */
 export async function addTagOnPost(post_id: string, tag_ids: string[]) {
   const postTags = await Promise.all(
     tag_ids.map((tag_id) =>
@@ -386,6 +467,12 @@ export async function addTagOnPost(post_id: string, tag_ids: string[]) {
   return postTags;
 }
 
+/**
+ * Deletes a post from the database by its unique identifier.
+ *
+ * @param post_id - The unique identifier of the post to delete.
+ * @returns An object indicating whether the post was successfully deleted.
+ */
 export async function deletePost(post_id: string) {
   await db_client.post.delete({
     where: { id: post_id },
@@ -394,6 +481,13 @@ export async function deletePost(post_id: string) {
   return { deleted: true };
 }
 
+/**
+ * Toggles the visibility of a forum post by updating its `is_public` status.
+ *
+ * @param visibility - A boolean indicating whether the post should be public (`true`) or private (`false`).
+ * @param post_id - The unique identifier of the post to update.
+ * @returns A promise that resolves to `true` when the update is successful.
+ */
 export async function togglePostVisibility(
   visibility: boolean,
   post_id: string
@@ -410,6 +504,15 @@ export async function togglePostVisibility(
   return true;
 }
 
+/**
+ * Searches for public forum posts matching the given query in their title or tags.
+ *
+ * @param query - The search string to match against post titles and tag names.
+ * @param page - The page number for pagination (default is 1).
+ * @param limit - The number of posts to return per page (default is 10).
+ * @param sort - The sorting method: "newest" (by creation date), "top" (by vote count), or "comments" (by comment count). Default is "newest".
+ * @returns An object containing the array of matching posts and the total count of results.
+ */
 export async function searchPost(
   query: string,
   page = 1,

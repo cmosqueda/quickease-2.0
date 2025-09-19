@@ -8,6 +8,22 @@ import {
   get_user_flashcard,
 } from "./flashcard.controller";
 
+/**
+ * Registers flashcard-related routes for the Fastify server instance.
+ *
+ * @param fastify - The Fastify server instance to register routes on.
+ *
+ * @remarks
+ * All routes require authentication via the `fastify.authenticate` preHandler.
+ *
+ * @route GET `/` - Retrieves all flashcards for the authenticated user.
+ * @route GET `/:flashcard_id` - Retrieves a specific flashcard by its ID.
+ * @route POST `/create` - Creates a new flashcard for the authenticated user.
+ * @route PUT `/update` - Updates an existing flashcard.
+ * @route DELETE `/delete` - Deletes a flashcard.
+ * @route PUT `/toggle-visibility` - Toggles the visibility of a flashcard.
+ */
+
 export default async function flashcardRoutes(fastify: FastifyInstance) {
   fastify.get("/", {
     preHandler: [fastify.authenticate],

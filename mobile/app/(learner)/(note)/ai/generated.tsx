@@ -30,7 +30,6 @@ import {
 import _FONTS from "@/types/theme/Font";
 import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
-import { parse } from "@babel/core";
 
 export default function Page() {
   const { user, addNote } = useAuth();
@@ -57,6 +56,14 @@ export default function Page() {
   const editorContent = useEditorContent(editor, { type: "html" });
 
   useLayoutEffect(() => {
+    /**
+     * Retrieves the generated note content from AsyncStorage, parses it,
+     * and updates the editor and state with the retrieved title and content.
+     * If retrieval or parsing fails, navigates back using the router.
+     *
+     * @async
+     * @returns {Promise<void>} Resolves when the content is set or navigation occurs.
+     */
     const getGeneratedContent = async () => {
       try {
         const stored = await AsyncStorage.getItem("app-ai-generated-note");

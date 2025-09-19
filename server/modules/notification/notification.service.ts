@@ -1,6 +1,12 @@
 import db_client from "../../utils/client";
 import _EXPO_PUSH_SERVICE from "../../utils/expo";
 
+/**
+ * Retrieves the latest 20 notifications for a specific user.
+ *
+ * @param user_id - The unique identifier of the user whose notifications are to be fetched.
+ * @returns A promise that resolves to an array of notification objects for the given user, ordered by creation date in descending order.
+ */
 export async function getUserNotifications(user_id: string) {
   const notifications = await db_client.notification.findMany({
     where: {
@@ -15,6 +21,12 @@ export async function getUserNotifications(user_id: string) {
   return notifications;
 }
 
+/**
+ * Deletes a notification from the database by its unique identifier.
+ *
+ * @param notification_id - The unique identifier of the notification to delete.
+ * @returns A promise that resolves to `true` if the notification was successfully deleted.
+ */
 export async function deleteNotification(notification_id: string) {
   await db_client.notification.delete({
     where: {
@@ -25,6 +37,12 @@ export async function deleteNotification(notification_id: string) {
   return true;
 }
 
+/**
+ * Marks a notification as read in the database.
+ *
+ * @param notification_id - The unique identifier of the notification to mark as read.
+ * @returns A promise that resolves to `true` when the operation is complete.
+ */
 export async function markNotificationAsRead(notification_id: string) {
   await db_client.notification.update({
     data: {
@@ -38,6 +56,12 @@ export async function markNotificationAsRead(notification_id: string) {
   return true;
 }
 
+/**
+ * Marks a notification as unread by setting its `is_read` property to `false`.
+ *
+ * @param notification_id - The unique identifier of the notification to update.
+ * @returns A promise that resolves to `true` when the operation is complete.
+ */
 export async function markNotificationAsUnread(notification_id: string) {
   await db_client.notification.update({
     data: {
@@ -52,6 +76,13 @@ export async function markNotificationAsUnread(notification_id: string) {
 }
 
 // Used for EXPO PUSH TOKENS NOTIFICATIONS (EACH DEVICE AND UPSERT), only one token
+/**
+ * Associates a push notification token with a user in the database.
+ *
+ * @param token - The push notification token to be added.
+ * @param user_id - The unique identifier of the user to update.
+ * @returns A promise that resolves to `true` when the token has been successfully added.
+ */
 export async function addPushToken(token: string, user_id: string) {
   await db_client.user.update({
     data: {

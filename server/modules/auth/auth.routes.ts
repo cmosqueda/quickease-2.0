@@ -8,6 +8,20 @@ import {
   verify_email,
 } from "./auth.controller";
 
+/**
+ * Registers authentication-related routes for the Fastify instance.
+ *
+ * @param fastify - The Fastify instance to register routes on.
+ *
+ * @remarks
+ * This function sets up the following routes:
+ * @route POST `/login`: Handles user login.
+ * @route POST `/register`: Handles user registration.
+ * @route POST `/logout`: Logs out the authenticated user. Requires authentication.
+ * @route PUT `/update-password`: Updates the authenticated user's password. Requires authentication.
+ * @route PUT `/update-email`: Updates the authenticated user's email. Requires authentication.
+ * @route PUT `/verify-email`: Verifies the authenticated user's email. Requires authentication.
+ */
 export default async function authRoutes(fastify: FastifyInstance) {
   fastify.post("/login", {
     handler: login_user,

@@ -17,6 +17,13 @@ import {
   generateSummaryNotesFromImage,
 } from "./ai.upload.service";
 
+/**
+ * Generates a quiz based on the provided note ID.
+ *
+ * @param { note_id: string } - Fastify request object containing the note ID in the body.
+ * @param reply - Fastify reply object used to send the response.
+ * @returns Sends a generated quiz content on success, or an error message on failure.
+ */
 export async function generate_quiz_from_note(
   request: FastifyRequest,
   reply: FastifyReply
@@ -38,6 +45,14 @@ export async function generate_quiz_from_note(
   }
 }
 
+/**
+ * Generates flashcards from a given note.
+ *
+ * @param { note_id: string; } - Fastify request object containing the note ID in the body.
+ * @param reply - Fastify reply object used to send the response.
+ * @returns Sends a 200 response with the generated flashcards content on success,
+ *          or a 500 response with an error message on failure.
+ */
 export async function generate_flashcards_from_note(
   request: FastifyRequest,
   reply: FastifyReply
@@ -59,6 +74,13 @@ export async function generate_flashcards_from_note(
   }
 }
 
+/**
+ * Handles the generation of a quiz based on a provided prompt.
+ *
+ * @param { prompt: string; } - The Fastify request object containing the prompt in the body.
+ * @param reply - The Fastify reply object used to send the response.
+ * @returns Sends a generated quiz content on success, or an error message on failure.
+ */
 export async function generate_quiz_from_prompt(
   request: FastifyRequest,
   reply: FastifyReply
@@ -80,6 +102,15 @@ export async function generate_quiz_from_prompt(
   }
 }
 
+/**
+ * Handles the generation of flashcards based on a given prompt.
+ *
+ * @param { prompt: string; } - The Fastify request object containing the prompt in the body.
+ * @param reply - The Fastify reply object used to send the response.
+ * @returns A response containing the generated flashcards or an error message.
+ *
+ * @throws Sends a 500 error response if flashcard generation fails.
+ */
 export async function generate_flashcards_from_prompt(
   request: FastifyRequest,
   reply: FastifyReply
@@ -101,6 +132,14 @@ export async function generate_flashcards_from_prompt(
   }
 }
 
+/**
+ * Handles the generation of summary notes from a given prompt.
+ *
+ * @param { prompt: string; } - The Fastify request object containing the prompt in the body.
+ * @param reply - The Fastify reply object used to send the response.
+ * @returns Sends a response with the generated notes content on success,
+ *          or an error message on failure.
+ */
 export async function generate_notes_from_prompt(
   request: FastifyRequest,
   reply: FastifyReply
@@ -122,6 +161,18 @@ export async function generate_notes_from_prompt(
   }
 }
 
+/**
+ * Handles a request to generate summary notes from an uploaded PDF file.
+ *
+ * This function expects a PDF file to be uploaded in the request, processes it,
+ * and generates summary notes using the `generateSummaryNotesFromPDF` function.
+ * On success, it responds with the generated notes and a 200 status code.
+ * On failure, it responds with a 500 status code and an error message.
+ *
+ * @param request - The Fastify request object containing the uploaded PDF file.
+ * @param reply - The Fastify reply object used to send the response.
+ * @returns A promise that resolves when the response is sent.
+ */
 export async function generate_notes_from_pdf(
   request: FastifyRequest,
   reply: FastifyReply
@@ -143,6 +194,19 @@ export async function generate_notes_from_pdf(
   }
 }
 
+/**
+ * Handles the generation of a quiz from an uploaded PDF file.
+ *
+ * This endpoint expects a PDF file to be uploaded in the request. It reads the file,
+ * converts it to a buffer, and passes it to the `generateQuizFromPDF` function to
+ * generate quiz questions based on the PDF content. The generated quiz is sent back
+ * in the response with a 200 status code. If an error occurs during processing,
+ * a 500 status code and an error message are returned.
+ *
+ * @param request - The Fastify request object containing the uploaded PDF file.
+ * @param reply - The Fastify reply object used to send the response.
+ * @returns A promise that resolves when the response is sent.
+ */
 export async function generate_quiz_from_pdf(
   request: FastifyRequest,
   reply: FastifyReply
@@ -164,6 +228,17 @@ export async function generate_quiz_from_pdf(
   }
 }
 
+/**
+ * Handles a Fastify request to generate flashcards from an uploaded PDF file.
+ *
+ * This function expects a PDF file to be uploaded in the request. It reads the file,
+ * converts it to a buffer, and passes it to the `generateFlashcardsFromPDF` function.
+ * On success, it responds with the generated flashcards. On failure, it sends a 500 error response.
+ *
+ * @param request - The Fastify request object containing the uploaded PDF file.
+ * @param reply - The Fastify reply object used to send responses.
+ * @returns A promise that resolves when the response is sent.
+ */
 export async function generate_flashcards_from_pdf(
   request: FastifyRequest,
   reply: FastifyReply
@@ -185,6 +260,18 @@ export async function generate_flashcards_from_pdf(
   }
 }
 
+/**
+ * Generates summary notes from an uploaded image.
+ *
+ * This function handles a Fastify request containing an image file,
+ * processes the image to extract summary notes, and sends the result
+ * in the response. If an error occurs during processing, it responds
+ * with a 500 status code and an error message.
+ *
+ * @param request - The Fastify request object containing the image file.
+ * @param reply - The Fastify reply object used to send the response.
+ * @returns A promise that resolves when the response is sent.
+ */
 export async function generate_notes_from_image(
   request: FastifyRequest,
   reply: FastifyReply

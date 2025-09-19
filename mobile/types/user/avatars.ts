@@ -1,3 +1,18 @@
+/**
+ * USED FOR COMPONENTS NGA NAAY AVATARS, and para dali ra pag import sa useAssets
+ * A mapping of avatar color names to their corresponding SVG asset imports.
+ *
+ * The keys represent the available avatar color options, and the values are the imported SVG assets
+ * used for displaying user avatars in the application.
+ *
+ * @remarks
+ * This map is used to dynamically select avatar images based on user preferences or settings.
+ *
+ * @example
+ * ```typescript
+ * const avatarAsset = _AVATAR_ASSET_MAP["blue"];
+ * ```
+ */
 export const _AVATAR_ASSET_MAP: Record<string, any> = {
   blue: require("../../assets/images/avatars/blue.svg"),
   green: require("../../assets/images/avatars/green.svg"),

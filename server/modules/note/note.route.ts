@@ -8,6 +8,22 @@ import {
   get_user_note,
 } from "./note.controller";
 
+/**
+ * Registers note-related routes for the Fastify instance.
+ *
+ * @param fastify - The Fastify instance to register routes on.
+ *
+ * @remarks
+ * All routes require authentication via the `fastify.authenticate` preHandler.
+ *
+ * @routes
+ * @route `GET /` - Retrieves all notes for the authenticated user.
+ * @route `GET /:note_id` - Retrieves a specific note by its ID for the authenticated user.
+ * @route `POST /create` - Creates a new note for the authenticated user.
+ * @route `PUT /update` - Updates an existing note for the authenticated user.
+ * @route `DELETE /delete` - Deletes a note for the authenticated user.
+ * @route `PATCH /toggle-visibility` - Toggles the visibility of a note for the authenticated user.
+ */
 export default async function noteRoutes(fastify: FastifyInstance) {
   fastify.get("/", {
     preHandler: [fastify.authenticate],

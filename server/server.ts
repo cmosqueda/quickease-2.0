@@ -4,6 +4,14 @@ import initializeFastifyConfig from "./fastify.config";
 
 export const server = Fastify();
 
+/**
+ * Initializes the Fastify server configuration, connects to the database,
+ * and starts the server listening on the specified port and host.
+ *
+ * @async
+ * @function
+ * @returns {Promise<void>} Resolves when the server has started successfully.
+ */
 async function main() {
   try {
     await initializeFastifyConfig();

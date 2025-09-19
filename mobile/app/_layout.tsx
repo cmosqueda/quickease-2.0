@@ -28,6 +28,18 @@ const client = new QueryClient();
 
 SplashScreen.preventAutoHideAsync();
 
+/**
+ * This is the main layout component for the application.
+ *
+ * - Loads custom fonts and hides the splash screen once fonts are loaded or if an error occurs.
+ * - Sets the status bar style based on the current color scheme (light or dark).
+ * - Provides context providers for gesture handling, query client, and tray navigation.
+ * - Configures navigation stack with protected routes based on user authentication.
+ * - Displays a toaster notification component with dynamic theming.
+ * - Renders the status bar with automatic style and animation.
+ *
+ * @returns The root layout JSX element for the app.
+ */
 export default function RootLayout() {
   const { currentScheme } = useTheme();
   const { user } = useAuth();

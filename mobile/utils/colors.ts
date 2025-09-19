@@ -1,3 +1,14 @@
+/**
+ * THIS FUNCTION IS MOSTLY USED FOR THEMING STUFF, DON'T TOUCH UNLESS NECESSARY. (though you won't find a situation where you need to touch it tho lol)
+ * Converts an RGBA or RGB color string to its hexadecimal representation.
+ *
+ * Accepts color strings in the format `rgba(r, g, b, a)` or `rgb(r, g, b)`.
+ * The alpha channel, if present, is converted to a two-digit hex value and appended to the result.
+ *
+ * @param rgba - The RGBA or RGB color string to convert (e.g., "rgba(255, 0, 0, 0.5)" or "rgb(255, 0, 0)").
+ * @returns The hexadecimal color string (e.g., "#ff000080" for "rgba(255, 0, 0, 0.5)", "#ff0000" for "rgb(255, 0, 0)").
+ * @throws If the input string is not a valid RGBA or RGB format.
+ */
 export function rgbaToHex(rgba: string): string {
   const match = rgba.match(
     /rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*([\d.]+))?\s*\)/
@@ -18,6 +29,14 @@ export function rgbaToHex(rgba: string): string {
   return "#" + toHex(r) + toHex(g) + toHex(b) + (a !== null ? toHex(a) : "");
 }
 
+/**
+ * USED FOR POMODORO TIMER AND THE SVG ON `react-countdown-circle` package, DON'T TOUCH UNLESS NECESSARY.
+ * Generates an array of time values corresponding to each color step over a given duration.
+ *
+ * @param duration - The total duration over which the colors should be distributed.
+ * @param colors - An array of color strings representing each step.
+ * @returns An array of numbers representing the time (in milliseconds) for each color step.
+ */
 export function generateColorsTime(
   duration: number,
   colors: string[]

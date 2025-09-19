@@ -35,6 +35,37 @@ const defaultSettings: TimerSettings = {
   longBreak: 15 * 60,
 };
 
+/**
+ * Zustand store hook for managing a Pomodoro timer state.
+ *
+ * @remarks
+ * - Uses `immer` for immutable state updates.
+ * - Persists state to AsyncStorage using Zustand's `persist` middleware.
+ * - Supports study, short break, and long break modes.
+ *
+ * @property {TimerSettings} settings - Current timer durations for each mode.
+ * @property {number} time - Remaining time in seconds for the current mode.
+ * @property {boolean} isRunning - Indicates if the timer is currently running.
+ * @property {"study" | "shortBreak" | "longBreak"} mode - Current timer mode.
+ * @property {boolean} done - Indicates if the current timer session is completed.
+ *
+ * @method start - Starts the timer.
+ * @method pause - Pauses the timer.
+ * @method reset - Resets the timer to the initial duration for the current mode.
+ * @method tick - Decrements the timer by one second and handles mode transitions.
+ * @method startStudy - Starts a study session.
+ * @method startShortBreak - Starts a short break session.
+ * @method startLongBreak - Starts a long break session.
+ * @method setDurations - Updates timer durations for each mode.
+ * @method setSettings - Sets study and short break durations (in minutes), long break is fixed at 15 minutes.
+ *
+ * @example
+ * const timer = useTimer();
+ * timer.start();
+ * timer.pause();
+ * timer.reset();
+ * timer.setSettings(25, 5); // 25 min study, 5 min short break
+ */
 const useTimer = create<TimerStore>()(
   persist(
     immer((set, get) => ({

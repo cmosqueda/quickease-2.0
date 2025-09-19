@@ -20,10 +20,10 @@ import { View, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import _API_INSTANCE from "@/utils/axios";
 import _FONTS from "@/types/theme/Font";
 
-/*
-  _DONT TOUCH
-  Used for mapping flashcards & making it flippable
-*/
+/**
+ *  _DONT TOUCH
+ * Used for mapping flashcards & making it flippable
+ */
 const Card = ({ card }: { card: { front: string; back: string } }) => {
   const [flipped, setFlipped] = useState(false);
 

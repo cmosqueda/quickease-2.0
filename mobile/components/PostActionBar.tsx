@@ -10,6 +10,18 @@ import { useTrays } from "react-native-trays";
 import { MyTraysProps } from "@/types/trays/trays";
 import { Pressable, View } from "react-native";
 
+/**
+ * Renders an action bar for a post, providing voting, commenting, and attachment viewing functionality.
+ *
+ * @param post - The post object containing post details and vote information.
+ * @param id - The unique identifier for the post.
+ *
+ * @remarks
+ * - Displays upvote and downvote buttons, showing the current vote sum.
+ * - Allows verified users to comment on the post.
+ * - Shows an attachment viewing button if the post has attachments.
+ * - Uses custom hooks for authentication, tray management, and voting mutations.
+ */
 export default function PostActionBar({
   post,
   id,

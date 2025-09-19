@@ -26,6 +26,10 @@ import GenerateFromDocumentTray from "@/components/trays/GenerateFromDocumentTra
 import PostAttachmentsSelectionTray from "@/components/trays/PostAttachmentsSelectionTray";
 import SummarizeNotesStudyToolsSelectionTray from "@/components/trays/SummarizeNotesStudyToolsSelectionTray";
 
+/**
+ * Typesafe props for all tray components used in the application.
+ * Each tray key matches a component in ./components/trays and is used with react-native-trays.
+ */
 export type MyTraysProps = {
   SearchTray: {
     close: () => void;

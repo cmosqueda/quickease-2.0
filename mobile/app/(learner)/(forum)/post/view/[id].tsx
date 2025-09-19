@@ -36,6 +36,19 @@ export default function Page() {
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
 
+  /**
+   * Fetches and manages the state of a forum post by its `id` using React Query.
+   *
+   * @remarks
+   * - Uses the `useQuery` hook to asynchronously retrieve post data from the API.
+   * - The query is identified by the key `["view-post", id]`.
+   * - Handles API errors by throwing them to be managed by React Query.
+   *
+   * @returns
+   * - `data`: The fetched `Post` object, or `undefined` if not yet loaded.
+   * - `refetch`: Function to manually refetch the post data.
+   * - `isRefetching`: Boolean indicating if a refetch is currently in progress.
+   */
   const {
     data: post,
     refetch,

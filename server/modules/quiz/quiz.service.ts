@@ -1,5 +1,12 @@
 import db_client from "../../utils/client";
 
+/**
+ * Retrieves all quizzes associated with a specific user.
+ *
+ * @param user_id - The unique identifier of the user whose quizzes are to be fetched.
+ * @returns A promise that resolves to an array of quizzes belonging to the user.
+ * @throws Will throw an error if the database query fails.
+ */
 export async function getUserQuizzes(user_id: string) {
   try {
     return await db_client.quiz.findMany({ where: { user_id } });
@@ -8,6 +15,14 @@ export async function getUserQuizzes(user_id: string) {
   }
 }
 
+/**
+ * Retrieves a quiz by its ID along with the current user's attempts and the quiz leaderboard.
+ *
+ * @param quiz_id - The unique identifier of the quiz to fetch.
+ * @param user_id - The unique identifier of the user whose attempts are to be included.
+ * @returns An object containing the quiz details, the user's attempts, and the leaderboard (top 10 public attempts).
+ * @throws Will throw an error if the database query fails.
+ */
 export async function getQuiz(quiz_id: string, user_id: string) {
   try {
     // Fetch the quiz and the current user's attempts
@@ -49,6 +64,19 @@ export async function getQuiz(quiz_id: string, user_id: string) {
   }
 }
 
+/**
+ * Creates a new quiz for a user with the specified parameters.
+ *
+ * @param title - The title of the quiz.
+ * @param description - A brief description of the quiz.
+ * @param quiz_content - An array of quiz questions, each containing the question text, optional description, possible options, and indices of correct answers.
+ * @param is_randomized - Whether the quiz questions should be randomized.
+ * @param timed_quiz - The time limit for the quiz in seconds.
+ * @param user_id - The ID of the user creating the quiz.
+ * @param isAI - Optional flag indicating if the quiz is AI-generated.
+ * @returns The created quiz object from the database.
+ * @throws Will throw an error if the quiz creation fails.
+ */
 export async function createUserQuiz(
   title: string,
   description: string,
@@ -80,6 +108,18 @@ export async function createUserQuiz(
   }
 }
 
+/**
+ * Updates an existing quiz with the provided details.
+ *
+ * @param title - The title of the quiz.
+ * @param description - A brief description of the quiz.
+ * @param quiz_content - An array of quiz questions, each containing the question text, optional description, possible options, and indices of correct answers.
+ * @param is_randomized - Whether the quiz questions should be presented in a randomized order.
+ * @param timed_quiz - The time limit for the quiz in seconds.
+ * @param quiz_id - The unique identifier of the quiz to update.
+ * @returns A promise that resolves to the updated quiz object.
+ * @throws Will throw an error if the update operation fails.
+ */
 export async function updateUserQuiz(
   title: string,
   description: string,
@@ -109,6 +149,14 @@ export async function updateUserQuiz(
   }
 }
 
+/**
+ * Updates the visibility status of a quiz for a given quiz ID.
+ *
+ * @param visibility - A boolean indicating whether the quiz should be public (`true`) or private (`false`).
+ * @param quiz_id - The unique identifier of the quiz to update.
+ * @returns A promise that resolves to the updated quiz object.
+ * @throws Will throw an error if the update operation fails.
+ */
 export async function updateUserQuizVisibility(
   visibility: boolean,
   quiz_id: string
@@ -123,6 +171,13 @@ export async function updateUserQuizVisibility(
   }
 }
 
+/**
+ * Deletes a quiz for a user by its unique identifier.
+ *
+ * @param quiz_id - The unique identifier of the quiz to delete.
+ * @returns A promise that resolves to `true` if the quiz was deleted successfully.
+ * @throws Will throw an error if the deletion fails.
+ */
 export async function deleteUserQuiz(quiz_id: string) {
   try {
     await db_client.quiz.delete({ where: { id: quiz_id } });
@@ -132,6 +187,21 @@ export async function deleteUserQuiz(quiz_id: string) {
   }
 }
 
+/**
+ * Submits a quiz attempt by creating a new record in the database.
+ *
+ * @param answer_data - An object containing the question details and the user's answer.
+ * @param answer_data.question - The question object, including the question text, optional description, available options, and correct answer indices.
+ * @param answer_data.user_answer - An array of indices representing the user's selected answers.
+ * @param started_at - The ISO string representing when the quiz attempt was started.
+ * @param completed_at - The ISO string representing when the quiz attempt was completed.
+ * @param duration - The duration of the quiz attempt in seconds.
+ * @param score - The score achieved by the user in this attempt.
+ * @param quiz_id - The unique identifier of the quiz.
+ * @param user_id - The unique identifier of the user submitting the attempt.
+ * @returns An object indicating successful submission and the ID of the created quiz attempt.
+ * @throws Will throw an error if the database operation fails.
+ */
 export async function submitQuizAttempt(
   answer_data: {
     question: {
@@ -171,6 +241,13 @@ export async function submitQuizAttempt(
   }
 }
 
+/**
+ * Retrieves a quiz attempt by its unique identifier.
+ *
+ * @param attempt_id - The unique identifier of the quiz attempt.
+ * @returns A promise that resolves to the quiz attempt object, including related quiz and selected user fields.
+ * @throws Rethrows any errors encountered during the database query.
+ */
 export async function getQuizAttempt(attempt_id: string) {
   try {
     return await db_client.quizAttempt.findUnique({

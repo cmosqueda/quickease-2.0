@@ -8,11 +8,11 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { QuizAttempt } from "@/types/user/types";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRef, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView, View, Pressable, useWindowDimensions } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
-import { useRef, useState } from "react";
 
 export default function Page() {
   const { currentScheme } = useTheme();

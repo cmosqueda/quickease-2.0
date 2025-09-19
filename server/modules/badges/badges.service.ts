@@ -62,6 +62,16 @@ const _BADGES = [
   },
 ];
 
+/**
+ * Checks the user's activity and awards new badges based on predefined conditions.
+ *
+ * This function evaluates various user metrics such as notes, flashcards, quizzes,
+ * quiz attempts, posts, comments, and votes to determine which badges the user qualifies for.
+ * If new badges are earned, they are merged with the user's existing badges and updated in the database.
+ *
+ * @param user_id - The unique identifier of the user to check and award badges for.
+ * @returns An object containing the list of newly awarded badges.
+ */
 export async function checkAndAwardBadges(user_id: string) {
   const user = await db_client.user.findUnique({
     where: { id: user_id },

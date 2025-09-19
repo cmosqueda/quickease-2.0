@@ -7,9 +7,9 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { Note } from "@/types/user/types";
 import { toast } from "sonner-native";
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 
 import {

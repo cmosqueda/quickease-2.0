@@ -26,6 +26,20 @@ export default function Page() {
   const { id } = useLocalSearchParams<{ id?: string }>();
   const { user } = useAuth();
 
+  /**
+   * Fetches flashcard data for a given `id` using React Query.
+   *
+   * @remarks
+   * - Uses the `useQuery` hook to asynchronously retrieve a flashcard from the API.
+   * - The query is enabled only if a valid `id` is provided.
+   * - Retries the request up to 3 times in case of failure.
+   *
+   * @returns
+   * An object containing:
+   * - `flashcardData`: The fetched flashcard data of type `Flashcard`.
+   * - `isFetching`: Boolean indicating if the query is currently loading.
+   * - `isError`: Boolean indicating if an error occurred during fetching.
+   */
   const {
     data: flashcardData,
     isFetching,
@@ -48,6 +62,17 @@ export default function Page() {
   const totalFlashcards = flashcardData?.flashcards?.length ?? 0;
   const [flipped, setFlipped] = useState(false);
 
+  /**
+   * Computes a safe index for accessing flashcards.
+   * Ensures the index is within the valid range:
+   * - Returns 0 if `flashcardIndex` is less than 0.
+   * - Returns the last valid index (`totalFlashcards - 1`) if `flashcardIndex` exceeds the total.
+   * - Otherwise, returns the current `flashcardIndex`.
+   *
+   * @param flashcardIndex - The current index of the flashcard.
+   * @param totalFlashcards - The total number of flashcards available.
+   * @returns A valid flashcard index within bounds.
+   */
   const safeIndex = useMemo(() => {
     if (flashcardIndex < 0) return 0;
     if (flashcardIndex >= totalFlashcards) return totalFlashcards - 1;

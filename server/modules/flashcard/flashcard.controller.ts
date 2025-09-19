@@ -9,6 +9,15 @@ import {
 } from "./flashcard.service";
 import { z } from "zod";
 
+/**
+ * Handles the request to retrieve flashcards for the authenticated user.
+ *
+ * @param { user_id: string } - The Fastify request object, expected to contain the authenticated user's information.
+ * @param reply - The Fastify reply object used to send responses.
+ * @returns Sends a 200 response with the user's flashcards if authenticated,
+ *          a 401 response if the user is not authenticated,
+ *          or a 500 response if an error occurs during retrieval.
+ */
 export async function get_user_flashcards(
   request: FastifyRequest,
   reply: FastifyReply
@@ -26,6 +35,17 @@ export async function get_user_flashcards(
   }
 }
 
+/**
+ * Handles the retrieval of a user's flashcard by its ID.
+ *
+ * @param { flashcard_id: string } - Fastify request object containing the flashcard ID in params.
+ * @param reply - Fastify reply object used to send the response.
+ * @returns Sends the flashcard data if found, or an error message if not found or on failure.
+ *
+ * @throws 400 - If the flashcard ID is not provided.
+ * @throws 404 - If the flashcard is not found.
+ * @throws 500 - If an error occurs while retrieving the flashcard.
+ */
 export async function get_user_flashcard(
   request: FastifyRequest,
   reply: FastifyReply
@@ -49,6 +69,20 @@ export async function get_user_flashcard(
   }
 }
 
+/**
+ * Handles the creation of a user flashcard set.
+ *
+ * Validates the request body for required fields: `title`, `description`, `flashcards`, and `isAI`.
+ * Ensures the user is authenticated before proceeding.
+ * On success, creates a new flashcard set for the user and returns it with a 201 status code.
+ * On validation failure, responds with a 400 status code and error details.
+ * On authentication failure, responds with a 401 status code.
+ * On server error, responds with a 500 status code.
+ *
+ * @param { title: string; description: string; isAI: boolean; flashcards: { front: string; back: string }[]; } - The Fastify request object containing user and body data.
+ * @param reply - The Fastify reply object used to send responses.
+ * @returns A promise that resolves with the created flashcard set or an error response.
+ */
 export async function create_user_flashcard(
   request: FastifyRequest,
   reply: FastifyReply
@@ -101,6 +135,22 @@ export async function create_user_flashcard(
   }
 }
 
+/**
+ * Updates a user's flashcard with new title, description, and flashcards.
+ *
+ * @param { title: string; description: string; flashcards: { front: string; back: string }[]; flashcard_id: string; } - Fastify request object containing the flashcard update data.
+ * @param reply - Fastify reply object for sending responses.
+ *
+ * @remarks
+ * - Validates input using Zod schema.
+ * - Requires user authentication.
+ * - Returns 400 if input is invalid.
+ * - Returns 401 if user is unauthorized.
+ * - Returns 200 with updated flashcard on success.
+ * - Returns 500 on server error.
+ *
+ * @returns Sends an HTTP response with the result of the update operation.
+ */
 export async function update_user_flashcard(
   request: FastifyRequest,
   reply: FastifyReply
@@ -159,6 +209,16 @@ export async function update_user_flashcard(
   }
 }
 
+/**
+ * Deletes a user flashcard by its ID.
+ *
+ * Expects a `flashcard_id` in the request body. Returns a 400 error if the ID is missing.
+ * On success, deletes the flashcard and responds with a 200 status and confirmation message.
+ * On failure, responds with a 500 status and error message.
+ *
+ * @param { flashcard_id: string } - Fastify request object containing the flashcard ID in the body.
+ * @param reply - Fastify reply object used to send HTTP responses.
+ */
 export async function delete_user_flashcard(
   request: FastifyRequest,
   reply: FastifyReply
@@ -177,6 +237,16 @@ export async function delete_user_flashcard(
   }
 }
 
+/**
+ * Toggles the visibility of a flashcard by its ID.
+ *
+ * @param { flashcard_id: string } - Fastify request object containing the flashcard ID in the body.
+ * @param reply - Fastify reply object used to send the response.
+ * @returns Sends a response indicating success or failure of the operation.
+ *
+ * @throws 400 - If the flashcard ID is not provided in the request body.
+ * @throws 500 - If an error occurs while updating the flashcard visibility.
+ */
 export async function toggle_flashcard_visibility(
   request: FastifyRequest,
   reply: FastifyReply
