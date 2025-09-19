@@ -20,6 +20,11 @@ export default function LearnerEditFlashcardPage() {
   const [back, setBack] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+  // track flip state per card
+  const [flippedCards, setFlippedCards] = useState<boolean[]>(
+    Array(data.flashcards.length).fill(false)
+  );
+
   const handleAddCard = () => {
     if (!front && !back) {
       toast.error("Invalid input values.");
@@ -28,6 +33,7 @@ export default function LearnerEditFlashcardPage() {
 
     const newCard = { front, back };
     setCards([...cards, newCard]);
+    setFlippedCards([...flippedCards, false]); // add flip state for new card
     setFront("");
     setBack("");
   };
@@ -73,6 +79,12 @@ export default function LearnerEditFlashcardPage() {
     const updatedCards = [...cards];
     updatedCards[index] = { ...updatedCards[index], [side]: value };
     setCards(updatedCards);
+  };
+
+  const toggleFlip = (index: number) => {
+    const updated = [...flippedCards];
+    updated[index] = !updated[index];
+    setFlippedCards(updated);
   };
 
   return (
@@ -158,7 +170,7 @@ export default function LearnerEditFlashcardPage() {
       {cards.length > 0 && (
         <div className="flex flex-col gap-4">
           <h1 className="text-3xl font-bold">Flashcards</h1>
-          {cards.map((card: any, index: any) => (
+          {cards.map((card: any, index: number) => (
             <div
               key={index}
               className="flex flex-col gap-4 bg-base-100 p-6 rounded-3xl border border-base-300 shadow"
@@ -189,7 +201,10 @@ export default function LearnerEditFlashcardPage() {
               <FlippableCard
                 front={card.front}
                 back={card.back}
+                isFlipped={flippedCards[index]}
+                onFlip={() => toggleFlip(index)}
                 hasMargin={false}
+                style="self-center"
               />
             </div>
           ))}

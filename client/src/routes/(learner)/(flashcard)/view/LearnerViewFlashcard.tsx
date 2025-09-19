@@ -136,6 +136,7 @@ export default function LearnerViewFlashcardPage() {
             if (cardIndex != 0) {
               setCardIndex((prev) => prev - 1);
             }
+            setIsFlipped(false);
           }}
         />
         <p>
@@ -151,6 +152,7 @@ export default function LearnerViewFlashcardPage() {
               }
               return prev;
             });
+            setIsFlipped(false);
           }}
         />
       </div>

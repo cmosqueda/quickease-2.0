@@ -124,7 +124,7 @@ export default function LearnerFlashcardPage() {
           </details>
         </div>
       </div>
-      <div className="collapse bg-base-100 border-base-300 border collapse-arrow">
+      <div className="collapse bg-base-100 border-base-300 border shadow collapse-arrow">
         <input type="checkbox" />
         <div className="collapse-title font-semibold ">
           {data.is_ai_generated && (
@@ -176,6 +176,7 @@ export default function LearnerFlashcardPage() {
             if (cardIndex != 0) {
               setCardIndex((prev) => prev - 1);
             }
+            setIsFlipped(false);
           }}
         />
         <p>
@@ -191,6 +192,7 @@ export default function LearnerFlashcardPage() {
               }
               return prev;
             });
+            setIsFlipped(false);
           }}
         />
       </div>

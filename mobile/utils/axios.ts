@@ -27,7 +27,7 @@ export const checkAuthAndRedirect = async () => {
 };
 
 const _API_INSTANCE = axios.create({
-  baseURL: "https://quickease-server.onrender.com/api/",
+  baseURL: "https://quickease-2-0.onrender.com/api/",
   timeout: 8 * 60 * 1000,
   withCredentials: true,
 });
