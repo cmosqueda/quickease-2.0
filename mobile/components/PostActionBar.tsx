@@ -33,7 +33,7 @@ export default function PostActionBar({
     >
       <Pressable
         disabled={isVotingPost}
-        onPress={() => voteOnPost({ post_id: id, vote_type: -1 })}
+        onPress={() => voteOnPost({ post_id: id, vote_type: 1 })}
       >
         <CustomText color="colorPrimaryContent">
           <MaterialIcons name="keyboard-arrow-up" size={24} />

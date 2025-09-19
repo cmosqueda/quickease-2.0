@@ -30,6 +30,7 @@ import {
 import _FONTS from "@/types/theme/Font";
 import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
+import { parse } from "@babel/core";
 
 export default function Page() {
   const { user, addNote } = useAuth();
@@ -62,9 +63,11 @@ export default function Page() {
 
         if (stored) {
           const parsed = JSON.parse(stored);
+          console.log(parsed);
 
           setTitle(parsed.title || "Untitled");
           setContent(parsed.content || "");
+          editor.setContent(parsed.content);
         }
       } catch (err) {
         router.back();
@@ -72,7 +75,7 @@ export default function Page() {
     };
 
     getGeneratedContent();
-  }, []);
+  }, [editor]);
 
   const handleSave = async () => {
     try {

@@ -124,7 +124,7 @@ const PostAttachmentsSelectionTray = ({
           return (
             <Pressable
               key={quiz.id}
-              className="disabled:opacity-70"
+              className="disabled:opacity-70 relative"
               onPress={() =>
                 handleToggle(quiz, selectedQuizzes, setSelectedQuizzes)
               }
@@ -135,11 +135,7 @@ const PostAttachmentsSelectionTray = ({
                 })
               }
             >
-              <CustomView
-                className={`p-6 rounded-xl gap-2 ${
-                  isSelected ? "border-2 border-blue-500" : ""
-                }`}
-              >
+              <CustomView className="p-6 rounded-xl gap-2">
                 {quiz.is_ai_generated && (
                   <View className="flex flex-row gap-4 items-center">
                     <CustomText>
@@ -157,6 +153,11 @@ const PostAttachmentsSelectionTray = ({
                   {quiz.title}
                 </CustomText>
               </CustomView>
+              {isSelected && (
+                <CustomText className="absolute right-4 top-4">
+                  <MaterialCommunityIcons name="check" size={24} />
+                </CustomText>
+              )}
             </Pressable>
           );
         })}
@@ -182,7 +183,7 @@ const PostAttachmentsSelectionTray = ({
           return (
             <Pressable
               key={flashcard.id}
-              className="disabled:opacity-70"
+              className="disabled:opacity-70 relative"
               onPress={() =>
                 handleToggle(
                   flashcard,
@@ -197,11 +198,7 @@ const PostAttachmentsSelectionTray = ({
                 })
               }
             >
-              <CustomView
-                className={`p-6 rounded-xl gap-2 ${
-                  isSelected ? "border-2 border-blue-500" : ""
-                }`}
-              >
+              <CustomView className="p-6 rounded-xl gap-2">
                 {flashcard.is_ai_generated && (
                   <View className="flex flex-row gap-4 items-center">
                     <CustomText>
@@ -219,6 +216,11 @@ const PostAttachmentsSelectionTray = ({
                   {flashcard.title}
                 </CustomText>
               </CustomView>
+              {isSelected && (
+                <CustomText className="absolute right-4 top-4">
+                  <MaterialCommunityIcons name="check" size={24} />
+                </CustomText>
+              )}
             </Pressable>
           );
         })}
@@ -252,7 +254,9 @@ const PostAttachmentsSelectionTray = ({
           variant={index === 1 ? "colorPrimary" : "colorBase300"}
           onPress={() => setIndex(1)}
         >
-          <CustomText>
+          <CustomText
+            color={index === 1 ? "colorPrimaryContent" : "colorBaseContent"}
+          >
             <AntDesign name="unknowfile1" size={20} />
           </CustomText>
         </CustomPressable>
@@ -261,7 +265,9 @@ const PostAttachmentsSelectionTray = ({
           variant={index === 2 ? "colorPrimary" : "colorBase300"}
           onPress={() => setIndex(2)}
         >
-          <CustomText>
+          <CustomText
+            color={index === 2 ? "colorPrimaryContent" : "colorBaseContent"}
+          >
             <AntDesign name="profile" size={20} />
           </CustomText>
         </CustomPressable>

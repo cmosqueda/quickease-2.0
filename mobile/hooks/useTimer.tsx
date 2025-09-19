@@ -16,6 +16,7 @@ type TimerStore = {
   time: number;
   isRunning: boolean;
   mode: Mode;
+  done: boolean;
   settings: TimerSettings;
   start: () => void;
   pause: () => void;
@@ -41,6 +42,7 @@ const useTimer = create<TimerStore>()(
       time: defaultSettings.study,
       isRunning: false,
       mode: "study",
+      done: false,
       start: () => {
         set((state) => {
           state.isRunning = true;
@@ -55,6 +57,7 @@ const useTimer = create<TimerStore>()(
         const { mode, settings } = get();
         set((state) => {
           state.isRunning = false;
+          state.done = false;
           state.time =
             mode === "study"
               ? settings.study
@@ -73,19 +76,17 @@ const useTimer = create<TimerStore>()(
         } else if (isRunning && time === 0) {
           set((state) => {
             state.isRunning = false;
+            state.done = true; // ✅ mark as done
 
             if (mode === "study") {
               state.mode = "shortBreak";
               state.time = settings.shortBreak;
-              state.isRunning = true;
             } else if (mode === "shortBreak") {
               state.mode = "study";
               state.time = settings.study;
-              state.isRunning = true;
             } else if (mode === "longBreak") {
               state.mode = "study";
               state.time = settings.study;
-              state.isRunning = true;
             }
           });
         }

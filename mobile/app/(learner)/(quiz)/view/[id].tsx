@@ -8,7 +8,6 @@ import CustomText from "@/components/CustomText";
 import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,10 +16,11 @@ import { useLocalSearchParams, router, Link } from "expo-router";
 import { ScrollView, Pressable, View, ActivityIndicator } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
+import { toast } from "sonner-native";
 
 export default function LearnerQuizPage() {
   const { currentScheme } = useTheme();
-  const { user } = useAuth();
+  const { user, deleteQuiz } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const { data: quizData } = useQuery({
@@ -28,6 +28,7 @@ export default function LearnerQuizPage() {
     queryFn: async () => {
       try {
         const { data } = await _API_INSTANCE.get(`/quiz/${id}`);
+        console.log(data);
 
         return data;
       } catch (err) {
@@ -47,6 +48,27 @@ export default function LearnerQuizPage() {
       pathname: "/(learner)/(quiz)/answer/[id]",
       params: { id: id },
     });
+  };
+
+  const handleDeleteQuiz = async () => {
+    try {
+      const { status } = await _API_INSTANCE.delete(`/quiz/delete`, {
+        data: {
+          quiz_id: quizData.id,
+        },
+      });
+
+      if (status == 200) {
+        deleteQuiz(quizData.id);
+        toast.success("Quiz deleted.");
+        router.replace({
+          pathname: "/(learner)/(quiz)",
+        });
+      }
+    } catch {
+      toast.error("Failed to delete.");
+      return;
+    }
   };
 
   const renderAttempts = () =>
@@ -153,11 +175,32 @@ export default function LearnerQuizPage() {
         variant="colorBase200"
         className="flex flex-row justify-between items-center"
       >
-        <Pressable onPress={() => router.back()}>
+        <Pressable onPress={() => router.replace("/(learner)/(quiz)")}>
           <CustomText>
             <MaterialIcons name="keyboard-arrow-left" size={36} />
           </CustomText>
         </Pressable>
+        {quizData.user_id === user?.id && (
+          <View className="flex flex-row gap-4 items-center">
+            <Pressable
+              onPress={() =>
+                router.replace({
+                  pathname: "/(learner)/(quiz)/edit/[id]",
+                  params: { id: quizData.id },
+                })
+              }
+            >
+              <CustomText>
+                <MaterialIcons name="edit" size={24} />
+              </CustomText>
+            </Pressable>
+            <Pressable onPress={handleDeleteQuiz}>
+              <CustomText>
+                <MaterialIcons name="delete" size={24} />
+              </CustomText>
+            </Pressable>
+          </View>
+        )}
       </CustomView>
 
       <CustomView variant="colorBase100" className="gap-4 p-4 rounded-3xl">

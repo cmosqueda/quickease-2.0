@@ -1,5 +1,6 @@
 package com.mirimomekiku.quickease
 import expo.modules.splashscreen.SplashScreenManager
+import org.devio.rn.splashscreen.SplashScreen
 
 import android.os.Build
 import android.os.Bundle

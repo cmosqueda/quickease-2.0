@@ -53,7 +53,7 @@ export default function Page() {
 
       if (status === 201) {
         setUser(data);
-        router.replace("/(learner)/(forum)");
+        router.dismissTo("/(learner)/(forum)");
       }
     } catch (err: any) {
       toast.error(

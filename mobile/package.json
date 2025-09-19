@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@10play/tentap-editor": "^0.7.5-alpha.0",
+    "@attarchi/react-native-lottie-splash-screen": "^3.0.0",
     "@expo-google-fonts/gabarito": "^0.4.1",
     "@expo/ui": "^0.1.1-alpha.10",
     "@expo/vector-icons": "^14.1.0",

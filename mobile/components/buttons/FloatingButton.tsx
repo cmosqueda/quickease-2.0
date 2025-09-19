@@ -67,13 +67,7 @@ export default function FloatingButton({
         style={{ backgroundColor: currentScheme.colorSecondary }}
         className="p-4 rounded-full"
         onLongPress={toggleMenu}
-        onPress={() => {
-          if (expanded) {
-            toggleMenu();
-          } else {
-            main_func();
-          }
-        }}
+        onPress={toggleMenu}
       >
         <CustomText color="colorSecondaryContent">
           <MaterialIcons name={expanded ? "close" : "add"} size={28} />

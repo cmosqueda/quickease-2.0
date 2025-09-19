@@ -12,6 +12,7 @@
       "supportsTablet": true
     },
     "android": {
+      "enableShrinkResourcesInReleaseBuilds": true,
       "googleServicesFile": "./secrets/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive_icon.png",

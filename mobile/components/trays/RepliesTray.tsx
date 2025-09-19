@@ -79,7 +79,8 @@ const RepliesTray = ({
     <KeyboardAvoidingView
       behavior="height"
       style={{
-        maxHeight: height / 1.2,
+        maxHeight: height / 1.5,
+        height: height / 1.5,
         backgroundColor: currentScheme.colorBase100,
       }}
       className="rounded-tr-3xl rounded-tl-3xl px-4 py-4 pb-4 gap-4"

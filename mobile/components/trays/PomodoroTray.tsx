@@ -19,7 +19,7 @@ const PomodoroTray = ({
   openSettings: () => void;
 }) => {
   const { currentScheme } = useTheme();
-  const { isRunning, mode, pause, reset, start, time } = useTimer();
+  const { isRunning, mode, pause, reset, start, time, settings } = useTimer();
 
   const colors: any = [
     rgbaToHex(currentScheme.colorPrimary) as any,
@@ -54,12 +54,21 @@ const PomodoroTray = ({
       <View className="items-center">
         <CountdownCircleTimer
           isPlaying={isRunning}
-          duration={time}
+          initialRemainingTime={time}
+          duration={mode === "study" ? settings.study : settings.shortBreak}
           colors={colors}
           colorsTime={[60, 30, 15, 0]}
-          isSmoothColorTransition={true}
+          isSmoothColorTransition
           strokeLinecap="round"
           trailColor={currentScheme.colorBase300 as any}
+          onComplete={() => {
+            if (mode === "study") {
+              start();
+            } else {
+              start();
+            }
+            return { shouldRepeat: false };
+          }}
         >
           {({ remainingTime }) => (
             <CustomText variant="black" className="text-3xl">

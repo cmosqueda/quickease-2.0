@@ -13,7 +13,7 @@ import { useState } from "react";
 import { TimerPicker } from "react-native-timer-picker";
 
 const PomodoroSettingsTray = ({ back }: { back: () => void }) => {
-  const { settings, setSettings } = useTimer();
+  const { settings, setSettings, reset } = useTimer();
   const { currentScheme } = useTheme();
 
   const [index, setIndex] = useState(0);
@@ -31,6 +31,7 @@ const PomodoroSettingsTray = ({ back }: { back: () => void }) => {
     }
 
     setSettings(studyTime, shortBreakTime);
+    reset();
   };
 
   const tabs = [
