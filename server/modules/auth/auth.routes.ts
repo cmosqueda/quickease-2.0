@@ -37,7 +37,6 @@ export default async function authRoutes(fastify: FastifyInstance) {
   });
 
   fastify.put("/update-password", {
-    preHandler: [fastify.authenticate],
     handler: update_password,
   });
 

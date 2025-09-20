@@ -68,12 +68,11 @@ const AccountSettings = () => {
 
   const handleRequestChangePassword = async () => {
     if (!canChangePassword) {
-      toast.success("You can only change your password after 7 days.");
-      return;
+      throw new Error("You can only change your password after 7 days.");
     }
 
     try {
-      const { data } = await _API_INSTANCE.post(
+      const { status } = await _API_INSTANCE.post(
         "mail/request-change-password",
         {},
         {
@@ -86,8 +85,7 @@ const AccountSettings = () => {
         new Date().toISOString()
       );
 
-      console.log(data);
-      toast.success("Mail sent!");
+      return status;
     } catch (err) {
       console.log(err);
       toast.error("Mail failed to send.");
@@ -173,7 +171,13 @@ const AccountSettings = () => {
         <p>Change name</p>
       </button>
       <button
-        onClick={handleRequestChangePassword}
+        onClick={() =>
+          toast.promise(handleRequestChangePassword(), {
+            loading: "Requesting to change password",
+            success: `Mail sent!`,
+            error: (err) => err.message || "Error requesting, try again.",
+          })
+        }
         className="flex flex-row gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all border border-base-300 shadow"
       >
         <Lock />

@@ -324,6 +324,7 @@ const LearnerRoutes: RouteObject = {
           loader: async ({ params }: { params: any }) => {
             try {
               const { data } = await _API_INSTANCE.get(`/quiz/${params.id}`);
+
               return data;
             } catch {
               toast.error("Error getting quiz data.");

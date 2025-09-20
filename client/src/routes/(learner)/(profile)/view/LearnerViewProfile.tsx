@@ -68,7 +68,14 @@ const OtherUser = ({ user }: { user: any }) => {
       {user.posts.map((post: any) => (
         <div className="flex flex-col gap-2">
           <div className="flex flex-row gap-2 items-center">
-            <div className="w-[32px] h-[32px] rounded-full bg-base-100" />
+            <img
+              src={
+                post.user?.avatar
+                  ? `/assets/images/avatars/${post.user?.avatar}.svg`
+                  : "/assets/images/avatars/blue.svg"
+              }
+              className="w-[2rem] aspect-square"
+            />
             <NavLink
               to={`/learner/profile/${post.user.id}`}
               className="font-semibold"
@@ -87,7 +94,7 @@ const OtherUser = ({ user }: { user: any }) => {
           <NavLink
             to={`/learner/post/${post.id}`}
             viewTransition
-            className="transition-all duration-300 p-4 rounded-3xl bg-base-100 hover:bg-base-300 border border-base-200 hover:shadow"
+            className="transition-all duration-300 p-4 rounded-3xl bg-base-100 hover:bg-base-300 border border-base-300 shadow"
           >
             <EditorProvider
               content={post.post_body}
@@ -106,7 +113,7 @@ const OtherUser = ({ user }: { user: any }) => {
         onClick={() => navigate(-1 as any, { viewTransition: false })}
         className="cursor-pointer"
       />
-      <div className="bg-base-100 p-8 flex flex-row gap-4 rounded-3xl">
+      <div className="bg-base-100 p-8 flex flex-row gap-4 rounded-3xl border border-base-300 shadow">
         <img
           src={
             user.avatar

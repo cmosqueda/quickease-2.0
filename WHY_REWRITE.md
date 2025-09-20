@@ -227,7 +227,7 @@ The original codebase, whether web, mobile, or backend, has little to no documen
 
 The original codebase is written entirely in plain `.jsx`. **PLAIN JSX.** with no type-safety at all. For a project built around 2024, skipping TypeScript is a major setback. TypeScript has become the standard in modern development because it helps prevent runtime errors, enforces clearer contracts between components, and makes collaboration easier. Without it, the IDE can’t properly assist and with features like autocomplete, type inference, and early error detection are basically unusable.
 
-This was the biggest reason I chose to rebuild the project. Working on a **pure .jsx** codebase in 2024 is inefficient and frustrating, especially when adding or scaling features. My rewritten version isn’t perfectly type-safe—it doesn’t catch every single edge case, but it covers roughly 80% of them. That’s a huge improvement compared to the original, which had no type-safety whatsoever.
+This was the biggest reason I chose to rebuild the project. Working on a **pure .jsx** codebase in 2024 is inefficient and frustrating, especially when adding or scaling features. My rewritten version isn’t perfectly type-safe and clearly it doesn’t catch every single edge case, but it covers roughly 80% of them. That’s a huge improvement compared to the original, which had no type-safety whatsoever.
 
 ---
 

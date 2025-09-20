@@ -50,7 +50,14 @@ const User = ({ user, posts }: { user: any; posts: any }) => {
         {posts.map((post: any) => (
           <div className="flex flex-col gap-2" key={post.id}>
             <div className="flex flex-row gap-2 items-center">
-              <div className="w-[32px] h-[32px] rounded-full bg-base-100" />
+              <img
+                src={
+                  post.user?.avatar
+                    ? `/assets/images/avatars/${post.user?.avatar}.svg`
+                    : "/assets/images/avatars/blue.svg"
+                }
+                className="w-[2rem] aspect-square"
+              />
               <h1 className="font-semibold">
                 {user?.first_name ?? "Unknown"} {user?.last_name ?? "User"}
               </h1>
@@ -89,14 +96,16 @@ const User = ({ user, posts }: { user: any; posts: any }) => {
           <Crown size={36} />
           <div className="flex flex-col">
             <p>Notes created</p>
-            <h1 className="font-bold text-4xl">0</h1>
+            <h1 className="font-bold text-4xl">{user.notes.length || "0"}</h1>
           </div>
         </div>
         <div className="flex flex-row gap-4 bg-base-100 p-8 rounded-3xl items-center border border-base-300 shadow">
           <GalleryVertical size={36} />
           <div className="flex flex-col">
             <p>Flashcards created</p>
-            <h1 className="font-bold text-4xl">0</h1>
+            <h1 className="font-bold text-4xl">
+              {user.flashcards.length || "0"}
+            </h1>
           </div>
         </div>
       </div>

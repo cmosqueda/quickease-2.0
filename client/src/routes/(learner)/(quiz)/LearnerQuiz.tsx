@@ -12,9 +12,10 @@ import {
   Edit,
   EllipsisVertical,
   Info,
+  TriangleAlertIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { NavLink, useLoaderData, useNavigate } from "react-router";
+import { Link, NavLink, useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
 import type { Quiz } from "@/types/types";
 
@@ -108,7 +109,8 @@ export default function LearnerQuizPage() {
       }, 0);
 
       return (
-        <div
+        <Link
+          to={`attempt/${entry.id}`}
           key={entry.id}
           className="flex flex-row justify-between items-center bg-base-100 p-4 rounded-2xl border border-base-300 shadow"
         >
@@ -126,7 +128,7 @@ export default function LearnerQuizPage() {
           <h1 className="font-bold text-xl">
             {correctCount}/{totalQuestions}
           </h1>
-        </div>
+        </Link>
       );
     });
 
@@ -166,10 +168,27 @@ export default function LearnerQuizPage() {
     });
 
   useEffect(() => {
-    if (data.attempts.length > 0) {
+    if (data.is_public && data.attempts.length > 0) {
       setTabIndex(0);
     }
-  }, [data.attempts.length]);
+  }, [data.is_public, data.attempts.length]);
+
+  if (!data.is_public && data.user_id !== user?.id) {
+    return (
+      <div className="flex flex-col min-h-screen max-w-7xl mx-auto w-full items-center justify-center gap-4">
+        <TriangleAlertIcon size={96} />
+        <div>
+          <h1 className="text-4xl font-bold text-center">
+            The user made this quiz private.
+          </h1>
+          <p className="text-base-content/50">
+            Sorry, we can't display this quiz. The user either made this quiz
+            private or made changes on it.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col w-full min-h-screen max-w-7xl mx-auto p-8 gap-4">

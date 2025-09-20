@@ -172,7 +172,7 @@ export default function LearnerCreateQuizPage() {
             className="textarea textarea-bordered text-base resize-none w-full"
           />
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="hidden flex-col gap-2">
           <h1 className="font-bold">Quiz options</h1>
           <div className="flex flex-row items-center gap-2">
             <input
