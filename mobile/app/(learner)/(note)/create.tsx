@@ -112,60 +112,58 @@ export default function Page() {
     );
   }
 
-  if (editor) {
-    return (
-      <SafeAreaView
-        style={{ backgroundColor: currentScheme.colorBase100 }}
-        className="flex flex-1 p-4"
-      >
-        <View className="flex flex-row gap-4 justify-between items-center relative">
-          <Pressable
-            onPress={() => {
-              router.back();
-            }}
-          >
-            <CustomText>
-              <MaterialIcons name="keyboard-arrow-left" size={36} />
-            </CustomText>
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              toast.promise(handleSave(), {
-                loading: "Saving note.",
-                error: "Error saving note.",
-                success: (data) => "Note created.",
-              });
-            }}
-          >
-            <CustomText>
-              <MaterialIcons name="save" size={32} />
-            </CustomText>
-          </Pressable>
-        </View>
-        <CustomTextInput
-          style={{
-            paddingHorizontal: 0,
-            fontFamily: _FONTS.Gabarito_900Black,
-            backgroundColor: null as any,
+  return (
+    <SafeAreaView
+      style={{ backgroundColor: currentScheme.colorBase100 }}
+      className="flex flex-1 p-4"
+    >
+      <View className="flex flex-row gap-4 justify-between items-center relative">
+        <Pressable
+          onPress={() => {
+            router.back();
           }}
-          className="text-4xl"
-          placeholder="Title"
-          value={title}
-          onChangeText={setTitle}
-          multiline
-        />
-        <RichText editor={editor} />
-        <KeyboardAvoidingView
-          behavior="position"
-          style={{ position: "absolute", width: width, bottom: 0 }}
         >
-          <Toolbar
-            editor={editor}
-            shouldHideDisabledToolbarItems
-            hidden={isToolbarHidden}
-          />
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    );
-  }
+          <CustomText>
+            <MaterialIcons name="keyboard-arrow-left" size={36} />
+          </CustomText>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            toast.promise(handleSave(), {
+              loading: "Saving note.",
+              error: "Error saving note.",
+              success: (data) => "Note created.",
+            });
+          }}
+        >
+          <CustomText>
+            <MaterialIcons name="save" size={32} />
+          </CustomText>
+        </Pressable>
+      </View>
+      <CustomTextInput
+        style={{
+          paddingHorizontal: 0,
+          fontFamily: _FONTS.Gabarito_900Black,
+          backgroundColor: undefined,
+        }}
+        className="text-4xl"
+        placeholder="Title"
+        value={title}
+        onChangeText={setTitle}
+        multiline
+      />
+      <RichText editor={editor} />
+      <KeyboardAvoidingView
+        behavior="position"
+        style={{ position: "absolute", width: width, bottom: 0 }}
+      >
+        <Toolbar
+          editor={editor}
+          shouldHideDisabledToolbarItems
+          hidden={isToolbarHidden}
+        />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
 }

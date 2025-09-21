@@ -16,7 +16,13 @@ import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useRef, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, View } from "react-native";
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Pressable,
+  ScrollView,
+  View,
+} from "react-native";
 
 import _FONTS from "@/types/theme/Font";
 import _API_INSTANCE from "@/utils/axios";
@@ -303,11 +309,11 @@ export default function Page() {
           </CustomPressable>
         </View>
 
-        <View key={1} className="flex-1 gap-4">
-          <CustomText variant="black" className="text-5xl">
-            Questions
-          </CustomText>
+        <KeyboardAvoidingView className="gap-4" behavior="position" key={1}>
           <ScrollView contentContainerClassName="gap-4 pb-[5rem]">
+            <CustomText variant="black" className="text-5xl">
+              Questions
+            </CustomText>
             {questions.map((q, index) => (
               <CustomView
                 variant="colorBase300"
@@ -367,19 +373,18 @@ export default function Page() {
               </CustomView>
             ))}
           </ScrollView>
-
-          <CustomPressable
-            onPress={addQuestion}
-            variant="colorPrimary"
-            className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
-          >
-            <CustomText color="colorPrimaryContent">
-              <MaterialIcons name="post-add" size={32} />
-            </CustomText>
-            <CustomText color="colorPrimaryContent">Add question</CustomText>
-          </CustomPressable>
-        </View>
+        </KeyboardAvoidingView>
       </PagerView>
+      <CustomPressable
+        onPress={addQuestion}
+        variant="colorPrimary"
+        className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+      >
+        <CustomText color="colorPrimaryContent">
+          <MaterialIcons name="post-add" size={32} />
+        </CustomText>
+        <CustomText color="colorPrimaryContent">Add question</CustomText>
+      </CustomPressable>
     </SafeAreaView>
   );
 }

@@ -3,8 +3,7 @@ import PagerView from "react-native-pager-view";
 import CustomText from "../CustomText";
 import CustomView from "../CustomView";
 
-import { MaterialIcons } from "@expo/vector-icons";
-
+import { toast } from "sonner-native";
 import { Image } from "expo-image";
 import { useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -25,6 +24,12 @@ import { _BADGE_ASSET_MAP, _BADGE_MAP } from "@/types/user/badges";
 import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
+type Badge = {
+  id: string;
+  title: string;
+  description: string;
+};
+
 const PostComponent = ({ post }: { post: Post }) => {
   const { currentScheme } = useTheme();
   const editor = useEditorBridge({
@@ -40,46 +45,43 @@ const PostComponent = ({ post }: { post: Post }) => {
     initialContent: post.post_body,
   });
 
-  if (editor) {
-    return (
-      <View>
-        <CustomText
-          variant="bold"
-          className="text-2xl"
-          color="colorBaseContent"
-        >
-          {post.title}
-        </CustomText>
-        <CustomView
-          key={post.id}
-          variant="colorBase300"
-          className="p-4 rounded-3xl"
-        >
-          <RichText editor={editor} />
-        </CustomView>
-      </View>
-    );
-  }
+  if (!editor) return null;
+
+  return (
+    <View>
+      <CustomText variant="bold" className="text-2xl" color="colorBaseContent">
+        {post.title}
+      </CustomText>
+      <CustomView
+        key={post.id}
+        variant="colorBase300"
+        className="p-4 rounded-3xl"
+      >
+        <RichText editor={editor} />
+      </CustomView>
+    </View>
+  );
 };
 
 const Badges = ({ user }: { user: User }) => {
   const badgeIds = Object.keys(_BADGE_ASSET_MAP);
   const [assets] = useAssets(Object.values(_BADGE_ASSET_MAP));
 
-  if (!assets) return null;
+  if (!assets || !user.badges || user.badges.length === 0) return null;
 
   return (
     <ScrollView contentContainerClassName="flex flex-col gap-4">
-      {user?.badges.map(
-        (badge: { id: string; title: string; description: string }) => {
+      {user.badges &&
+        user.badges.length > 0 &&
+        user.badges.map((badge: Badge) => {
           const badgeMeta = _BADGE_MAP[badge.id];
-
           if (!badgeMeta) return null;
 
           const index = badgeIds.indexOf(badge.id);
           if (index === -1) return null;
 
           const asset = assets[index];
+          if (!asset) return null;
 
           return (
             <CustomView
@@ -105,14 +107,13 @@ const Badges = ({ user }: { user: User }) => {
               </View>
             </CustomView>
           );
-        }
-      )}
+        })}
     </ScrollView>
   );
 };
 
 const Posts = ({ posts }: { posts: Post[] }) => {
-  if (posts.length === 0) {
+  if (!posts || posts.length === 0) {
     return (
       <CustomView className="flex items-center justify-center p-4">
         <CustomText>No posts yet.</CustomText>
@@ -125,22 +126,20 @@ const Posts = ({ posts }: { posts: Post[] }) => {
       contentContainerClassName="flex flex-col gap-4"
       style={{ maxHeight: Dimensions.get("screen").height / 1.5 }}
     >
-      {posts.map((post) => {
-        return <PostComponent post={post} key={post.id} />;
-      })}
+      {posts.map((post) => (
+        <PostComponent post={post} key={post.id} />
+      ))}
     </ScrollView>
   );
 };
 
 const Avatar = ({ user }: { user: User }) => {
   const { height } = useWindowDimensions();
-
   const avatarIds = Object.keys(_AVATAR_ASSET_MAP);
   const [assets] = useAssets(Object.values(_AVATAR_ASSET_MAP));
 
   if (!assets) return null;
 
-  // Fallback if user.avatar is missing/invalid
   const avatarId =
     user?.avatar && avatarIds.includes(user.avatar) ? user.avatar : "blue";
 
@@ -149,7 +148,7 @@ const Avatar = ({ user }: { user: User }) => {
 
   return (
     <View
-      style={{ height: height / 6 }}
+      style={{ height: height / 5 }}
       className="flex gap-4 items-center justify-center"
     >
       {avatarAsset && (
@@ -161,7 +160,7 @@ const Avatar = ({ user }: { user: User }) => {
 
       <View className="items-center">
         <CustomText variant="bold" className="text-3xl">
-          {user?.first_name} {user?.last_name}
+          {user.first_name} {user.last_name}
         </CustomText>
       </View>
     </View>
@@ -177,39 +176,55 @@ const ViewOtherProfileTray = ({
 }) => {
   const pagerViewRef = useRef<PagerView>(null);
 
-  const { data: _USER } = useQuery({
+  const { data: _USER } = useQuery<User>({
     enabled: !!user?.id,
-    queryKey: user?.id ? [user.id] : [],
+    queryKey: ["user", user.id],
     queryFn: async () => {
       try {
-        const { data } = await _API_INSTANCE.get(`/users/view/${user.id}`);
-
+        const { data } = await _API_INSTANCE.get<User>(
+          `/users/view/${user.id}`
+        );
         return data;
-      } catch (err) {
+      } catch {
         close();
-        throw err;
+        toast.error("User doesn't exist.");
+        throw new Error("User doesn't exist.");
       }
     },
     retry: 3,
   });
 
-  if (_USER) {
+  if (!_USER) return null;
+
+  if (!_USER.is_public) {
     return (
       <CustomView
         variant="colorBase100"
-        className="rounded-tr-3xl rounded-tl-3xl px-4 pt-8 gap-4"
+        className="rounded-tr-3xl rounded-tl-3xl px-4 pt-8"
       >
         <Avatar user={user} />
-        <PagerView
-          ref={pagerViewRef}
-          style={{ height: Dimensions.get("screen").height / 2, gap: 16 }}
-        >
-          <Badges key={0} user={_USER} />
-          <Posts key={1} posts={_USER.posts} />
-        </PagerView>
+        <CustomText className="pb-4 text-center text-xl opacity-70">
+          This profile is private.
+        </CustomText>
       </CustomView>
     );
   }
+
+  return (
+    <CustomView
+      variant="colorBase100"
+      className="rounded-tr-3xl rounded-tl-3xl px-4 pt-8 gap-4"
+    >
+      <Avatar user={user} />
+      <PagerView
+        ref={pagerViewRef}
+        style={{ height: Dimensions.get("screen").height / 2, gap: 16 }}
+      >
+        <Badges key="badges" user={_USER.badges} />
+        <Posts posts={_USER.posts} key="posts" />
+      </PagerView>
+    </CustomView>
+  );
 };
 
 export default ViewOtherProfileTray;

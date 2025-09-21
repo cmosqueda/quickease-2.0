@@ -115,7 +115,7 @@ export default function Page() {
     return null;
   }
 
-  if (!flashcardData.is_public) {
+  if (!flashcardData.is_public && flashcardData.user_id !== user?.id) {
     return (
       <SafeAreaView
         className="flex-1 items-center justify-center gap-6"

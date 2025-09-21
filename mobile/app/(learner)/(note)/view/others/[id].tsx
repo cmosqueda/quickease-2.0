@@ -3,9 +3,10 @@ import CustomText from "@/components/CustomText";
 import CustomTextInput from "@/components/CustomTextInput";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Note } from "@/types/user/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Pressable } from "react-native";
@@ -36,7 +37,7 @@ export default function Page() {
     initialContent: content,
   });
 
-  const { data, isFetching } = useQuery({
+  const { data: noteData, isFetching } = useQuery({
     queryKey: ["view-note", id],
     queryFn: async () => {
       try {
@@ -56,12 +57,48 @@ export default function Page() {
     enabled: !!id,
   });
 
+  useEffect(() => {
+    if (noteData && !noteData.is_public) {
+      setTimeout(() => {
+        router.replace("/(learner)/(note)");
+      }, 3000);
+    }
+  }, [noteData, id]);
+
   if (isFetching) {
     return (
       <SafeAreaView
         style={{ backgroundColor: currentScheme.colorBase100 }}
         className="flex flex-1 p-4"
       ></SafeAreaView>
+    );
+  }
+
+  if (noteData && !noteData.is_public) {
+    return (
+      <SafeAreaView
+        className="flex-1 items-center justify-center gap-6"
+        style={{ backgroundColor: currentScheme.colorBase200 }}
+      >
+        <CustomText>
+          <MaterialCommunityIcons name="alert-circle" size={96} />
+        </CustomText>
+        <View className="flex flex-col gap-1">
+          <CustomText className="text-xl text-center" variant="bold">
+            The user made this note private.
+          </CustomText>
+          <CustomText className="text-sm opacity-70 text-center px-8">
+            Sorry, we can&apos;t display this note. The user either made this
+            note private or made changes on it.
+          </CustomText>
+          <CustomText
+            className="opacity-70 text-center my-4 px-8"
+            variant="bold"
+          >
+            You&apos;ll be redirected to your note tab in a few seconds...
+          </CustomText>
+        </View>
+      </SafeAreaView>
     );
   }
 

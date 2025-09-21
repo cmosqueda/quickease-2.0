@@ -8,7 +8,10 @@ import CustomText from "@/components/CustomText";
 import CustomPressable from "@/components/CustomPressable";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+import { Quiz } from "@/types/user/types";
+import { toast } from "sonner-native";
 import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useRef, useState } from "react";
@@ -16,8 +19,6 @@ import { useLocalSearchParams, router, Link } from "expo-router";
 import { ScrollView, Pressable, View, ActivityIndicator } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
-import { toast } from "sonner-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function LearnerQuizPage() {
   const { currentScheme } = useTheme();
@@ -28,7 +29,7 @@ export default function LearnerQuizPage() {
     queryKey: ["view-quiz", id],
     queryFn: async () => {
       try {
-        const { data } = await _API_INSTANCE.get(`/quiz/${id}`);
+        const { data } = await _API_INSTANCE.get<Quiz>(`/quiz/${id}`);
         console.log(data);
 
         return data;
@@ -52,23 +53,25 @@ export default function LearnerQuizPage() {
   };
 
   const handleDeleteQuiz = async () => {
-    try {
-      const { status } = await _API_INSTANCE.delete(`/quiz/delete`, {
-        data: {
-          quiz_id: quizData.id,
-        },
-      });
-
-      if (status == 200) {
-        deleteQuiz(quizData.id);
-        toast.success("Quiz deleted.");
-        router.replace({
-          pathname: "/(learner)/(quiz)",
+    if (quizData) {
+      try {
+        const { status } = await _API_INSTANCE.delete(`/quiz/delete`, {
+          data: {
+            quiz_id: quizData.id,
+          },
         });
+
+        if (status == 200) {
+          deleteQuiz(quizData.id);
+          toast.success("Quiz deleted.");
+          router.replace({
+            pathname: "/(learner)/(quiz)",
+          });
+        }
+      } catch {
+        toast.error("Failed to delete.");
+        return;
       }
-    } catch {
-      toast.error("Failed to delete.");
-      return;
     }
   };
 
@@ -173,7 +176,7 @@ export default function LearnerQuizPage() {
     );
   }
 
-  if (!quizData.is_public) {
+  if (!quizData.is_public && quizData.user_id !== user?.id) {
     return (
       <SafeAreaView
         className="flex-1 items-center justify-center gap-6"

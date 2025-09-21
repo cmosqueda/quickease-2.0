@@ -1,23 +1,29 @@
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
-import _FONTS from "@/types/theme/Font";
-import _API_INSTANCE from "@/utils/axios";
-
-import CustomPressable from "@/components/CustomPressable";
+import PagerView from "react-native-pager-view";
 import CustomText from "@/components/CustomText";
-import CustomTextInput from "@/components/CustomTextInput";
 import CustomView from "@/components/CustomView";
+import CustomPressable from "@/components/CustomPressable";
+import CustomTextInput from "@/components/CustomTextInput";
 
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { toast } from "sonner-native";
-import { Switch } from "@expo/ui/jetpack-compose";
 import { router } from "expo-router";
-import { useState } from "react";
+import { Switch } from "@expo/ui/jetpack-compose";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Pressable, ScrollView, View } from "react-native";
+import { useRef, useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Pressable,
+  ScrollView,
+  View,
+} from "react-native";
+
+import _FONTS from "@/types/theme/Font";
+import _API_INSTANCE from "@/utils/axios";
 
 interface Question {
   question: string;
@@ -29,6 +35,7 @@ interface Question {
 export default function Page() {
   const { addQuiz } = useAuth();
   const { currentScheme } = useTheme();
+  const pagerViewRef = useRef<PagerView>(null);
 
   const [questions, setQuestions] = useState<Question[]>([
     {
@@ -130,120 +137,6 @@ export default function Page() {
   };
 
   const [tabIndex, setTabIndex] = useState(0);
-  const tabs = [
-    <>
-      <View className="flex-1">
-        <CustomTextInput
-          style={{
-            backgroundColor: "",
-            paddingHorizontal: 0,
-            fontFamily: _FONTS.Gabarito_900Black,
-          }}
-          className="text-4xl"
-          placeholder="Title"
-          value={quizTitle}
-          onChangeText={setQuizTitle}
-          multiline
-        />
-        <CustomTextInput
-          style={{
-            backgroundColor: null as any,
-            paddingHorizontal: 0,
-            fontFamily: _FONTS.Gabarito_400Regular,
-            flex: 1,
-          }}
-          placeholder="Description"
-          multiline
-          textAlignVertical="top"
-          value={quizDescription}
-          onChangeText={setQuizDescription}
-        />
-      </View>
-      <CustomPressable
-        variant="colorBase300"
-        className="rounded-3xl items-center"
-        onPress={() => {
-          if (!quizTitle) {
-            toast("No quiz title?");
-            return;
-          }
-
-          setTabIndex(1);
-        }}
-      >
-        <CustomText>Next</CustomText>
-      </CustomPressable>
-    </>,
-    <>
-      <CustomText variant="black" className="text-5xl">
-        Questions
-      </CustomText>
-      <ScrollView contentContainerClassName="gap-4 pb-[5rem]">
-        {questions.map((q, index) => (
-          <CustomView
-            variant="colorBase300"
-            key={index}
-            className="gap-2 p-4 rounded-3xl"
-          >
-            <CustomTextInput
-              value={q.question}
-              onChangeText={(val) =>
-                handleQuestionChange(index, "question", val)
-              }
-              placeholder={`Question ${index + 1}`}
-              className="rounded-xl"
-            />
-            <CustomTextInput
-              placeholder="Description (optional)"
-              value={q.description}
-              onChangeText={(val) =>
-                handleQuestionChange(index, "description", val)
-              }
-              className="h-[6rem] rounded-xl"
-              textAlignVertical="top"
-              multiline
-            />
-            <CustomText>Answers/Options</CustomText>
-            {q.options.map((opt, oIndex) => (
-              <View key={oIndex} className="flex flex-row gap-4">
-                <CustomTextInput
-                  placeholder={`Option ${oIndex + 1}`}
-                  value={opt}
-                  onChangeText={(val: string) =>
-                    handleOptionChange(index, oIndex, val)
-                  }
-                  className="rounded-xl flex-1"
-                />
-                <Switch
-                  variant="checkbox"
-                  value={q.correctAnswers.includes(oIndex)}
-                  onValueChange={() => handleCorrectAnswerToggle(index, oIndex)}
-                />
-              </View>
-            ))}
-            <CustomPressable
-              variant="colorBase100"
-              className="items-center rounded-xl"
-              onPress={() => deleteQuestion(index)}
-            >
-              <CustomText>Delete</CustomText>
-            </CustomPressable>
-          </CustomView>
-        ))}
-      </ScrollView>
-
-      <CustomPressable
-        onPress={addQuestion}
-        variant="colorPrimary"
-        className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
-      >
-        <CustomText color="colorPrimaryContent">
-          <MaterialIcons name="post-add" size={32} />
-        </CustomText>
-        <CustomText color="colorPrimaryContent">Add question</CustomText>
-      </CustomPressable>
-    </>,
-  ];
 
   return (
     <SafeAreaView
@@ -254,11 +147,13 @@ export default function Page() {
         <View className="flex flex-row gap-2 items-center">
           <Pressable
             onPress={() => {
-              if (tabIndex == 1) {
+              if (tabIndex === 1) {
+                pagerViewRef.current?.setPage(0);
                 setTabIndex(0);
                 return;
               }
 
+              pagerViewRef.current?.setPage(0);
               setTabIndex(0);
               router.back();
             }}
@@ -320,7 +215,130 @@ export default function Page() {
           variant={tabIndex == 1 ? "colorPrimary" : "colorBase300"}
         />
       </View>
-      {tabs[tabIndex]}
+      <PagerView
+        scrollEnabled={false}
+        ref={pagerViewRef}
+        style={{ flex: 1 }}
+        onPageScroll={(e) => setTabIndex(e.nativeEvent.position)}
+      >
+        <View key={0}>
+          <View className="flex-1">
+            <CustomTextInput
+              style={{
+                backgroundColor: "",
+                paddingHorizontal: 0,
+                fontFamily: _FONTS.Gabarito_900Black,
+              }}
+              className="text-4xl"
+              placeholder="Title"
+              value={quizTitle}
+              onChangeText={setQuizTitle}
+              multiline
+            />
+            <CustomTextInput
+              style={{
+                backgroundColor: null as any,
+                paddingHorizontal: 0,
+                fontFamily: _FONTS.Gabarito_400Regular,
+                flex: 1,
+              }}
+              placeholder="Description"
+              multiline
+              textAlignVertical="top"
+              value={quizDescription}
+              onChangeText={setQuizDescription}
+            />
+          </View>
+          <CustomPressable
+            variant="colorBase300"
+            className="rounded-3xl items-center"
+            onPress={() => {
+              if (!quizTitle) {
+                toast("No quiz title?");
+                return;
+              }
+
+              pagerViewRef.current?.setPage(1);
+              setTabIndex(1);
+            }}
+          >
+            <CustomText>Next</CustomText>
+          </CustomPressable>
+        </View>
+        <KeyboardAvoidingView behavior="position" key={1}>
+          <ScrollView
+            contentContainerClassName="gap-4 pb-[5rem]"
+            showsVerticalScrollIndicator={false}
+          >
+            <CustomText variant="black" className="text-5xl">
+              Questions
+            </CustomText>
+            {questions.map((q, index) => (
+              <CustomView
+                variant="colorBase300"
+                key={index}
+                className="gap-2 p-4 rounded-3xl"
+              >
+                <CustomTextInput
+                  value={q.question}
+                  onChangeText={(val) =>
+                    handleQuestionChange(index, "question", val)
+                  }
+                  placeholder={`Question ${index + 1}`}
+                  className="rounded-xl"
+                />
+                <CustomTextInput
+                  placeholder="Description (optional)"
+                  value={q.description}
+                  onChangeText={(val) =>
+                    handleQuestionChange(index, "description", val)
+                  }
+                  className="h-[6rem] rounded-xl"
+                  textAlignVertical="top"
+                  multiline
+                />
+                <CustomText>Answers/Options</CustomText>
+                {q.options.map((opt, oIndex) => (
+                  <View key={oIndex} className="flex flex-row gap-4">
+                    <CustomTextInput
+                      placeholder={`Option ${oIndex + 1}`}
+                      value={opt}
+                      onChangeText={(val: string) =>
+                        handleOptionChange(index, oIndex, val)
+                      }
+                      className="rounded-xl flex-1"
+                    />
+                    <Switch
+                      variant="checkbox"
+                      value={q.correctAnswers.includes(oIndex)}
+                      onValueChange={() =>
+                        handleCorrectAnswerToggle(index, oIndex)
+                      }
+                    />
+                  </View>
+                ))}
+                <CustomPressable
+                  variant="colorBase100"
+                  className="items-center rounded-xl"
+                  onPress={() => deleteQuestion(index)}
+                >
+                  <CustomText>Delete</CustomText>
+                </CustomPressable>
+              </CustomView>
+            ))}
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </PagerView>
+      <CustomPressable
+        onPress={addQuestion}
+        variant="colorPrimary"
+        className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+      >
+        <CustomText color="colorPrimaryContent">
+          <MaterialIcons name="post-add" size={32} />
+        </CustomText>
+        <CustomText color="colorPrimaryContent">Add question</CustomText>
+      </CustomPressable>
     </SafeAreaView>
   );
 }
