@@ -24,16 +24,81 @@ import _FONTS from "@/types/theme/Font";
  *  _DONT TOUCH
  * Used for mapping flashcards & making it flippable
  */
-const Card = ({ card }: { card: { front: string; back: string } }) => {
+const Card = ({
+  card,
+  index,
+  onDelete,
+  onEdit,
+}: {
+  card: { front: string; back: string };
+  index: number;
+  onDelete: (index: number) => void;
+  onEdit: (index: number, updatedCard: { front: string; back: string }) => void;
+}) => {
   const [flipped, setFlipped] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFront, setEditFront] = useState(card.front);
+  const [editBack, setEditBack] = useState(card.back);
 
   return (
-    <FlippableCard
-      front={card.front}
-      back={card.back}
-      flipped={flipped}
-      setFlipped={setFlipped}
-    />
+    <CustomView variant="colorBase200" className="p-4 rounded-2xl gap-2">
+      {isEditing ? (
+        <>
+          <CustomTextInput
+            value={editFront}
+            onChangeText={setEditFront}
+            placeholder="Edit front"
+            style={{ backgroundColor: "white" }}
+            className="rounded-xl"
+          />
+          <CustomTextInput
+            value={editBack}
+            onChangeText={setEditBack}
+            placeholder="Edit back"
+            style={{ backgroundColor: "white" }}
+            className="rounded-xl"
+          />
+          <CustomPressable
+            className="items-center rounded-xl"
+            onPress={() => {
+              if (!editFront && !editBack) {
+                toast("Invalid edit values.");
+                return;
+              }
+              onEdit(index, { front: editFront, back: editBack });
+              setIsEditing(false);
+            }}
+          >
+            <CustomText color="colorPrimaryContent">Save Edit</CustomText>
+          </CustomPressable>
+        </>
+      ) : (
+        <>
+          <FlippableCard
+            front={card.front}
+            back={card.back}
+            flipped={flipped}
+            setFlipped={setFlipped}
+          />
+          <View className="flex-row gap-2">
+            <CustomPressable
+              onPress={() => setIsEditing(true)}
+              className="p-2 rounded-full flex-1 items-center"
+              variant="colorBase300"
+            >
+              <MaterialIcons name="edit" size={20} />
+            </CustomPressable>
+            <CustomPressable
+              onPress={() => onDelete(index)}
+              className="p-2 rounded-full flex-1 items-center"
+              variant="colorBase300"
+            >
+              <MaterialIcons name="delete" size={20} />
+            </CustomPressable>
+          </View>
+        </>
+      )}
+    </CustomView>
   );
 };
 
@@ -84,6 +149,19 @@ export default function Page() {
     setCards((prev) => [...prev, { front, back }]);
     setFront("");
     setBack("");
+  };
+
+  const handleDeleteCard = (idx: number) => {
+    setCards(cards.filter((_, i) => i !== idx));
+  };
+
+  const handleEditCard = (
+    idx: number,
+    updatedCard: { front: string; back: string }
+  ) => {
+    const updatedCards = [...cards];
+    updatedCards[idx] = updatedCard;
+    setCards(updatedCards);
   };
 
   const handleSave = async () => {
@@ -150,7 +228,7 @@ export default function Page() {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: currentScheme.colorBase200 }}
+      style={{ flex: 1, backgroundColor: currentScheme.colorBase100 }}
       className="p-4 gap-4"
     >
       <View className="flex flex-row items-center justify-between">
@@ -221,6 +299,7 @@ export default function Page() {
           <View className="flex-1">
             <CustomTextInput
               style={{
+                backgroundColor: "",
                 paddingHorizontal: 0,
                 fontFamily: _FONTS.Gabarito_900Black,
               }}
@@ -232,6 +311,7 @@ export default function Page() {
             />
             <CustomTextInput
               style={{
+                backgroundColor: "",
                 paddingHorizontal: 0,
                 fontFamily: _FONTS.Gabarito_400Regular,
                 flex: 1,
@@ -259,56 +339,55 @@ export default function Page() {
             <CustomText>Next</CustomText>
           </CustomPressable>
         </View>
-        <View key={1} className="gap-4">
-          <CustomText variant="black" className="text-5xl">
-            Edit Cards
-          </CustomText>
-          <CustomView variant="colorBase300" className="gap-4 p-4 rounded-3xl">
-            <CustomText>Front (Question)</CustomText>
-            <CustomTextInput
-              value={front}
-              onChangeText={setFront}
-              placeholder="Edit the front"
-              style={{ backgroundColor: currentScheme.colorBase200 }}
-              className="rounded-xl"
-              multiline
-            />
-            <CustomText>Back (Answer)</CustomText>
-            <CustomTextInput
-              value={back}
-              onChangeText={setBack}
-              placeholder="Edit the back"
-              style={{ backgroundColor: currentScheme.colorBase200 }}
-              className="rounded-xl"
-              multiline
-            />
-            <CustomPressable
-              onPress={handleAddCard}
-              className="items-center rounded-xl"
-            >
-              <CustomText color="colorPrimaryContent">Add Card</CustomText>
-            </CustomPressable>
-          </CustomView>
-
-          <CustomText variant="bold" className="text-xl">
-            Existing Cards
-          </CustomText>
-          {cards.length > 0 ? (
-            <ScrollView
-              contentContainerStyle={{
-                backgroundColor: currentScheme.colorBase200,
-              }}
-              contentContainerClassName="gap-4"
-            >
-              {cards.map((card, index) => (
-                <Card card={card} key={index} />
-              ))}
-            </ScrollView>
-          ) : (
-            <CustomText className="opacity-60">
-              No cards yet. Add one above.
+        <View key={1}>
+          <ScrollView contentContainerClassName="gap-4">
+            <CustomText variant="black" className="text-5xl">
+              Flashcards
             </CustomText>
-          )}
+            <CustomView
+              variant="colorBase300"
+              className="gap-4 p-4 rounded-3xl"
+            >
+              <CustomText>Front (Question)</CustomText>
+              <CustomTextInput
+                value={front}
+                onChangeText={setFront}
+                placeholder="Enter the front of the card"
+                style={{ backgroundColor: currentScheme.colorBase200 }}
+                className="rounded-xl"
+                multiline
+              />
+              <CustomText>Back (Answer)</CustomText>
+              <CustomTextInput
+                value={back}
+                onChangeText={setBack}
+                placeholder="Enter the back of the card"
+                style={{ backgroundColor: currentScheme.colorBase200 }}
+                className="rounded-xl"
+                multiline
+              />
+              <CustomPressable
+                onPress={handleAddCard}
+                className="items-center rounded-xl"
+              >
+                <CustomText color="colorPrimaryContent">Add</CustomText>
+              </CustomPressable>
+            </CustomView>
+
+            <CustomText variant="bold" className="text-xl">
+              Previews
+            </CustomText>
+
+            {cards.map((card, index) => (
+              <Card
+                card={card}
+                index={index}
+                key={index}
+                onDelete={handleDeleteCard}
+                onEdit={handleEditCard}
+              />
+            ))}
+          </ScrollView>
         </View>
       </PagerView>
     </SafeAreaView>

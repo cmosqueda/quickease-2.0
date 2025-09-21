@@ -185,7 +185,7 @@ export async function replyOnComment(
         actorId: user_id,
         type: "REPLIED",
         message: `${actorName} replied to your comment.`,
-        resourceId: comment_id,
+        resourceId: post_id,
         resourceType: "COMMENT",
       });
     }

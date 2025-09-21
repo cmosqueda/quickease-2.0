@@ -133,7 +133,7 @@ export default function Index() {
   }
 
   if (loggedIn) {
-    return <Redirect href={"/(learner)/(profile)"} />;
+    return <Redirect href={"/(learner)/(forum)"} />;
   }
 
   if (!loggedIn && !isChecking) {

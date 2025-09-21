@@ -11,12 +11,13 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocalSearchParams, router, Link } from "expo-router";
 import { ScrollView, Pressable, View, ActivityIndicator } from "react-native";
 
 import _API_INSTANCE from "@/utils/axios";
 import { toast } from "sonner-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function LearnerQuizPage() {
   const { currentScheme } = useTheme();
@@ -153,6 +154,14 @@ export default function LearnerQuizPage() {
       );
     });
 
+  useEffect(() => {
+    if (quizData && !quizData.is_public) {
+      setTimeout(() => {
+        router.replace("/(learner)/(quiz)");
+      }, 3000);
+    }
+  }, [quizData, id]);
+
   if (!quizData) {
     return (
       <SafeAreaView
@@ -160,6 +169,34 @@ export default function LearnerQuizPage() {
         style={{ backgroundColor: currentScheme.colorBase200 }}
       >
         <ActivityIndicator color={currentScheme.colorPrimary} size={96} />
+      </SafeAreaView>
+    );
+  }
+
+  if (!quizData.is_public) {
+    return (
+      <SafeAreaView
+        className="flex-1 items-center justify-center gap-6"
+        style={{ backgroundColor: currentScheme.colorBase200 }}
+      >
+        <CustomText>
+          <MaterialCommunityIcons name="alert-circle" size={96} />
+        </CustomText>
+        <View className="flex flex-col gap-1">
+          <CustomText className="text-xl text-center" variant="bold">
+            The user made this quiz private.
+          </CustomText>
+          <CustomText className="text-sm opacity-70 text-center px-8">
+            Sorry, we can&apos;t display this quiz. The user either made this
+            quiz private or made changes on it.
+          </CustomText>
+          <CustomText
+            className="opacity-70 text-center my-4 px-8"
+            variant="bold"
+          >
+            You&apos;ll be redirected to your quiz tab in a few seconds...
+          </CustomText>
+        </View>
       </SafeAreaView>
     );
   }

@@ -142,8 +142,7 @@ export default function Page() {
       queryClient.invalidateQueries({ queryKey: ["recent-posts"] });
       queryClient.invalidateQueries({ queryKey: ["view-post", id] });
 
-      toast.success("Post deleted.");
-
+      router.back();
       router.back();
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "An error occurred.");
@@ -225,7 +224,25 @@ export default function Page() {
         </Pressable>
         <View className="flex flex-row gap-2 items-center">
           <CustomPressable
-            onPress={handleDelete}
+            onPress={() => {
+              toast("Are you sure?", {
+                action: {
+                  label: "YES",
+                  onClick: () => {
+                    toast.dismiss();
+                    toast.promise(handleDelete(), {
+                      loading: "Deleting Post",
+                      success: (data) => "Post deleted.",
+                      error: "Error deleting post, try again.",
+                    });
+                  },
+                },
+                cancel: {
+                  label: "NO",
+                  onClick: () => {},
+                },
+              });
+            }}
             className="rounded-3xl disabled:opacity-60"
             variant="colorBase300"
             disabled={deletingPost}

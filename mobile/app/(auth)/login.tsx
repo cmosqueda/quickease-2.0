@@ -74,6 +74,7 @@ export default function Page() {
             state.user!.flashcards = flashcard.data;
             state.user!.quizzes = quiz.data;
           });
+          router.back();
           router.dismissTo("/(learner)/(forum)");
         }
       }

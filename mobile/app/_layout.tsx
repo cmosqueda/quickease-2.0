@@ -1,5 +1,7 @@
 import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
+import CustomText from "@/components/CustomText";
+import * as Linking from "expo-linking";
 import * as SplashScreen from "expo-splash-screen";
 
 import { Stack } from "expo-router";
@@ -9,6 +11,7 @@ import { TrayProvider } from "react-native-trays";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import {
   Gabarito_400Regular,
   Gabarito_500Medium,
@@ -41,6 +44,20 @@ SplashScreen.preventAutoHideAsync();
  * @returns The root layout JSX element for the app.
  */
 export default function RootLayout() {
+  const linking = {
+    prefixes: ["https://quickease.online", "quickease://"],
+    config: {
+      screens: {
+        Home: "",
+        Learner: {
+          screens: {
+            Post: "learner/post/:id",
+          },
+        },
+      },
+    },
+  };
+
   const { currentScheme } = useTheme();
   const { user } = useAuth();
   const [loaded, error] = useFonts({

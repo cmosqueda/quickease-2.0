@@ -101,6 +101,49 @@ export default function Page() {
             No notes yet.
           </CustomText>
         </CustomView>
+        <FloatingButton
+          option_one={
+            <CustomPressable
+              className="rounded-full"
+              style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+              onPress={() =>
+                openTray("SummarizeNotesStudyToolsSelectionTray", {
+                  openUploadImage: () => {
+                    closeTray();
+                    openTray("GenerateFromImageTray", {
+                      close: closeTray,
+                      type: "summary-notes",
+                    });
+                  },
+                  openUploadDocument: () => {
+                    closeTray();
+                    openTray("GenerateFromDocumentTray", {
+                      close: closeTray,
+                      type: "summary-notes",
+                    });
+                  },
+                  close: closeTray,
+                })
+              }
+            >
+              <CustomText color="colorPrimaryContent">
+                <MaterialCommunityIcons name="toolbox" size={24} />
+              </CustomText>
+            </CustomPressable>
+          }
+          option_two={
+            <CustomPressable
+              className="rounded-full"
+              style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+              onPress={() => router.push("/(learner)/(note)/create")}
+            >
+              <CustomText color="colorPrimaryContent">
+                <MaterialIcons name="note-add" size={24} />
+              </CustomText>
+            </CustomPressable>
+          }
+          main_func={() => router.push("/(learner)/(note)/create")}
+        />
       </SafeAreaView>
     );
   }

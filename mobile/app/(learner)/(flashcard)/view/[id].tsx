@@ -15,7 +15,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useQuery } from "@tanstack/react-query";
 import { Flashcard } from "@/types/user/types";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { View, Pressable, ActivityIndicator } from "react-native";
 
@@ -79,6 +79,14 @@ export default function Page() {
     return flashcardIndex;
   }, [flashcardIndex, totalFlashcards]);
 
+  useEffect(() => {
+    if (flashcardData && !flashcardData.is_public) {
+      setTimeout(() => {
+        router.replace("/(learner)/(flashcard)");
+      }, 3000);
+    }
+  }, [flashcardData, id]);
+
   if (isFetching) {
     return (
       <SafeAreaView
@@ -105,6 +113,34 @@ export default function Page() {
 
   if (!flashcardData) {
     return null;
+  }
+
+  if (!flashcardData.is_public) {
+    return (
+      <SafeAreaView
+        className="flex-1 items-center justify-center gap-6"
+        style={{ backgroundColor: currentScheme.colorBase200 }}
+      >
+        <CustomText>
+          <MaterialCommunityIcons name="alert-circle" size={96} />
+        </CustomText>
+        <View className="flex flex-col gap-1">
+          <CustomText className="text-xl text-center" variant="bold">
+            The user made this flashcard private.
+          </CustomText>
+          <CustomText className="text-sm opacity-70 text-center px-8">
+            Sorry, we can&apos;t display this flashcard. The user either made
+            this flashcard private or made changes on it.
+          </CustomText>
+          <CustomText
+            className="opacity-70 text-center my-4 px-8"
+            variant="bold"
+          >
+            You&apos;ll be redirected to your flashcard tab in a few seconds...
+          </CustomText>
+        </View>
+      </SafeAreaView>
+    );
   }
 
   return (

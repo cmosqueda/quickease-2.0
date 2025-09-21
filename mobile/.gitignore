@@ -10,6 +10,7 @@ web-build/
 expo-env.d.ts
 secrets/
 android/app/google-services.json
+android/keystores
 
 # Native
 .kotlin/

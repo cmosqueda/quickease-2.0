@@ -91,6 +91,50 @@ export default function Page() {
             No quiz yet.
           </CustomText>
         </CustomView>
+        <FloatingButton
+          option_one={
+            <CustomPressable
+              className="rounded-full"
+              style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+              onPress={() =>
+                openTray("StudyToolsSelectionTray", {
+                  openGenerateFromNotes: () => {
+                    closeTray();
+                    openTray("GenerateFromNotesTray", {
+                      close: closeTray,
+                      type: "quiz",
+                    });
+                  },
+                  openUploadFile: () => {
+                    closeTray();
+                    openTray("GenerateFromDocumentTray", {
+                      close: closeTray,
+                      type: "quiz",
+                    });
+                  },
+                  close: closeTray,
+                  type: "quiz",
+                })
+              }
+            >
+              <CustomText color="colorPrimaryContent">
+                <MaterialCommunityIcons name="toolbox" size={24} />
+              </CustomText>
+            </CustomPressable>
+          }
+          option_two={
+            <CustomPressable
+              className="rounded-full"
+              style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+              onPress={() => router.push("/(learner)/(quiz)/create")}
+            >
+              <CustomText color="colorPrimaryContent">
+                <MaterialIcons name="note-add" size={24} />
+              </CustomText>
+            </CustomPressable>
+          }
+          main_func={() => router.push("/(learner)/(quiz)/create")}
+        />
       </SafeAreaView>
     );
   }

@@ -9,7 +9,7 @@ import { toast } from "sonner-native";
 import { router } from "expo-router";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect, useState } from "react";f
+import { useEffect, useState } from "react";
 
 import {
   RichText,

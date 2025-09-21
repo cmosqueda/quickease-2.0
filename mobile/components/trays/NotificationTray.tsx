@@ -73,18 +73,10 @@ const NotificationTray = ({ close }: { close: () => void }) => {
         renderItem={({ item }) => (
           <Pressable
             onPress={() => {
-              if (item.type === NotificationType.COMMENTED) {
+              if (item.resource_id) {
                 router.push({
                   pathname: "/(learner)/(forum)/post/view/[id]",
-                  params: { id: item.resource_id! },
-                });
-                close();
-              }
-
-              if (item.type === NotificationType.REPLIED) {
-                router.push({
-                  pathname: "/(learner)/(forum)/post/view/[id]",
-                  params: { id: item.resource_id! },
+                  params: { id: item.resource_id },
                 });
                 close();
               }

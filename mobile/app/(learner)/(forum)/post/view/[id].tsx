@@ -187,86 +187,90 @@ export default function Page() {
                   {post.attachments.map((attachment) => {
                     switch (attachment.resource_type) {
                       case "NOTE":
-                        return (
-                          <Pressable
-                            key={attachment.id}
-                            onPress={() => {
-                              router.push({
-                                pathname: "/(learner)/(note)/view/others/[id]",
-                                params: { id: attachment.note!.id },
-                              });
-                            }}
-                            className="flex flex-row gap-4 items-center"
-                          >
-                            <CustomText>
-                              <MaterialCommunityIcons name="note" size={28} />
-                            </CustomText>
-                            <CustomView
-                              variant="colorBase200"
-                              className="p-4 rounded-3xl flex-1"
+                        if (attachment.note_id)
+                          return (
+                            <Pressable
+                              key={attachment.id}
+                              onPress={() => {
+                                router.push({
+                                  pathname:
+                                    "/(learner)/(note)/view/others/[id]",
+                                  params: { id: attachment.note!.id },
+                                });
+                              }}
+                              className="flex flex-row gap-4 items-center"
                             >
-                              <CustomText className="text-xl" variant="bold">
-                                {attachment.note?.title}
+                              <CustomText>
+                                <MaterialCommunityIcons name="note" size={28} />
                               </CustomText>
-                            </CustomView>
-                          </Pressable>
-                        );
+                              <CustomView
+                                variant="colorBase200"
+                                className="p-4 rounded-3xl flex-1"
+                              >
+                                <CustomText className="text-xl" variant="bold">
+                                  {attachment.note?.title}
+                                </CustomText>
+                              </CustomView>
+                            </Pressable>
+                          );
                       case "FLASHCARD":
-                        return (
-                          <Pressable
-                            key={attachment.id}
-                            onPress={() => {
-                              router.push({
-                                pathname: "/(learner)/(flashcard)/view/[id]",
-                                params: { id: attachment.flashcard!.id },
-                              });
-                            }}
-                            className="flex flex-row gap-4 items-center"
-                          >
-                            <CustomText>
-                              <MaterialCommunityIcons
-                                name="view-column"
-                                size={28}
-                              />
-                            </CustomText>
-                            <CustomView
-                              variant="colorBase200"
-                              className="p-4 rounded-3xl flex-1"
+                        if (attachment.flashcard_id)
+                          return (
+                            <Pressable
+                              key={attachment.id}
+                              onPress={() => {
+                                router.push({
+                                  pathname: "/(learner)/(flashcard)/view/[id]",
+                                  params: { id: attachment.flashcard!.id },
+                                });
+                              }}
+                              className="flex flex-row gap-4 items-center"
                             >
-                              <CustomText className="text-xl" variant="bold">
-                                {attachment.flashcard?.title}
+                              <CustomText>
+                                <MaterialCommunityIcons
+                                  name="view-column"
+                                  size={28}
+                                />
                               </CustomText>
-                            </CustomView>
-                          </Pressable>
-                        );
+                              <CustomView
+                                variant="colorBase200"
+                                className="p-4 rounded-3xl flex-1"
+                              >
+                                <CustomText className="text-xl" variant="bold">
+                                  {attachment.flashcard?.title}
+                                </CustomText>
+                              </CustomView>
+                            </Pressable>
+                          );
                       case "QUIZ":
-                        return (
-                          <Pressable
-                            key={attachment.id}
-                            onPress={() => {
-                              router.push({
-                                pathname: "/(learner)/(quiz)/view/[id]",
-                                params: { id: attachment.quiz!.id },
-                              });
-                            }}
-                            className="flex flex-row gap-4 items-center"
-                          >
-                            <CustomText>
-                              <MaterialCommunityIcons
-                                name="head-question"
-                                size={28}
-                              />
-                            </CustomText>
-                            <CustomView
-                              variant="colorBase200"
-                              className="p-4 rounded-3xl flex-1"
+                        if (attachment.quiz_id)
+                          return (
+                            <Pressable
+                              key={attachment.id}
+                              onPress={() => {
+                                router.push({
+                                  pathname: "/(learner)/(quiz)/view/[id]",
+                                  params: { id: attachment.quiz!.id },
+                                });
+                              }}
+                              className="flex flex-row gap-4 items-center"
                             >
-                              <CustomText className="text-xl" variant="bold">
-                                {attachment.quiz?.title}
+                              <CustomText>
+                                <MaterialCommunityIcons
+                                  name="head-question"
+                                  size={28}
+                                />
                               </CustomText>
-                            </CustomView>
-                          </Pressable>
-                        );
+                              <CustomView
+                                variant="colorBase200"
+                                className="p-4 rounded-3xl flex-1"
+                              >
+                                <CustomText className="text-xl" variant="bold">
+                                  {attachment.quiz?.title}
+                                </CustomText>
+                              </CustomView>
+                            </Pressable>
+                          );
                     }
                   })}
                 </Collapsible>

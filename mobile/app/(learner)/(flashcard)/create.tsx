@@ -276,7 +276,7 @@ export default function Page() {
         <View key={1}>
           <ScrollView contentContainerClassName="gap-4">
             <CustomText variant="black" className="text-5xl">
-              Questions
+              Flashcards
             </CustomText>
             <CustomView
               variant="colorBase300"

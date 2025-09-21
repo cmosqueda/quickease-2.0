@@ -102,6 +102,50 @@ export default function Page() {
             No flashcards yet.
           </CustomText>
         </CustomView>
+        <FloatingButton
+          option_one={
+            <CustomPressable
+              className="rounded-full"
+              style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+              onPress={() =>
+                openTray("StudyToolsSelectionTray", {
+                  openGenerateFromNotes: () => {
+                    closeTray();
+                    openTray("GenerateFromNotesTray", {
+                      close: closeTray,
+                      type: "flashcard",
+                    });
+                  },
+                  openUploadFile: () => {
+                    closeTray();
+                    openTray("GenerateFromDocumentTray", {
+                      close: closeTray,
+                      type: "flashcard",
+                    });
+                  },
+                  close: closeTray,
+                  type: "flashcard",
+                })
+              }
+            >
+              <CustomText color="colorPrimaryContent">
+                <MaterialCommunityIcons name="toolbox" size={24} />
+              </CustomText>
+            </CustomPressable>
+          }
+          option_two={
+            <CustomPressable
+              className="rounded-full"
+              style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+              onPress={() => router.push("/(learner)/(flashcard)/create")}
+            >
+              <CustomText color="colorPrimaryContent">
+                <MaterialIcons name="note-add" size={24} />
+              </CustomText>
+            </CustomPressable>
+          }
+          main_func={() => router.push("/(learner)/(flashcard)/create")}
+        />
       </SafeAreaView>
     );
   }

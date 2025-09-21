@@ -12,6 +12,20 @@
       "supportsTablet": true
     },
     "android": {
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "quickease.online",
+              "pathPrefix": "/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
       "enableShrinkResourcesInReleaseBuilds": true,
       "googleServicesFile": "./secrets/google-services.json",
       "adaptiveIcon": {
