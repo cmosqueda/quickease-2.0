@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.mirimomekiku.quickease",
+      "sha256_cert_fingerprints": [
+        "D2:99:1C:C5:49:77:F8:AE:A1:8B:DC:46:B7:05:79:0F:86:35:54:12:3B:59:52:61:A8:A2:DF:8B:48:54:0B:E6"
+      ]
+    }
+  }
+]

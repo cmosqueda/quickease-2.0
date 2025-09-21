@@ -41,7 +41,7 @@ export default function LearnerViewFlashcardPage() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [data.flashcards.length]);
+  }, []);
 
   if (data.private) {
     return (
