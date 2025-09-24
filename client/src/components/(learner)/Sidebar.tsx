@@ -153,13 +153,13 @@ const Mobile = ({
             <div className="flex flex-row gap-4">
               <NavLink
                 to={"/learner/settings"}
-                className="btn btn-neutral btn-soft"
+                className="btn btn-neutral btn-soft flex-1 items-center"
               >
                 <Settings />
                 <p>Settings</p>
               </NavLink>
               <button
-                className="btn btn-soft btn-accent mt-auto"
+                className="btn btn-soft btn-accent mt-auto flex-1 items-center"
                 onClick={async () => {
                   try {
                     localStorage.removeItem("QUICKEASE_CURRENT_QUIZ");
