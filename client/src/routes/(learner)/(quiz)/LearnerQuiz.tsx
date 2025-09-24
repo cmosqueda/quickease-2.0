@@ -125,7 +125,7 @@ export default function LearnerQuizPage() {
               <h1 className="text-xl font-bold">
                 {user?.first_name} {user?.last_name}
               </h1>
-              <p className="opacity-60">
+              <p className="opacity-60 lg:block hidden">
                 {dayjs(entry.completed_at).format("MMMM DD YYYY / hh:mm A")}
               </p>
             </div>
@@ -135,7 +135,7 @@ export default function LearnerQuizPage() {
             <h1 className="font-bold text-xl">
               {correctCount}/{totalQuestions}
             </h1>
-            <p className="opacity-60">
+            <p className="opacity-60 text-sm lg:text-base text-right">
               Finished in {formatTime(entry.duration)}
             </p>
           </div>
@@ -174,7 +174,7 @@ export default function LearnerQuizPage() {
               <h1 className="text-xl font-bold">
                 {entry.user.first_name} {entry.user.last_name}
               </h1>
-              <p className="opacity-60">
+              <p className="opacity-60 lg:block hidden">
                 {dayjs(entry.completed_at).format("MMMM DD YYYY / hh:mm A")}
               </p>
             </div>
@@ -183,7 +183,7 @@ export default function LearnerQuizPage() {
             <h1 className="font-bold text-xl">
               {correctCount}/{totalQuestions}
             </h1>
-            <p className="opacity-60">
+            <p className="opacity-60 lg:text-base text-sm text-right">
               Finished in {formatTime(entry.duration)}
             </p>
           </div>

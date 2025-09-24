@@ -148,29 +148,32 @@ const Mobile = ({
             </NavLink>
           </div>
 
-          <button
-            className="btn btn-soft btn-accent self-end mt-auto"
-            onClick={async () => {
-              try {
-                localStorage.removeItem("QUICKEASE_CURRENT_QUIZ");
-                localStorage.removeItem("QUICKEASE_GENERATED_CONTENT");
-                localStorage.removeItem("QUICKEASE_USER");
+          <div className="flex flex-col gap-4 mt-auto">
+            <UserAvatar data={{ user }} showDate={false} />
+            <button
+              className="btn btn-soft btn-accent mt-auto"
+              onClick={async () => {
+                try {
+                  localStorage.removeItem("QUICKEASE_CURRENT_QUIZ");
+                  localStorage.removeItem("QUICKEASE_GENERATED_CONTENT");
+                  localStorage.removeItem("QUICKEASE_USER");
 
-                await _API_INSTANCE.post(
-                  "/auth/logout",
-                  {},
-                  { withCredentials: true }
-                );
-                navigate("/", { viewTransition: true });
-              } catch (err) {
-                toast.error("Logout error.");
-                throw err;
-              }
-            }}
-          >
-            <LogOut />
-            <span>Logout</span>
-          </button>
+                  await _API_INSTANCE.post(
+                    "/auth/logout",
+                    {},
+                    { withCredentials: true }
+                  );
+                  navigate("/", { viewTransition: true });
+                } catch (err) {
+                  toast.error("Logout error.");
+                  throw err;
+                }
+              }}
+            >
+              <LogOut />
+              <span>Logout</span>
+            </button>
+          </div>
         </ul>
       </div>
     </div>

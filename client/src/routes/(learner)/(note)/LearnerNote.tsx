@@ -140,32 +140,34 @@ export default function LearnerNotePage() {
           }
           className="cursor-pointer lg:ml-6"
         />
-        <div
-          className={clsx(
-            "flex flex-row gap-4 w-full lg:w-fit",
-            title === data.title && html === data.notes_content
-              ? "opacity-0"
-              : "opacity-100"
-          )}
-        >
-          <button
-            disabled={isSaving}
-            onClick={handleSave}
-            className="btn btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
+        {title != data.title && html != data.notes_content && (
+          <div
+            className={clsx(
+              "flex flex-row gap-4 w-full lg:w-fit",
+              title === data.title && html === data.notes_content
+                ? "opacity-0"
+                : "opacity-100"
+            )}
           >
-            <Save />
-            <p>Save changes</p>
-          </button>
-          <button
-            onClick={() =>
-              navigate("/learner/library?tab=notes", { viewTransition: true })
-            }
-            className="btn btn-ghost btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
-          >
-            <X />
-            <p>Cancel</p>
-          </button>
-        </div>
+            <button
+              disabled={isSaving}
+              onClick={handleSave}
+              className="btn btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
+            >
+              <Save />
+              <p>Save changes</p>
+            </button>
+            <button
+              onClick={() =>
+                navigate("/learner/library?tab=notes", { viewTransition: true })
+              }
+              className="btn btn-ghost btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
+            >
+              <X />
+              <p>Cancel</p>
+            </button>
+          </div>
+        )}
       </div>
       <div className="flex flex-col lg:grid lg:grid-cols-[1fr_0.2fr] h-full">
         <div className="flex flex-col gap-2 p-4 lg:p-8">

@@ -94,25 +94,18 @@ export default function LearnerCreateNotePage() {
           />
           <h1 className="text-2xl font-bold">Create note</h1>
         </div>
-        <div className="flex flex-row gap-4 w-full lg:w-fit">
-          <button
-            className="btn btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
-            disabled={isSaving}
-            onClick={handleSave}
-          >
-            <Save />
-            <p>Save changes</p>
-          </button>
-          <button
-            onClick={() =>
-              navigate("/learner/library?tab=notes", { viewTransition: true })
-            }
-            className="btn btn-ghost btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
-          >
-            <X />
-            <p>Cancel</p>
-          </button>
-        </div>
+        {title && (
+          <div className="flex flex-row gap-4 w-full lg:w-fit">
+            <button
+              className="btn btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
+              disabled={isSaving}
+              onClick={handleSave}
+            >
+              <Save />
+              <p>Save changes</p>
+            </button>
+          </div>
+        )}
       </div>
       <div className="flex flex-col lg:grid lg:grid-cols-[1fr_0.2fr] h-full">
         <div className="flex flex-col gap-2 p-4 lg:p-8">
