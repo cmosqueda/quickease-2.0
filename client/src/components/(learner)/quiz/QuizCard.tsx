@@ -41,7 +41,7 @@ export default function QuizCard({
         )}
       >
         <div className="flex flex-row justify-between items-center">
-          <h1 className="font-bold text-xl truncate">{title}</h1>
+          <h1 className="font-bold text-xl line-clamp-1">{title}</h1>
         </div>
         <p className="text-sm text-gray-500">
           {term} item{term !== 1 && "s"} / {formattedDate}
@@ -59,7 +59,7 @@ export default function QuizCard({
       )}
     >
       <div className="flex flex-row justify-between items-center">
-        <h1 className="font-bold text-xl truncate">{title}</h1>
+        <h1 className="font-bold text-xl line-clamp-1">{title}</h1>
       </div>
       <p className="text-sm text-gray-500">
         {term} item{term !== 1 && "s"} / {formattedDate}

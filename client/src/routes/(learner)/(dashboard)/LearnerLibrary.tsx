@@ -50,7 +50,7 @@ export default function LearnerLibraryPage() {
           className={clsx("tab flex-1", tabIndex == 0 ? "tab-active" : null)}
           onClick={() => setTabIndex(0)}
         >
-          Summary notes
+          Notes
         </a>
         <a
           role="tab"

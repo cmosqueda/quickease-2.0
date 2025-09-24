@@ -42,8 +42,8 @@ export default function NoteCard({
         to={`/learner/note/${link}`}
         className={clsx(
           style,
-          "flex flex-col justify-between w-[24rem] min-h-[16rem] p-4 rounded-3xl bg-base-100 border border-base-300 shadow disabled:bg-base-300 disabled:cursor-not-allowed",
-          "transition-all delay-0 duration-300 hover:shadow cursor-pointer"
+          "flex flex-col gap-2 w-[24rem] min-h-[6rem] rounded-3xl bg-base-100 p-4 cursor-pointer border border-base-300 shadow",
+          "transition-all delay-0 duration-300 hover:shadow cursor-pointer justify-between"
         )}
       >
         <h1 className="font-bold text-2xl line-clamp-2">{title}</h1>

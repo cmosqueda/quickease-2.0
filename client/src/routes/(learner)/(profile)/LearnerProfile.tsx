@@ -5,7 +5,7 @@ import UserAvatar from "@/components/(learner)/UserAvatar";
 import clsx from "clsx";
 
 import { EditorProvider } from "@tiptap/react";
-import { Crown, GalleryVertical, Info } from "lucide-react";
+import { Crown, FileQuestion, GalleryVertical, Info } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useLoaderData } from "react-router";
 import type { Post, User } from "@/types/types";
@@ -77,7 +77,7 @@ const User = ({ user, posts }: { user: User; posts: Post[] }) => {
       </div>
     </>,
     <>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4">
         <div className="flex flex-row gap-4 bg-base-100 p-8 rounded-3xl items-center border border-base-300 shadow">
           <Crown size={36} />
           <div className="flex flex-col">
@@ -92,6 +92,13 @@ const User = ({ user, posts }: { user: User; posts: Post[] }) => {
             <h1 className="font-bold text-4xl">
               {user.flashcards.length || "0"}
             </h1>
+          </div>
+        </div>
+        <div className="flex flex-row gap-4 bg-base-100 p-8 rounded-3xl items-center border border-base-300 shadow">
+          <FileQuestion size={36} />
+          <div className="flex flex-col">
+            <p>Quiz created</p>
+            <h1 className="font-bold text-4xl">{user.quizzes.length || "0"}</h1>
           </div>
         </div>
       </div>
