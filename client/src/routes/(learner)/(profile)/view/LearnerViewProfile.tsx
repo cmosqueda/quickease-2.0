@@ -36,7 +36,7 @@ const OtherUser = ({ user }: { user: any }) => {
   const [index, setIndex] = useState(0);
 
   const tabs = [
-    <div className="grid grid-cols-3 gap-2">
+    <div className="flex flex-col lg:grid lg:grid-cols-3 gap-2">
       {user.badges &&
         user.badges.map((badge: any) => {
           const slug = badge.id
