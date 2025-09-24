@@ -51,6 +51,7 @@ async function validateOwnership(
 export async function getUserPosts(user_id: string) {
   const posts = await db_client.post.findMany({
     where: { user_id: user_id },
+    include: { user: { select: { avatar: true } } },
   });
 
   return posts;
@@ -241,11 +242,11 @@ export async function getPost(post_id: string, user_id: string) {
 
 /**
  * Creates a new forum post with optional attachments and tags.
- * 
+ *
  * This function analyzes the post content for toxicity using an AI model before creation.
  * If the post is deemed toxic or likely to be rejected, it returns an object indicating toxicity.
  * Otherwise, it creates the post, associates any provided attachments and tags, and returns the created post.
- * 
+ *
  * @param body - The main content of the post.
  * @param title - The title of the post.
  * @param user_id - The ID of the user creating the post.
@@ -357,21 +358,21 @@ export async function createPost(
 
 /**
  * Updates an existing forum post with new content, title, and optional attachments.
- * 
+ *
  * This function performs the following steps within a database transaction:
  * - Verifies that the post exists and the user is authorized to update it.
  * - Removes all existing attachments from the post.
  * - Validates ownership of each new attachment and adds them to the post.
  * - Updates the post's title, body, and updated timestamp.
- * 
+ *
  * @param body - The new content/body of the post.
  * @param title - The new title of the post.
  * @param post_id - The unique identifier of the post to update.
  * @param user_id - The unique identifier of the user attempting the update.
  * @param attachments - Optional array of resources to attach to the post. Each attachment must specify its type and resource ID.
- * 
+ *
  * @throws {Error} If the post does not exist, the user is not authorized, or any attachment is invalid or unauthorized.
- * 
+ *
  * @returns The updated post object.
  */
 export async function updatePost(
@@ -394,40 +395,39 @@ export async function updatePost(
       throw new Error("Unauthorized or non-existent post.");
     }
 
-    await tx.postAttachment.deleteMany({ where: { post_id } });
+    if (attachments !== undefined) {
+      await tx.postAttachment.deleteMany({ where: { post_id } });
 
-    if (attachments?.length) {
-      const attachmentData = [];
+      if (attachments.length > 0) {
+        const attachmentData: any[] = [];
 
-      for (const { resource_type, resource_id } of attachments) {
-        const isOwner = await validateOwnership(
-          tx,
-          user_id,
-          resource_type,
-          resource_id
-        );
-
-        if (!isOwner) {
-          throw new Error(
-            `Unauthorized or invalid ${resource_type} (ID: ${resource_id})`
+        for (const { resource_type, resource_id } of attachments) {
+          const isOwner = await validateOwnership(
+            tx,
+            user_id,
+            resource_type,
+            resource_id
           );
+
+          if (!isOwner) {
+            throw new Error(
+              `Unauthorized or invalid ${resource_type} (ID: ${resource_id})`
+            );
+          }
+
+          const base = { post_id, resource_type };
+
+          if (resource_type === "NOTE") {
+            attachmentData.push({ ...base, note_id: resource_id });
+          } else if (resource_type === "FLASHCARD") {
+            attachmentData.push({ ...base, flashcard_id: resource_id });
+          } else if (resource_type === "QUIZ") {
+            attachmentData.push({ ...base, quiz_id: resource_id });
+          }
         }
 
-        const base = {
-          post_id,
-          resource_type,
-        };
-
-        if (resource_type === "NOTE") {
-          attachmentData.push({ ...base, note_id: resource_id });
-        } else if (resource_type === "FLASHCARD") {
-          attachmentData.push({ ...base, flashcard_id: resource_id });
-        } else if (resource_type === "QUIZ") {
-          attachmentData.push({ ...base, quiz_id: resource_id });
-        }
+        await tx.postAttachment.createMany({ data: attachmentData });
       }
-
-      await tx.postAttachment.createMany({ data: attachmentData });
     }
 
     const updatedPost = await tx.post.update({

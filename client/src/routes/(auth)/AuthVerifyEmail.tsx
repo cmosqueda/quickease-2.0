@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import TermsAndPrivacyPolicyModal from "@/components/TermsAndPrivacyPolicyModal";
 import _API_INSTANCE from "@/utils/axios";
 
-import { ArrowLeft } from "lucide-react";
+import { LoaderPinwheel } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
@@ -31,9 +33,11 @@ export default function AuthVerifyEmailPage() {
       }, 3000);
     } catch (err) {
       console.log(err);
-      toast.error("Error verifying email.");
     } finally {
       setIsUpdating(false);
+      setTimeout(() => {
+        navigate("/auth/login");
+      }, 3000);
     }
   };
 
@@ -44,49 +48,70 @@ export default function AuthVerifyEmailPage() {
   }, [params]);
 
   return (
-    <main className="flex flex-col max-w-xl justify-center mx-auto py-8 h-screen">
-      <div className="flex flex-col gap-4">
-        <ArrowLeft onClick={() => navigate("/")} className="cursor-pointer" />
-        <h1 className="font-bold text-2xl">QuickEase</h1>
-        <div className="p-4 rounded-lg bg-base-200 flex flex-col gap-4">
-          <h1 className="text-2xl font-black">Verify email</h1>
-          <div className="collapse collapse-arrow bg-base-100 border-base-300 border">
-            <input type="checkbox" />
-            <div className="collapse-title font-semibold">
-              Account information
-            </div>
-            <div className="collapse-content text-sm">
-              <fieldset className="fieldset w-full">
-                <legend className="fieldset-legend">Email</legend>
-                <input
-                  type="text"
-                  className="input w-full"
-                  placeholder="Email"
-                  disabled
-                  value={params.get("email")?.toString()}
-                />
-              </fieldset>
-              <fieldset className="fieldset w-full">
-                <legend className="fieldset-legend">Token</legend>
-                <input
-                  type="text"
-                  className="input w-full"
-                  placeholder="Token"
-                  disabled
-                  value={params.get("token")?.toString()}
-                />
-              </fieldset>
-            </div>
+    <main className="lg:grid lg:grid-cols-[1fr_1fr] flex flex-col items-center gap-8 min-h-screen">
+      <div className="hidden lg:flex flex-col h-screen items-center justify-center bg-base-100 border-r border-base-200">
+        <h1 className="font-bold text-[7rem]">QuickEase</h1>
+      </div>
+      <h1 className="font-bold text-3xl my-8 block lg:hidden">QuickEase</h1>
+      {!isUpdating && (
+        <div className="relative flex flex-col justify-center gap-6 p-8 2xl:px-[12rem]">
+          <div className="flex flex-col gap-4">
+            <h1 className="font-bold text-5xl">Start your journey now!</h1>
+            <p className="text-lg text-neutral/50">
+              By verifying, you'll finally start the real journey towards a
+              better study experience.
+            </p>
+          </div>
+          <div className="flex flex-col gap-4 w-full">
+            <label className="floating-label">
+              <span>Email</span>
+              <input
+                disabled={true}
+                type="text"
+                placeholder="Email"
+                className="input input-lg w-full"
+                value={params.get("email") as any}
+                onKeyDown={(e) => {
+                  if (e.key == "Enter") {
+                    handleUpdate();
+                  }
+                }}
+              />
+            </label>
           </div>
           <button
-            className="btn btn-success"
+            className="btn btn-neutral w-full btn-lg"
             disabled={isUpdating}
             onClick={handleUpdate}
           >
-            {isUpdating ? "Verifying" : "Verify"}
+            Verify
           </button>
+          <button
+            className="transition-all delay-0 duration-300 hover:text-accent fixed bottom-8 cursor-pointer self-center"
+            onClick={() => {
+              const modal = document.getElementById(
+                "terms-of-use-modal"
+              ) as HTMLDialogElement;
+
+              modal.showModal();
+            }}
+          >
+            Terms of use & Privacy policy
+          </button>
+          <TermsAndPrivacyPolicyModal />
         </div>
-      </div>
+      )}
+      {isUpdating && (
+        <div className="flex flex-col flex-1 gap-4 items-center justify-center">
+          <LoaderPinwheel size={96} className="animate-spin" />
+          <div className="text-center flex flex-col gap-2">
+            <h1 className="text-4xl font-black">Verifying...</h1>
+            <p className="text-neutral/40">
+              You'll be redirected to the login page after verifying...
+            </p>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -10,7 +10,7 @@ import { toast } from "sonner";
 export default function AdminManageUserPage() {
   const navigate = useNavigate();
   const data = useLoaderData();
-  
+
   const [isEditingUserInfo, setIsEditingUserInfo] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -91,21 +91,25 @@ export default function AdminManageUserPage() {
         onClick={() => navigate(-1 as any, { viewTransition: true })}
         className="cursor-pointer"
       />
-      <div className="bg-base-100 p-8 flex flex-row gap-4 rounded-3xl">
-        <div className="aspect-square items-center">
-          <h1 className="font-bold text-4xl p-6 rounded-full bg-base-200 w-fit">
-            {data.first_name[0].toUpperCase()}
-            {data.last_name[0].toUpperCase()}
-          </h1>
-        </div>
+      <div className="bg-base-100 p-8 flex flex-row gap-6 rounded-3xl border-base-300 shadow items-center">
+        <img
+          src={
+            data.avatar
+              ? `/assets/images/avatars/${data.avatar}.svg`
+              : "/assets/images/avatars/blue.svg"
+          }
+          className="w-[4rem] lg:w-[7rem]"
+        />
         <div className="flex flex-col justify-center">
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-3xl lg:text-5xl font-bold">
             {data.first_name} {data.last_name}
           </h1>
-          <p className="text-sm text-base-content/35">{data.email}</p>
+          <p className="text-sm lg:text-lg text-base-content/35">
+            {data.email}
+          </p>
         </div>
       </div>
-      <div className="collapse border-none rounded-3xl collapse-arrow bg-base-100 border-base-300 border">
+      <div className="collapse border-none rounded-3xl collapse-arrow bg-base-100 border-base-300 border shadow">
         <input type="checkbox" defaultChecked />
         <div className="collapse-title font-semibold">Account information</div>
         <div className="flex flex-col gap-2 collapse-content text-sm">
@@ -133,7 +137,7 @@ export default function AdminManageUserPage() {
             </fieldset>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4">
             <fieldset className="fieldset w-full">
               <legend className="fieldset-legend">First Name</legend>
               <input
@@ -171,7 +175,7 @@ export default function AdminManageUserPage() {
             </fieldset>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4">
             <fieldset className="fieldset w-full">
               <legend className="fieldset-legend">Profile Visibility</legend>
               <select
@@ -232,7 +236,7 @@ export default function AdminManageUserPage() {
                 Cancel
               </button>
               <button
-                className="btn btn-success"
+                className="btn btn-neutral"
                 onClick={handleUpdate}
                 disabled={isUpdating}
               >
@@ -242,11 +246,11 @@ export default function AdminManageUserPage() {
           )}
         </div>
       </div>
-      <div className="collapse border-none rounded-3xl collapse-arrow bg-base-100 border-base-300 border">
+      <div className="collapse border-none rounded-3xl collapse-arrow bg-base-100 border-base-300 border shadow">
         <input type="checkbox" />
         <div className="collapse-title font-semibold">Other options</div>
         <div className="flex flex-col gap-2 collapse-content text-sm">
-          <div className="grid grid-cols-3 gap-4">
+          <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4">
             <button className="btn" onClick={handleSendPasswordResetEmail}>
               <Key size={16} />
               <h1>Send an email to change password</h1>

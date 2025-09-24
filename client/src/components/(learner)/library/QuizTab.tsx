@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import QuizCard from "./QuizCard";
+import QuizCard from "../quiz/QuizCard";
 
 import { Search, Plus } from "lucide-react";
 import { NavLink } from "react-router";
@@ -35,10 +35,7 @@ export default function QuizTab({ quizzes }: { quizzes: Quiz[] }) {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </label>
-        <NavLink
-          to="/learner/quizzes/create"
-          className="btn btn-soft btn-success"
-        >
+        <NavLink to="/learner/quizzes/create" className="btn btn-neutral">
           <Plus />
           <span className="lg:block hidden">Manually Create</span>
         </NavLink>

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import clsx from "clsx";
-import dayjs from "dayjs";
+import UserAvatar from "@/components/(learner)/UserAvatar";
 
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
@@ -67,29 +67,7 @@ const OtherUser = ({ user }: { user: any }) => {
     <>
       {user.posts.map((post: any) => (
         <div className="flex flex-col gap-2">
-          <div className="flex flex-row gap-2 items-center">
-            <img
-              src={
-                post.user?.avatar
-                  ? `/assets/images/avatars/${post.user?.avatar}.svg`
-                  : "/assets/images/avatars/blue.svg"
-              }
-              className="w-[2rem] aspect-square"
-            />
-            <NavLink
-              to={`/learner/profile/${post.user.id}`}
-              className="font-semibold"
-            >
-              {post?.user?.first_name ?? "Unknown"}{" "}
-              {post?.user?.last_name ?? "User"}
-            </NavLink>
-            <p className="text-sm text-gray-500">
-              /{" "}
-              {dayjs(post.created_at).isValid()
-                ? dayjs(post.created_at).format("MMMM DD, YYYY")
-                : "Unknown date"}
-            </p>
-          </div>
+          <UserAvatar data={post} />
           <h1 className="font-bold text-4xl">{post.title}</h1>
           <NavLink
             to={`/learner/post/${post.id}`}

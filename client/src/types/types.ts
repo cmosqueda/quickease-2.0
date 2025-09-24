@@ -206,6 +206,7 @@ export interface QuizAttempt {
   is_public: boolean;
   duration: number;
   score: number;
+  is_ai_generated: boolean;
 
   quiz: Quiz;
   user: User;

@@ -3,6 +3,10 @@ import _API_INSTANCE from "@/utils/axios";
 import clsx from "clsx";
 import dayjs from "dayjs";
 
+import { useState, type Dispatch, type SetStateAction } from "react";
+import { useNavigate, type NavigateFunction } from "react-router";
+import { toast } from "sonner";
+
 import {
   ArrowRight,
   Image,
@@ -11,9 +15,6 @@ import {
   Paperclip,
   X,
 } from "lucide-react";
-import { useState, type Dispatch, type SetStateAction } from "react";
-import { useNavigate, type NavigateFunction } from "react-router";
-import { toast } from "sonner";
 
 const GenerateFromText = ({
   text,
@@ -107,6 +108,7 @@ export default function GenerateSummaryModal() {
       setFile(selectedFile);
     }
   };
+
   const handleSubmit = async () => {
     if (!file) return alert("Please select a file first.");
 
@@ -164,6 +166,7 @@ export default function GenerateSummaryModal() {
       setIsGenerating(false);
     }
   };
+
   const _TABS = [
     <>
       {file ? (
@@ -221,7 +224,7 @@ export default function GenerateSummaryModal() {
       )}
 
       <button
-        className="btn btn-soft btn-success w-fit self-end"
+        className="btn btn-neutral w-fit self-end"
         onClick={handleSubmit}
         disabled={isGenerating}
       >
@@ -284,10 +287,7 @@ export default function GenerateSummaryModal() {
         </div>
       )}
 
-      <button
-        className="btn btn-soft btn-success w-fit self-end"
-        onClick={handleSubmit}
-      >
+      <button className="btn btn-neutral w-fit self-end" onClick={handleSubmit}>
         <h1>Summarize</h1>
         <ArrowRight />
       </button>

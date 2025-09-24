@@ -2,10 +2,14 @@
 import CustomEditor from "@/components/Editor";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
-import { checkBadges } from "@/utils/badges";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useEditor } from "@tiptap/react";
+import { useState } from "react";
+import { useLoaderData, useNavigate } from "react-router";
+import { toast } from "sonner";
+import { checkBadges } from "@/utils/badges";
+
 import {
   ArrowLeft,
   Check,
@@ -14,9 +18,6 @@ import {
   Notebook,
   X,
 } from "lucide-react";
-import { useState } from "react";
-import { useLoaderData, useNavigate } from "react-router";
-import { toast } from "sonner";
 
 export default function LearnerCreatePostPage() {
   const navigate = useNavigate();
@@ -119,7 +120,7 @@ export default function LearnerCreatePostPage() {
       <fieldset className="fieldset">
         <input
           type="text"
-          className="input w-full input-lg"
+          className="input w-full input-lg border border-base-300 shadow"
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -133,7 +134,7 @@ export default function LearnerCreatePostPage() {
         <h1>Tags</h1>
         <input
           type="text"
-          className="input w-full"
+          className="input w-full border border-base-300 shadow"
           placeholder="Add a tag and press Enter"
           value={tagInput}
           onChange={(e) => setTagInput(e.target.value)}
@@ -176,7 +177,10 @@ export default function LearnerCreatePostPage() {
       </fieldset>
 
       {/* Rich Text Editor */}
-      <CustomEditor editor={editor!} style="overflow-y-auto" />
+      <CustomEditor
+        editor={editor!}
+        style="overflow-y-auto border border-base-300 shadow"
+      />
       <div className="flex flex-row gap-4 items-center">
         <button
           className="btn btn-neutral btn-ghost flex-1"
@@ -204,21 +208,21 @@ export default function LearnerCreatePostPage() {
       {(selectedNotes.length > 0 ||
         selectedFlashcards.length > 0 ||
         selectedQuizzes.length > 0) && (
-        <div className="flex flex-row items-center gap-4 overflow-x-auto">
+        <div className="flex flex-row items-center gap-4 overflow-x-auto flex-wrap">
           {selectedNotes.map((n) => (
-            <div className="flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[12rem] overflow-clip">
+            <div className="flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
               <Notebook className="shrink-0" />
               {n.title}
             </div>
           ))}
           {selectedFlashcards.map((f) => (
-            <div className="flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[12rem] overflow-clip">
+            <div className="flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
               <GalleryVertical className="shrink-0" />
               {f.title}
             </div>
           ))}
           {selectedQuizzes.map((q) => (
-            <div className="flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[12rem] overflow-clip">
+            <div className="flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
               <FileQuestion className="shrink-0" />
               {q.title}
             </div>
@@ -228,7 +232,7 @@ export default function LearnerCreatePostPage() {
 
       {/* Submit Button */}
       <button
-        className="btn btn-success mt-2"
+        className="btn btn-neutral border border-base-300 shadow"
         disabled={isSaving}
         onClick={handleSave}
       >
@@ -265,7 +269,7 @@ export default function LearnerCreatePostPage() {
               return (
                 <button
                   key={note.id}
-                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative"
+                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative border border-base-300 shadow"
                   onClick={() => {
                     setSelectedNotes((prev) =>
                       isSelected
@@ -323,7 +327,7 @@ export default function LearnerCreatePostPage() {
               return (
                 <button
                   key={flashcard.id}
-                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative"
+                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative border border-base-300 shadow"
                   onClick={() => {
                     setSelectedFlashcards((prev) =>
                       isSelected
@@ -386,7 +390,7 @@ export default function LearnerCreatePostPage() {
                         : [...prev, quiz]
                     );
                   }}
-                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative"
+                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative border border-base-300 shadow"
                 >
                   {isSelected && (
                     <Check size={16} className="absolute right-4" />

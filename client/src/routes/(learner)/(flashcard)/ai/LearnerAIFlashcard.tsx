@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import FlippableCard from "@/components/(learner)/FlippableCard";
+import FlippableCard from "@/components/(learner)/flashcard/FlippableCard";
 import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "@/utils/axios";
-import { checkBadges } from "@/utils/badges";
 
+import { checkBadges } from "@/utils/badges";
 import { ArrowLeft, ChevronLeft, ChevronRight, Edit, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
@@ -15,10 +15,6 @@ export default function LearnerAIFlashcardPage() {
   const navigate = useNavigate();
   const [cardIndex, setCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -87,9 +83,12 @@ export default function LearnerAIFlashcardPage() {
           }
           className="cursor-pointer"
         />
-        <div className="flex flex-row gap-6 items-center">
-          <Edit className="cursor-pointer" onClick={() => navigate("edit")} />
-          <button className="btn btn-ghost btn-success" onClick={handleSave}>
+        <div className="flex flex-row gap-4 items-center">
+          <button className="btn btn-neutral">
+            <Edit className="cursor-pointer" onClick={() => navigate("edit")} />
+            <p>Edit</p>
+          </button>
+          <button className="btn btn-neutral" onClick={handleSave}>
             <Save />
             <p>Save generated flashcards</p>
           </button>
@@ -109,6 +108,7 @@ export default function LearnerAIFlashcardPage() {
             if (cardIndex != 0) {
               setCardIndex((prev) => prev - 1);
             }
+            setIsFlipped(false);
           }}
         />
         <p>
@@ -124,6 +124,7 @@ export default function LearnerAIFlashcardPage() {
               }
               return prev;
             });
+            setIsFlipped(false);
           }}
         />
       </div>

@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import FlippableCard from "@/components/(learner)/FlippableCard";
+import FlippableCard from "@/components/(learner)/flashcard/FlippableCard";
 import _API_INSTANCE from "@/utils/axios";
+
+
+import { useState, useEffect } from "react";
+import { useLoaderData, useNavigate } from "react-router";
+import { toast } from "sonner";
 
 import {
   ArrowLeft,
@@ -11,9 +16,6 @@ import {
   EllipsisVertical,
   Info,
 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useLoaderData, useNavigate } from "react-router";
-import { toast } from "sonner";
 
 export default function LearnerFlashcardPage() {
   const data = useLoaderData();

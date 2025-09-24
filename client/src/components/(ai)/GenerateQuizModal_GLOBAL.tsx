@@ -1,8 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import clsx from "clsx";
-import NoteCard from "../(learner)/NoteCard";
+import NoteCard from "../(learner)/notes/NoteCard";
 import _API_INSTANCE from "@/utils/axios";
 import dayjs from "dayjs";
+
+import { useState, type Dispatch, type SetStateAction } from "react";
+import { useNavigate, type NavigateFunction } from "react-router";
+import { toast } from "sonner";
+import type { Note } from "@/types/types";
 
 import {
   ArrowRight,
@@ -12,10 +17,6 @@ import {
   SendHorizonal,
   X,
 } from "lucide-react";
-import { useState, type Dispatch, type SetStateAction } from "react";
-import { useNavigate, type NavigateFunction } from "react-router";
-import { toast } from "sonner";
-import type { Note } from "@/types/types";
 
 const GenerateQuizzesFromNotes = ({
   notes,
@@ -285,7 +286,7 @@ const GenerateQuizzesFromPDF = ({
       )}
 
       <button
-        className="btn btn-soft btn-success w-fit self-end"
+        className="btn btn-neutral w-fit self-end"
         onClick={handleSubmit}
         disabled={isGenerating}
       >

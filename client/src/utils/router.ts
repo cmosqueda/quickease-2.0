@@ -60,6 +60,13 @@ export const loadLearnerResources = async () => {
   }
 };
 
+/**
+ * Retrieves and parses the AI-generated content from localStorage.
+ *
+ * @param key - The localStorage key to fetch the generated content from. Defaults to "QUICKEASE_GENERATED_CONTENT".
+ * @returns An object containing the `title` and parsed `content` if available, or `null` if not found or parsing fails.
+ *
+ */
 export const getGeneratedContent = (
   key = "QUICKEASE_GENERATED_CONTENT"
 ): { title: string; content: any } | null => {

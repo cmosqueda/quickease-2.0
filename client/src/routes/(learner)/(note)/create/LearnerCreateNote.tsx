@@ -4,7 +4,14 @@ import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOT
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
 import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "@/utils/axios";
+import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_GLOBAL";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
+
+import { useNavigate } from "react-router";
+import { useEditor } from "@tiptap/react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { checkBadges } from "@/utils/badges";
 
 import {
   ArrowLeft,
@@ -15,12 +22,6 @@ import {
   Save,
   X,
 } from "lucide-react";
-import { useNavigate } from "react-router";
-import { useEditor } from "@tiptap/react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_GLOBAL";
-import { checkBadges } from "@/utils/badges";
 
 export default function LearnerCreateNotePage() {
   const { user } = useAuth();
@@ -95,7 +96,7 @@ export default function LearnerCreateNotePage() {
         </div>
         <div className="flex flex-row gap-4 w-full lg:w-fit">
           <button
-            className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1 lg:flex-initial"
+            className="btn btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
             disabled={isSaving}
             onClick={handleSave}
           >
@@ -126,7 +127,7 @@ export default function LearnerCreateNotePage() {
         <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
           <h1 className="font-bold text-xl">Note options</h1>
           <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
+            className="rounded-3xl btn btn-soft gap-2 join-item border-base-300 border shadow"
             onClick={() =>
               navigate("/learner/library?tab=notes", { viewTransition: true })
             }
@@ -138,7 +139,7 @@ export default function LearnerCreateNotePage() {
             <>
               <h1 className="font-bold text-xl">Study options</h1>
               <button
-                className="rounded-3xl btn btn-soft gap-2 join-item"
+                className="rounded-3xl btn btn-soft gap-2 join-item border-base-300 border shadow"
                 onClick={() => {
                   const modal = document.getElementById(
                     "generate-summary-modal"
@@ -151,7 +152,7 @@ export default function LearnerCreateNotePage() {
                 <h1>Generate summary</h1>
               </button>
               <button
-                className="rounded-3xl btn btn-soft gap-2 join-item"
+                className="rounded-3xl btn btn-soft gap-2 join-item border-base-300 border shadow"
                 onClick={() => {
                   const modal = document.getElementById(
                     "generate-flashcard-modal"
@@ -164,7 +165,7 @@ export default function LearnerCreateNotePage() {
                 <h1>Generate flashcards</h1>
               </button>
               <button
-                className="rounded-3xl btn btn-soft gap-2 join-item"
+                className="rounded-3xl btn btn-soft gap-2 join-item border-base-300 border shadow"
                 onClick={() => {
                   const modal = document.getElementById(
                     "generate-quiz-modal"

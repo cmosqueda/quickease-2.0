@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import FlippableCard from "@/components/(learner)/FlippableCard";
+import FlippableCard from "@/components/(learner)/flashcard/FlippableCard";
 import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "@/utils/axios";
-import { checkBadges } from "@/utils/badges";
 
-import { ArrowLeft, EllipsisVertical, Save } from "lucide-react";
+import { checkBadges } from "@/utils/badges";
+import { ArrowLeft, Save } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -23,6 +23,11 @@ export default function LearnerCreateFlashcardPage() {
   // cards
 
   const [isSaving, setIsSaving] = useState(false);
+
+  // track flip state per card
+  const [flippedCards, setFlippedCards] = useState<boolean[]>(
+    Array(cards.length).fill(false)
+  );
 
   const handleAddCard = () => {
     if (!front && !back) {
@@ -82,6 +87,12 @@ export default function LearnerCreateFlashcardPage() {
     setCards(updatedCards);
   };
 
+  const toggleFlip = (index: number) => {
+    const updated = [...flippedCards];
+    updated[index] = !updated[index];
+    setFlippedCards(updated);
+  };
+
   return (
     <div className="flex flex-col w-full lg:min-h-screen max-w-4xl mx-auto p-8 gap-6">
       <div className="flex flex-row justify-between items-center">
@@ -93,28 +104,14 @@ export default function LearnerCreateFlashcardPage() {
           }
           className="cursor-pointer"
         />
-        <div className="flex flex-row gap-4 items-center">
-          <button
-            className="cursor-pointer"
-            disabled={isSaving}
-            onClick={handleSave}
-          >
-            <Save />
-          </button>
-          <details className="dropdown dropdown-end cursor-pointer">
-            <summary className="list-none">
-              <EllipsisVertical />
-            </summary>
-            <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4">
-              <li>
-                <a>Save as draft</a>
-              </li>
-              <li>
-                <a>Discard Changes</a>
-              </li>
-            </ul>
-          </details>
-        </div>
+        <button
+          className="btn btn-neutral"
+          disabled={isSaving}
+          onClick={handleSave}
+        >
+          <Save />
+          <h1>Save changes</h1>
+        </button>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -122,13 +119,13 @@ export default function LearnerCreateFlashcardPage() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           type="text"
-          className="input input-ghost text-2xl w-full"
+          className="input text-2xl w-full"
           placeholder="Title..."
         />
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="textarea textarea-ghost text-lg resize-none w-full"
+          className="textarea text-lg resize-none w-full"
           placeholder="Short description..."
         />
       </div>
@@ -161,10 +158,11 @@ export default function LearnerCreateFlashcardPage() {
           Add Flashcard
         </button>
       </div>
+
       {cards.length > 0 && (
         <div className="flex flex-col gap-4">
           <h1 className="text-3xl font-bold">Flashcards</h1>
-          {cards.map((card, index) => (
+          {cards.map((card: any, index: number) => (
             <div
               key={index}
               className="flex flex-col gap-4 bg-base-100 p-6 rounded-3xl border border-base-300 shadow"
@@ -195,7 +193,10 @@ export default function LearnerCreateFlashcardPage() {
               <FlippableCard
                 front={card.front}
                 back={card.back}
+                isFlipped={flippedCards[index]}
+                onFlip={() => toggleFlip(index)}
                 hasMargin={false}
+                style="self-center"
               />
             </div>
           ))}

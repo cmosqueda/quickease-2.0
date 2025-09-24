@@ -2,17 +2,26 @@
 import _API_INSTANCE from "@/utils/axios";
 import dayjs from "dayjs";
 
-import { Check, Clock, Search, X } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router";
+
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Search,
+  X,
+} from "lucide-react";
+import UserAvatar from "@/components/(learner)/UserAvatar";
 
 export default function AdminManageUsersPage() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["all-users", page],
     queryFn: async () => {
       try {
@@ -52,6 +61,9 @@ export default function AdminManageUsersPage() {
         </label>
       </div>
 
+      {isLoading && <p>Loading reports...</p>}
+      {isError && <p className="text-error">Failed to load reports.</p>}
+
       {!isLoading && (
         <div className="grid lg:grid-cols-2 2xl:grid-cols-3 gap-4">
           {data.users.map((user: any) => (
@@ -60,15 +72,13 @@ export default function AdminManageUsersPage() {
               to={`user/${user.id}`}
               className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer"
             >
-              <div>
-                <h1 className="font-bold text-xl">
-                  {user.first_name} {user.last_name}
-                </h1>
+              <div className="flex flex-col gap-2">
+                <UserAvatar data={{ user: user }} showDate={false} />
                 <div className="flex flex-row gap-2 items-center">
                   <Clock size={16} />
                   <p>
                     {dayjs(user.created_at)
-                      .format("MMMM DD, YYYY hh:mm A")
+                      .format("MMMM DD, YYYY / hh:mm A")
                       .toString()}
                   </p>
                 </div>
@@ -83,20 +93,22 @@ export default function AdminManageUsersPage() {
       )}
 
       {!isLoading && (
-        <div className="flex justify-center gap-4 self-end">
+        <div className="flex justify-center gap-4 lg:self-end">
           <button
             onClick={() => setPage((p) => Math.max(p - 1, 1))}
             disabled={page === 1}
-            className="btn"
+            className="btn btn-neutral flex-1 lg:flex-[0]"
           >
+            <ChevronLeft />
             Previous
           </button>
           <button
             onClick={() => setPage((p) => (p < data.totalPages ? p + 1 : p))}
             disabled={page >= data.totalPages}
-            className="btn"
+            className="btn btn-neutral flex-1 lg:flex-[0]"
           >
             Next
+            <ChevronRight />
           </button>
         </div>
       )}

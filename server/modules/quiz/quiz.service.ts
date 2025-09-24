@@ -25,7 +25,6 @@ export async function getUserQuizzes(user_id: string) {
  */
 export async function getQuiz(quiz_id: string, user_id: string) {
   try {
-    // Fetch the quiz and the current user's attempts
     const quiz = await db_client.quiz.findUnique({
       where: { id: quiz_id },
       include: {
@@ -53,6 +52,7 @@ export async function getQuiz(quiz_id: string, user_id: string) {
             id: true,
             first_name: true,
             last_name: true,
+            avatar: true,
           },
         },
       },

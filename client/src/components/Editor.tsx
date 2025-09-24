@@ -111,7 +111,7 @@ export default function CustomEditor({
       <div
         className={
           isToolbarVisible
-            ? "flex flex-wrap gap-2 p-4 rounded-3xl bg-base-100 border border-base-300 w-fit mb-4"
+            ? "flex flex-wrap gap-2 p-4 rounded-3xl bg-base-100 border border-base-300 shadow w-fit mb-4"
             : "hidden"
         }
       >
@@ -147,7 +147,7 @@ export default function CustomEditor({
         placeholder={placeholder}
         className={clsx(
           style,
-          "prose bg-base-100 rounded-xl p-4 border border-base-300 focus:outline-none"
+          "prose bg-base-100 rounded-xl p-4 border border-base-300 focus:outline-none shadow"
         )}
       />
     </>

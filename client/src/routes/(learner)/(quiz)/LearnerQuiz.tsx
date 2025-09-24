@@ -4,8 +4,13 @@ import clsx from "clsx";
 import dayjs from "dayjs";
 import useAuth from "@/hooks/useAuth";
 import _API_INSTANCE from "@/utils/axios";
+import formatTime from "@/utils/format_time";
 
-import { calculateScore } from "@/utils/quiz";
+import { useEffect, useState } from "react";
+import { Link, useLoaderData, useNavigate } from "react-router";
+import { toast } from "sonner";
+import type { Quiz, User } from "@/types/types";
+
 import {
   ArrowLeft,
   ArrowRightFromLine,
@@ -14,10 +19,6 @@ import {
   Info,
   TriangleAlertIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, NavLink, useLoaderData, useNavigate } from "react-router";
-import { toast } from "sonner";
-import type { Quiz } from "@/types/types";
 
 interface QuizData extends Quiz {
   leaderboard: {
@@ -26,11 +27,7 @@ interface QuizData extends Quiz {
     score: number;
     started_at: string;
     completed_at: string;
-    user: {
-      id: string;
-      first_name: string;
-      last_name: string;
-    };
+    user: User;
     answer_data: {
       question: {
         correctAnswers: number[];
@@ -116,18 +113,32 @@ export default function LearnerQuizPage() {
         >
           <div className="flex flex-row gap-4">
             <p>{index + 1}</p>
+            <img
+              src={
+                user?.avatar
+                  ? `/assets/images/avatars/${user?.avatar}.svg`
+                  : "/assets/images/avatars/blue.svg"
+              }
+              className={clsx(`w-[2.5rem] aspect-square`)}
+            />
             <div>
               <h1 className="text-xl font-bold">
                 {user?.first_name} {user?.last_name}
               </h1>
-              <p>
+              <p className="opacity-60">
                 {dayjs(entry.completed_at).format("MMMM DD YYYY / hh:mm A")}
               </p>
             </div>
           </div>
-          <h1 className="font-bold text-xl">
-            {correctCount}/{totalQuestions}
-          </h1>
+
+          <div className="flex flex-col items-end">
+            <h1 className="font-bold text-xl">
+              {correctCount}/{totalQuestions}
+            </h1>
+            <p className="opacity-60">
+              Finished in {formatTime(entry.duration)}
+            </p>
+          </div>
         </Link>
       );
     });
@@ -151,18 +162,31 @@ export default function LearnerQuizPage() {
         >
           <div className="flex flex-row gap-4">
             <p>{index + 1}</p>
+            <img
+              src={
+                entry.user?.avatar
+                  ? `/assets/images/avatars/${entry.user?.avatar}.svg`
+                  : "/assets/images/avatars/blue.svg"
+              }
+              className={clsx(`w-[2.5rem] aspect-square`)}
+            />
             <div>
               <h1 className="text-xl font-bold">
                 {entry.user.first_name} {entry.user.last_name}
               </h1>
-              <p>
+              <p className="opacity-60">
                 {dayjs(entry.completed_at).format("MMMM DD YYYY / hh:mm A")}
               </p>
             </div>
           </div>
-          <h1 className="font-bold text-xl">
-            {correctCount}/{totalQuestions}
-          </h1>
+          <div className="flex flex-col items-end">
+            <h1 className="font-bold text-xl">
+              {correctCount}/{totalQuestions}
+            </h1>
+            <p className="opacity-60">
+              Finished in {formatTime(entry.duration)}
+            </p>
+          </div>
         </div>
       );
     });
@@ -197,10 +221,9 @@ export default function LearnerQuizPage() {
           className="cursor-pointer"
           onClick={() => navigate(-1 as any, { viewTransition: true })}
         />
-        <div className="flex flex-row gap-6 items-center">
+        <div className="flex flex-row gap-2 items-center">
           {data.user_id === user?.id && (
             <>
-              <Edit onClick={handleEditQuiz} className="cursor-pointer" />
               <details className="dropdown dropdown-end cursor-pointer">
                 <summary className="list-none">
                   <EllipsisVertical />
@@ -224,12 +247,13 @@ export default function LearnerQuizPage() {
                   </li>
                 </ul>
               </details>
+              <button className="btn btn-neutral" onClick={handleEditQuiz}>
+                <Edit />
+                <p>Edit</p>
+              </button>
             </>
           )}
-          <button
-            className="btn btn-primary btn-soft"
-            onClick={handleAnswerQuiz}
-          >
+          <button className="btn btn-neutral" onClick={handleAnswerQuiz}>
             <h1>Start</h1>
             <ArrowRightFromLine />
           </button>

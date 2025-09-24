@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useNavigate, useRouteError } from "react-router";
 import { toast } from "sonner";
 
-export default function LearnerErrorFallback() {
+export default function ErrorFallback() {
   const navigate = useNavigate();
   const { error }: any = useRouteError();
 

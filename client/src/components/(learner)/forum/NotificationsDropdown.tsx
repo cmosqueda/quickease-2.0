@@ -50,7 +50,7 @@ export default function NotificationsDropdown({
       <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-[24rem] p-8 my-2 shadow-md border border-base-300 gap-4 max-h-[52rem]">
         <div className="flex flex-row gap-3 items-center">
           {notifications.filter((n) => !n.is_read).length > 0 && (
-            <p className="px-3 py-1 bg-info rounded-full text-base-100">
+            <p className="px-3 py-1 bg-neutral rounded-full text-base-100">
               {notifications.filter((notif) => notif.is_read == false).length}
             </p>
           )}

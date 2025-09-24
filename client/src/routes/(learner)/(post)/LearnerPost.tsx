@@ -1,25 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
-import CommentCard from "@/components/(learner)/CommentCard";
-import PostCard from "@/components/(learner)/PostCard";
+import CommentCard from "@/components/(learner)/forum/post/CommentCard";
 import useAuth from "@/hooks/useAuth";
 import clsx from "clsx";
 import useReport from "@/hooks/useReport";
+import AlternatePostCard from "@/components/(learner)/forum/post/AlternatePostCard";
 
 import { EditorContent, useEditor } from "@tiptap/react";
-import {
-  ArrowLeft,
-  Edit,
-  EllipsisVertical,
-  TriangleAlertIcon,
-} from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useComment } from "@/hooks/useComment";
 import { useQuery } from "@tanstack/react-query";
 import { useDeletePost } from "@/hooks/useDeletePost";
+
+import {
+  ArrowLeft,
+  Edit,
+  EllipsisVertical,
+  TriangleAlertIcon,
+} from "lucide-react";
 
 export default function LearnerPostPage() {
   const { setPost } = useReport();
@@ -154,7 +155,7 @@ export default function LearnerPostPage() {
           </details>
         </div>
       </div>
-      <PostCard data={postData} />
+      <AlternatePostCard data={postData} />
       {user?.is_verified && (
         <div className="flex flex-col gap-4 relative">
           <EditorContent
@@ -165,7 +166,7 @@ export default function LearnerPostPage() {
             placeholder="Comment"
           />
           <button
-            className="btn btn-success w-fit self-end absolute right-2 bottom-2"
+            className="btn btn-neutral w-fit self-end absolute right-2 bottom-2"
             onClick={handleSubmitComment}
           >
             <p>Comment</p>

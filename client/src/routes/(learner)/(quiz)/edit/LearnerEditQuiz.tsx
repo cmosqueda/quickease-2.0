@@ -1,12 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _API_INSTANCE from "@/utils/axios";
-import clsx from "clsx";
 
-import { ArrowLeft, ArrowRightFromLine, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Save, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
-import { getUnitValue, handleTimeChange } from "@/utils/quiz";
 import { checkBadges } from "@/utils/badges";
 
 interface Question {
@@ -140,89 +139,35 @@ export default function LearnerEditQuizPage() {
           }
         />
         <button
-          className="btn btn-primary flex gap-2"
+          className="btn btn-neutral flex gap-2"
           onClick={handleSubmit}
           disabled={isSubmitting}
         >
+          <Save />
           <p>{isSubmitting ? "Saving..." : "Save Changes"}</p>
-          <ArrowRightFromLine />
         </button>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-4 items-center">
-        <div className="flex flex-col gap-2">
-          <input
-            type="text"
-            value={quizTitle}
-            onChange={(e) => setQuizTitle(e.target.value)}
-            placeholder="Quiz Title"
-            className="input input-bordered text-3xl font-bold w-full"
-          />
-          <textarea
-            value={quizDescription}
-            onChange={(e) => setQuizDescription(e.target.value)}
-            placeholder="Quiz Description"
-            className="textarea textarea-bordered text-base resize-none w-full"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <h1 className="font-bold">Quiz options</h1>
-          <div className="flex flex-row items-center gap-2">
-            <input
-              type="checkbox"
-              className="checkbox"
-              checked={isRandomized}
-              onChange={() => setIsRandomized((prev) => !prev)}
-            />
-            <h1>Randomize questions</h1>
-          </div>
-          <div className="flex flex-row items-center gap-2">
-            <input
-              type="checkbox"
-              className="checkbox"
-              checked={isTimedQuiz}
-              onChange={() => setIsTimedQuiz(!isTimedQuiz)}
-            />
-            <h1>Timed quiz</h1>
-          </div>
-          <div className="flex flex-row gap-2">
-            {["hours", "minutes", "seconds"].map((unit) => (
-              <fieldset className="fieldset" key={unit}>
-                <input
-                  type="number"
-                  className={clsx(
-                    isTimedQuiz ? "opacity-100" : "opacity-0",
-                    "input"
-                  )}
-                  value={getUnitValue(unit, totalSeconds)}
-                  onChange={(e) =>
-                    handleTimeChange(
-                      unit,
-                      e.target.value,
-                      totalSeconds,
-                      setTotalSeconds
-                    )
-                  }
-                  disabled={!isTimedQuiz}
-                />
-                <p
-                  className={clsx(
-                    isTimedQuiz ? "opacity-100" : "opacity-0",
-                    "label"
-                  )}
-                >
-                  {unit.charAt(0).toUpperCase() + unit.slice(1)}/s
-                </p>
-              </fieldset>
-            ))}
-          </div>
-        </div>
+      <div className="flex flex-col gap-2">
+        <input
+          type="text"
+          value={quizTitle}
+          onChange={(e) => setQuizTitle(e.target.value)}
+          placeholder="Quiz Title"
+          className="input input-bordered text-3xl font-bold w-full border border-base-300 shadow"
+        />
+        <textarea
+          value={quizDescription}
+          onChange={(e) => setQuizDescription(e.target.value)}
+          placeholder="Quiz Description"
+          className="textarea textarea-bordered text-base resize-none w-full border border-base-300 shadow"
+        />
       </div>
 
       {questions.map((q, qIndex) => (
         <div
           key={qIndex}
-          className="border border-base-content/20 rounded-lg p-4 bg-base-100 flex flex-col gap-4 shadow-sm"
+          className="rounded-lg p-4 bg-base-100 flex flex-col gap-4 shadow border border-base-300"
         >
           <div className="flex justify-between items-center">
             <h2 className="font-semibold text-xl">Question {qIndex + 1}</h2>
@@ -250,7 +195,7 @@ export default function LearnerEditQuizPage() {
               handleQuestionChange(qIndex, "description", e.target.value)
             }
           />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4">
             {q.options.map((opt, oIndex) => (
               <div key={oIndex} className="flex items-center gap-2">
                 <input
@@ -276,7 +221,7 @@ export default function LearnerEditQuizPage() {
 
       <button
         onClick={addQuestion}
-        className="btn btn-accent mt-4 flex items-center gap-2 w-fit self-end"
+        className="btn btn-neutral flex lg:items-center p-4 gap-2 flex-1 lg:flex-[0] lg:w-fit lg:self-end"
       >
         <Plus />
         Add Question

@@ -1,22 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import _API_INSTANCE from "@/utils/axios";
-import { checkBadges } from "@/utils/badges";
 import clsx from "clsx";
+
+import { useState } from "react";
+import { useLoaderData, useNavigate } from "react-router";
+import { checkBadges } from "@/utils/badges";
+import { toast } from "sonner";
 
 import {
   ArrowLeft,
-  EllipsisVertical,
   ArrowRightFromLine,
   CheckCircle2,
   Info,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useState } from "react";
-import { useLoaderData, useNavigate } from "react-router";
-import { toast } from "sonner";
 
 interface QuizQuestion {
   question: string;
@@ -40,6 +41,7 @@ export default function LearnerAnswerQuizPage() {
   };
 
   const [startTime, setStartTime] = useState(new Date());
+
   const [endTime, setEndTime] = useState<Date>();
 
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -165,30 +167,18 @@ export default function LearnerAnswerQuizPage() {
             })
           }
         />
-        <div className="flex flex-row gap-6 items-center">
-          <details className="hidden dropdown dropdown-end cursor-pointer">
-            <summary className="list-none">
-              <EllipsisVertical />
-            </summary>
-            <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm my-4">
-              <li>
-                <a>Save progress</a>
-              </li>
-            </ul>
-          </details>
-          <button
-            className="btn btn-primary btn-soft"
-            onClick={() =>
-              toast("Submit quiz?", {
-                action: { label: "Submit", onClick: handleSubmit },
-              })
-            }
-            disabled={isSubmitting}
-          >
-            <h1>Submit quiz</h1>
-            <ArrowRightFromLine />
-          </button>
-        </div>
+        <button
+          className="btn btn-neutral"
+          onClick={() =>
+            toast("Submit quiz?", {
+              action: { label: "Submit", onClick: handleSubmit },
+            })
+          }
+          disabled={isSubmitting}
+        >
+          <h1>Submit quiz</h1>
+          <ArrowRightFromLine />
+        </button>
       </div>
       <div className="collapse collapse-arrow border border-base-300 shadow">
         <input type="checkbox" />
@@ -211,7 +201,7 @@ export default function LearnerAnswerQuizPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-[0.3fr_1fr] gap-8">
+      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[0.3fr_1fr] lg:gap-8">
         <div className="flex flex-row flex-wrap gap-2 h-fit">
           {data.quiz_content?.map((_, index) => (
             <div
@@ -249,7 +239,7 @@ export default function LearnerAnswerQuizPage() {
                   (Multiple answers)
                 </p>
               )}
-              <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-base-100 my-2 border border-base-300 shadow">
+              <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 p-4 rounded-xl bg-base-100 my-2 border border-base-300 shadow">
                 {currentQuestion.options.map((option, i) => (
                   <div className="flex flex-row gap-2 items-center" key={i}>
                     <input
@@ -279,10 +269,11 @@ export default function LearnerAnswerQuizPage() {
           )}
         </div>
       </div>
-      <div className="flex flex-row gap-2 items-center self-end">
+
+      <div className="flex flex-row gap-2 lg:items-center lg:self-end">
         {questionIndex > 0 && (
           <button
-            className="btn btn-primary"
+            className="btn btn-neutral lg:flex-[0] flex-1"
             onClick={() => setQuestionIndex((prev) => Math.max(0, prev - 1))}
           >
             <ChevronLeft />
@@ -292,15 +283,15 @@ export default function LearnerAnswerQuizPage() {
 
         {questionIndex < data.quiz_content.length - 1 && (
           <button
-            className="btn btn-primary"
+            className="btn btn-neutral lg:flex-[0] flex-1"
             onClick={() =>
               setQuestionIndex((prev) =>
                 Math.min(data.quiz_content.length - 1, prev + 1)
               )
             }
           >
-            <ChevronRight />
             <p>Next</p>
+            <ChevronRight />
           </button>
         )}
       </div>

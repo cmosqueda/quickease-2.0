@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import FlashcardTab from "@/components/(learner)/FlashcardTab";
-import NotesTab from "@/components/(learner)/NotesTab";
-import QuizTab from "@/components/(learner)/QuizTab";
-import ProfileDropdown from "@/components/(learner)/ProfileDropdown";
+import FlashcardTab from "@/components/(learner)/library/FlashcardTab";
+import NotesTab from "@/components/(learner)/library/NotesTab";
+import QuizTab from "@/components/(learner)/library/QuizTab";
+import ProfileDropdown from "@/components/(learner)/forum/ProfileDropdown";
 import clsx from "clsx";
 
 import { useEffect, useState } from "react";

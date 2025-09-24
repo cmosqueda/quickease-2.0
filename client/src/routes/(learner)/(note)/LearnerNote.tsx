@@ -8,6 +8,11 @@ import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import useAuth from "@/hooks/useAuth";
 import clsx from "clsx";
 
+import { useLoaderData, useNavigate } from "react-router";
+import { useEditor } from "@tiptap/react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
 import {
   ArrowLeft,
   CalendarRange,
@@ -17,10 +22,6 @@ import {
   Save,
   X,
 } from "lucide-react";
-import { useLoaderData, useNavigate } from "react-router";
-import { useEditor } from "@tiptap/react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 export default function LearnerNotePage() {
   const { user } = useAuth();
@@ -109,6 +110,7 @@ export default function LearnerNotePage() {
       throw err;
     }
   };
+
   const handleVisibility = async (visibility: boolean) => {
     try {
       await _API_INSTANCE.patch(
@@ -149,7 +151,7 @@ export default function LearnerNotePage() {
           <button
             disabled={isSaving}
             onClick={handleSave}
-            className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1 lg:flex-initial"
+            className="btn btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
           >
             <Save />
             <p>Save changes</p>
@@ -180,7 +182,7 @@ export default function LearnerNotePage() {
             <>
               <h1 className="font-bold text-xl">Study options</h1>
               <button
-                className="rounded-3xl btn btn-soft gap-2 join-item"
+                className="rounded-3xl btn btn-soft gap-2 join-item border border-base-300 shadow"
                 onClick={() => {
                   const modal = document.getElementById(
                     "generate-flashcard-modal"
@@ -192,7 +194,7 @@ export default function LearnerNotePage() {
                 <h1>Generate flashcards</h1>
               </button>
               <button
-                className="rounded-3xl btn btn-soft gap-2 join-item"
+                className="rounded-3xl btn btn-soft gap-2 join-item border border-base-300 shadow"
                 onClick={() => {
                   const modal = document.getElementById(
                     "generate-quiz-modal"
@@ -209,7 +211,7 @@ export default function LearnerNotePage() {
           <h1 className="font-bold text-xl">Other options</h1>
           <div className="flex flex-col gap-1">
             <button
-              className="rounded-3xl btn btn-soft gap-2 join-item w-full"
+              className="rounded-3xl btn btn-soft gap-2 join-item w-full border border-base-300 shadow"
               onClick={async () => {
                 await navigator.clipboard.writeText(
                   `https://quickease.online/learner/note/view/${data.id}`
@@ -227,13 +229,13 @@ export default function LearnerNotePage() {
           </div>
 
           <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
+            className="rounded-3xl btn btn-soft gap-2 join-item border border-base-300 shadow"
             onClick={handleDelete}
           >
             <Delete />
             <h1>Delete</h1>
           </button>
-          <div className="flex flex-row items-center justify-between rounded-3xl p-4 bg-base-200 gap-2 join-item">
+          <div className="flex flex-row items-center justify-between rounded-3xl p-4 bg-base-200 gap-2 join-item border border-base-300 shadow">
             <h1>Set to {isPublic ? "private" : "public"}</h1>
             <input
               type="checkbox"

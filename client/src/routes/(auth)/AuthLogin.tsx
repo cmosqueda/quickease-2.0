@@ -82,7 +82,7 @@ export default function AuthLoginPage() {
       <div className="relative flex flex-col justify-center gap-6 p-8 2xl:px-[12rem]">
         <div>
           <h1 className="font-bold text-5xl">Welcome back</h1>
-          <p className="text-lg text-gray-400">
+          <p className="text-lg text-neutral/50">
             Continue your learning journey.
           </p>
         </div>
@@ -120,30 +120,30 @@ export default function AuthLoginPage() {
         </div>
         <NavLink
           to="/auth/forgot-password"
-          className="text-right text-sm text-gray-400"
+          className="text-right text-sm text-neutral/50 underline"
           viewTransition
         >
           Forgot password?
         </NavLink>
         <button
-          className="btn btn-soft btn-success w-full btn-lg"
+          className="btn btn-neutral w-full btn-lg"
           disabled={isLoggingIn}
           onClick={handleLogin}
         >
           Login
         </button>
-        <p>
+        <p className="text-center lg:text-start">
           Don't have an account?{" "}
           <NavLink
             to="/auth/register"
             viewTransition
-            className="text-accent mx-1"
+            className="text-neutral font-black underline mx-1"
           >
             Register now
           </NavLink>
         </p>
         <button
-          className="transition-all delay-0 duration-300 hover:text-accent fixed bottom-8 cursor-pointer"
+          className="transition-all delay-0 duration-300 hover:text-accent lg:fixed lg:bottom-8 cursor-pointer self-center"
           onClick={() => {
             const modal = document.getElementById(
               "terms-of-use-modal"

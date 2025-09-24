@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
-import dayjs from "dayjs";
+import ForumPostCard from "@/components/(learner)/forum/ForumPostCard";
 
 import { ArrowLeft, TriangleAlert } from "lucide-react";
-import { Link, useLoaderData, useNavigate } from "react-router";
-import { EditorProvider } from "@tiptap/react";
+import { useLoaderData, useNavigate } from "react-router";
 
 export default function LearnerSearchPage() {
   const navigate = useNavigate();
@@ -22,7 +20,7 @@ export default function LearnerSearchPage() {
 
   const handlePageChange = (pageNum: number) => {
     const pagePath = pageNum === 1 ? "" : `/${pageNum}`;
-    navigate(`/search/${data.query}${pagePath}`);
+    navigate(`/learner/search/${data.query}${pagePath}`);
   };
 
   if (data.posts.length == 0) {
@@ -75,57 +73,22 @@ export default function LearnerSearchPage() {
           </fieldset>
         </div>
       </div>
+
       <div className="flex flex-col gap-4">
         {data.posts.map((post) => (
-          <Link
-            className="flex flex-col gap-4 bg-base-100 p-4 rounded-3xl"
-            key={post.id}
-            to={`/learner/post/${post.id}`}
-          >
-            <div className="flex flex-row items-center gap-3">
-              <div className="bg-base-300 rounded-3xl shadow w-[3rem] h-[3rem] aspect-square" />
-              <div>
-                <p>
-                  {post?.user?.first_name} {post?.user?.last_name}
-                </p>
-                <p className="text-base-content/40">
-                  {dayjs(post?.created_at).format("MMMM DD, YYYY").toString()}
-                </p>
-              </div>
-            </div>
-
-            <h1 className="text-4xl font-bold">{post?.title}</h1>
-
-            {post.tags.length > 0 && (
-              <div className="flex flex-row flex-wrap gap-2">
-                {post.tags.map((tag: any) => (
-                  <div key={tag.tag.tag_name} className="badge badge-neutral">
-                    {tag.tag.tag_name}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="p-4 rounded-3xl bg-base-100 shadow border border-base-200">
-              <EditorProvider
-                content={post?.post_body || ""}
-                extensions={_TIPTAP_EXTENSIONS}
-                editable={false}
-              />
-            </div>
-          </Link>
+          <ForumPostCard post={post} />
         ))}
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center mt-8 gap-2 flex-wrap">
+        <div className="flex justify-center gap-2 flex-wrap">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map(
             (pageNum) => (
               <button
                 key={pageNum}
                 onClick={() => handlePageChange(pageNum)}
-                className={`btn btn-sm ${
-                  pageNum === currentPage ? "btn-primary" : "btn-ghost"
+                className={`btn ${
+                  pageNum === currentPage ? "btn-neutral" : "btn-ghost"
                 }`}
               >
                 {pageNum}

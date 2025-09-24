@@ -102,7 +102,7 @@ export default function AuthRegisterPage() {
       <div className="flex flex-col gap-4 justify-center p-8 2xl:px-[12rem]">
         <div className="">
           <h1 className="font-bold text-4xl">Create your account </h1>
-          <p className="text-gray-400">Start your learning journey today.</p>
+          <p className="text-neutral/50">Start your learning journey today.</p>
         </div>
         <div className="lg:grid lg:grid-cols-2 flex flex-col gap-2">
           <label className="floating-label">
@@ -190,7 +190,7 @@ export default function AuthRegisterPage() {
           />
           I accept the{" "}
           <button
-            className="text--500 cursor-pointer"
+            className="text-neutral underline cursor-pointer"
             onClick={() => {
               const modal = document.getElementById(
                 "terms-of-use-modal"
@@ -199,19 +199,23 @@ export default function AuthRegisterPage() {
               modal.showModal();
             }}
           >
-            terms of use and privacy policy
+            <p className="text-ellipsis">terms of use and privacy policy</p>
           </button>
         </label>
         <button
-          className="btn btn-soft btn-success btn-lg"
+          className="btn btn-neutral btn-lg"
           disabled={isRegistering}
           onClick={handleRegister}
         >
           Create account
         </button>
-        <p>
+        <p className="self-center lg:self-start">
           Already have an account?{" "}
-          <NavLink className={"text-accent"} to="/auth/login" viewTransition>
+          <NavLink
+            className={"text-neutral font-black underline"}
+            to="/auth/login"
+            viewTransition
+          >
             Sign in
           </NavLink>
         </p>

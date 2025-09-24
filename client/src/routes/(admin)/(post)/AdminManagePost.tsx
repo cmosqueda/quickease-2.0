@@ -4,6 +4,10 @@ import _API_INSTANCE from "@/utils/axios";
 import dayjs from "dayjs";
 
 import { EditorProvider } from "@tiptap/react";
+import { useLoaderData, useNavigate } from "react-router";
+import { useState } from "react";
+import { toast } from "sonner";
+
 import {
   AlertTriangle,
   ArrowLeft,
@@ -11,9 +15,7 @@ import {
   MessageCircle,
   Trash,
 } from "lucide-react";
-import { useLoaderData, useNavigate } from "react-router";
-import { useState } from "react";
-import { toast } from "sonner";
+import UserAvatar from "@/components/(learner)/UserAvatar";
 
 export default function AdminManagePostPage() {
   const data = useLoaderData();
@@ -63,17 +65,7 @@ export default function AdminManagePostPage() {
         className="cursor-pointer"
       />
 
-      <div className="flex flex-row items-center gap-3">
-        <div className="bg-base-300 rounded-3xl shadow w-[3rem] h-[3rem] aspect-square" />
-        <div>
-          <p>
-            {data.post.user.first_name} {data.post.user.last_name}
-          </p>
-          <p className="text-base-content/40">
-            {dayjs(data.post.created_at).format("MMMM DD, YYYY").toString()}
-          </p>
-        </div>
-      </div>
+      <UserAvatar data={data.post} />
       <h1 className="text-4xl font-bold">{data.post.title}</h1>
       {data.post.post_body && (
         <div className="p-4 rounded-3xl bg-base-100 shadow border border-base-200">
@@ -85,7 +77,7 @@ export default function AdminManagePostPage() {
         </div>
       )}
 
-      <div className="collapse collapse-arrow bg-base-100 rounded-box">
+      <div className="collapse collapse-arrow bg-base-100 rounded-box shadow border border-base-300">
         <input type="checkbox" />
         <div className="collapse-title font-medium">
           {data.reports.length > 1 ? "Reports" : "Report"} (
@@ -95,7 +87,7 @@ export default function AdminManagePostPage() {
           {data.reports.map((report: any, idx: number) => (
             <div
               key={idx}
-              className="p-4 rounded-xl bg-base-100 border border-base-300"
+              className="p-4 rounded-xl bg-base-100 border border-base-300 shadow"
             >
               <div className="flex flex-row gap-2 items-center mb-2">
                 <MessageCircle size={16} />
@@ -110,7 +102,7 @@ export default function AdminManagePostPage() {
         </div>
       </div>
 
-      <div className="collapse border-none rounded-3xl collapse-arrow bg-base-100 border-base-300 border">
+      <div className="collapse border-none rounded-3xl collapse-arrow bg-base-100 border-base-300 border shadow">
         <input type="checkbox" />
         <div className="collapse-title font-semibold">Other options</div>
         <div className="flex flex-col gap-2 collapse-content text-sm">

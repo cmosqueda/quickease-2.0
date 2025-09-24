@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import useReport from "@/hooks/useReport";
-import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
 
-import { EditorProvider } from "@tiptap/react";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export default function ReportCommentModal() {
-  const { comment } = useReport();
+export default function ReportPostModal() {
+  const { post } = useReport();
   const [description, setDescription] = useState<any>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -18,58 +16,53 @@ export default function ReportCommentModal() {
 
     try {
       await _API_INSTANCE.put(
-        "/forum/comment/report",
+        "/forum/post/report",
         {
           description: description,
-          comment_id: comment?.id,
+          post_id: post?.id,
         },
-        { timeout: 8 * 60 * 1000 }
+        {
+          timeout: 8 * 60 * 1000,
+        }
       );
 
       const modal = document.getElementById(
-        "report-comment-modal"
+        "report-post-modal"
       ) as HTMLDialogElement;
 
       modal.close();
-      toast.success("Comment reported.");
-    } catch {
-      toast.error("Error reporting comment.");
+      toast.success("Post reported.");
+    } catch (err) {
+      toast.error("Error reporting post.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (comment) {
+  if (post) {
     return (
-      <dialog id="report-comment-modal" className="modal">
+      <dialog id="report-post-modal" className="modal">
         <div className="modal-box flex flex-col gap-4">
           <div className="flex flex-row gap-4 items-center">
             <X
               className="cursor-pointer"
               onClick={() => {
                 const modal = document.getElementById(
-                  "report-comment-modal"
+                  "report-post-modal"
                 ) as HTMLDialogElement;
-
                 modal.close();
               }}
             />
             <h1 className="font-bold text-2xl">
-              Why are you reporting this comment?
+              Why are you reporting this post?
             </h1>
           </div>
           <div className="">
-            <p className="text-sm text-base-content/50">Comment</p>
-            {comment?.comment_body && (
-              <EditorProvider
-                content={comment.comment_body}
-                extensions={_TIPTAP_EXTENSIONS}
-                editable={false}
-                editorContainerProps={{
-                  className:
-                    "p-4 bg-base-200 rounded-xl overflow-ellipsis max-h-[24rem]",
-                }}
-              />
+            <p className="text-sm text-base-content/50">Post</p>
+            {post?.title && (
+              <h1 className="p-4 bg-base-200 rounded-xl font-bold text-xl border border-base-300 shadow">
+                {post.title}
+              </h1>
             )}
           </div>
           <div className="">
@@ -82,7 +75,7 @@ export default function ReportCommentModal() {
             />
           </div>
           <button
-            className="btn btn-success"
+            className="btn btn-neutral"
             onClick={handleSubmit}
             disabled={isSubmitting}
           >

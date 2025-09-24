@@ -2,6 +2,11 @@
 import clsx from "clsx";
 import ThemeBox from "../ThemeBox";
 import _API_INSTANCE from "@/utils/axios";
+import useAuth from "@/hooks/useAuth";
+
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { NavLink, useNavigate, type NavigateFunction } from "react-router";
+import { toast } from "sonner";
 
 import {
   BookUser,
@@ -15,16 +20,7 @@ import {
   Settings,
   Timer,
 } from "lucide-react";
-import {
-  use,
-  useEffect,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
-import { NavLink, useNavigate, type NavigateFunction } from "react-router";
-import { toast } from "sonner";
-import useAuth from "@/hooks/useAuth";
+import UserAvatar from "./UserAvatar";
 
 type NavLinkItem = {
   title: string;
@@ -256,6 +252,7 @@ const Desktop = ({
         {_LINKS[5].icon}
         {isOpen && <span>{_LINKS[5].title}</span>}
       </NavLink>
+      <div className="flex-1" />
     </div>
   );
 };

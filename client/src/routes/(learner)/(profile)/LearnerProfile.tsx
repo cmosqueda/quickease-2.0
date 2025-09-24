@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
+import UserAvatar from "@/components/(learner)/UserAvatar";
 import clsx from "clsx";
-import dayjs from "dayjs";
 
 import { EditorProvider } from "@tiptap/react";
 import { Crown, GalleryVertical, Info } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useLoaderData } from "react-router";
+import type { Post, User } from "@/types/types";
 
-const User = ({ user, posts }: { user: any; posts: any }) => {
+const User = ({ user, posts }: { user: User; posts: Post[] }) => {
   const [index, setIndex] = useState(0);
 
   const tabs = [
@@ -47,27 +48,12 @@ const User = ({ user, posts }: { user: any; posts: any }) => {
     </>,
     <>
       <div className="flex flex-col gap-6">
-        {posts.map((post: any) => (
+        {posts.map((post: Post) => (
           <div className="flex flex-col gap-2" key={post.id}>
-            <div className="flex flex-row gap-2 items-center">
-              <img
-                src={
-                  post.user?.avatar
-                    ? `/assets/images/avatars/${post.user?.avatar}.svg`
-                    : "/assets/images/avatars/blue.svg"
-                }
-                className="w-[2rem] aspect-square"
-              />
-              <h1 className="font-semibold">
-                {user?.first_name ?? "Unknown"} {user?.last_name ?? "User"}
-              </h1>
-              <p className="text-sm text-gray-500">
-                /{" "}
-                {dayjs(post.created_at).isValid()
-                  ? dayjs(post.created_at).format("MMMM DD, YYYY")
-                  : "Unknown date"}
-              </p>
-            </div>
+            <UserAvatar
+              data={post}
+              fullName={`${user.first_name} ${user.last_name}`}
+            />
             <h1 className="font-bold text-4xl">{post.title}</h1>
             <NavLink
               to={`/learner/post/${post.id}`}

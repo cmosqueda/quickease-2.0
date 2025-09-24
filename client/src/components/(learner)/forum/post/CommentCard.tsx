@@ -9,6 +9,12 @@ import useReport from "@/hooks/useReport";
 import { useComment } from "@/hooks/useComment";
 import { useVoteOnComment } from "@/hooks/useVote";
 import { useEditor, EditorProvider, EditorContent } from "@tiptap/react";
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import type { Comment } from "@/types/types";
+
 import {
   ChevronUp,
   ChevronDown,
@@ -16,11 +22,6 @@ import {
   Ellipsis,
   Edit,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { NavLink } from "react-router";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import type { Comment } from "@/types/types";
 
 const CommentCard = ({
   comment,
@@ -231,7 +232,7 @@ const CommentCard = ({
                   placeholder="Comment"
                 />
                 <button
-                  className="btn btn-success w-fit self-end absolute right-2 bottom-2"
+                  className="btn btn-neutral w-fit self-end absolute right-2 bottom-2"
                   onClick={!isEditing ? handleSubmitReply : handleEditComment}
                 >
                   <p>{!isEditing ? "Reply" : "Save changes"}</p>

@@ -7,6 +7,8 @@ import duration from "dayjs/plugin/duration";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
 import {
   CheckCircle2,
   Eye,
@@ -18,7 +20,6 @@ import {
   UserCircle,
   X,
 } from "lucide-react";
-import { toast } from "sonner";
 
 dayjs.extend(duration);
 dayjs.extend(isSameOrAfter);
@@ -184,7 +185,11 @@ const AccountSettings = () => {
         <p>Request to change password</p>
       </button>
       <button
-        onClick={handleRequestVerification}
+        onClick={() =>
+          toast.promise(handleRequestVerification(), {
+            loading: "Requesting...",
+          })
+        }
         className="flex flex-row items-center gap-4 p-8 rounded-3xl bg-base-100 hover:bg-base-300 cursor-pointer delay-0 duration-300 transition-all disabled:bg-base-300/50 disabled:cursor-not-allowed border border-base-300 shadow disabled:shadow-none"
         disabled={user?.is_verified}
       >

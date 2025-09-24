@@ -53,7 +53,7 @@ export default function AdminManageReportsPage() {
       </label>
 
       {isLoading && <p>Loading reports...</p>}
-      {isError && <p className="text-red-500">Failed to load reports.</p>}
+      {isError && <p className="text-error">Failed to load reports.</p>}
 
       <div className="grid lg:grid-cols-2 gap-4">
         {data?.map((post: any) => (

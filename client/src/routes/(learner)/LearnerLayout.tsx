@@ -1,10 +1,10 @@
 import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_GLOBAL";
 import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_GLOBAL";
 import GenerateSummaryModal from "@/components/(ai)/GenerateSummaryModal_GLOBAL";
-import ReportCommentModal from "@/components/(learner)/ReportCommentModal";
-import ReportPostModal from "@/components/(learner)/ReportPostModal";
+import ReportCommentModal from "@/components/(learner)/modals/ReportCommentModal";
+import ReportPostModal from "@/components/(learner)/modals/ReportPostModal";
 import Sidebar from "@/components/(learner)/Sidebar";
-import TimerPopup from "@/components/(learner)/TimerPopup";
+import TimerPopup from "@/components/(learner)/popups/TimerPopup";
 import useAuth from "@/hooks/useAuth";
 import useTimer from "@/hooks/useTimer";
 import { useEffect } from "react";

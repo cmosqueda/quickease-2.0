@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import FlippableCard from "@/components/(learner)/FlippableCard";
+import FlippableCard from "@/components/(learner)/flashcard/FlippableCard";
+
+import { useState, useEffect } from "react";
+import { useLoaderData, useNavigate } from "react-router";
 
 import {
   ArrowLeft,
@@ -10,8 +13,6 @@ import {
   Info,
   TriangleAlertIcon,
 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useLoaderData, useNavigate } from "react-router";
 
 export default function LearnerViewFlashcardPage() {
   const data = useLoaderData();

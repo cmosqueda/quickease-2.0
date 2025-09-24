@@ -7,6 +7,12 @@ import _API_INSTANCE from "@/utils/axios";
 import useAuth from "@/hooks/useAuth";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
+import { useLoaderData, useNavigate } from "react-router";
+import { useEditor } from "@tiptap/react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { checkBadges } from "@/utils/badges";
+
 import {
   ArrowLeft,
   BookDown,
@@ -15,11 +21,6 @@ import {
   Save,
   X,
 } from "lucide-react";
-import { useLoaderData, useNavigate } from "react-router";
-import { useEditor } from "@tiptap/react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { checkBadges } from "@/utils/badges";
 
 export default function LearnerAICreateNotePage() {
   const data = useLoaderData(); // for generated content
@@ -96,7 +97,7 @@ export default function LearnerAICreateNotePage() {
         </div>
         <div className="flex flex-row gap-4 w-full lg:w-fit">
           <button
-            className="btn btn-soft btn-success flex flex-row gap-4 items-center flex-1 lg:flex-initial"
+            className="btn btn-neutral flex flex-row gap-4 items-center flex-1 lg:flex-initial"
             disabled={isSaving}
             onClick={handleSave}
           >
@@ -127,7 +128,7 @@ export default function LearnerAICreateNotePage() {
         <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
           <h1 className="font-bold text-xl">Study options</h1>
           <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
+            className="rounded-3xl btn btn-soft gap-2 join-item border border-base-300 shadow"
             onClick={() => {
               const modal = document.getElementById(
                 "generate-summary-modal"
@@ -139,7 +140,7 @@ export default function LearnerAICreateNotePage() {
             <h1>Generate summary</h1>
           </button>
           <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
+            className="rounded-3xl btn btn-soft gap-2 join-item border border-base-300 shadow"
             onClick={() => {
               const modal = document.getElementById(
                 "generate-flashcard-modal"
@@ -151,7 +152,7 @@ export default function LearnerAICreateNotePage() {
             <h1>Generate flashcards</h1>
           </button>
           <button
-            className="rounded-3xl btn btn-soft gap-2 join-item"
+            className="rounded-3xl btn btn-soft gap-2 join-item border border-base-300 shadow"
             onClick={() => {
               const modal = document.getElementById(
                 "generate-quiz-modal"

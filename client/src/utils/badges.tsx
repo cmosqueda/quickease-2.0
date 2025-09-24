@@ -1,26 +1,11 @@
 import _API_INSTANCE from "./axios";
 import { toast } from "sonner";
 
-export async function testNotificationBadge() {
-  toast.custom(
-    () => (
-      <div className="flex flex-row items-center justify-around gap-3 py-4 px-8 w-[22rem] bg-base-100 rounded-xl border border-base-300 shadow">
-        <img
-          src={"/assets/images/badges/first-post-gradient.png"}
-          className="w-24 h-24 rounded-md object-cover"
-        />
-        <div>
-          <p className="text-sm text-base-content/50">You unlocked a badge</p>
-          <p className="font-bold text-2xl">Test</p>
-        </div>
-      </div>
-    ),
-    {
-      duration: 5000,
-    }
-  );
-}
-
+/**
+ * Checks for newly awarded badges by making an API request.
+ * If any badges are awarded, displays a custom toast notification for each badge,
+ * including its image, name, and a message.
+ */
 export async function checkBadges() {
   try {
     const { data } = await _API_INSTANCE.get("badges/check");

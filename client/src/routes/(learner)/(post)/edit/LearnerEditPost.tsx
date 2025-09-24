@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
-import dayjs from "dayjs";
+import CustomEditor from "@/components/Editor";
+import UserAvatar from "@/components/(learner)/UserAvatar";
 
 import { useQuery } from "@tanstack/react-query";
-import { EditorContent, useEditor } from "@tiptap/react";
-import { ArrowLeft } from "lucide-react";
+import { useEditor } from "@tiptap/react";
+import { ArrowLeft, Save, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import { useEditPost } from "@/hooks/useEditPost";
@@ -70,22 +71,27 @@ export default function LearnerEditPostPage() {
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
-      <div className="flex items-center justify-between">
-        <ArrowLeft
-          className="cursor-pointer"
-          onClick={() => navigate(-1 as any, { viewTransition: true })}
-        />
+      <div className="flex flex-row items-center justify-between gap-4">
+        <div className="flex flex-row gap-4 items-center">
+          <ArrowLeft
+            onClick={() => navigate("/learner", { viewTransition: true })}
+            className="cursor-pointer"
+          />
+          <h1 className="text-2xl font-bold">Edit post</h1>
+        </div>
+        <div className="flex flex-row gap-4 items-center">
+          <button className="btn btn-neutral">
+            <Trash />
+            <p>Delete post</p>
+          </button>
+          <button className="btn btn-neutral" onClick={handleUpdate}>
+            <Save />
+            Update
+          </button>
+        </div>
       </div>
       <div className="flex flex-row items-center gap-3">
-        <div className="bg-base-300 rounded-3xl shadow w-[3rem] h-[3rem] aspect-square" />
-        <div>
-          <p>
-            {postData?.user?.first_name} {postData?.user?.last_name}
-          </p>
-          <p className="text-base-content/40">
-            {dayjs(data?.created_at).format("MMMM DD, YYYY").toString()}
-          </p>
-        </div>
+        <UserAvatar data={postData} />
       </div>
       <div className="flex flex-col gap-2">
         <input
@@ -95,23 +101,12 @@ export default function LearnerEditPostPage() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <div className="p-4 rounded-3xl bg-base-100 shadow border border-base-200">
-          <EditorContent editor={editor} />
-        </div>
+        <CustomEditor
+          editor={editor!}
+          style="overflow-y-auto border border-base-300 shadow"
+        />
       </div>
-      <div className="flex flex-row gap-4 items-center justify-end">
-        <button
-          className="btn btn-cancel"
-          onClick={() =>
-            navigate(`/learner/post/${data.id}`, { replace: true })
-          }
-        >
-          Cancel
-        </button>
-        <button className="btn btn-success" onClick={handleUpdate}>
-          Update
-        </button>
-      </div>
+      <div className="flex flex-row gap-4 items-center justify-end"></div>
     </div>
   );
 }

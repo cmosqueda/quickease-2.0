@@ -1,7 +1,8 @@
 import useAuth from "@/hooks/useAuth";
 
-import { UserCircle } from "lucide-react";
+import { Settings, UserCircle } from "lucide-react";
 import { NavLink } from "react-router";
+import UserAvatar from "../UserAvatar";
 
 export default function ProfileDropdown() {
   const { user } = useAuth();
@@ -14,14 +15,18 @@ export default function ProfileDropdown() {
           size={40}
         />
       </summary>
-      <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 my-2 shadow-sm border border-base-300">
+      <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-64 p-2 my-2 shadow-sm border border-base-300 gap-1">
         <li>
-          <NavLink to="/learner/profile">
-            {user?.first_name} {user?.last_name}
-          </NavLink>
+          <UserAvatar data={{ user: user }} showDate={false} />
         </li>
         <li>
-          <NavLink to="/learner/settings">Settings</NavLink>
+          <NavLink
+            to="/learner/settings"
+            className={"flex flex-row items-center gap-3 px-5"}
+          >
+            <Settings />
+            <p>Settings</p>
+          </NavLink>
         </li>
       </ul>
     </details>

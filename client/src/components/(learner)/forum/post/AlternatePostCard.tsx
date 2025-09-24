@@ -5,6 +5,9 @@ import dayjs from "dayjs";
 
 import { useVote } from "@/hooks/useVote";
 import { EditorProvider } from "@tiptap/react";
+import { NavLink } from "react-router";
+import type { PostAttachment } from "@/types/types";
+
 import {
   Notebook,
   GalleryVertical,
@@ -12,10 +15,9 @@ import {
   ChevronDown,
   MessageCircle,
 } from "lucide-react";
-import { NavLink } from "react-router";
-import type { PostAttachment } from "@/types/types";
+import UserAvatar from "../../UserAvatar";
 
-const PostCard = ({ data }: { data: any }) => {
+const AlternatePostCard = ({ data }: { data: any }) => {
   const { mutate: vote } = useVote(["post"]);
 
   const handlePostVote = (vote_type: number) => {
@@ -25,26 +27,24 @@ const PostCard = ({ data }: { data: any }) => {
     });
   };
 
+  const filteredAttachments = data.attachments.filter(
+    (attachment: PostAttachment) => {
+      switch (attachment.resource_type) {
+        case "NOTE":
+          return !!attachment.note_id;
+        case "QUIZ":
+          return !!attachment.quiz_id;
+        case "FLASHCARD":
+          return !!attachment.flashcard_id;
+        default:
+          return false;
+      }
+    }
+  );
+
   return (
     <>
-      <div className="flex flex-row items-center gap-3">
-        <img
-          src={
-            data.user.avatar
-              ? `/assets/images/avatars/${data.user.avatar}.svg`
-              : "/assets/images/avatars/blue.svg"
-          }
-          className="bg-base-300 rounded-3xl shadow w-[3rem] h-[3rem] aspect-square"
-        />
-        <div>
-          <p>
-            {data?.user?.first_name} {data?.user?.last_name}
-          </p>
-          <p className="text-base-content/40">
-            {dayjs(data?.created_at).format("MMMM DD, YYYY").toString()}
-          </p>
-        </div>
-      </div>
+      <UserAvatar data={data} />
       <h1 className="text-4xl font-bold">{data?.title}</h1>
       {data.tags.length > 0 && (
         <div className="flex flex-row gap-2">
@@ -62,15 +62,16 @@ const PostCard = ({ data }: { data: any }) => {
           editable={false}
         />
       </div>
-      {data.attachments.length > 0 && (
+      {filteredAttachments.length > 0 && (
         <>
           <h1 className="font-bold text-xl">Attachments</h1>
           <div className="flex flex-row gap-4 items-center">
-            {data.attachments.map((attachment: PostAttachment) => {
+            {filteredAttachments.map((attachment: PostAttachment) => {
               switch (attachment.resource_type) {
                 case "NOTE":
                   return (
                     <NavLink
+                      key={attachment.note_id}
                       to={`/learner/note/view/${attachment.note_id}`}
                       className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300 border border-base-300 shadow"
                     >
@@ -83,6 +84,7 @@ const PostCard = ({ data }: { data: any }) => {
                 case "QUIZ":
                   return (
                     <NavLink
+                      key={attachment.quiz_id}
                       to={`/learner/quizzes/${attachment.quiz_id}`}
                       className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300 border border-base-300 shadow"
                     >
@@ -95,6 +97,7 @@ const PostCard = ({ data }: { data: any }) => {
                 case "FLASHCARD":
                   return (
                     <NavLink
+                      key={attachment.flashcard_id}
                       to={`/learner/flashcards/view/${attachment.flashcard_id}`}
                       className="rounded-xl p-4 bg-base-100 cursor-pointer flex flex-row gap-4 items-center hover:bg-base-300 border border-base-300 shadow"
                     >
@@ -104,7 +107,8 @@ const PostCard = ({ data }: { data: any }) => {
                       </h1>
                     </NavLink>
                   );
-                  break;
+                default:
+                  return null;
               }
             })}
           </div>
@@ -138,4 +142,4 @@ const PostCard = ({ data }: { data: any }) => {
   );
 };
 
-export default PostCard;
+export default AlternatePostCard;
