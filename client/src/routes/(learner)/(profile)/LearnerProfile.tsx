@@ -16,7 +16,7 @@ const User = ({ user, posts }: { user: User; posts: Post[] }) => {
   const tabs = [
     <>
       <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-2">
           {user.badges &&
             user.badges.map((badge: any) => {
               const slug = badge.id

@@ -3,6 +3,7 @@ import clsx from "clsx";
 import ThemeBox from "../ThemeBox";
 import _API_INSTANCE from "@/utils/axios";
 import useAuth from "@/hooks/useAuth";
+import UserAvatar from "./UserAvatar";
 
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { NavLink, useNavigate, type NavigateFunction } from "react-router";
@@ -20,7 +21,6 @@ import {
   Settings,
   Timer,
 } from "lucide-react";
-import UserAvatar from "./UserAvatar";
 
 type NavLinkItem = {
   title: string;
