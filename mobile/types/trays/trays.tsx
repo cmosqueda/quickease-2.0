@@ -25,6 +25,8 @@ import ViewPostAttachmentsTray from "@/components/trays/ViewPostAttachmentsTray"
 import GenerateFromDocumentTray from "@/components/trays/GenerateFromDocumentTray";
 import PostAttachmentsSelectionTray from "@/components/trays/PostAttachmentsSelectionTray";
 import SummarizeNotesStudyToolsSelectionTray from "@/components/trays/SummarizeNotesStudyToolsSelectionTray";
+import ReportPostTray from "@/components/trays/ReportPostTray";
+import ReportCommentTray from "@/components/trays/ReportCommentTray";
 
 /**
  * Typesafe props for all tray components used in the application.
@@ -106,6 +108,14 @@ export type MyTraysProps = {
     setSelectedQuizzes: Dispatch<SetStateAction<Quiz[]>>;
     close: () => void;
   };
+  ReportPostTray: {
+    post: Post;
+    close: () => void;
+  };
+  ReportCommentTray: {
+    comment: Comment;
+    close: () => void;
+  };
   ContextMenuTray: {
     type: "note" | "flashcard" | "quiz";
     close: () => void;
@@ -172,6 +182,12 @@ const _TRAYS = {
   },
   PostAttachmentsSelectionTray: {
     component: PostAttachmentsSelectionTray,
+  },
+  ReportPostTray: {
+    component: ReportPostTray,
+  },
+  ReportCommentTray: {
+    component: ReportCommentTray,
   },
   ContextMenuTray: { component: ContextMenuTray },
 };

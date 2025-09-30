@@ -35,6 +35,8 @@ export default function CommentComponent({
   const { push: openTray, pop: closeTray } = useTrays<MyTraysProps>(
     "DismissibleRoundedNoMarginAndSpacingTray"
   );
+  const useReportTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
+
   const queryClient = useQueryClient();
 
   const editCommentTray = useTrays<MyTraysProps>("DismissibleStickToTopTray");
@@ -135,6 +137,20 @@ export default function CommentComponent({
 
             <View className="flex-1" />
 
+            {user?.id !== comment.user?.id && (
+              <Pressable
+                onPress={() => {
+                  useReportTray.push("ReportCommentTray", {
+                    comment: comment,
+                    close: useReportTray.pop,
+                  });
+                }}
+              >
+                <CustomText color="colorPrimaryContent">
+                  <MaterialCommunityIcons name="flag" size={24} />
+                </CustomText>
+              </Pressable>
+            )}
             {!disableCommentBtn && (
               <Pressable
                 onPress={() =>

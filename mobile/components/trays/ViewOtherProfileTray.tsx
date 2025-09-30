@@ -5,7 +5,7 @@ import CustomView from "../CustomView";
 
 import { toast } from "sonner-native";
 import { Image } from "expo-image";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAssets } from "expo-asset";
 import { User, Post } from "@/types/user/types";
@@ -23,6 +23,7 @@ import { _BADGE_ASSET_MAP, _BADGE_MAP } from "@/types/user/badges";
 
 import _API_INSTANCE from "@/utils/axios";
 import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
+import CustomPressable from "../CustomPressable";
 
 type Badge = {
   id: string;
@@ -67,7 +68,8 @@ const Badges = ({ user }: { user: User }) => {
   const badgeIds = Object.keys(_BADGE_ASSET_MAP);
   const [assets] = useAssets(Object.values(_BADGE_ASSET_MAP));
 
-  if (!assets || !user.badges || user.badges.length === 0) return null;
+  if (!assets || !user.badges || user.badges.length === 0)
+    return <CustomText className="text-center">No badges.</CustomText>;
 
   return (
     <ScrollView contentContainerClassName="flex flex-col gap-4">
@@ -175,6 +177,7 @@ const ViewOtherProfileTray = ({
   close: () => void;
 }) => {
   const pagerViewRef = useRef<PagerView>(null);
+  const [index, setIndex] = useState(0);
 
   const { data: _USER } = useQuery<User>({
     enabled: !!user?.id,
@@ -216,6 +219,36 @@ const ViewOtherProfileTray = ({
       className="rounded-tr-3xl rounded-tl-3xl px-4 pt-8 gap-4"
     >
       <Avatar user={user} />
+      <View className="flex flex-row gap-2">
+        <CustomPressable
+          variant={index === 0 ? "colorPrimary" : "colorBase300"}
+          className="flex-1 rounded-3xl flex flex-row gap-2 justify-center"
+          onPress={() => {
+            setIndex(0);
+            pagerViewRef.current?.setPage(0);
+          }}
+        >
+          <CustomText
+            color={index === 0 ? "colorPrimaryContent" : "colorBaseContent"}
+          >
+            Badges
+          </CustomText>
+        </CustomPressable>
+        <CustomPressable
+          variant={index == 1 ? "colorPrimary" : "colorBase300"}
+          className="flex-1 rounded-3xl flex flex-row gap-2 justify-center"
+          onPress={() => {
+            setIndex(1);
+            pagerViewRef.current?.setPage(1);
+          }}
+        >
+          <CustomText
+            color={index == 1 ? "colorPrimaryContent" : "colorBaseContent"}
+          >
+            Posts
+          </CustomText>
+        </CustomPressable>
+      </View>
       <PagerView
         ref={pagerViewRef}
         style={{ height: Dimensions.get("screen").height / 2, gap: 16 }}

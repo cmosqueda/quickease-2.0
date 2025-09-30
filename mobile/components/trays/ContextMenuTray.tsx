@@ -197,15 +197,17 @@ const ContextMenuTray = ({
         </CustomText>
         <CustomText>Delete</CustomText>
       </Pressable>
-      <Pressable
-        className="p-4 rounded-3xl flex flex-row gap-4 items-center"
-        onPress={handleShare}
-      >
-        <CustomText>
-          <MaterialIcons name="share" size={24} />
-        </CustomText>
-        <CustomText>Share link</CustomText>
-      </Pressable>
+      {data.is_public && (
+        <Pressable
+          className="p-4 rounded-3xl flex flex-row gap-4 items-center"
+          onPress={handleShare}
+        >
+          <CustomText>
+            <MaterialIcons name="share" size={24} />
+          </CustomText>
+          <CustomText>Share link</CustomText>
+        </Pressable>
+      )}
     </CustomView>
   );
 };
