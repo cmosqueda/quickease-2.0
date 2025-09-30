@@ -6,6 +6,8 @@ import {
   delete_comment,
   search_reported_posts,
   resolve_post,
+  get_reported_comments,
+  get_reports_by_comment,
 } from "./admin.forum.controller";
 
 /**
@@ -15,7 +17,8 @@ import {
  *
  * @remarks
  * The following routes are registered:
- * @route `GET /reports`: Retrieves all reported posts.
+ * @route `GET /reports/posts`: Retrieves all reported posts.
+ * @route `GET /reports/commengts`: Retrieves all reported comments.
  * @route `GET /reports/search`: Searches reported posts.
  * @route `GET /report/:post_id`: Retrieves reports for a specific post.
  * @route `DELETE /post/delete/:post_id`: Deletes a specific post.
@@ -25,9 +28,14 @@ import {
  * All routes require admin authentication via the `fastify.authenticate_admin` preHandler.
  */
 export default async function adminForumRoutes(fastify: FastifyInstance) {
-  fastify.get("/reports", {
+  fastify.get("/reports/posts", {
     preHandler: [fastify.authenticate_admin],
     handler: get_reported_posts,
+  });
+
+  fastify.get("/reports/comments", {
+    preHandler: [fastify.authenticate_admin],
+    handler: get_reported_comments,
   });
 
   fastify.get("/reports/search", {
@@ -35,9 +43,14 @@ export default async function adminForumRoutes(fastify: FastifyInstance) {
     handler: search_reported_posts,
   });
 
-  fastify.get("/report/:post_id", {
+  fastify.get("/report/post/:post_id", {
     preHandler: [fastify.authenticate_admin],
     handler: get_reports_by_post,
+  });
+
+  fastify.get("/report/comment/:comment_id", {
+    preHandler: [fastify.authenticate_admin],
+    handler: get_reports_by_comment,
   });
 
   fastify.delete("/post/delete/:post_id", {

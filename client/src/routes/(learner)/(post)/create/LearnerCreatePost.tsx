@@ -181,23 +181,23 @@ export default function LearnerCreatePostPage() {
         editor={editor!}
         style="overflow-y-auto border border-base-300 shadow"
       />
-      <div className="flex flex-row gap-4 items-center">
+      <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
         <button
-          className="btn btn-neutral btn-ghost flex-1"
+          className="btn btn-neutral btn-ghost flex-1 p-4 lg:p-0"
           onClick={() => setTabIndex(1)}
         >
           <Notebook />
           <p>Attach notes</p>
         </button>
         <button
-          className="btn btn-neutral btn-ghost flex-1"
+          className="btn btn-neutral btn-ghost flex-1 p-4 lg:p-0"
           onClick={() => setTabIndex(2)}
         >
           <GalleryVertical />
           <p>Attach flashcards</p>
         </button>
         <button
-          className="btn btn-neutral btn-ghost flex-1"
+          className="btn btn-neutral btn-ghost flex-1 p-4 lg:p-0"
           onClick={() => setTabIndex(3)}
         >
           <FileQuestion />
@@ -208,21 +208,21 @@ export default function LearnerCreatePostPage() {
       {(selectedNotes.length > 0 ||
         selectedFlashcards.length > 0 ||
         selectedQuizzes.length > 0) && (
-        <div className="flex flex-row items-center gap-4 overflow-x-auto flex-wrap">
+        <div className="flex flex-col lg:flex-row items-center gap-4 overflow-x-auto flex-wrap">
           {selectedNotes.map((n) => (
-            <div className="flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
+            <div className="flex-1 lg:flex-[0] flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
               <Notebook className="shrink-0" />
               {n.title}
             </div>
           ))}
           {selectedFlashcards.map((f) => (
-            <div className="flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
+            <div className="flex-1 lg:flex-[0] flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
               <GalleryVertical className="shrink-0" />
               {f.title}
             </div>
           ))}
           {selectedQuizzes.map((q) => (
-            <div className="flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
+            <div className="flex-1 lg:flex-[0] flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
               <FileQuestion className="shrink-0" />
               {q.title}
             </div>
@@ -412,7 +412,7 @@ export default function LearnerCreatePostPage() {
   ]; // 0 - Post | 1 - Notes | 2 - Flashcards | 3 - Quizzes
 
   return (
-    <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-h-screen max-w-7xl mx-auto">
+    <div className="flex flex-col gap-4 p-4 lg:p-8 w-full lg:max-h-screen max-w-7xl mx-auto">
       {tabs[tabIndex]}
     </div>
   );

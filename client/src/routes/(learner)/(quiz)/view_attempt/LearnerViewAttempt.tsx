@@ -45,7 +45,8 @@ export default function LearnerQuizAttemptPage() {
       <h1 className="text-2xl font-bold text-center bg-base-100 p-4 rounded-3xl border border-base-300 shadow">
         {textPercentage}
       </h1>
-      <div className="grid grid-cols-2 gap-4">
+      {/* Web */}
+      <div className="grid grid-rows-2 lg:grid-cols-2 gap-4">
         <div className="items-center justify-center flex flex-col gap-6 bg-base-100 p-4 rounded-3xl border border-base-300 shadow">
           <h1 className="text-2xl font-bold">Correct percentage</h1>
           <div
@@ -76,6 +77,7 @@ export default function LearnerQuizAttemptPage() {
           </div>
         </div>
       </div>
+      {/* Web */}
     </>,
     <>
       <div className="flex flex-col gap-8">
@@ -98,7 +100,7 @@ export default function LearnerQuizAttemptPage() {
                 </p>
               )}
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-rows-4 lg:grid-cols-2 gap-4">
                 {question.options.map((option: any, oIndex: any) => {
                   const isCorrect = question.correctAnswers.includes(oIndex);
                   const isUserChoice = user_answer.includes(oIndex);

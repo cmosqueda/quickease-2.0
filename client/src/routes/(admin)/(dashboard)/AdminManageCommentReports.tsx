@@ -8,17 +8,17 @@ import { useState } from "react";
 import { EditorProvider } from "@tiptap/react";
 import { Link, useNavigate } from "react-router";
 
-export default function AdminManageReportsPage() {
+export default function AdminManageCommentReportsPage() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["reported-posts", page],
+    queryKey: ["reported-comments", page],
     queryFn: async () => {
       try {
         const { data } = await _API_INSTANCE.get(
-          `admin/forum/reports?page=${page}`
+          `admin/forum/reports/comments?page=${page}`
         );
 
         return data;
@@ -56,30 +56,25 @@ export default function AdminManageReportsPage() {
       {isError && <p className="text-error">Failed to load reports.</p>}
 
       <div className="grid lg:grid-cols-2 gap-4">
-        {data?.map((post: any) => (
+        {data?.map((comment: any) => (
           <div
-            key={post.id}
+            key={comment.id}
             className="flex flex-col gap-4 p-4 rounded-3xl bg-base-100 border border-base-200 shadow"
           >
             <Link
-              to={`/admin/report/${post.id}`}
+              to={`/admin/report/comment/${comment.id}`}
               className="font-bold text-sm text-base-content/50"
             >
-              Post by {post.user?.first_name} {post.user?.last_name}
+              Comment by {comment.user?.first_name} {comment.user?.last_name} on
+              post named {comment.post.title}
             </Link>
-            <Link
-              to={`/admin/report/${post.id}`}
-              className="text-4xl font-bold"
-            >
-              {post.title}
-            </Link>
-            {post.post_body && (
+            {comment.comment_body && (
               <Link
-                to={`/admin/report/${post.id}`}
+                to={`/admin/report/comment/${comment.id}`}
                 className="p-4 rounded-3xl bg-base-100 shadow border border-base-200"
               >
                 <EditorProvider
-                  content={post?.post_body || ""}
+                  content={comment?.comment_body || ""}
                   extensions={_TIPTAP_EXTENSIONS}
                   editable={false}
                 />
@@ -89,10 +84,10 @@ export default function AdminManageReportsPage() {
             <div className="collapse collapse-arrow bg-base-200 rounded-box">
               <input type="checkbox" />
               <div className="collapse-title font-medium">
-                {post.reports.length} Report(s)
+                {comment.reports.length} Report(s)
               </div>
               <div className="collapse-content flex flex-col gap-4">
-                {post.reports.map((report: any, idx: number) => (
+                {comment.reports.map((report: any, idx: number) => (
                   <div
                     key={idx}
                     className="p-4 rounded-xl bg-base-100 border border-base-300"
@@ -113,14 +108,14 @@ export default function AdminManageReportsPage() {
             <div className="flex flex-row gap-2 items-center">
               <div className="px-4 py-1 rounded-3xl bg-base-200 w-fit flex flex-row gap-2 items-center">
                 <Clock size={16} />
-                <h1>{new Date(post.created_at).toLocaleDateString()}</h1>
+                <h1>{new Date(comment.created_at).toLocaleDateString()}</h1>
               </div>
-              {post.is_resolved && (
+              {comment.is_resolved && (
                 <div className="px-4 py-1 rounded-3xl bg-base-200 w-fit flex flex-row gap-2 items-center">
                   <Check size={16} />
                   <h1>
                     Resolved -{" "}
-                    {post.is_resolved == "IS_DELETED" ? "Deleted" : "Hidden"}
+                    {comment.is_resolved == "IS_DELETED" ? "Deleted" : "Hidden"}
                   </h1>
                 </div>
               )}

@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import AdminManageReportsPage from "@/routes/(admin)/(dashboard)/AdminManageReports";
+
+import AdminManageCommentPage from "@/routes/(admin)/(comment)/AdminManageComment";
+import AdminManageCommentReportsPage from "@/routes/(admin)/(dashboard)/AdminManageCommentReports";
+import AdminManagePostReportsPage from "@/routes/(admin)/(dashboard)/AdminManagePostReports";
 import AdminManageUsersPage from "@/routes/(admin)/(dashboard)/AdminManageUsers";
 import AdminManagePostPage from "@/routes/(admin)/(post)/AdminManagePost";
 import AdminSearchReportsPage from "@/routes/(admin)/(search)/AdminSearchPosts";
@@ -20,11 +23,22 @@ const AdminRoutes: RouteObject = {
     },
     {
       path: "reports",
-      Component: AdminManageReportsPage,
-    },
-    {
-      path: "reports/search",
-      Component: AdminSearchReportsPage,
+      children: [
+        {
+          path: "posts",
+          Component: AdminManagePostReportsPage,
+          index: true,
+        },
+        {
+          path: "comments",
+          Component: AdminManageCommentReportsPage,
+          index: true,
+        },
+        {
+          path: "search",
+          Component: AdminSearchReportsPage,
+        },
+      ],
     },
     {
       path: "user/:id",
@@ -46,19 +60,39 @@ const AdminRoutes: RouteObject = {
       Component: AdminSearchUsersPage,
     },
     {
-      path: "report/:id",
-      Component: AdminManagePostPage,
-      loader: async ({ params }) => {
-        try {
-          const { data } = await _API_INSTANCE.get(
-            `admin/forum/report/${params.id}`
-          );
+      path: "report",
+      children: [
+        {
+          path: "post/:id",
+          Component: AdminManagePostPage,
+          loader: async ({ params }) => {
+            try {
+              const { data } = await _API_INSTANCE.get(
+                `admin/forum/report/post/${params.id}`
+              );
 
-          return data;
-        } catch {
-          redirect(-1 as any);
-        }
-      },
+              return data;
+            } catch {
+              redirect(-1 as any);
+            }
+          },
+        },
+        {
+          path: "comment/:id",
+          Component: AdminManageCommentPage,
+          loader: async ({ params }) => {
+            try {
+              const { data } = await _API_INSTANCE.get(
+                `admin/forum/report/comment/${params.id}`
+              );
+
+              return data;
+            } catch {
+              redirect(-1 as any);
+            }
+          },
+        },
+      ],
     },
   ],
 };

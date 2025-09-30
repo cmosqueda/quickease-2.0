@@ -94,7 +94,7 @@ export default function LearnerViewFlashcardPage() {
               <h1 className="text-sm text-base-content/50">AI-generated</h1>
             </div>
           )}
-          <h1 className="text-4xl font-bold">{data.title}</h1>
+          <h1 className="text-xl lg:text-4xl font-bold">{data.title}</h1>
         </div>
         <div className="collapse-content text-sm">
           <div className="flex flex-col gap-2">

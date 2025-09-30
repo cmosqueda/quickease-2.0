@@ -11,7 +11,7 @@ import { useEditor } from "@tiptap/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLoaderData, useNavigate } from "react-router";
 
-import { LoaderPinwheel, Plus, Search } from "lucide-react";
+import { LoaderPinwheel, Plus, Search, SquarePlus } from "lucide-react";
 import UserAvatar from "@/components/(learner)/UserAvatar";
 
 export default function LearnerForumPage() {
@@ -64,7 +64,7 @@ export default function LearnerForumPage() {
 
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full max-w-7xl mx-auto">
-      <div className="flex flex-row items-center justify-between gap-8">
+      <div className="flex flex-row items-center justify-between gap-4 lg:gap-8">
         <label className="input w-full lg:w-fit border-base-300">
           <Search size={24} />
           <input
@@ -80,6 +80,17 @@ export default function LearnerForumPage() {
             }}
           />
         </label>
+        {user?.is_verified && (
+          <button
+            onClick={() => {
+              navigate("/learner/post/");
+            }}
+            disabled={!user?.is_verified}
+            className="btn btn-neutral lg:hidden"
+          >
+            <SquarePlus />
+          </button>
+        )}
         <div className="hidden lg:flex flex-row gap-2">
           <button
             onClick={() => {

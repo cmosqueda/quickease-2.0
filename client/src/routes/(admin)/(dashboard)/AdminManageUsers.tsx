@@ -73,7 +73,7 @@ export default function AdminManageUsersPage() {
               className="flex flex-col gap-2 justify-between p-4 rounded-3xl bg-base-100 border border-base-200 shadow cursor-pointer"
             >
               <div className="flex flex-col gap-2">
-                <UserAvatar data={{ user: user }} showDate={false} />
+                <UserAvatar isAdmin={true} data={{ user: user }} showDate={false} />
                 <div className="flex flex-row gap-2 items-center">
                   <Clock size={16} />
                   <p>

@@ -5,6 +5,8 @@ import {
   deleteComment,
   searchReportedPosts,
   resolvePost,
+  getReportedComments,
+  getReportsByComment,
 } from "./admin.forum.service";
 import { FastifyRequest, FastifyReply } from "fastify";
 
@@ -26,6 +28,20 @@ export async function get_reported_posts(
     return reply.code(200).send(posts);
   } catch (err) {
     return reply.code(500).send({ error: "failed_to_get_reported_posts" });
+  }
+}
+
+export async function get_reported_comments(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const page = Number((request.query as any).page) || 1;
+
+    const posts = await getReportedComments(page);
+    return reply.code(200).send(posts);
+  } catch (err) {
+    return reply.code(500).send({ error: "failed_to_get_reported_comments" });
   }
 }
 
@@ -78,6 +94,19 @@ export async function get_reports_by_post(
   try {
     const { post_id } = request.params as { post_id: string };
     const reports = await getReportsByPost(post_id);
+    return reply.code(200).send(reports);
+  } catch {
+    return reply.code(500).send({ error: "failed_to_get_reports" });
+  }
+}
+
+export async function get_reports_by_comment(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const { comment_id } = request.params as { comment_id: string };
+    const reports = await getReportsByComment(comment_id);
     return reply.code(200).send(reports);
   } catch {
     return reply.code(500).send({ error: "failed_to_get_reports" });

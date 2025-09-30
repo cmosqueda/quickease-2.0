@@ -16,6 +16,7 @@ import {
   ArrowRightFromLine,
   Edit,
   EllipsisVertical,
+  Forward,
   Info,
   TriangleAlertIcon,
 } from "lucide-react";
@@ -224,7 +225,7 @@ export default function LearnerQuizPage() {
         <div className="flex flex-row gap-2 items-center">
           {data.user_id === user?.id && (
             <>
-              <details className="dropdown dropdown-end cursor-pointer">
+              <details className="dropdown lg:dropdown-end cursor-pointer">
                 <summary className="list-none">
                   <EllipsisVertical />
                 </summary>
@@ -244,6 +245,21 @@ export default function LearnerQuizPage() {
                   </li>
                   <li>
                     <a onClick={handleDeleteQuiz}>Delete</a>
+                  </li>
+                  <li>
+                    <button
+                      className="rounded-3xl btn btn-soft gap-2 join-item w-full border border-base-300 shadow mt-2"
+                      onClick={async () => {
+                        await navigator.clipboard.writeText(
+                          `https://quickease.online/learner/quizzes/${data.id}`
+                        );
+                        toast.success("Link copied to clipboard.");
+                      }}
+                      disabled={data.is_public}
+                    >
+                      <Forward />
+                      <h1>Share (Copy Link)</h1>
+                    </button>
                   </li>
                 </ul>
               </details>

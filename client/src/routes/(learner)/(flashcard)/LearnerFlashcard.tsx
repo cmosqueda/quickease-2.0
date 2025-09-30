@@ -2,7 +2,6 @@
 import FlippableCard from "@/components/(learner)/flashcard/FlippableCard";
 import _API_INSTANCE from "@/utils/axios";
 
-
 import { useState, useEffect } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -14,6 +13,7 @@ import {
   ChevronRight,
   Edit,
   EllipsisVertical,
+  Forward,
   Info,
 } from "lucide-react";
 
@@ -122,6 +122,21 @@ export default function LearnerFlashcardPage() {
                   {isVisible ? "Set to private" : "Set to public"}
                 </button>
               </li>
+              <li>
+                <button
+                  className="rounded-3xl btn btn-soft gap-2 join-item w-full border border-base-300 shadow mt-2"
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(
+                      `https://quickease.online/learner/flashcards/view/${data.id}`
+                    );
+                    toast.success("Link copied to clipboard.");
+                  }}
+                  disabled={data.isPublic}
+                >
+                  <Forward />
+                  <h1>Share (Copy Link)</h1>
+                </button>
+              </li>
             </ul>
           </details>
         </div>
@@ -135,7 +150,7 @@ export default function LearnerFlashcardPage() {
               <h1 className="text-sm text-base-content/50">AI-generated</h1>
             </div>
           )}
-          <h1 className="text-4xl font-bold">{data.title}</h1>
+          <h1 className="text-xl lg:text-4xl font-bold">{data.title}</h1>
         </div>
         <div className="collapse-content text-sm">
           <div className="flex flex-col gap-2">

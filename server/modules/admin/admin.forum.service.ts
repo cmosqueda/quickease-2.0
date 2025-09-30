@@ -57,6 +57,65 @@ export async function getReportedPosts(page = 1) {
 }
 
 /**
+ * Retrieves a paginated list of comments that have been reported.
+ *
+ * Each comment includes up to 5 reports, with details about the reporting users,
+ * the comment's author, and the associated post. Results are ordered by the number
+ * of reports in descending order.
+ *
+ * @param page - The page number for pagination (defaults to 1).
+ * @returns A promise that resolves to an array of reported comments with related data.
+ */
+export async function getReportedComments(page = 1) {
+  const pageSize = 20;
+  const offset = (page - 1) * pageSize;
+
+  const comments = await db_client.comment.findMany({
+    where: {
+      reports: {
+        some: {},
+      },
+    },
+    include: {
+      reports: {
+        take: 5,
+        include: {
+          reported_by: {
+            select: {
+              id: true,
+              first_name: true,
+              last_name: true,
+              email: true,
+            },
+          },
+        },
+      },
+      user: {
+        select: {
+          first_name: true,
+          last_name: true,
+        },
+      },
+      post: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
+    },
+    orderBy: {
+      reports: {
+        _count: "desc",
+      },
+    },
+    take: pageSize,
+    skip: offset,
+  });
+
+  return comments;
+}
+
+/**
  * Searches for reported forum posts with pagination and optional title query.
  *
  * Retrieves posts that have at least one report, optionally filtering by a case-insensitive title query.
@@ -184,6 +243,63 @@ export async function getReportsByPost(post_id: string) {
   });
 
   return { reports, post };
+}
+
+/**
+ * Retrieves all reports associated with a specific comment, along with detailed information
+ * about the comment itself, its author, and the related post.
+ *
+ * @param comment_id - The unique identifier of the comment for which reports are to be fetched.
+ * @returns An object containing:
+ * - `reports`: An array of report objects, each including information about the user who reported the comment.
+ * - `comment`: The comment object, including its body, creation date, author details, and related post information.
+ *
+ * @throws Will propagate any errors thrown by the database client.
+ */
+export async function getReportsByComment(comment_id: string) {
+  const reports = await db_client.report.findMany({
+    where: {
+      reported_comment_id: comment_id,
+    },
+    include: {
+      reported_by: {
+        select: {
+          id: true,
+          first_name: true,
+          last_name: true,
+          email: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+
+  const comment = await db_client.comment.findFirst({
+    where: {
+      id: comment_id,
+    },
+    select: {
+      id: true,
+      comment_body: true,
+      created_at: true,
+      user: {
+        select: {
+          id: true,
+          first_name: true,
+          last_name: true,
+          avatar: true,
+        },
+      },
+      post: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
+    },
+  });
+
+  return { reports, comment };
 }
 
 /**

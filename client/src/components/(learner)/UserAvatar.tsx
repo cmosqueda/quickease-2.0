@@ -10,11 +10,13 @@ export default function UserAvatar({
     data?.user?.last_name ?? "User"
   }`,
   showDate = true,
+  isAdmin = false,
 }: {
   data: any;
   size?: string;
   fullName?: string;
   showDate?: boolean;
+  isAdmin?: boolean;
 }) {
   const formattedDate = dayjs(data.created_at).isValid()
     ? dayjs(data.created_at).format("MMMM DD, YYYY")
@@ -32,7 +34,11 @@ export default function UserAvatar({
       />
       <div>
         <NavLink
-          to={`/learner/profile/${data.user?.id}`}
+          to={
+            isAdmin
+              ? `/admin/user/${data.user?.id}`
+              : `/learner/profile/${data.user?.id}`
+          }
           className="font-semibold"
         >
           {fullName}
