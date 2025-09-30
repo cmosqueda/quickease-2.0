@@ -26,15 +26,19 @@ export default function AdminManageCommentPage() {
     setIsDeleting(true);
 
     try {
-      await _API_INSTANCE.post(`admin/forum/comment/delete/${data.post.id}`, {
-        data: {
-          user_id: data.post.user.id,
-        },
-      });
+      await _API_INSTANCE.delete(
+        `admin/forum/comment/delete/${data.comment.id}`,
+        {
+          data: {
+            user_id: data.comment.user.id,
+          },
+        }
+      );
 
       toast.success("Post deleted.");
       navigate(-1 as any, { viewTransition: true });
-    } catch {
+    } catch (err) {
+      console.log(err);
       toast.error("Error deleting post, try again.");
     } finally {
       setIsDeleting(false);
