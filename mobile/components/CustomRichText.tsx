@@ -1,5 +1,6 @@
 import useTheme from "@/hooks/useTheme";
 
+import { useState } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 
 import {
@@ -8,8 +9,7 @@ import {
   useEditorBridge,
 } from "@10play/tentap-editor";
 
-import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
-import { useState } from "react";
+import { buildEditorBridgeExtensions } from "@/types/theme/TenTapThemes";
 
 export default function CustomRichText({
   content,
@@ -34,7 +34,7 @@ export default function CustomRichText({
         ...webviewTheme,
       },
     },
-    bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
+    bridgeExtensions: buildEditorBridgeExtensions(currentScheme),
     dynamicHeight: dynamicHeight,
     editable: editable,
     initialContent: content ? content : "",

@@ -5,6 +5,7 @@ import CustomPressable from "../CustomPressable";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { toast } from "sonner-native";
+import { router } from "expo-router";
 import { Comment } from "@/types/user/types";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -23,8 +24,7 @@ import {
 } from "@10play/tentap-editor";
 
 import _API_INSTANCE from "@/utils/axios";
-import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
-import { router } from "expo-router";
+import { buildEditorBridgeExtensions } from "@/types/theme/TenTapThemes";
 
 const EditCommentTray = ({
   comment,
@@ -46,7 +46,7 @@ const EditCommentTray = ({
         backgroundColor: currentScheme.colorBase100,
       },
     },
-    bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
+    bridgeExtensions: buildEditorBridgeExtensions(currentScheme),
     dynamicHeight: true,
     initialContent: comment.comment_body,
   });

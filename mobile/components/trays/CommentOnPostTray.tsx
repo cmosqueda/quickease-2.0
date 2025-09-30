@@ -17,7 +17,7 @@ import {
   RichText,
 } from "@10play/tentap-editor";
 
-import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
+import { buildEditorBridgeExtensions } from "@/types/theme/TenTapThemes";
 
 const CommentOnPostTray = ({
   post,
@@ -36,7 +36,7 @@ const CommentOnPostTray = ({
         backgroundColor: currentScheme.colorBase100,
       },
     },
-    bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
+    bridgeExtensions: buildEditorBridgeExtensions(currentScheme),
     dynamicHeight: true,
   });
 

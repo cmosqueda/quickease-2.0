@@ -2,6 +2,7 @@ import useTheme from "@/hooks/useTheme";
 import PagerView from "react-native-pager-view";
 import CustomText from "../CustomText";
 import CustomView from "../CustomView";
+import CustomPressable from "../CustomPressable";
 
 import { toast } from "sonner-native";
 import { Image } from "expo-image";
@@ -22,8 +23,7 @@ import { _AVATAR_ASSET_MAP } from "@/types/user/avatars";
 import { _BADGE_ASSET_MAP, _BADGE_MAP } from "@/types/user/badges";
 
 import _API_INSTANCE from "@/utils/axios";
-import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
-import CustomPressable from "../CustomPressable";
+import { buildEditorBridgeExtensions } from "@/types/theme/TenTapThemes";
 
 type Badge = {
   id: string;
@@ -40,7 +40,7 @@ const PostComponent = ({ post }: { post: Post }) => {
         backgroundColor: currentScheme.colorBase300,
       },
     },
-    bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
+    bridgeExtensions: buildEditorBridgeExtensions(currentScheme),
     dynamicHeight: true,
     editable: false,
     initialContent: post.post_body,

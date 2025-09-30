@@ -26,7 +26,7 @@ import { _AVATAR_ASSET_MAP } from "@/types/user/avatars";
 import { _BADGE_ASSET_MAP, _BADGE_MAP } from "@/types/user/badges";
 
 import _API_INSTANCE from "@/utils/axios";
-import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
+import { buildEditorBridgeExtensions } from "@/types/theme/TenTapThemes";
 
 /**
  * Renders a post preview component with title and rich text body.
@@ -45,7 +45,7 @@ const PostComponent = ({ post }: { post: Post }) => {
         backgroundColor: currentScheme.colorBase100,
       },
     },
-    bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
+    bridgeExtensions: buildEditorBridgeExtensions(currentScheme),
     dynamicHeight: true,
     editable: false,
     initialContent: post.post_body,

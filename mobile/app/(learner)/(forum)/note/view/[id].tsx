@@ -11,11 +11,11 @@ import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Pressable } from "react-native";
 import { RichText, useEditorBridge } from "@10play/tentap-editor";
+import { buildEditorBridgeExtensions } from "@/types/theme/TenTapThemes";
 import { router, useLocalSearchParams } from "expo-router";
 
 import _FONTS from "@/types/theme/Font";
 import _API_INSTANCE from "@/utils/axios";
-import _EDITOR_BRIDGE_EXTENSIONS from "@/types/theme/TenTapThemes";
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -31,7 +31,7 @@ export default function Page() {
         backgroundColor: currentScheme.colorBase100,
       },
     },
-    bridgeExtensions: _EDITOR_BRIDGE_EXTENSIONS,
+    bridgeExtensions: buildEditorBridgeExtensions(currentScheme),
     dynamicHeight: true,
     editable: false,
     initialContent: content,
