@@ -15,6 +15,7 @@ import { Switch } from "@expo/ui/jetpack-compose";
 import { checkBadges } from "@/types/user/badges";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState } from "react";
+
 import {
   KeyboardAvoidingView,
   Pressable,

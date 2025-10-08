@@ -29,7 +29,6 @@ export default function LearnerQuizPage() {
     queryFn: async () => {
       try {
         const { data } = await _API_INSTANCE.get<Quiz>(`/quiz/${id}`);
-        console.log(data);
 
         return data;
       } catch (err) {
@@ -134,12 +133,12 @@ export default function LearnerQuizPage() {
     });
 
   useEffect(() => {
-    if (quizData && !quizData.is_public) {
+    if (quizData && !quizData.is_public && quizData.user_id !== user?.id) {
       setTimeout(() => {
         router.back();
       }, 3000);
     }
-  }, [quizData, id]);
+  }, [quizData, id, user?.id]);
 
   if (!quizData) {
     return (

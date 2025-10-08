@@ -80,12 +80,16 @@ export default function Page() {
   }, [flashcardIndex, totalFlashcards]);
 
   useEffect(() => {
-    if (flashcardData && !flashcardData.is_public) {
+    if (
+      flashcardData &&
+      !flashcardData.is_public &&
+      flashcardData.user_id !== user?.id
+    ) {
       setTimeout(() => {
         router.back();
       }, 3000);
     }
-  }, [flashcardData, id]);
+  }, [flashcardData, id, user?.id]);
 
   if (isFetching) {
     return (
@@ -185,7 +189,8 @@ export default function Page() {
             <UserAvatar />
             <CustomView variant="colorBase200">
               <CustomText variant="bold">
-                {user?.first_name ?? "Unknown"} {user?.last_name ?? "User"}
+                {flashcardData.user?.first_name ?? "Unknown"}{" "}
+                {flashcardData.user?.last_name ?? "User"}
               </CustomText>
               <CustomText className="text-sm opacity-40">
                 {flashcardData?.updated_at

@@ -28,6 +28,9 @@ export async function getUserFlashcard(flashcard_id: string) {
   try {
     return await db_client.flashcard.findFirst({
       where: { id: flashcard_id },
+      include: {
+        user: true,
+      },
     });
   } catch (err) {
     throw err;

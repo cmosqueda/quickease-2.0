@@ -16,8 +16,10 @@ import { router, useLocalSearchParams } from "expo-router";
 
 import _FONTS from "@/types/theme/Font";
 import _API_INSTANCE from "@/utils/axios";
+import useAuth from "@/hooks/useAuth";
 
 export default function Page() {
+  const { user } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { currentScheme } = useTheme();
 
@@ -58,12 +60,12 @@ export default function Page() {
   });
 
   useEffect(() => {
-    if (noteData && !noteData.is_public) {
+    if (noteData && !noteData.is_public && noteData.user_id !== user?.id) {
       setTimeout(() => {
         router.back();
       }, 3000);
     }
-  }, [noteData, id]);
+  }, [noteData, id, user?.id]);
 
   if (isFetching) {
     return (
@@ -74,7 +76,11 @@ export default function Page() {
     );
   }
 
-  if (noteData && !noteData.is_public) {
+  if (!noteData) {
+    return null;
+  }
+
+  if (!noteData.is_public && noteData.user_id !== user?.id) {
     return (
       <SafeAreaView
         className="flex-1 items-center justify-center gap-6"

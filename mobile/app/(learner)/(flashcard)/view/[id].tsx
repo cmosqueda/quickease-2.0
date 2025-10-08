@@ -80,12 +80,16 @@ export default function Page() {
   }, [flashcardIndex, totalFlashcards]);
 
   useEffect(() => {
-    if (flashcardData && !flashcardData.is_public) {
+    if (
+      flashcardData &&
+      !flashcardData.is_public &&
+      flashcardData.user_id !== user?.id
+    ) {
       setTimeout(() => {
         router.replace("/(learner)/(flashcard)");
       }, 3000);
     }
-  }, [flashcardData, id]);
+  }, [flashcardData, id, user?.id]);
 
   if (isFetching) {
     return (

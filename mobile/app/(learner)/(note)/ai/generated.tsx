@@ -70,7 +70,6 @@ export default function Page() {
 
         if (stored) {
           const parsed = JSON.parse(stored);
-          console.log(parsed);
 
           setTitle(parsed.title || "Untitled");
           setContent(parsed.content || "");
