@@ -26,6 +26,12 @@ const TagsTray = ({
     close();
   };
 
+  const removeTag = (index: number) => {
+    setTags((prev: any[]) => prev.filter((_, i) => i !== index));
+    close();
+  };
+
+
   return (
     <CustomView
       variant="colorBase100"
@@ -56,7 +62,6 @@ const TagsTray = ({
             variant="colorBase200"
             style={{ paddingHorizontal: 16, paddingVertical: 16 }}
             className="rounded-3xl"
-            s
             onPress={addTag}
           >
             <MaterialCommunityIcons name="plus" />
@@ -71,9 +76,14 @@ const TagsTray = ({
               <CustomView
                 key={idx}
                 variant="colorPrimary"
-                className="px-8 py-2 rounded-full"
+                className="px-6 py-2 rounded-full flex flex-row gap-2 items-center"
               >
                 <CustomText color="colorPrimaryContent">{tag}</CustomText>
+                <Pressable onPress={() => removeTag(idx)}>
+                  <CustomText color="colorPrimaryContent">
+                    <MaterialCommunityIcons name="close" />
+                  </CustomText>
+                </Pressable>
               </CustomView>
             ))}
           </View>

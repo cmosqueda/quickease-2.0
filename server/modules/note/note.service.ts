@@ -57,6 +57,7 @@ export async function createUserNote(
         notes_content: content,
         user_id,
         is_ai_generated,
+        is_public: true
       },
     });
   } catch (err) {

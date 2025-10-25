@@ -164,7 +164,7 @@ const ContextMenuTray = ({
 
   return (
     <CustomView className="p-4 rounded-3xl gap-2" variant="colorBase100">
-      <Pressable
+      {/* <Pressable
         className="p-4 rounded-3xl flex flex-row gap-4 items-center"
         onPress={handleToggleVisibility}
       >
@@ -175,7 +175,7 @@ const ContextMenuTray = ({
           />
         </CustomText>
         <CustomText>Set to {data.is_public ? "private" : "public"}</CustomText>
-      </Pressable>
+      </Pressable> */}
       <Pressable
         className="p-4 rounded-3xl flex flex-row gap-4 items-center"
         onPress={() => {

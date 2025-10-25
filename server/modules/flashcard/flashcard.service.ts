@@ -63,6 +63,7 @@ export async function createUserFlashcard(
         flashcards,
         is_ai_generated,
         user_id,
+        is_public: true
       },
     });
   } catch (err) {

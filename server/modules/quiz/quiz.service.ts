@@ -101,6 +101,7 @@ export async function createUserQuiz(
         timed_quiz,
         user_id,
         is_ai_generated: isAI,
+        is_public: true
       },
     });
   } catch (err) {

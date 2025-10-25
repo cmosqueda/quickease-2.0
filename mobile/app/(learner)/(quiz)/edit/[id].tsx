@@ -373,18 +373,19 @@ export default function Page() {
               </CustomView>
             ))}
           </ScrollView>
+          <CustomPressable
+            onPress={addQuestion}
+            variant="colorPrimary"
+            className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
+          >
+            <CustomText color="colorPrimaryContent">
+              <MaterialIcons name="post-add" size={32} />
+            </CustomText>
+            <CustomText color="colorPrimaryContent">Add question</CustomText>
+          </CustomPressable>
         </KeyboardAvoidingView>
       </PagerView>
-      <CustomPressable
-        onPress={addQuestion}
-        variant="colorPrimary"
-        className="absolute bottom-4 right-4 rounded-3xl px-4 py-4 flex-row items-center gap-2 shadow"
-      >
-        <CustomText color="colorPrimaryContent">
-          <MaterialIcons name="post-add" size={32} />
-        </CustomText>
-        <CustomText color="colorPrimaryContent">Add question</CustomText>
-      </CustomPressable>
+
     </SafeAreaView>
   );
 }

@@ -109,7 +109,7 @@ export default function LearnerFlashcardPage() {
               <li>
                 <button onClick={handleDelete}>Delete</button>
               </li>
-              <li>
+              {/* <li>
                 <button
                   onClick={() => {
                     if (isVisible) {
@@ -121,7 +121,7 @@ export default function LearnerFlashcardPage() {
                 >
                   {isVisible ? "Set to private" : "Set to public"}
                 </button>
-              </li>
+              </li> */}
               <li>
                 <button
                   className="rounded-3xl btn btn-soft gap-2 join-item w-full border border-base-300 shadow mt-2"

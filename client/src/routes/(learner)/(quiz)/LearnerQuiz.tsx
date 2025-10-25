@@ -230,7 +230,7 @@ export default function LearnerQuizPage() {
                   <EllipsisVertical />
                 </summary>
                 <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm border border-base-300 my-4 ">
-                  <li>
+                  {/* <li>
                     <a
                       onClick={() => {
                         if (quizVisibility) {
@@ -242,7 +242,7 @@ export default function LearnerQuizPage() {
                     >
                       {quizVisibility ? "Set to private" : "Set to public"}
                     </a>
-                  </li>
+                  </li> */}
                   <li>
                     <a onClick={handleDeleteQuiz}>Delete</a>
                   </li>

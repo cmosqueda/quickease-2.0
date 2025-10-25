@@ -225,9 +225,9 @@ export default function LearnerNotePage() {
               <Forward />
               <h1>Share (Copy Link)</h1>
             </button>
-            <p className="text-xs text-base-content/50">
+            {/* <p className="text-xs text-base-content/50">
               To share, you must set note to public.
-            </p>
+            </p> */}
           </div>
 
           <button
@@ -237,7 +237,7 @@ export default function LearnerNotePage() {
             <Delete />
             <h1>Delete</h1>
           </button>
-          <div className="flex flex-row items-center justify-between rounded-3xl p-4 bg-base-200 gap-2 join-item border border-base-300 shadow">
+          {/* <div className="flex flex-row items-center justify-between rounded-3xl p-4 bg-base-200 gap-2 join-item border border-base-300 shadow">
             <h1>Set to {isPublic ? "private" : "public"}</h1>
             <input
               type="checkbox"
@@ -255,7 +255,7 @@ export default function LearnerNotePage() {
               }}
               className="toggle"
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <GenerateFlashcardModal text={text} />
