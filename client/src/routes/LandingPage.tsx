@@ -156,7 +156,7 @@ export default function LandingPage() {
         <div className="flex flex-col-reverse lg:flex-row justify-between lg:p-0 p-4">
           <div className="flex flex-col lg:justify-start justify-center items-center">
             <h1 className="font-bold text-4xl">Mobile</h1>
-            <p className="text-xl text-base-content/50">
+            <p className="text-xl text-base-content/50 text-center lg:text-start">
               QuickEase Mobile is the official Android app.
             </p>
             <a href="https://github.com/dlord213/quickease-2.0/releases/download/1.0.0/1.0.0.apk" target="_blank" className="underline text-primary text-center">You can also download directly by clicking this link.</a>
