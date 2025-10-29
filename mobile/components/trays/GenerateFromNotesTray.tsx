@@ -96,7 +96,6 @@ const GenerateFromNotesTray = ({
       </View>
       <ScrollView contentContainerClassName="gap-4">
         {user?.notes
-          .filter((note: Note) => note.is_ai_generated === false)
           .map((note: Note) => (
             <Pressable
               key={note.id}

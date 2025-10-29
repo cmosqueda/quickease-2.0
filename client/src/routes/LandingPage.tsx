@@ -153,15 +153,17 @@ export default function LandingPage() {
           .
         </p>
         <div className="divider" />
-        <div className="flex flex-row justify-between lg:p-0 p-4">
-          <div>
+        <div className="flex flex-col-reverse lg:flex-row justify-between lg:p-0 p-4">
+          <div className="flex flex-col lg:justify-start justify-center items-center">
             <h1 className="font-bold text-4xl">Mobile</h1>
             <p className="text-xl text-base-content/50">
               QuickEase Mobile is the official Android app.
             </p>
+            <a href="https://github.com/dlord213/quickease-2.0/releases/download/1.0.0/1.0.0.apk" target="_blank" className="underline text-primary text-center">You can also download directly by clicking this link.</a>
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 items-center justify-center">
             <h1>Scan the QR code below.</h1>
+            <img src="./assets/images/link.png" className="lg:w-[192px] aspect-square" />
           </div>
         </div>
       </section>
