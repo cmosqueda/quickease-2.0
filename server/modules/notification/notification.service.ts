@@ -8,17 +8,25 @@ import _EXPO_PUSH_SERVICE from "../../utils/expo";
  * @returns A promise that resolves to an array of notification objects for the given user, ordered by creation date in descending order.
  */
 export async function getUserNotifications(user_id: string) {
-  const notifications = await db_client.notification.findMany({
+  return db_client.notification.findMany({
     where: {
       recipient_id: user_id,
     },
     orderBy: {
       created_at: "desc",
     },
+    include: {
+      actor: {
+        select: {
+          id: true,
+          first_name: true,
+          last_name: true,
+          avatar: true,
+        },
+      },
+    },
     take: 20,
   });
-
-  return notifications;
 }
 
 /**
@@ -27,13 +35,20 @@ export async function getUserNotifications(user_id: string) {
  * @param notification_id - The unique identifier of the notification to delete.
  * @returns A promise that resolves to `true` if the notification was successfully deleted.
  */
-export async function deleteNotification(notification_id: string) {
-  await db_client.notification.delete({
+export async function deleteNotification(
+  notification_id: string,
+  user_id: string
+) {
+  const result = await db_client.notification.deleteMany({
     where: {
       id: notification_id,
+      recipient_id: user_id,
     },
   });
 
+  if (result.count === 0) {
+    throw new Error("Notification not found or user not authorized.");
+  }
   return true;
 }
 
@@ -43,35 +58,48 @@ export async function deleteNotification(notification_id: string) {
  * @param notification_id - The unique identifier of the notification to mark as read.
  * @returns A promise that resolves to `true` when the operation is complete.
  */
-export async function markNotificationAsRead(notification_id: string) {
-  await db_client.notification.update({
+export async function markNotificationAsRead(
+  notification_id: string,
+  user_id: string
+) {
+  const result = await db_client.notification.updateMany({
     data: {
       is_read: true,
     },
     where: {
       id: notification_id,
+      recipient_id: user_id,
     },
   });
 
+  if (result.count === 0) {
+    throw new Error("Notification not found or user not authorized.");
+  }
   return true;
 }
-
 /**
  * Marks a notification as unread by setting its `is_read` property to `false`.
  *
  * @param notification_id - The unique identifier of the notification to update.
  * @returns A promise that resolves to `true` when the operation is complete.
  */
-export async function markNotificationAsUnread(notification_id: string) {
-  await db_client.notification.update({
+export async function markNotificationAsUnread(
+  notification_id: string,
+  user_id: string
+) {
+  const result = await db_client.notification.updateMany({
     data: {
       is_read: false,
     },
     where: {
       id: notification_id,
+      recipient_id: user_id,
     },
   });
 
+  if (result.count === 0) {
+    throw new Error("Notification not found or user not authorized.");
+  }
   return true;
 }
 

@@ -1,15 +1,38 @@
 import db_client from "../../utils/client";
 
 /**
- * Retrieves a user by their unique identifier, including related flashcards, quizzes, and notes.
+ * Retrieves a user by their unique identifier, including counts of related items.
  *
  * @param user_id - The unique identifier of the user to retrieve.
- * @returns A promise that resolves to the user object with associated flashcards, quizzes, and notes, or `null` if not found.
+ * @returns A promise that resolves to the user object with associated counts, or `null` if not found.
  */
 export async function getUser(user_id: string) {
   const user = await db_client.user.findUnique({
     where: { id: user_id },
-    include: { flashcards: true, quizzes: true, notes: true },
+    select: {
+      id: true,
+      first_name: true,
+      last_name: true,
+      email: true,
+      avatar: true,
+      badges: true,
+      is_admin: true,
+      is_verified: true,
+      is_public: true,
+      created_at: true,
+      // Add other user fields you need
+
+      // Get counts instead of all related data
+      _count: {
+        select: {
+          flashcards: true,
+          quizzes: true,
+          notes: true,
+          posts: true,
+          comments: true,
+        },
+      },
+    },
   });
 
   return user;
@@ -20,7 +43,7 @@ export async function getUser(user_id: string) {
  *
  * @param user_id - The unique identifier of the user to retrieve.
  * @returns A promise that resolves to an object containing the user's first name, last name, and admin status,
- *          or `null` if no user is found.
+ * or `null` if no user is found.
  */
 export async function checkUser(user_id: string) {
   const user = await db_client.user.findUnique({
@@ -80,8 +103,6 @@ export async function changeUserEmail(email: string, user_id: string) {
 /**
  * Toggles the profile visibility for a user.
  *
- * Updates the `is_public` field of the user with the specified `user_id`.
- *
  * @param visibility - The desired visibility state (`true` for public, `false` for private).
  * @param user_id - The unique identifier of the user whose profile visibility is to be updated.
  * @returns A promise that resolves to the updated user object.
@@ -103,16 +124,36 @@ export async function toggleProfileVisibility(
 }
 
 /**
- * Retrieves the profile information for a user by their ID.
+ * Retrieves the profile information for a user by their ID using a two-step query.
  *
- * If the user's profile is public, returns detailed information including comments, badges, avatar, and posts.
- * If the profile is not public, returns only the user's first name, last name, and public status.
+ * If the user's profile is public, returns detailed information.
+ * If the profile is not public or user not found, returns minimal info or null.
  *
  * @param user_id - The unique identifier of the user whose profile is to be viewed.
- * @returns A promise that resolves to the user's profile information, with details depending on the profile's public status.
+ * @returns A promise that resolves to the user's profile information.
  */
 export async function viewProfile(user_id: string) {
-  const user = await db_client.user.findUnique({
+  // Step 1: Fetch basic info and visibility
+  const userBasics = await db_client.user.findUnique({
+    where: { id: user_id },
+    select: {
+      first_name: true,
+      last_name: true,
+      is_public: true,
+    },
+  });
+
+  if (!userBasics) {
+    return null; // User not found
+  }
+
+  // Step 2: If not public, return the minimal data
+  if (!userBasics.is_public) {
+    return userBasics;
+  }
+
+  // Step 3: If public, fetch the full, rich data
+  const userProfile = await db_client.user.findUnique({
     where: {
       id: user_id,
     },
@@ -130,15 +171,7 @@ export async function viewProfile(user_id: string) {
     },
   });
 
-  if (user?.is_public) {
-    return user;
-  } else {
-    return {
-      first_name: user?.first_name,
-      last_name: user?.last_name,
-      is_public: false,
-    };
-  }
+  return userProfile;
 }
 
 /**
@@ -146,10 +179,10 @@ export async function viewProfile(user_id: string) {
  *
  * @param avatar_id - The ID of the new avatar to assign to the user.
  * @param user_id - The ID of the user whose avatar is to be changed.
- * @returns A promise that resolves to `true` when the avatar has been successfully updated.
+ * @returns A promise that resolves to the updated user object.
  */
 export async function changeAvatar(avatar_id: string, user_id: string) {
-  await db_client.user.update({
+  const update = await db_client.user.update({
     data: {
       avatar: avatar_id,
     },
@@ -158,5 +191,5 @@ export async function changeAvatar(avatar_id: string, user_id: string) {
     },
   });
 
-  return true;
+  return update;
 }

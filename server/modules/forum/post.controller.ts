@@ -57,7 +57,7 @@ export async function get_recent_posts(
     const data = await getRecentPosts(cursor, parseInt(limit ?? "10"));
     reply.code(200).send(data);
   } catch (err) {
-    reply.code(500).send({ message: "Error fetching posts.", err });
+    reply.code(500).send({ message: "Error fetching posts." });
   }
 }
 
@@ -70,7 +70,6 @@ export async function get_post(request: FastifyRequest, reply: FastifyReply) {
   } catch (err) {
     reply.code(500).send({
       message: "Error getting post.",
-      err,
     });
   }
 }
@@ -123,8 +122,8 @@ export async function create_post(
 
     reply.code(200).send(post);
   } catch (err) {
-    console.error("Error creating post:", err);
-    reply.code(500).send({ message: "Error posting.", err });
+    console.error("Error creating post:");
+    reply.code(500).send({ message: "Error posting." });
   }
 }
 
@@ -197,7 +196,7 @@ export async function delete_post(
 ) {
   const { post_id } = request.body as { post_id: string };
   try {
-    await deletePost(post_id);
+    await deletePost(post_id, request.user.id);
 
     reply.code(200).send({
       message: "Deleted post.",
@@ -226,7 +225,7 @@ export async function toggle_post_visibility(
   };
 
   try {
-    await togglePostVisibility(visibility, post_id);
+    await togglePostVisibility(visibility, post_id, request.user.id);
 
     reply.code(200).send({
       message: "Updated post visibility.",
@@ -271,7 +270,7 @@ export async function search_posts(
     const result = await searchPost(query, page, limit, sort ?? "newest");
     reply.code(200).send(result);
   } catch (err) {
-    console.error("Search error:", err);
-    reply.code(500).send({ message: "Search failed.", err });
+    console.error("Search error:");
+    reply.code(500).send({ message: "Search failed." });
   }
 }

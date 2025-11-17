@@ -53,7 +53,7 @@ export async function get_user_note(
     return reply.code(400).send({ message: "Note ID is required." });
 
   try {
-    const note = await getUserNote(note_id);
+    const note = await getUserNote(note_id, request.user.id);
 
     if (!note) return reply.code(404).send({ message: "Note not found." });
 
@@ -155,7 +155,7 @@ export async function update_user_note(
   }
 
   try {
-    const note = await updateUserNote(title, content, note_id);
+    const note = await updateUserNote(title, content, note_id, request.user.id);
     reply.code(200).send(note);
   } catch (err) {
     reply.code(500).send({ message: "Error updating note." });
@@ -194,7 +194,7 @@ export async function delete_user_note(
   }
 
   try {
-    await deleteUserNote(note_id);
+    await deleteUserNote(note_id, request.user.id);
     reply.code(200).send({ message: "Note deleted successfully." });
   } catch (err) {
     reply.code(500).send({ message: "Error deleting note." });
@@ -237,7 +237,7 @@ export async function toggle_user_note_visibility(
   }
 
   try {
-    await toggleNoteVisibility(visibility, note_id);
+    await toggleNoteVisibility(visibility, note_id, request.user.id);
     reply.code(200).send({ message: "Note visibility updated." });
   } catch (err) {
     reply.code(500).send({ message: "Error updating note visibility." });

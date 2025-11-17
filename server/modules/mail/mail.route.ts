@@ -20,22 +20,35 @@ import {
  * @route `POST /forgot-password`: Requests password reset for forgotten password (no authentication required).
  */
 export default async function mailRoutes(fastify: FastifyInstance) {
+  const mailRateLimit = {
+    config: {
+      rateLimit: {
+        max: 5,
+        timeWindow: "10 minutes",
+      },
+    },
+  };
+
   fastify.post("/request-verify-email", {
+    ...mailRateLimit,
     preHandler: [fastify.authenticate],
     handler: request_to_verify_email,
   });
 
   fastify.post("/request-change-email", {
+    ...mailRateLimit,
     preHandler: [fastify.authenticate],
     handler: request_to_change_email,
   });
 
   fastify.post("/request-change-password", {
+    ...mailRateLimit,
     preHandler: [fastify.authenticate],
     handler: request_to_change_password,
   });
 
   fastify.post("/forgot-password", {
+    ...mailRateLimit,
     handler: request_to_change_forgotten_password,
   });
 }

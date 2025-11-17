@@ -11,6 +11,7 @@ export async function getUserFlashcards(user_id: string) {
   try {
     return await db_client.flashcard.findMany({
       where: { user_id },
+      orderBy: { created_at: "desc" },
     });
   } catch (err) {
     throw err;
@@ -24,12 +25,22 @@ export async function getUserFlashcards(user_id: string) {
  * @returns A promise that resolves to the flashcard object if found, or `null` if not found.
  * @throws Will throw an error if the database query fails.
  */
-export async function getUserFlashcard(flashcard_id: string) {
+export async function getUserFlashcard(flashcard_id: string, user_id: string) {
   try {
     return await db_client.flashcard.findFirst({
-      where: { id: flashcard_id },
+      where: {
+        id: flashcard_id,
+        OR: [{ is_public: true }, { user_id: user_id }],
+      },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            avatar: true,
+          },
+        },
       },
     });
   } catch (err) {
@@ -63,7 +74,7 @@ export async function createUserFlashcard(
         flashcards,
         is_ai_generated,
         user_id,
-        is_public: true
+        is_public: true,
       },
     });
   } catch (err) {
@@ -99,6 +110,7 @@ export async function updateUserFlashcard(
       },
       where: {
         id: flashcard_id,
+        user_id: user_id,
       },
     });
   } catch (err) {
@@ -113,10 +125,13 @@ export async function updateUserFlashcard(
  * @returns A promise that resolves to `true` if the deletion was successful.
  * @throws Will throw an error if the deletion fails.
  */
-export async function deleteUserFlashcard(flashcard_id: string) {
+export async function deleteUserFlashcard(
+  flashcard_id: string,
+  user_id: string
+) {
   try {
     await db_client.flashcard.delete({
-      where: { id: flashcard_id },
+      where: { id: flashcard_id, user_id: user_id },
     });
     return true;
   } catch (err) {
@@ -134,10 +149,16 @@ export async function deleteUserFlashcard(flashcard_id: string) {
  * @returns A promise that resolves to `true` if the operation succeeds.
  * @throws Throws an error if the database operation fails.
  */
-export async function toggleFlashcardVisibility(flashcard_id: string) {
+export async function toggleFlashcardVisibility(
+  flashcard_id: string,
+  user_id: string
+) {
   try {
-    const current = await db_client.flashcard.findUnique({
-      where: { id: flashcard_id },
+    const current = await db_client.flashcard.findFirst({
+      where: {
+        id: flashcard_id,
+        user_id: user_id,
+      },
       select: { is_public: true },
     });
 

@@ -24,44 +24,51 @@ export async function getUserQuizzes(user_id: string) {
  * @throws Will throw an error if the database query fails.
  */
 export async function getQuiz(quiz_id: string, user_id: string) {
-  try {
-    const quiz = await db_client.quiz.findUnique({
-      where: { id: quiz_id },
-      include: {
-        attempts: {
-          where: { user_id },
+  const quiz = await db_client.quiz.findFirst({
+    where: {
+      id: quiz_id,
+      OR: [{ is_public: true }, { user_id: user_id }],
+    },
+    include: {
+      attempts: {
+        where: { user_id },
+        orderBy: { completed_at: "desc" },
+      },
+      user: {
+        select: {
+          id: true,
+          first_name: true,
+          last_name: true,
+          avatar: true,
         },
       },
-    });
+    },
+  });
 
-    const leaderboard = await db_client.quizAttempt.findMany({
-      where: {
-        quiz_id,
-        is_public: true,
-      },
-      orderBy: [
-        { score: "desc" },
-        {
-          duration: "asc",
-        },
-      ],
-      take: 10,
-      include: {
-        user: {
-          select: {
-            id: true,
-            first_name: true,
-            last_name: true,
-            avatar: true,
-          },
-        },
-      },
-    });
-
-    return { ...quiz, leaderboard };
-  } catch (err) {
-    throw err;
+  if (!quiz) {
+    throw new Error("Quiz not found or not accessible.");
   }
+
+  const leaderboard = await db_client.quizAttempt.findMany({
+    where: {
+      quiz_id,
+      is_public: true,
+    },
+    orderBy: [{ score: "desc" }, { duration: "asc" }],
+    take: 10,
+    include: {
+      user: {
+        select: {
+          id: true,
+          first_name: true,
+          last_name: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+
+  return { ...quiz, leaderboard };
 }
 
 /**
@@ -79,7 +86,7 @@ export async function getQuiz(quiz_id: string, user_id: string) {
  */
 export async function createUserQuiz(
   title: string,
-  description: string,
+  description: string | null,
   quiz_content: {
     question: string;
     description?: string;
@@ -91,22 +98,18 @@ export async function createUserQuiz(
   user_id: string,
   isAI?: boolean
 ) {
-  try {
-    return await db_client.quiz.create({
-      data: {
-        title,
-        description,
-        quiz_content,
-        is_randomized,
-        timed_quiz,
-        user_id,
-        is_ai_generated: isAI,
-        is_public: true
-      },
-    });
-  } catch (err) {
-    throw err;
-  }
+  return db_client.quiz.create({
+    data: {
+      title,
+      description,
+      quiz_content,
+      is_randomized,
+      timed_quiz,
+      user_id,
+      is_ai_generated: isAI,
+      is_public: true,
+    },
+  });
 }
 
 /**
@@ -123,7 +126,7 @@ export async function createUserQuiz(
  */
 export async function updateUserQuiz(
   title: string,
-  description: string,
+  description: string | null,
   quiz_content: {
     question: string;
     description?: string;
@@ -132,22 +135,28 @@ export async function updateUserQuiz(
   }[],
   is_randomized: boolean,
   timed_quiz: number,
-  quiz_id: string
+  quiz_id: string,
+  user_id: string
 ) {
-  try {
-    return await db_client.quiz.update({
-      data: {
-        title,
-        description,
-        quiz_content,
-        is_randomized,
-        timed_quiz,
-      },
-      where: { id: quiz_id },
-    });
-  } catch (err) {
-    throw err;
+  const result = await db_client.quiz.updateMany({
+    data: {
+      title,
+      description,
+      quiz_content,
+      is_randomized,
+      timed_quiz,
+    },
+    where: {
+      id: quiz_id,
+      user_id: user_id,
+    },
+  });
+
+  if (result.count === 0) {
+    throw new Error("Quiz not found or user not authorized.");
   }
+
+  return db_client.quiz.findUnique({ where: { id: quiz_id } });
 }
 
 /**
@@ -160,16 +169,22 @@ export async function updateUserQuiz(
  */
 export async function updateUserQuizVisibility(
   visibility: boolean,
-  quiz_id: string
+  quiz_id: string,
+  user_id: string
 ) {
-  try {
-    return await db_client.quiz.update({
-      data: { is_public: visibility },
-      where: { id: quiz_id },
-    });
-  } catch (err) {
-    throw err;
+  const result = await db_client.quiz.updateMany({
+    data: { is_public: visibility },
+    where: {
+      id: quiz_id,
+      user_id: user_id,
+    },
+  });
+
+  if (result.count === 0) {
+    throw new Error("Quiz not found or user not authorized.");
   }
+
+  return db_client.quiz.findUnique({ where: { id: quiz_id } });
 }
 
 /**
@@ -179,13 +194,18 @@ export async function updateUserQuizVisibility(
  * @returns A promise that resolves to `true` if the quiz was deleted successfully.
  * @throws Will throw an error if the deletion fails.
  */
-export async function deleteUserQuiz(quiz_id: string) {
-  try {
-    await db_client.quiz.delete({ where: { id: quiz_id } });
-    return true;
-  } catch (err) {
-    throw err;
+export async function deleteUserQuiz(quiz_id: string, user_id: string) {
+  const result = await db_client.quiz.deleteMany({
+    where: {
+      id: quiz_id,
+      user_id: user_id,
+    },
+  });
+
+  if (result.count === 0) {
+    throw new Error("Quiz not found or user not authorized.");
   }
+  return true;
 }
 
 /**
@@ -249,16 +269,20 @@ export async function submitQuizAttempt(
  * @returns A promise that resolves to the quiz attempt object, including related quiz and selected user fields.
  * @throws Rethrows any errors encountered during the database query.
  */
-export async function getQuizAttempt(attempt_id: string) {
-  try {
-    return await db_client.quizAttempt.findUnique({
-      where: { id: attempt_id },
-      include: {
-        quiz: true,
-        user: { select: { first_name: true, last_name: true } },
-      },
-    });
-  } catch (err) {
-    throw err;
+export async function getQuizAttempt(attempt_id: string, user_id: string) {
+  const attempt = await db_client.quizAttempt.findFirst({
+    where: {
+      id: attempt_id,
+      user_id: user_id,
+    },
+    include: {
+      quiz: true,
+      user: { select: { first_name: true, last_name: true } },
+    },
+  });
+
+  if (!attempt) {
+    throw new Error("Quiz attempt not found or user not authorized.");
   }
+  return attempt;
 }

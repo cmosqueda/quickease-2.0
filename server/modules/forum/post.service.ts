@@ -282,9 +282,14 @@ export async function createPost(
                 Only output the JSON string.
                 `.trim(),
   });
+  let result: { toxicity: number; likely_to_reject: number };
 
-  const result = JSON.parse(response.text!.replace(/```json|```/g, ""));
-
+  try {
+    result = JSON.parse(response.text!.replace(/```json|```/g, ""));
+  } catch (e) {
+    console.error("AI JSON parsing failed:", e);
+    result = { toxicity: 0.0, likely_to_reject: 0.0 };
+  }
   if (result.toxicity > 0.6 || result.likely_to_reject > 0.5) {
     return { toxic: true };
   }
@@ -473,9 +478,9 @@ export async function addTagOnPost(post_id: string, tag_ids: string[]) {
  * @param post_id - The unique identifier of the post to delete.
  * @returns An object indicating whether the post was successfully deleted.
  */
-export async function deletePost(post_id: string) {
+export async function deletePost(post_id: string, user_id: string) {
   await db_client.post.delete({
-    where: { id: post_id },
+    where: { id: post_id, user_id: user_id },
   });
 
   return { deleted: true };
@@ -490,7 +495,8 @@ export async function deletePost(post_id: string) {
  */
 export async function togglePostVisibility(
   visibility: boolean,
-  post_id: string
+  post_id: string,
+  user_id: string
 ) {
   await db_client.post.update({
     data: {
@@ -498,6 +504,7 @@ export async function togglePostVisibility(
     },
     where: {
       id: post_id,
+      user_id: user_id,
     },
   });
 
@@ -521,7 +528,6 @@ export async function searchPost(
 ) {
   const skip = (page - 1) * limit;
 
-  // Base filter
   const baseWhere: Prisma.PostWhereInput = {
     OR: [
       {

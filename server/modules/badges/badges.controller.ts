@@ -16,6 +16,13 @@ export async function checkUserBadges(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const result = await checkAndAwardBadges(request.user.id);
-  return reply.send(result);
+  try {
+    const result = await checkAndAwardBadges(request.user.id);
+    return reply.code(200).send(result);
+  } catch (err) {
+    request.log.error(err, "Error checking user badges");
+    return reply.code(500).send({
+      message: "An error occurred while checking for new badges.",
+    });
+  }
 }
