@@ -24,7 +24,11 @@ export async function loginUser(email: string, password: string) {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return false;
 
-    return user;
+    return {
+      ...user,
+      password:
+        "nope, contact me nalang kay na-decode nimo ang JWT. hehe jhon lloyd viernes akong name",
+    };
   } catch (err) {
     throw new Error("User login failed.");
   }
@@ -61,7 +65,11 @@ export async function registerUser(
       },
     });
 
-    return user;
+    return {
+      ...user,
+      password:
+        "nope, contact me nalang kay na-decode nimo ang JWT. hehe jhon lloyd viernes akong name",
+    };
   } catch (err) {
     throw new Error("User registration failed");
   }

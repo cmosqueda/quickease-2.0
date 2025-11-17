@@ -41,24 +41,30 @@ export async function commentOnPost(
     },
     include: {
       user: {
-        select: { first_name: true, last_name: true, push_token: true },
+        select: { first_name: true, last_name: true },
+      },
+      post: {
+        select: {
+          id: true,
+          title: true,
+          user: {
+            select: { id: true, push_token: true },
+          },
+        },
       },
     },
   });
 
-  const post = await db_client.post.findUnique({
-    where: { id: post_id },
-    select: { user_id: true, user: true, title: true },
-  });
+  try {
+    const { post, user } = comment;
+    const postOwner = post.user;
+    const actorName = `${user.first_name} ${user.last_name}`;
 
-  if (post) {
-    if (post.user_id !== user_id) {
-      const actorName = `${comment.user.first_name} ${comment.user.last_name}`;
-
-      if (post.user.push_token) {
+    if (postOwner.id !== user_id) {
+      if (postOwner.push_token) {
         await _EXPO_PUSH_SERVICE.sendPushNotificationsAsync([
           {
-            to: post.user.push_token,
+            to: postOwner.push_token,
             sound: "default",
             body: `${actorName} commented on your post.`,
             title: `About your post '${post.title}'`,
@@ -67,7 +73,7 @@ export async function commentOnPost(
       }
 
       await sendNotification({
-        recipientId: post.user_id,
+        recipientId: postOwner.id,
         actorId: user_id,
         type: "COMMENTED",
         message: `${actorName} commented on your post.`,
@@ -75,11 +81,13 @@ export async function commentOnPost(
         resourceType: "POST",
       });
     }
+  } catch (notificationError) {
+    console.error("Failed to send notification:", notificationError);
   }
 
+  // 3. Return the created comment
   return comment;
 }
-
 /**
  * Updates the body of a comment with the specified ID.
  *
@@ -87,17 +95,26 @@ export async function commentOnPost(
  * @param comment_id - The unique identifier of the comment to update.
  * @returns A promise that resolves to the updated comment object.
  */
-export async function updateComment(body: string, comment_id: string) {
-  const comment = await db_client.comment.update({
+export async function updateComment(
+  body: string,
+  comment_id: string,
+  user_id: string
+) {
+  const result = await db_client.comment.updateMany({
     data: {
       comment_body: body,
     },
     where: {
       id: comment_id,
+      user_id: user_id,
     },
   });
 
-  return comment;
+  if (result.count === 0) {
+    throw new Error("Comment not found or user not authorized.");
+  }
+
+  return db_client.comment.findUnique({ where: { id: comment_id } });
 }
 
 /**
@@ -106,10 +123,17 @@ export async function updateComment(body: string, comment_id: string) {
  * @param comment_id - The unique identifier of the comment to be deleted.
  * @returns A promise that resolves to `true` if the deletion was successful.
  */
-export async function deleteComment(comment_id: string) {
-  await db_client.comment.delete({
-    where: { id: comment_id },
+export async function deleteComment(comment_id: string, user_id: string) {
+  const result = await db_client.comment.deleteMany({
+    where: {
+      id: comment_id,
+      user_id: user_id,
+    },
   });
+
+  if (result.count === 0) {
+    throw new Error("Comment not found or user not authorized.");
+  }
 
   return true;
 }
@@ -128,60 +152,53 @@ export async function deleteComment(comment_id: string) {
  */
 export async function replyOnComment(
   body: string,
-  comment_id: string,
+  parent_comment_id: string,
   user_id: string,
   post_id: string
 ) {
-  const actor = await db_client.user.findUnique({
-    where: { id: user_id },
-    select: { first_name: true, last_name: true },
-  });
-
-  const parentComment = await db_client.comment.findUnique({
-    where: { id: comment_id },
-    select: {
-      user_id: true,
-      post: {
-        select: { title: true, user: { select: { push_token: true } } },
-      },
-    },
-  });
-
-  await db_client.comment.update({
+  const newReply = await db_client.comment.create({
     data: {
-      replies: {
-        create: {
-          comment_body: body,
-          user_id,
-          post_id,
+      comment_body: body,
+      user_id,
+      post_id,
+      parent_comment_id: parent_comment_id,
+    },
+    include: {
+      user: {
+        select: { first_name: true, last_name: true },
+      },
+      parent_comment: {
+        select: {
+          user: {
+            select: { id: true, push_token: true },
+          },
+          post: {
+            select: { title: true },
+          },
         },
       },
     },
-    where: { id: comment_id },
   });
 
-  if (parentComment && actor) {
-    if (parentComment.user_id !== user_id) {
-      const actorName = `${actor.first_name} ${actor.last_name}`;
+  try {
+    const { parent_comment, user } = newReply;
+    const recipient = parent_comment?.user;
+    const actorName = `${user.first_name} ${user.last_name}`;
 
-      const parentUser = await db_client.user.findUnique({
-        where: { id: parentComment.user_id },
-        select: { push_token: true },
-      });
-
-      if (parentUser?.push_token) {
+    if (recipient && recipient.id !== user_id) {
+      if (recipient.push_token) {
         await _EXPO_PUSH_SERVICE.sendPushNotificationsAsync([
           {
-            to: parentUser.push_token,
+            to: recipient.push_token,
             sound: "default",
             body: `${actorName} replied to your comment.`,
-            title: `On '${parentComment.post.title}'`,
+            title: `On '${parent_comment?.post.title}'`,
           },
         ]);
       }
 
       await sendNotification({
-        recipientId: parentComment.user_id,
+        recipientId: recipient.id,
         actorId: user_id,
         type: "REPLIED",
         message: `${actorName} replied to your comment.`,
@@ -189,7 +206,9 @@ export async function replyOnComment(
         resourceType: "COMMENT",
       });
     }
+  } catch (notificationError) {
+    console.error("Failed to send reply notification:", notificationError);
   }
 
-  return { replied: true };
+  return newReply;
 }

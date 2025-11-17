@@ -24,6 +24,8 @@ import adminMailRoutes from "./modules/admin/admin.mail.route";
 
 import { FastifyRequest, FastifyReply } from "fastify";
 import { server } from "./server";
+import fastifyHelmet from "@fastify/helmet";
+import fastifyRateLimit from "@fastify/rate-limit";
 
 /**
  * Initializes Fastify server configuration including environment variables, cookies, JWT, CORS, multipart handling, and route registration.
@@ -73,6 +75,12 @@ export default async function initializeFastifyConfig() {
         NODEMAILER_GMAIL_USER: { type: "string" },
       },
     },
+  });
+
+  await server.register(fastifyHelmet);
+  await server.register(fastifyRateLimit, {
+    max: 100,
+    timeWindow: "1 minute",
   });
 
   /*
@@ -144,14 +152,8 @@ export default async function initializeFastifyConfig() {
     return next();
   });
 
-  /*
-    - 'onRequest' hook that verifies JWT tokens for every route that requires JWT token
-    The token/cookie is stored on a key named 'QUICKEASE_TOKEN'.
-    */
-
-  server.decorate(
-    "authenticate",
-    async (request: FastifyRequest, reply: FastifyReply) => {
+  function createAuthGuard(options: { isAdmin: boolean }) {
+    return async (request: FastifyRequest, reply: FastifyReply) => {
       const token = request.cookies.QUICKEASE_TOKEN;
 
       if (!token) {
@@ -176,54 +178,29 @@ export default async function initializeFastifyConfig() {
         }
 
         request.user = decoded;
+
+        if (options.isAdmin && !decoded.is_admin) {
+          return reply.code(403).send({ message: "admin_only_access" });
+        }
       } catch (err) {
         return reply.code(401).send({ message: "invalid_token" });
       }
-    }
-  );
+    };
+  }
 
+  /*
+    - 'onRequest' hook that verifies JWT tokens for every route that requires JWT token
+    The token/cookie is stored on a key named 'QUICKEASE_TOKEN'.
+    */
+
+  server.decorate("authenticate", createAuthGuard({ isAdmin: false }));
   /*
     - 'onRequest' hook that verifies JWT tokens for every route that requires JWT token
     The token/cookie is stored on a key named 'QUICKEASE_TOKEN'.
 
     (FOR ADMIN API ROUTES)
     */
-  server.decorate(
-    "authenticate_admin",
-    async (request: FastifyRequest, reply: FastifyReply) => {
-      const token = request.cookies.QUICKEASE_TOKEN;
-
-      if (!token) {
-        return reply.code(401).send({ message: "authentication_required" });
-      }
-
-      try {
-        const decoded = request.jwt.verify(token) as {
-          id: string;
-          first_name: string;
-          last_name: string;
-          is_admin: boolean;
-        };
-
-        if (
-          !decoded.id ||
-          !decoded.first_name ||
-          !decoded.last_name ||
-          typeof decoded.is_admin !== "boolean"
-        ) {
-          return reply.code(401).send({ message: "invalid_token_payload" });
-        }
-
-        request.user = decoded;
-
-        if (!decoded.is_admin) {
-          return reply.code(403).send({ message: "admin_only_access" });
-        }
-      } catch (err) {
-        return reply.code(401).send({ message: "invalid_token" });
-      }
-    }
-  );
+  server.decorate("authenticate_admin", createAuthGuard({ isAdmin: true }));
 
   /*
     - Registering routes for each modules (Users)

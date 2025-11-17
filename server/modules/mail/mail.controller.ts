@@ -31,7 +31,7 @@ export async function request_to_verify_email(
 
 /**
  * Handles a request to change the user's email address.
- * 
+ *
  * Sends an email to the user with instructions to change their email.
  * Responds with a success message if the mail is sent, or an error message if sending fails.
  *
@@ -96,6 +96,6 @@ export async function request_to_change_forgotten_password(
 
     reply.code(200).send({ mail, message: "Mail sent." });
   } catch (err) {
-    reply.code(400).send({ message: "Mail failed to send.", errors: err });
+    reply.code(400).send({ message: "Mail failed to send." });
   }
 }

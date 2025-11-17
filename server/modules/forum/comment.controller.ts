@@ -110,7 +110,7 @@ export async function update_comment(
   };
 
   try {
-    return await updateComment(body, comment_id);
+    return await updateComment(body, comment_id, request.user.id);
   } catch (err) {
     reply.code(500).send({
       message: "Error updating comment",
@@ -135,7 +135,7 @@ export async function delete_comment(
   };
 
   try {
-    return await deleteComment(comment_id);
+    return await deleteComment(comment_id, request.user.id);
   } catch (err) {
     reply.code(500).send({
       message: "Error updating comment",

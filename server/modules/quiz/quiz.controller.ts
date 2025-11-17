@@ -156,7 +156,8 @@ export async function update_user_quiz(
       quiz_content,
       is_randomized,
       timed_quiz,
-      quiz_id
+      quiz_id,
+      request.user.id
     );
     reply.code(200).send({ message: "Updated quiz." });
   } catch (err) {
@@ -188,7 +189,7 @@ export async function update_user_quiz_visibility(
   }
 
   try {
-    await updateUserQuizVisibility(visibility, quiz_id);
+    await updateUserQuizVisibility(visibility, quiz_id, request.user.id);
     reply.code(200).send({ message: "Updated quiz visibility." });
   } catch (err) {
     reply.code(500).send({ message: "Error updating quiz visibility." });
@@ -205,7 +206,7 @@ export async function delete_user_quiz(
     return reply.code(400).send({ message: "Quiz ID is required." });
 
   try {
-    await deleteUserQuiz(quiz_id);
+    await deleteUserQuiz(quiz_id, request.user.id);
     reply.code(200).send({ message: "Deleted quiz." });
   } catch (err) {
     reply.code(500).send({ message: "Error deleting quiz." });
@@ -295,7 +296,7 @@ export async function get_quiz_attempt(
     return reply.code(400).send({ message: "Attempt ID is required." });
 
   try {
-    const attempt = await getQuizAttempt(attempt_id);
+    const attempt = await getQuizAttempt(attempt_id, request.user.id);
     if (!attempt)
       return reply.code(404).send({ message: "Attempt not found." });
 

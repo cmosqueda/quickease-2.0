@@ -24,6 +24,10 @@ export async function requestChangeEmail(user_id: string) {
     where: { id: user_id },
   });
 
+  if (!user) {
+    throw new Error("User not found for mail request");
+  }
+
   const token = randomBytes(32).toString("hex");
 
   await db_client.userToken.create({
@@ -466,7 +470,7 @@ export async function requestForgotPassword(email: string) {
       user_id: user.id,
       token,
       type: "RESET_PASSWORD",
-      expires_at: dayjs(new Date()).add(24, "hours").toDate(),
+      expires_at: dayjs().add(24, "hours").toDate(),
     },
   });
 

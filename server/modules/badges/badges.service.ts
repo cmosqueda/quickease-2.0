@@ -62,6 +62,12 @@ const _BADGES = [
   },
 ];
 
+type Badge = {
+  id: string;
+  name: string;
+  description: string;
+};
+
 /**
  * Checks the user's activity and awards new badges based on predefined conditions.
  *
@@ -75,10 +81,23 @@ const _BADGES = [
 export async function checkAndAwardBadges(user_id: string) {
   const user = await db_client.user.findUnique({
     where: { id: user_id },
-    select: { badges: true },
+    select: { badges: true, lastBadgeCheckAt: true },
   });
 
-  const currentBadges: any = user?.badges ?? [];
+  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+  if (user?.lastBadgeCheckAt && user.lastBadgeCheckAt > tenMinutesAgo) {
+    return {
+      awarded: [],
+    };
+  }
+
+  await db_client.user.update({
+    where: { id: user_id },
+    data: { lastBadgeCheckAt: new Date() },
+  });
+
+  const currentBadges: Badge[] = (user?.badges as Badge[] | null) ?? [];
+  const currentBadgeIds = new Set(currentBadges.map((b) => b.id));
   const newBadges: string[] = [];
 
   const [
@@ -90,7 +109,7 @@ export async function checkAndAwardBadges(user_id: string) {
     repeatedQuizAttempts,
     postsWithAttachments,
     commentUpvotes,
-    topPostUpvotes,
+    userPostsWithUpvotes,
     forumActivityCount,
   ] = await Promise.all([
     db_client.note.count({ where: { user_id } }),
@@ -108,24 +127,16 @@ export async function checkAndAwardBadges(user_id: string) {
       having: { quiz_id: { _count: { gte: 5 } } },
     }),
     db_client.post.count({
-      where: {
-        user_id,
-        attachments: { some: {} },
-      },
+      where: { user_id, attachments: { some: {} } },
     }),
     db_client.commentVote.count({
-      where: {
-        comment: { user_id },
-        vote_type: 1,
-      },
+      where: { comment: { user_id }, vote_type: 1 },
     }),
-    db_client.post.count({
-      where: {
-        user_id,
-        votes: {
-          some: {
-            vote_type: 1,
-          },
+    db_client.post.findMany({
+      where: { user_id, attachments: { some: {} } },
+      select: {
+        _count: {
+          select: { votes: { where: { vote_type: 1 } } },
         },
       },
     }),
@@ -137,6 +148,10 @@ export async function checkAndAwardBadges(user_id: string) {
     ]).then(([pv, cv, c, p]) => pv + cv + c + p),
   ]);
 
+  const hasCommunityFavoritePost = userPostsWithUpvotes.some(
+    (post) => post._count.votes >= 25
+  );
+
   const badgeConditions: Record<string, boolean> = {
     firstStep: notesCount > 0 && flashcardCount > 0 && quizCount > 0,
     quickLearner: highScoreQuizzes.length >= 5,
@@ -145,16 +160,14 @@ export async function checkAndAwardBadges(user_id: string) {
     masterReviewer: repeatedQuizAttempts.length >= 1,
     firstPost: postsWithAttachments > 0,
     helpfulCommenter: commentUpvotes >= 10,
-    communityFavorite: topPostUpvotes >= 25,
+    communityFavorite: hasCommunityFavoritePost,
     perfectionist: perfectQuizzes >= 1,
     achiever: perfectQuizzes >= 10,
     forumVeteran: forumActivityCount >= 100,
   };
 
-  const currentBadgeIds = currentBadges.map((b: any) => b.id);
-
   for (const badgeId in badgeConditions) {
-    if (badgeConditions[badgeId] && !currentBadgeIds.includes(badgeId)) {
+    if (badgeConditions[badgeId] && !currentBadgeIds.has(badgeId)) {
       newBadges.push(badgeId);
     }
   }
@@ -162,30 +175,20 @@ export async function checkAndAwardBadges(user_id: string) {
   if (newBadges.length > 0) {
     const awardedBadgeObjects = newBadges
       .map((id) => _BADGES.find((b) => b.id === id))
-      .filter(Boolean);
+      .filter((b): b is Badge => Boolean(b));
 
-    const mergedBadges = [...currentBadges, ...awardedBadgeObjects].reduce(
-      (acc, badge) => {
-        if (!acc.find((b: any) => b.id === badge.id)) acc.push(badge);
-        return acc;
-      },
-      []
-    );
+    const allBadges = [...currentBadges, ...awardedBadgeObjects];
+    const uniqueBadges = [...new Map(allBadges.map((b) => [b.id, b])).values()];
 
     await db_client.user.update({
       where: { id: user_id },
       data: {
-        badges: mergedBadges,
+        badges: uniqueBadges,
       },
     });
+
+    return { awarded: awardedBadgeObjects };
   }
 
-  return {
-    awarded: newBadges
-      .map((id) => {
-        const badge = _BADGES.find((b) => b.id === id);
-        return badge ? { id, ...badge } : null;
-      })
-      .filter(Boolean),
-  };
+  return { awarded: [] };
 }

@@ -2,8 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider   = "prisma-client-js"
-  engineType = "binary"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -12,19 +11,20 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  password    String
-  first_name  String
-  last_name   String
-  email       String   @unique
-  avatar      String?
-  badges      Json?
-  is_public   Boolean  @default(true)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
-  is_admin    Boolean  @default(false)
-  is_verified Boolean  @default(false)
-  push_token String?
+  id               String    @id @default(uuid())
+  password         String
+  first_name       String
+  last_name        String
+  email            String    @unique
+  avatar           String?
+  badges           Json?
+  is_public        Boolean   @default(true)
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @default(now())
+  is_admin         Boolean   @default(false)
+  is_verified      Boolean   @default(false)
+  push_token       String?
+  lastBadgeCheckAt DateTime?
 
   flashcards             Flashcard[]
   notes                  Note[]
@@ -221,6 +221,9 @@ model Report {
   description          String
   reported_target_type ReportTargetType
   reported_at          DateTime         @default(now())
+
+  @@unique([reported_by_id, reported_post_id])
+  @@unique([reported_by_id, reported_comment_id])
 }
 
 enum ReportTargetType {

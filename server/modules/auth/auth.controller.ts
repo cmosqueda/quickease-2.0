@@ -48,9 +48,9 @@ export async function login_user(request: FastifyRequest, reply: FastifyReply) {
     reply
       .setCookie("QUICKEASE_TOKEN", token, {
         path: "/",
-        secure: true,
         httpOnly: true,
-        sameSite: "none",
+        secure: true,
+        sameSite: "lax",
       })
       .code(200)
       .send({
@@ -61,7 +61,6 @@ export async function login_user(request: FastifyRequest, reply: FastifyReply) {
   } catch (err) {
     reply.code(500).send({
       message: "Internal server error. Please try again later.",
-      errors: err,
     });
   }
 }
@@ -117,9 +116,9 @@ export async function register_user(
     reply
       .setCookie("QUICKEASE_TOKEN", token, {
         path: "/",
-        secure: true,
         httpOnly: true,
-        sameSite: "none",
+        secure: true,
+        sameSite: "lax",
       })
       .code(201)
       .send({
@@ -131,7 +130,6 @@ export async function register_user(
     console.error("Register error:", err);
     reply.code(500).send({
       message: "Internal server error. Could not register user.",
-      errors: err,
     });
   }
 }
@@ -153,7 +151,7 @@ export async function logout(request: FastifyRequest, reply: FastifyReply) {
       path: "/",
       httpOnly: true,
       secure: true,
-      sameSite: "none",
+      sameSite: "lax",
     });
     return reply.code(200).send("Logout successfully.");
   } catch (err) {
@@ -201,7 +199,6 @@ export async function update_password(
   } catch (err) {
     reply.code(500).send({
       message: "Error updating password",
-      errors: err instanceof Error ? err.message : err,
     });
   }
 }
@@ -245,7 +242,6 @@ export async function update_email(
   } catch (err) {
     reply.code(500).send({
       message: "Error updating email",
-      errors: err instanceof Error ? err.message : err,
     });
   }
 }
@@ -287,7 +283,6 @@ export async function verify_email(
   } catch (err) {
     reply.code(500).send({
       message: "Error updating email",
-      errors: err instanceof Error ? err.message : err,
     });
   }
 }

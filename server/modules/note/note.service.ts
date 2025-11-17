@@ -24,10 +24,23 @@ export async function getUserNotes(user_id: string) {
  * @returns A promise that resolves to the note object if found, or `null` if not found.
  * @throws Will propagate any errors encountered during the database query.
  */
-export async function getUserNote(note_id: string) {
+export async function getUserNote(note_id: string, user_id: string) {
   try {
     return await db_client.note.findFirst({
-      where: { id: note_id },
+      where: {
+        id: note_id,
+        OR: [{ is_public: true }, { user_id: user_id }],
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            avatar: true,
+          },
+        },
+      },
     });
   } catch (err) {
     throw err;
@@ -57,7 +70,7 @@ export async function createUserNote(
         notes_content: content,
         user_id,
         is_ai_generated,
-        is_public: true
+        is_public: true,
       },
     });
   } catch (err) {
@@ -77,19 +90,25 @@ export async function createUserNote(
 export async function updateUserNote(
   title: string,
   content: string,
-  note_id: string
+  note_id: string,
+  user_id: string
 ) {
-  try {
-    return await db_client.note.update({
-      data: {
-        title,
-        notes_content: content,
-      },
-      where: { id: note_id },
-    });
-  } catch (err) {
-    throw err;
+  const result = await db_client.note.updateMany({
+    data: {
+      title,
+      notes_content: content,
+    },
+    where: {
+      id: note_id,
+      user_id: user_id,
+    },
+  });
+
+  if (result.count === 0) {
+    throw new Error("Note not found or user not authorized.");
   }
+
+  return db_client.note.findUnique({ where: { id: note_id } });
 }
 
 /**
@@ -99,15 +118,19 @@ export async function updateUserNote(
  * @returns A promise that resolves to `true` if the note was successfully deleted.
  * @throws Will throw an error if the deletion fails.
  */
-export async function deleteUserNote(note_id: string) {
-  try {
-    await db_client.note.delete({
-      where: { id: note_id },
-    });
-    return true;
-  } catch (err) {
-    throw err;
+export async function deleteUserNote(note_id: string, user_id: string) {
+  const result = await db_client.note.deleteMany({
+    where: {
+      id: note_id,
+      user_id: user_id,
+    },
+  });
+
+  if (result.count === 0) {
+    throw new Error("Note not found or user not authorized.");
   }
+
+  return true;
 }
 
 /**
@@ -120,15 +143,20 @@ export async function deleteUserNote(note_id: string) {
  */
 export async function toggleNoteVisibility(
   visibility: boolean,
-  note_id: string
+  note_id: string,
+  user_id: string
 ) {
-  try {
-    await db_client.note.update({
-      data: { is_public: visibility },
-      where: { id: note_id },
-    });
-    return true;
-  } catch (err) {
-    throw err;
+  const result = await db_client.note.updateMany({
+    data: { is_public: visibility },
+    where: {
+      id: note_id,
+      user_id: user_id,
+    },
+  });
+
+  if (result.count === 0) {
+    throw new Error("Note not found or user not authorized.");
   }
+
+  return db_client.note.findUnique({ where: { id: note_id } });
 }

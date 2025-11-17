@@ -57,7 +57,7 @@ export async function get_user_flashcard(
   }
 
   try {
-    const flashcard = await getUserFlashcard(flashcard_id);
+    const flashcard = await getUserFlashcard(flashcard_id, request.user.id);
 
     if (!flashcard) {
       return reply.code(404).send({ message: "Flashcard not found." });
@@ -230,7 +230,7 @@ export async function delete_user_flashcard(
   }
 
   try {
-    await deleteUserFlashcard(flashcard_id);
+    await deleteUserFlashcard(flashcard_id, request.user.id);
     reply.code(200).send({ message: "Deleted flashcard." });
   } catch (err) {
     reply.code(500).send({ message: "Error deleting flashcard." });
@@ -258,7 +258,7 @@ export async function toggle_flashcard_visibility(
   }
 
   try {
-    await toggleFlashcardVisibility(flashcard_id);
+    await toggleFlashcardVisibility(flashcard_id, request.user.id);
     reply.code(200).send({ message: "Updated flashcard visibility." });
   } catch (err) {
     reply.code(500).send({ message: "Error updating flashcard visibility." });

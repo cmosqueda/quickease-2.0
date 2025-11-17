@@ -13,5 +13,11 @@ export default async function badgeRoutes(fastify: FastifyInstance) {
   fastify.get("/check", {
     preHandler: [fastify.authenticate],
     handler: checkUserBadges,
+    config: {
+      rateLimit: {
+        max: 5,
+        timeWindow: "10 minutes",
+      },
+    },
   });
 }

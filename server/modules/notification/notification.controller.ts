@@ -48,7 +48,7 @@ export async function delete_notification(
   };
 
   try {
-    await deleteNotification(notification_id);
+    await deleteNotification(notification_id, request.user.id);
 
     reply.code(200).send({
       message: "Deleted notification.",
@@ -79,7 +79,7 @@ export async function mark_notification_as_read(
   };
 
   try {
-    await markNotificationAsRead(notification_id);
+    await markNotificationAsRead(notification_id, request.user.id);
 
     reply.code(201).send({
       updated: true,
@@ -110,7 +110,7 @@ export async function mark_notification_as_unread(
   };
 
   try {
-    await markNotificationAsUnread(notification_id);
+    await markNotificationAsUnread(notification_id, request.user.id);
 
     reply.code(201).send({
       updated: true,
