@@ -17,7 +17,6 @@ async function main() {
     await initializeFastifyConfig();
     await db_client.$connect();
     await server.listen({ port: 10000, host: "0.0.0.0" });
-
     server.log.info("Server listening on port 10000");
   } catch (error) {
     server.log.error(error);
