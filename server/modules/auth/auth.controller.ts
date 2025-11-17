@@ -50,7 +50,7 @@ export async function login_user(request: FastifyRequest, reply: FastifyReply) {
         path: "/",
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "none",
       })
       .code(200)
       .send({
@@ -118,7 +118,7 @@ export async function register_user(
         path: "/",
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "none",
       })
       .code(201)
       .send({
