@@ -82,7 +82,7 @@ const User = ({ user, posts }: { user: User; posts: Post[] }) => {
           <Crown size={36} />
           <div className="flex flex-col">
             <p>Notes created</p>
-            <h1 className="font-bold text-4xl">{user.notes.length || "0"}</h1>
+            <h1 className="font-bold text-4xl">{user._count.notes || "0"}</h1>
           </div>
         </div>
         <div className="flex flex-row gap-4 bg-base-100 p-8 rounded-3xl items-center border border-base-300 shadow">
@@ -90,7 +90,7 @@ const User = ({ user, posts }: { user: User; posts: Post[] }) => {
           <div className="flex flex-col">
             <p>Flashcards created</p>
             <h1 className="font-bold text-4xl">
-              {user.flashcards.length || "0"}
+              {user._count.flashcards || "0"}
             </h1>
           </div>
         </div>
@@ -98,7 +98,7 @@ const User = ({ user, posts }: { user: User; posts: Post[] }) => {
           <FileQuestion size={36} />
           <div className="flex flex-col">
             <p>Quiz created</p>
-            <h1 className="font-bold text-4xl">{user.quizzes.length || "0"}</h1>
+            <h1 className="font-bold text-4xl">{user._count.quizzes || "0"}</h1>
           </div>
         </div>
       </div>

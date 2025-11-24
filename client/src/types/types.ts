@@ -48,6 +48,11 @@ export interface User {
   updated_at: Date;
   is_admin: boolean;
   is_verified: boolean;
+  _count: {
+    notes: number;
+    flashcards: number;
+    quizzes: number;
+  };
 
   flashcards: Flashcard[];
   notes: Note[];

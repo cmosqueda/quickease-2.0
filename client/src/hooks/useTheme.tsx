@@ -10,7 +10,7 @@ type ThemeStore = {
 const useTheme = create<ThemeStore>()(
   persist(
     immer((set) => ({
-      theme: undefined,
+      theme: "rush",
       setTheme: (theme: string) => {
         set((state) => {
           state.theme = theme;
@@ -23,9 +23,8 @@ const useTheme = create<ThemeStore>()(
     })),
     {
       name: "QUICKEASE_STORED_THEME",
-      partialize: (state) => ({ theme: state.theme }), // Only persist `theme`
+      partialize: (state) => ({ theme: state.theme }),
       onRehydrateStorage: () => (state) => {
-        // Sync theme to <html> on rehydrate
         if (state?.theme) {
           document
             .querySelector("html")

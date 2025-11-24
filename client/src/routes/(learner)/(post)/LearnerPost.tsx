@@ -19,6 +19,7 @@ import {
   ArrowLeft,
   Edit,
   EllipsisVertical,
+  LoaderPinwheel,
   TriangleAlertIcon,
 } from "lucide-react";
 
@@ -27,6 +28,7 @@ export default function LearnerPostPage() {
   const { user } = useAuth();
   const { mutate: comment } = useComment();
   const { mutate: deletePost } = useDeletePost();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const data = useLoaderData();
   const navigate = useNavigate();
@@ -104,6 +106,14 @@ export default function LearnerPostPage() {
     );
   }
 
+  if (isDeleting) {
+    return (
+      <div className="flex flex-col w-full max-w-7xl items-center justify-center mx-auto min-h-screen p-4 lg:p-8 gap-4">
+        <LoaderPinwheel className="w-64 animate-spin" size={128} />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 lg:p-8 gap-4">
       <div className="flex items-center justify-between">
@@ -129,17 +139,18 @@ export default function LearnerPostPage() {
               {postData.user_id == user?.id && (
                 <li>
                   <button
-                    onClick={async () =>
+                    onClick={async () => {
+                      setIsDeleting((prev) => !prev);
                       deletePost(
                         { post_id: data.id },
                         {
                           onSuccess: async () => {
-                            toast.success("Post deleted.");
                             navigate("/learner");
+                            toast.success("Post deleted.");
                           },
                         }
-                      )
-                    }
+                      );
+                    }}
                   >
                     Delete
                   </button>
