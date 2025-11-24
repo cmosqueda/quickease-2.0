@@ -149,7 +149,7 @@ export default function Page() {
         </Pressable>
       </View>
       <View className="flex-1" />
-      <Pressable className="self-center">
+      <Pressable className="self-center" onPress={() => router.push("/tos")}>
         <CustomText>Terms of use & Privacy and policy</CustomText>
       </Pressable>
     </SafeAreaView>

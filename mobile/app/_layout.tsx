@@ -99,6 +99,7 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="index" />
+            <Stack.Screen name="tos" />
             <Stack.Screen name="(auth)" />
             <Stack.Protected guard={user?.id ? true : false}>
               <Stack.Screen
