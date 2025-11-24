@@ -13,7 +13,7 @@ Open the source code directory in your preferred IDE and open a new terminal ins
 - `npm install`
 - `npm run dev`
 
-**Frontend**
+**Web**
 
 ```
 - Vite
@@ -41,4 +41,8 @@ Open the source code directory in your preferred IDE and open a new terminal ins
 - @fastify/postgres (fastify plugin for PostgreSQL)
 - @fastify/multipart (fastify plugin for handling files)
 - @fastify/mailer (fastify plugin for handling mails)
+- @fastify/cookie (fastify plugin for handling cookies)
+- @fastify/cors (fastify plugin for CORS)
+- @fastify/env (fastify plugin for storing environment variables)
+- @fastify/helmet (fastify plugin for secure headers)
 ```
