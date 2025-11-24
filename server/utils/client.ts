@@ -1,4 +1,3 @@
-import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
 /**
@@ -7,9 +6,6 @@ import { PrismaClient } from "@prisma/client";
  *
  * @see {@link https://www.prisma.io/docs/reference/api-reference/prisma-client}
  */
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL,
-});
-const db_client = new PrismaClient({ adapter });
+let db_client = new PrismaClient();
 
 export default db_client;

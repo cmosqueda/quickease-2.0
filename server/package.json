@@ -4,7 +4,7 @@
   "description": "QuickEase's 2.0 server",
   "license": "ISC",
   "author": "",
-  "type": "module",
+  "type": "commonjs",
   "main": "server.ts",
   "scripts": {
     "dev": "npx prisma generate && tsnd --respawn --transpile-only --exit-child server.ts",
