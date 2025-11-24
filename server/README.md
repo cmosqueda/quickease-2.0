@@ -13,6 +13,9 @@ This directory serves the server-side of our project named QuickEase 2.0, rewrit
 3. When trying to run the `npm i` or `npm install` command, it throws an error that says something about package dependencies conflict on their versions.
    Solution is to install the modules by adding the `--force-legacy-deps` parameter, if it still won't install then contact the developer `(Jhon Lloyd Viernes)`
 
+4. Ngano na-bali imong controller/services?
+   Sige nalang gyud. Ulahi nakayko naka-bantay man gud HAHAHAHA
+
 ## Initializing @/server
 
 **Requirements**
@@ -38,7 +41,7 @@ In chronological order
 2. Push the migrations on your database by running the npx prisma db push command
 3. Check if the tables are created on your PostgreSQL (by opening pgAdmin? or anything similar that'll let you check the database schema)
 4. Run the npm run dev command.
-5. Server initialized, check its port. (3000 = default port)
+5. Server initialized, check its port. (10000 = default port)
 ```
 
 ## Libraries used

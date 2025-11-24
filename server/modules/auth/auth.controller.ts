@@ -151,7 +151,7 @@ export async function logout(request: FastifyRequest, reply: FastifyReply) {
       path: "/",
       httpOnly: true,
       secure: true,
-      sameSite: "lax",
+      sameSite: "none",
     });
     return reply.code(200).send("Logout successfully.");
   } catch (err) {

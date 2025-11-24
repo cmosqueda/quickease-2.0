@@ -13,32 +13,12 @@ Open the source code directory in your preferred IDE and open a new terminal ins
 - `npm install`
 - `npm run dev`
 
-**Frontend**
 
-```
-- Vite
-- Zod
-- CLSX
-- Zustand
-- Sonner
-- DaisyUI
-- TailwindCSS
-- Tanstack Query
-```
+**Running the mobile**
+Open the source code directory in your preferred IDE and open a new terminal instance.
 
-**Backend**
+- `cd mobile`
+- `npm install`
+- `npm start`
 
-```
-- Node.js
-- Fastify
-- Prisma
-- Zod
-- bcrypt (for hashing passwords)
-- pg (for PostgreSQL)
-- @google/genai (for AI)
-- @fastify/cookie (fastify plugin for cookies)
-- @fastify/jwt (fastify plugin for JWT)
-- @fastify/postgres (fastify plugin for PostgreSQL)
-- @fastify/multipart (fastify plugin for handling files)
-- @fastify/mailer (fastify plugin for handling mails)
-```
+**Note**: This won't run on Expo Go and development build must be installed.

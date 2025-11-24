@@ -208,21 +208,21 @@ export default function LearnerCreatePostPage() {
       {(selectedNotes.length > 0 ||
         selectedFlashcards.length > 0 ||
         selectedQuizzes.length > 0) && (
-        <div className="flex flex-col lg:flex-row items-center gap-4 overflow-x-auto flex-wrap">
+        <div className="grid grid-col-1 lg:grid-cols-2 xl:grid-cols-5 gap-3">
           {selectedNotes.map((n) => (
-            <div className="flex-1 lg:flex-[0] flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
+            <div className="flex-1 flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 xl:max-h-[5rem] xl:max-w-[16rem] overflow-hidden border border-base-300 shadow">
               <Notebook className="shrink-0" />
               {n.title}
             </div>
           ))}
           {selectedFlashcards.map((f) => (
-            <div className="flex-1 lg:flex-[0] flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
+            <div className="flex-1 flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 xl:max-h-[5rem] xl:max-w-[16rem] overflow-hidden border border-base-300 shadow">
               <GalleryVertical className="shrink-0" />
               {f.title}
             </div>
           ))}
           {selectedQuizzes.map((q) => (
-            <div className="flex-1 lg:flex-[0] flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 h-[5rem] w-[16rem] overflow-hidden border border-base-300 shadow">
+            <div className="flex-1 flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 xl:max-h-[5rem] xl:max-w-[16rem] overflow-hidden border border-base-300 shadow">
               <FileQuestion className="shrink-0" />
               {q.title}
             </div>
@@ -412,7 +412,7 @@ export default function LearnerCreatePostPage() {
   ]; // 0 - Post | 1 - Notes | 2 - Flashcards | 3 - Quizzes
 
   return (
-    <div className="flex flex-col gap-4 p-4 lg:p-8 w-full lg:max-h-screen max-w-7xl mx-auto">
+    <div className="flex flex-col gap-4 p-4 lg:p-8 w-full lg:max-h-[150vh] max-w-7xl mx-auto">
       {tabs[tabIndex]}
     </div>
   );

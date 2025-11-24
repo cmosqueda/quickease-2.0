@@ -3,9 +3,14 @@ import clsx from "clsx";
 
 import { Paintbrush } from "lucide-react";
 import { darkThemes, lightThemes } from "@/types/themes";
+import { useEffect } from "react";
 
 export default function ThemeBox({ floating = true }: { floating?: boolean }) {
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme!);
+  }, [theme]);
 
   if (floating) {
     return (

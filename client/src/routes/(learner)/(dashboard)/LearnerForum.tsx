@@ -12,7 +12,6 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLoaderData, useNavigate } from "react-router";
 
 import { LoaderPinwheel, Plus, Search, SquarePlus } from "lucide-react";
-import UserAvatar from "@/components/(learner)/UserAvatar";
 
 export default function LearnerForumPage() {
   const navigate = useNavigate();

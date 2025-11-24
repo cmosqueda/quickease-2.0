@@ -65,7 +65,7 @@ const AlternatePostCard = ({ data }: { data: any }) => {
       {filteredAttachments.length > 0 && (
         <>
           <h1 className="font-bold text-xl">Attachments</h1>
-          <div className="flex flex-row gap-4 items-center">
+          <div className="grid grid-col-1 lg:grid-cols-2 xl:grid-cols-5 gap-3">
             {filteredAttachments.map((attachment: PostAttachment) => {
               switch (attachment.resource_type) {
                 case "NOTE":
