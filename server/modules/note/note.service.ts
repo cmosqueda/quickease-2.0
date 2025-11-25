@@ -40,13 +40,15 @@ export async function getUserNote(note_id: string, user_id: string) {
             avatar: true,
           },
         },
+        // Optional: Include connected items to verify creation in response
+        flashcards: true,
+        quizzes: true,
       },
     });
   } catch (err) {
     throw err;
   }
 }
-
 /**
  * Creates a new note for a user in the database.
  *
@@ -61,23 +63,69 @@ export async function createUserNote(
   title: string,
   content: string,
   user_id: string,
-  is_ai_generated: boolean
+  is_ai_generated: boolean,
+  generatedQuiz?: { title: string; quiz_content: any } | null,
+  generatedFlashcards?: { title: string; flashcards: any } | null
 ) {
   try {
-    return await db_client.note.create({
-      data: {
-        title,
-        notes_content: content,
-        user_id,
-        is_ai_generated,
-        is_public: true,
+    const noteData = {
+      title,
+      notes_content: content,
+      user_id,
+      is_ai_generated,
+      is_public: true,
+    };
+
+    if (!generatedQuiz && !generatedFlashcards) {
+      return await db_client.note.create({
+        data: noteData,
+      });
+    }
+
+    return await db_client.$transaction(
+      async (tx) => {
+        const note = await tx.note.create({
+          data: { ...noteData, has_pregenerated_contents: true },
+        });
+
+        if (generatedQuiz) {
+          await tx.quiz.create({
+            data: {
+              user_id,
+              connected_note_id: note.id,
+              title: generatedQuiz.title || `${title} - Quiz`,
+              quiz_content: generatedQuiz.quiz_content,
+              is_ai_generated: true,
+              is_public: true,
+            },
+          });
+        }
+
+        if (generatedFlashcards) {
+          await tx.flashcard.create({
+            data: {
+              user_id,
+              connected_note_id: note.id,
+              title: generatedFlashcards.title || `${title} - Flashcards`,
+              flashcards: generatedFlashcards.flashcards,
+              is_ai_generated: true,
+              is_public: true,
+            },
+          });
+        }
+
+        return note;
       },
-    });
+      {
+        maxWait: 5000,
+        timeout: 10000,
+      }
+    );
   } catch (err) {
+    console.error("Note creation failed:", err);
     throw err;
   }
 }
-
 /**
  * Updates an existing user note with the provided title and content.
  *

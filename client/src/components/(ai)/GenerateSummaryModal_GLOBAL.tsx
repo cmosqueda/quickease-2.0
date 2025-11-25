@@ -97,6 +97,7 @@ export default function GenerateSummaryModal() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [index, setIndex] = useState(0);
+  const [enableAutoGenerate, setIsAutoGenerate] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -118,13 +119,15 @@ export default function GenerateSummaryModal() {
     const extension = file.name.split(".").pop()?.toLowerCase();
     let endpoint = "";
 
+    const queryParams = `?auto=${enableAutoGenerate}`;
+
     if (index === 0 && extension === "pdf") {
-      endpoint = "ai/generate-notes-from-pdf";
+      endpoint = "ai/generate-notes-from-pdf" + queryParams;
     } else if (
       index === 1 &&
       ["jpg", "jpeg", "png"].includes(extension || "")
     ) {
-      endpoint = "ai/generate-notes-from-image";
+      endpoint = "ai/generate-notes-from-image" + queryParams;
     } else {
       return toast.error("File not supported or doesn't match selected tab.");
     }
@@ -141,12 +144,13 @@ export default function GenerateSummaryModal() {
 
       if (response.status === 200) {
         const data = response.data;
-        setGeneratedContent(data.content);
 
         await localStorage.setItem(
           "QUICKEASE_GENERATED_CONTENT",
           JSON.stringify(data)
         );
+
+        setGeneratedContent(data.note.content);
 
         const modal = document.getElementById(
           "generate-summary-modal-global"
@@ -159,6 +163,7 @@ export default function GenerateSummaryModal() {
       }
     } catch (error) {
       console.error("Upload error:", error);
+      toast.error("Failed to generate content. Please try again.");
     } finally {
       setGeneratedContent("");
       setFile(null);
@@ -222,6 +227,21 @@ export default function GenerateSummaryModal() {
           </label>
         </div>
       )}
+      <div className="flex flex-row items-center gap-2">
+        <input
+          type="checkbox"
+          className="toggle"
+          checked={enableAutoGenerate}
+          onChange={() => setIsAutoGenerate((prev) => !prev)}
+        />
+        <div className="flex flex-col">
+          <h1 className="">Auto-generate flashcards and quiz</h1>
+          <p className="text-error text-sm font-medium">
+            Note: If the generated note is deleted, it'll also delete the
+            generated flashcards and quiz.
+          </p>
+        </div>
+      </div>
 
       <button
         className="btn btn-neutral w-fit self-end"
@@ -286,6 +306,22 @@ export default function GenerateSummaryModal() {
           </label>
         </div>
       )}
+
+      <div className="flex flex-row items-center gap-2">
+        <input
+          type="checkbox"
+          className="toggle"
+          checked={enableAutoGenerate}
+          onChange={() => setIsAutoGenerate((prev) => !prev)}
+        />
+        <div className="flex flex-col">
+          <h1 className="">Auto-generate flashcards and quiz</h1>
+          <p className="text-error text-sm font-medium">
+            Note: If the generated note is deleted, it'll also delete the
+            generated flashcards and quiz.
+          </p>
+        </div>
+      </div>
 
       <button className="btn btn-neutral w-fit self-end" onClick={handleSubmit}>
         <h1>Summarize</h1>

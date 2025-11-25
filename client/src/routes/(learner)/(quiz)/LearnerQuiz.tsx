@@ -14,6 +14,7 @@ import type { Quiz, User } from "@/types/types";
 import {
   ArrowLeft,
   ArrowRightFromLine,
+  Clipboard,
   Edit,
   EllipsisVertical,
   Forward,
@@ -257,7 +258,7 @@ export default function LearnerQuizPage() {
                       }}
                       disabled={data.is_public}
                     >
-                      <Forward />
+                      <Clipboard />
                       <h1>Share (Copy Link)</h1>
                     </button>
                   </li>

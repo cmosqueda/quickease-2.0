@@ -261,3 +261,105 @@ Generate a concise summary of the provided image. The output must be a JSON obje
     return false;
   }
 }
+
+export async function generateQuizFromImage(buffer: Buffer) {
+  try {
+    const prompt = `
+Generate a quiz with at least 10 questions based on the provided image. The output must conform to the provided JSON schema.
+
+**Content Rules:**
+- Questions must be derived solely from the provided image content.
+- For multiple-choice questions, create plausible but incorrect distractor options.
+- The 'correctAnswers' array must contain the 0-based index of the correct option.
+
+**JSON Schema:**
+{
+  "title": "string",
+  "quiz_content": [
+    {
+      "question": "string",
+      "description": "string (can be empty)",
+      "options": ["string"],
+      "correctAnswers": [number]
+    }
+  ]
+}`.trim();
+
+    const contents = [
+      { text: prompt },
+      {
+        inlineData: {
+          mimeType: "image/jpeg",
+          data: buffer.toString("base64"),
+        },
+      },
+    ];
+
+    const response = await _AI.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents,
+    });
+
+    const raw = JSON.parse(
+      response.text!.replace(/^```json\s*/, "").replace(/```$/, "")
+    );
+
+    return {
+      title: raw.title,
+      quiz_content: raw.quiz_content,
+    };
+  } catch (err) {
+    console.error("Failed to generate quiz from image:", err);
+    return false;
+  }
+}
+
+export async function generateFlashcardsFromImage(buffer: Buffer) {
+  try {
+    const prompt = `
+Generate a set of at least 10 flashcards based on the provided image. The output must conform to the provided JSON schema.
+
+**Content Rules:**
+- Flashcards must be derived solely from the provided image.
+- The 'front' of each card must be a key term, name, or concept visible in the image.
+- The 'back' of each card must be its corresponding definition or explanation.
+
+**JSON Schema:**
+{
+  "title": "string",
+  "flashcards": [
+    {
+      "front": "string",
+      "back": "string"
+    }
+  ]
+}`.trim();
+
+    const contents = [
+      { text: prompt },
+      {
+        inlineData: {
+          mimeType: "image/jpeg",
+          data: buffer.toString("base64"),
+        },
+      },
+    ];
+
+    const response = await _AI.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents,
+    });
+
+    const raw = JSON.parse(
+      response.text!.replace(/^```json\s*/, "").replace(/```$/, "")
+    );
+
+    return {
+      title: raw.title,
+      flashcards: raw.flashcards,
+    };
+  } catch (err) {
+    console.error("Failed to generate flashcards from image:", err);
+    return false;
+  }
+}

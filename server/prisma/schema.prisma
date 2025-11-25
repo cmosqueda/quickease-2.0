@@ -41,46 +41,53 @@ model User {
 }
 
 model Flashcard {
-  id              String   @id @default(uuid())
-  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id         String
-  title           String
-  description     String?
-  flashcards      Json
-  is_public       Boolean? @default(true)
-  created_at      DateTime @default(now())
-  updated_at      DateTime @default(now())
-  is_ai_generated Boolean? @default(false)
+  id                String   @id @default(uuid())
+  user              User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id           String
+  connected_note    Note?     @relation(fields: [connected_note_id], references: [id], onDelete: Cascade)
+  connected_note_id String?
+  title             String
+  description       String?
+  flashcards        Json
+  is_public         Boolean? @default(true)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @default(now())
+  is_ai_generated   Boolean? @default(false)
 
   post_attachments PostAttachment[]
 }
 
 model Note {
-  id               String           @id @default(uuid())
-  user             User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id          String
-  title            String
-  notes_content    String
-  is_public        Boolean?         @default(true)
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @default(now())
-  is_ai_generated  Boolean?         @default(false)
-  post_attachments PostAttachment[]
+  id                        String           @id @default(uuid())
+  user                      User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id                   String
+  has_pregenerated_contents Boolean          @default(false)
+  title                     String
+  notes_content             String
+  is_public                 Boolean?         @default(true)
+  created_at                DateTime         @default(now())
+  updated_at                DateTime         @default(now())
+  is_ai_generated           Boolean?         @default(false)
+  post_attachments          PostAttachment[]
+  flashcards                Flashcard[]
+  quizzes                   Quiz[]
 }
 
 model Quiz {
-  id              String   @id @default(uuid())
-  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id         String
-  quiz_content    Json
-  title           String
-  description     String?
-  is_public       Boolean? @default(true)
-  created_at      DateTime @default(now())
-  updated_at      DateTime @default(now())
-  is_ai_generated Boolean? @default(false)
-  is_randomized   Boolean? @default(false)
-  timed_quiz      Decimal?
+  id                String   @id @default(uuid())
+  user              User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id           String
+  connected_note    Note?     @relation(fields: [connected_note_id], references: [id], onDelete: Cascade)
+  connected_note_id String?
+  quiz_content      Json
+  title             String
+  description       String?
+  is_public         Boolean? @default(true)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @default(now())
+  is_ai_generated   Boolean? @default(false)
+  is_randomized     Boolean? @default(false)
+  timed_quiz        Decimal?
 
   post_attachments PostAttachment[]
   attempts         QuizAttempt[]

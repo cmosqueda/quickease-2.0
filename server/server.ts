@@ -2,7 +2,7 @@ import Fastify from "fastify";
 import db_client from "./utils/client";
 import initializeFastifyConfig from "./fastify.config";
 
-export const server = Fastify();
+export const server = Fastify({ logger: true });
 
 /**
  * Initializes the Fastify server configuration, connects to the database,

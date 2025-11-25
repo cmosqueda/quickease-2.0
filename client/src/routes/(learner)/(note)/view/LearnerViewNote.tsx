@@ -3,14 +3,23 @@
 import CustomEditor from "@/components/Editor";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 
-import { ArrowLeft, TriangleAlertIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarRange,
+  ClipboardList,
+  TriangleAlertIcon,
+} from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router";
 import { useEditor } from "@tiptap/react";
 import { useEffect, useState } from "react";
+import useAuth from "@/hooks/useAuth";
+import GenerateFlashcardModal from "@/components/(ai)/GenerateFlashcardModal_NOTE";
+import GenerateQuizModal from "@/components/(ai)/GenerateQuizModal_NOTE";
 
 export default function LearnerViewNotePage() {
   const data = useLoaderData();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [html, setHTML] = useState("");
   const [text, setText] = useState("");
@@ -68,15 +77,50 @@ export default function LearnerViewNotePage() {
           className="cursor-pointer lg:ml-6"
         />
       </div>
-      <div className="flex flex-col gap-2 p-4 lg:p-8">
-        <input
-          placeholder="Title..."
-          value={title}
-          className="font-bold text-3xl input input-ghost w-full"
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <CustomEditor editor={editor} isToolbarVisible={false} />
+      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_0.2fr] h-full">
+        <div className="flex flex-col gap-2 p-4 lg:p-8">
+          <input
+            placeholder="Title..."
+            value={title}
+            className="font-bold text-3xl input input-ghost w-full"
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <CustomEditor editor={editor} isToolbarVisible={false} />
+        </div>
+        <div className="flex flex-col gap-4 bg-base-100 border-l border-b border-base-300 p-4 h-full">
+          {user?.is_verified && (
+            <>
+              <h1 className="font-bold text-xl">Study options</h1>
+              <button
+                className="rounded-3xl btn btn-soft gap-2 join-item border border-base-300 shadow"
+                onClick={() => {
+                  const modal = document.getElementById(
+                    "generate-flashcard-modal"
+                  ) as HTMLDialogElement;
+                  modal.showModal();
+                }}
+              >
+                <CalendarRange />
+                <h1>Generate flashcards</h1>
+              </button>
+              <button
+                className="rounded-3xl btn btn-soft gap-2 join-item border border-base-300 shadow"
+                onClick={() => {
+                  const modal = document.getElementById(
+                    "generate-quiz-modal"
+                  ) as HTMLDialogElement;
+                  modal.showModal();
+                }}
+              >
+                <ClipboardList />
+                <h1>Generate quiz</h1>
+              </button>
+            </>
+          )}
+        </div>
       </div>
+      <GenerateFlashcardModal text={data.notes_content} />
+      <GenerateQuizModal text={data.notes_content} />
     </div>
   );
 }
