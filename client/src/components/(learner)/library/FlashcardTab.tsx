@@ -28,7 +28,6 @@ export default function FlashcardTab({
 
   return (
     <>
-      {/* Header: Search + Create */}
       <div className="flex flex-row justify-between items-center gap-4">
         <label className="input w-full lg:w-fit flex items-center gap-2">
           <Search size={20} />
@@ -40,16 +39,12 @@ export default function FlashcardTab({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </label>
-        <NavLink
-          to="/learner/flashcards/create"
-          className="btn btn-neutral"
-        >
+        <NavLink to="/learner/flashcards/create" className="btn btn-neutral">
           <Plus />
-          <span className="lg:block hidden">Manually Create</span>
+          <span className="lg:block hidden">Create</span>
         </NavLink>
       </div>
 
-      {/* Filter Options */}
       <div className="join my-4">
         <input
           type="radio"
@@ -77,7 +72,6 @@ export default function FlashcardTab({
         />
       </div>
 
-      {/* Flashcard Grid */}
       <div className="flex flex-row gap-4 flex-wrap">
         {filteredFlashcards.length > 0 ? (
           filteredFlashcards.map((fc) => (

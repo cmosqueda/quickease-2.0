@@ -2,6 +2,7 @@
 import CustomEditor from "@/components/Editor";
 import _TIPTAP_EXTENSIONS from "@/types/tiptap_extensions";
 import _API_INSTANCE from "@/utils/axios";
+import { ResourceSelector } from "@/components/(learner)/forum/post/ResourceSelector";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useEditor } from "@tiptap/react";
@@ -12,7 +13,6 @@ import { checkBadges } from "@/utils/badges";
 
 import {
   ArrowLeft,
-  Check,
   FileQuestion,
   GalleryVertical,
   Notebook,
@@ -22,7 +22,7 @@ import {
 export default function LearnerCreatePostPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const data = useLoaderData();
+  const data = useLoaderData() as any;
 
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -38,13 +38,88 @@ export default function LearnerCreatePostPage() {
 
   const [html, setHTML] = useState("");
   const [title, setTitle] = useState("");
+
+  // Resources State
   const [selectedNotes, setSelectedNotes] = useState<any[]>([]);
   const [selectedFlashcards, setSelectedFlashcards] = useState<any[]>([]);
   const [selectedQuizzes, setSelectedQuizzes] = useState<any[]>([]);
+
   const [tagInput, setTagInput] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
   const [isSaving, setIsSaving] = useState(false);
+
+  const handleNoteSelection = (action: React.SetStateAction<any[]>) => {
+    let newNotes: any[] = [];
+
+    if (typeof action === "function") {
+      newNotes = action(selectedNotes);
+    } else {
+      newNotes = action;
+    }
+
+    const addedNotes = newNotes.filter(
+      (n) => !selectedNotes.some((prev) => prev.id === n.id)
+    );
+
+    const removedNotes = selectedNotes.filter(
+      (n) => !newNotes.some((curr) => curr.id === n.id)
+    );
+
+    if (addedNotes.length > 0) {
+      const notesWithConnections = addedNotes.filter(
+        (n) => n.has_pregenerated_contents
+      );
+
+      if (notesWithConnections.length > 0) {
+        const newFlashcards = [...selectedFlashcards];
+        const newQuizzes = [...selectedQuizzes];
+        let autoSelectedCount = 0;
+
+        notesWithConnections.forEach((note) => {
+          const connectedFlashcard = data?.flashcards?.find(
+            (f: any) => f.connected_note_id === note.id
+          );
+          const connectedQuiz = data?.quizzes?.find(
+            (q: any) => q.connected_note_id === note.id
+          );
+
+          if (
+            connectedFlashcard &&
+            !newFlashcards.some((f) => f.id === connectedFlashcard.id)
+          ) {
+            newFlashcards.push(connectedFlashcard);
+            autoSelectedCount++;
+          }
+          if (
+            connectedQuiz &&
+            !newQuizzes.some((q) => q.id === connectedQuiz.id)
+          ) {
+            newQuizzes.push(connectedQuiz);
+            autoSelectedCount++;
+          }
+        });
+
+        if (autoSelectedCount > 0) {
+          setSelectedFlashcards(newFlashcards);
+          setSelectedQuizzes(newQuizzes);
+          toast.success("Connected Flashcards and Quizzes auto-selected!", {});
+        }
+      }
+    }
+
+    if (removedNotes.length > 0) {
+      const removedIds = removedNotes.map((n) => n.id);
+
+      setSelectedFlashcards((prev) =>
+        prev.filter((f) => !removedIds.includes(f.connected_note_id))
+      );
+      setSelectedQuizzes((prev) =>
+        prev.filter((q) => !removedIds.includes(q.connected_note_id))
+      );
+    }
+
+    setSelectedNotes(newNotes);
+  };
 
   const handleSave = async () => {
     if (!title.trim()) {
@@ -75,7 +150,7 @@ export default function LearnerCreatePostPage() {
         })),
       ];
 
-      const { status, data } = await _API_INSTANCE.post(
+      const { status, data: resData } = await _API_INSTANCE.post(
         "/forum/post/create",
         {
           body: html,
@@ -83,18 +158,16 @@ export default function LearnerCreatePostPage() {
           attachments,
           tags: selectedTags,
         },
-        {
-          timeout: 8 * 60 * 1000,
-        }
+        { timeout: 8 * 60 * 1000 }
       );
 
       if (status === 200) {
         await checkBadges();
         queryClient.invalidateQueries({ queryKey: ["recent-posts"] });
         toast.success("Post created successfully.");
-        navigate(`/learner/post/${data.id}`);
-      } else if (status === 400 && data.toxic) {
-        toast.error(data.message);
+        navigate(`/learner/post/${resData.id}`);
+      } else if (status === 400 && resData.toxic) {
+        toast.error(resData.message);
       } else {
         toast.error("Failed to create post. Try again.");
       }
@@ -104,6 +177,61 @@ export default function LearnerCreatePostPage() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const renderSelectedItem = (
+    item: any,
+    type: "note" | "flashcard" | "quiz",
+    Icon: any
+  ) => {
+    const isAutoSelected =
+      type !== "note" &&
+      selectedNotes.some((n) => n.id === item.connected_note_id);
+
+    return (
+      <div
+        key={item.id}
+        className={`flex-1 flex flex-row gap-4 items-center rounded-3xl p-4 xl:max-h-[5rem] xl:max-w-[16rem] overflow-hidden border shadow relative group
+            ${
+              isAutoSelected
+                ? "bg-primary/10 border-primary/50"
+                : "bg-base-300 border-base-300"
+            }
+            `}
+      >
+        <Icon className={`shrink-0 ${isAutoSelected ? "text-primary" : ""}`} />
+
+        <span className="truncate flex-1">{item.title}</span>
+
+        {isAutoSelected && (
+          <div
+            className="tooltip tooltip-left z-10"
+            data-tip="Auto-selected via connected note"
+          ></div>
+        )}
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            if (type === "note")
+              handleNoteSelection((prev: any[]) =>
+                prev.filter((i) => i.id !== item.id)
+              );
+            if (type === "flashcard")
+              setSelectedFlashcards((prev) =>
+                prev.filter((i) => i.id !== item.id)
+              );
+            if (type === "quiz")
+              setSelectedQuizzes((prev) =>
+                prev.filter((i) => i.id !== item.id)
+              );
+          }}
+          className="btn btn-circle btn-xs btn-ghost absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <X size={12} />
+        </button>
+      </div>
+    );
   };
 
   const tabs = [
@@ -116,7 +244,6 @@ export default function LearnerCreatePostPage() {
         <h1 className="text-2xl font-bold">Create post</h1>
       </div>
 
-      {/* Title Field */}
       <fieldset className="fieldset">
         <input
           type="text"
@@ -144,11 +271,9 @@ export default function LearnerCreatePostPage() {
 
             if ((key === "Enter" || key === ",") && value) {
               e.preventDefault();
-
               if (!selectedTags.includes(value)) {
                 setSelectedTags([...selectedTags, value]);
               }
-
               setTagInput("");
             }
           }}
@@ -176,32 +301,32 @@ export default function LearnerCreatePostPage() {
         )}
       </fieldset>
 
-      {/* Rich Text Editor */}
       <CustomEditor
         editor={editor!}
         style="overflow-y-auto border border-base-300 shadow"
       />
+
       <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
         <button
           className="btn btn-neutral btn-ghost flex-1 p-4 lg:p-0"
           onClick={() => setTabIndex(1)}
         >
           <Notebook />
-          <p>Attach notes</p>
+          <p>Attach notes ({selectedNotes.length})</p>
         </button>
         <button
           className="btn btn-neutral btn-ghost flex-1 p-4 lg:p-0"
           onClick={() => setTabIndex(2)}
         >
           <GalleryVertical />
-          <p>Attach flashcards</p>
+          <p>Attach flashcards ({selectedFlashcards.length})</p>
         </button>
         <button
           className="btn btn-neutral btn-ghost flex-1 p-4 lg:p-0"
           onClick={() => setTabIndex(3)}
         >
           <FileQuestion />
-          <p>Attach quizzes</p>
+          <p>Attach quizzes ({selectedQuizzes.length})</p>
         </button>
       </div>
 
@@ -209,28 +334,16 @@ export default function LearnerCreatePostPage() {
         selectedFlashcards.length > 0 ||
         selectedQuizzes.length > 0) && (
         <div className="grid grid-col-1 lg:grid-cols-2 xl:grid-cols-5 gap-3">
-          {selectedNotes.map((n) => (
-            <div className="flex-1 flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 xl:max-h-[5rem] xl:max-w-[16rem] overflow-hidden border border-base-300 shadow">
-              <Notebook className="shrink-0" />
-              {n.title}
-            </div>
-          ))}
-          {selectedFlashcards.map((f) => (
-            <div className="flex-1 flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 xl:max-h-[5rem] xl:max-w-[16rem] overflow-hidden border border-base-300 shadow">
-              <GalleryVertical className="shrink-0" />
-              {f.title}
-            </div>
-          ))}
-          {selectedQuizzes.map((q) => (
-            <div className="flex-1 flex flex-row gap-4 items-center bg-base-300 rounded-3xl p-4 xl:max-h-[5rem] xl:max-w-[16rem] overflow-hidden border border-base-300 shadow">
-              <FileQuestion className="shrink-0" />
-              {q.title}
-            </div>
-          ))}
+          {selectedNotes.map((n) => renderSelectedItem(n, "note", Notebook))}
+          {selectedFlashcards.map((f) =>
+            renderSelectedItem(f, "flashcard", GalleryVertical)
+          )}
+          {selectedQuizzes.map((q) =>
+            renderSelectedItem(q, "quiz", FileQuestion)
+          )}
         </div>
       )}
 
-      {/* Submit Button */}
       <button
         className="btn btn-neutral border border-base-300 shadow"
         disabled={isSaving}
@@ -239,177 +352,40 @@ export default function LearnerCreatePostPage() {
         {isSaving ? <span className="loading loading-spinner" /> : <p>Post</p>}
       </button>
     </>,
-    <>
-      {/* Header */}
-      <div className="flex flex-row items-center gap-4">
-        <button
-          type="button"
-          onClick={() => setTabIndex(0)}
-          className="p-1 rounded"
-          aria-label="Close modal"
-        >
-          <ArrowLeft className="cursor-pointer" />
-        </button>
-        <div>
-          <h1 className="font-bold text-xl">Attach notes</h1>
-          <p className="text-sm text-base-content/50">
-            Only public notes are visible
-          </p>
-        </div>
-      </div>
 
-      {/* Notes */}
-      <div className="grid grid-cols-2 gap-4">
-        {data &&
-          data.notes &&
-          data.notes
-            .filter((n: any) => n.is_public == true)
-            .map((note: any) => {
-              const isSelected = selectedNotes.some((n) => n.id === note.id);
-              return (
-                <button
-                  key={note.id}
-                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative border border-base-300 shadow"
-                  onClick={() => {
-                    setSelectedNotes((prev) =>
-                      isSelected
-                        ? prev.filter((n) => n.id !== note.id)
-                        : [...prev, note]
-                    );
-                  }}
-                >
-                  {isSelected && (
-                    <Check size={16} className="absolute right-4" />
-                  )}
-                  <h1 className="font-bold text-2xl">{note.title}</h1>
-                </button>
-              );
-            })}
-      </div>
+    <ResourceSelector
+      key="notes"
+      title="Attach notes"
+      postTitle={title}
+      items={data?.notes || []}
+      selectedItems={selectedNotes}
+      setSelectedItems={handleNoteSelection}
+      onBack={() => setTabIndex(0)}
+      Icon={Notebook}
+    />,
 
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={() => setTabIndex(0)}
-      >
-        Confirm selection
-      </button>
-    </>,
-    <>
-      {/* Header */}
-      <div className="flex flex-row items-center gap-4">
-        <button
-          type="button"
-          onClick={() => setTabIndex(0)}
-          className="p-1 rounded"
-          aria-label="Close modal"
-        >
-          <ArrowLeft className="cursor-pointer" />
-        </button>
-        <div>
-          <h1 className="font-bold text-xl">Attach flashcards</h1>
-          <p className="text-sm text-base-content/50">
-            Only public flashcards are visible
-          </p>
-        </div>
-      </div>
+    <ResourceSelector
+      key="flashcards"
+      title="Attach flashcards"
+      postTitle={title}
+      items={data?.flashcards || []}
+      selectedItems={selectedFlashcards}
+      setSelectedItems={setSelectedFlashcards}
+      onBack={() => setTabIndex(0)}
+      Icon={GalleryVertical}
+    />,
 
-      {/* Flashcards */}
-      <div className="grid grid-cols-2 gap-4">
-        {data &&
-          data.flashcards &&
-          data.flashcards
-            .filter((f: any) => f.is_public == true)
-            .map((flashcard: any) => {
-              const isSelected = selectedFlashcards.some(
-                (f) => f.id === flashcard.id
-              );
-              return (
-                <button
-                  key={flashcard.id}
-                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative border border-base-300 shadow"
-                  onClick={() => {
-                    setSelectedFlashcards((prev) =>
-                      isSelected
-                        ? prev.filter((f) => f.id !== flashcard.id)
-                        : [...prev, flashcard]
-                    );
-                  }}
-                >
-                  {isSelected && (
-                    <Check size={16} className="absolute right-4" />
-                  )}
-                  <h1 className="font-bold text-2xl">{flashcard.title}</h1>
-                </button>
-              );
-            })}
-      </div>
-
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={() => setTabIndex(0)}
-      >
-        Confirm selection
-      </button>
-    </>,
-    <>
-      {/* Header */}
-      <div className="flex flex-row items-center gap-4">
-        <button
-          type="button"
-          onClick={() => setTabIndex(0)}
-          className="p-1 rounded"
-          aria-label="Close modal"
-        >
-          <ArrowLeft className="cursor-pointer" />
-        </button>
-        <div>
-          <h1 className="font-bold text-xl">Attach quizzes</h1>
-          <p className="text-sm text-base-content/50">
-            Only public quizzes are visible
-          </p>
-        </div>
-      </div>
-
-      {/* Quizzes */}
-      <div className="grid grid-cols-2 gap-4">
-        {data &&
-          data.quizzes &&
-          data.quizzes
-            .filter((q: any) => q.is_public == true)
-            .map((quiz: any) => {
-              const isSelected = selectedQuizzes.some((q) => q.id === quiz.id);
-              return (
-                <button
-                  key={quiz.id}
-                  onClick={() => {
-                    setSelectedQuizzes((prev) =>
-                      isSelected
-                        ? prev.filter((q) => q.id !== quiz.id)
-                        : [...prev, quiz]
-                    );
-                  }}
-                  className="flex flex-row p-4 rounded-xl cursor-pointer bg-base-300 relative border border-base-300 shadow"
-                >
-                  {isSelected && (
-                    <Check size={16} className="absolute right-4" />
-                  )}
-                  <h1 className="font-bold text-2xl">{quiz.title}</h1>
-                </button>
-              );
-            })}
-      </div>
-
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={() => setTabIndex(0)}
-      >
-        Confirm selection
-      </button>
-    </>,
-  ]; // 0 - Post | 1 - Notes | 2 - Flashcards | 3 - Quizzes
+    <ResourceSelector
+      key="quizzes"
+      title="Attach quizzes"
+      postTitle={title}
+      items={data?.quizzes || []}
+      selectedItems={selectedQuizzes}
+      setSelectedItems={setSelectedQuizzes}
+      onBack={() => setTabIndex(0)}
+      Icon={FileQuestion}
+    />,
+  ];
 
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-8 w-full lg:max-h-[150vh] max-w-7xl mx-auto">

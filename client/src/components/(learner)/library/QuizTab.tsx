@@ -37,7 +37,7 @@ export default function QuizTab({ quizzes }: { quizzes: Quiz[] }) {
         </label>
         <NavLink to="/learner/quizzes/create" className="btn btn-neutral">
           <Plus />
-          <span className="lg:block hidden">Manually Create</span>
+          <span className="lg:block hidden">Create</span>
         </NavLink>
       </div>
 

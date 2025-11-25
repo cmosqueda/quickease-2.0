@@ -84,20 +84,44 @@ export async function create_user_note(
     content,
     user_id,
     is_ai_generated = false,
+    generated_quiz,
+    generated_flashcards,
   } = request.body as {
     title: string;
     content: string;
     user_id: string;
     is_ai_generated: boolean;
+    generated_quiz?: { title: string; quiz_content: any };
+    generated_flashcards?: { title: string; flashcards: any };
   };
 
   const schema = z.object({
     title: z.string(),
     content: z.string().nullable(),
     user_id: z.string().min(1, "User ID is required."),
+    generated_quiz: z
+      .object({
+        title: z.string().optional(),
+        quiz_content: z.any(),
+      })
+      .optional()
+      .nullable(),
+    generated_flashcards: z
+      .object({
+        title: z.string().optional(),
+        flashcards: z.any(),
+      })
+      .optional()
+      .nullable(),
   });
 
-  const result = schema.safeParse({ title, content, user_id });
+  const result = schema.safeParse({
+    title,
+    content,
+    user_id,
+    generated_quiz,
+    generated_flashcards,
+  });
 
   if (!result.success) {
     return reply.code(400).send({
@@ -107,13 +131,20 @@ export async function create_user_note(
   }
 
   try {
-    const note = await createUserNote(title, content, user_id, is_ai_generated);
+    const note = await createUserNote(
+      title,
+      content,
+      user_id,
+      is_ai_generated,
+      generated_quiz,
+      generated_flashcards
+    );
     reply.code(201).send(note);
   } catch (err) {
+    console.error(err);
     reply.code(500).send({ message: "Error creating note.", errors: err });
   }
 }
-
 /**
  * Updates a user's note with the provided title and content.
  *

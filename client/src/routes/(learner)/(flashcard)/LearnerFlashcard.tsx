@@ -11,6 +11,7 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
+  Clipboard,
   Edit,
   EllipsisVertical,
   Forward,
@@ -133,7 +134,7 @@ export default function LearnerFlashcardPage() {
                   }}
                   disabled={data.isPublic}
                 >
-                  <Forward />
+                  <Clipboard />
                   <h1>Share (Copy Link)</h1>
                 </button>
               </li>

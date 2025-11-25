@@ -36,7 +36,7 @@ export default function NotesTab({ notes }: { notes: Note[] }) {
         </label>
         <NavLink to="/learner/note/create" className="btn btn-neutral">
           <Plus />
-          <span className="lg:block hidden">Manually Create</span>
+          <span className="lg:block hidden">Create</span>
         </NavLink>
       </div>
 

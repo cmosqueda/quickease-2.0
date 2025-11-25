@@ -15,6 +15,8 @@ import {
   generateQuizFromPDF,
   generateFlashcardsFromPDF,
   generateSummaryNotesFromImage,
+  generateFlashcardsFromImage,
+  generateQuizFromImage,
 } from "./ai.upload.service";
 
 /**
@@ -177,19 +179,41 @@ export async function generate_notes_from_pdf(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const pdf = await request.file();
+  const { auto } = request.query as { auto?: string };
+  const enableAutoGenerate = auto === "true";
 
+  const pdf = await request.file();
   const buffer = await pdf?.toBuffer();
 
+  if (!buffer) {
+    return reply.code(400).send({ message: "No file uploaded" });
+  }
+
   try {
-    const result = await generateSummaryNotesFromPDF(buffer!);
+    const noteResult = await generateSummaryNotesFromPDF(buffer);
+
+    if (!noteResult) {
+      throw new Error("Failed to generate note");
+    }
+
+    let quizResult = null;
+    let flashcardResult = null;
+
+    if (enableAutoGenerate) {
+      quizResult = await generateQuizFromPDF(buffer);
+
+      flashcardResult = await generateFlashcardsFromPDF(buffer);
+    }
 
     reply.code(200).send({
-      ...result,
+      note: noteResult,
+      quiz: quizResult,
+      flashcards: flashcardResult,
     });
   } catch (err) {
+    console.error(err);
     reply.code(500).send({
-      message: "Error generating summary from PDF.",
+      message: "Error generating content from PDF.",
     });
   }
 }
@@ -276,19 +300,40 @@ export async function generate_notes_from_image(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const image = await request.file();
+  const { auto } = request.query as { auto?: string };
+  const enableAutoGenerate = auto === "true";
 
+  const image = await request.file();
   const buffer = await image?.toBuffer();
 
+  if (!buffer) {
+    return reply.code(400).send({ message: "No file uploaded" });
+  }
+
   try {
-    const result = await generateSummaryNotesFromImage(buffer!);
+    const noteResult = await generateSummaryNotesFromImage(buffer);
+
+    if (!noteResult) {
+      throw new Error("Failed to generate note");
+    }
+
+    let quizResult = null;
+    let flashcardResult = null;
+
+    if (enableAutoGenerate) {
+      quizResult = await generateQuizFromImage(buffer);
+      flashcardResult = await generateFlashcardsFromImage(buffer);
+    }
 
     reply.code(200).send({
-      ...result,
+      note: noteResult,
+      quiz: quizResult,
+      flashcards: flashcardResult,
     });
   } catch (err) {
+    console.error(err);
     reply.code(500).send({
-      message: "Error generating summary from PDF.",
+      message: "Error generating content from Image.",
     });
   }
 }

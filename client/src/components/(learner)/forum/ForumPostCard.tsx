@@ -16,6 +16,7 @@ import {
   ChevronDown,
   MessageCircle,
   Forward,
+  Clipboard,
 } from "lucide-react";
 import UserAvatar from "../UserAvatar";
 
@@ -134,7 +135,7 @@ const ForumPostCard = ({ post }: { post: Post }) => {
             toast.success("Link copied to clipboard.");
           }}
         >
-          <Forward />
+          <Clipboard />
         </button>
       </div>
     </div>
