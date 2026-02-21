@@ -47,12 +47,12 @@ ${note.notes_content}
 `.trim();
 
       const response = await _AI.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
       });
 
       const raw = JSON.parse(
-        response.text!.replace(/^```json\s*/, "").replace(/```$/, "")
+        response.text!.replace(/^```json\s*/, "").replace(/```$/, ""),
       );
 
       return {
@@ -109,12 +109,12 @@ ${note.notes_content}
 }`.trim();
 
       const response = await _AI.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
       });
 
       const raw = JSON.parse(
-        response.text!.replace(/^```json\s*/, "").replace(/```$/, "")
+        response.text!.replace(/^```json\s*/, "").replace(/```$/, ""),
       );
 
       return {

@@ -19,7 +19,7 @@ async function validateOwnership(
   tx: Prisma.TransactionClient,
   user_id: string,
   resource_type: "NOTE" | "QUIZ" | "FLASHCARD",
-  resource_id: string
+  resource_id: string,
 ): Promise<boolean> {
   switch (resource_type) {
     case "NOTE":
@@ -132,7 +132,7 @@ export async function getRecentPosts(cursor?: string | null, limit = 10) {
   const postsWithVoteSum = items.map((post) => {
     const vote_sum = post.votes.reduce(
       (total, vote) => total + vote.vote_type,
-      0
+      0,
     );
     const user_vote = post.votes[0]?.vote_type ?? 0;
 
@@ -263,10 +263,10 @@ export async function createPost(
     resource_type: "NOTE" | "QUIZ" | "FLASHCARD";
     resource_id: string;
   }[],
-  tags?: string[] // Accept tags here
+  tags?: string[], // Accept tags here
 ) {
   const response = await _AI.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: "gemini-2.5-flash",
     contents: `
                 Given the following post data, analyze whether it contains offensive, toxic, hateful, or inappropriate language.
                 Check if the post is toxic.
@@ -312,12 +312,12 @@ export async function createPost(
           tx,
           user_id,
           resource_type,
-          resource_id
+          resource_id,
         );
 
         if (!isOwner) {
           throw new Error(
-            `Unauthorized or invalid ${resource_type} (ID: ${resource_id})`
+            `Unauthorized or invalid ${resource_type} (ID: ${resource_id})`,
           );
         }
 
@@ -388,7 +388,7 @@ export async function updatePost(
   attachments?: {
     resource_type: "NOTE" | "QUIZ" | "FLASHCARD";
     resource_id: string;
-  }[]
+  }[],
 ) {
   return await db_client.$transaction(async (tx) => {
     const existingPost = await tx.post.findUnique({
@@ -411,12 +411,12 @@ export async function updatePost(
             tx,
             user_id,
             resource_type,
-            resource_id
+            resource_id,
           );
 
           if (!isOwner) {
             throw new Error(
-              `Unauthorized or invalid ${resource_type} (ID: ${resource_id})`
+              `Unauthorized or invalid ${resource_type} (ID: ${resource_id})`,
             );
           }
 
@@ -465,8 +465,8 @@ export async function addTagOnPost(post_id: string, tag_ids: string[]) {
         where: { tag_id_post_id: { tag_id, post_id } },
         update: {},
         create: { tag_id, post_id },
-      })
-    )
+      }),
+    ),
   );
 
   return postTags;
@@ -496,7 +496,7 @@ export async function deletePost(post_id: string, user_id: string) {
 export async function togglePostVisibility(
   visibility: boolean,
   post_id: string,
-  user_id: string
+  user_id: string,
 ) {
   await db_client.post.update({
     data: {
@@ -524,7 +524,7 @@ export async function searchPost(
   query: string,
   page = 1,
   limit = 10,
-  sort: "newest" | "top" | "comments" = "newest"
+  sort: "newest" | "top" | "comments" = "newest",
 ) {
   const skip = (page - 1) * limit;
 
@@ -585,14 +585,14 @@ export async function searchPost(
             },
           }
         : sort === "top"
-        ? {
-            votes: {
-              _count: "desc",
+          ? {
+              votes: {
+                _count: "desc",
+              },
+            }
+          : {
+              created_at: "desc",
             },
-          }
-        : {
-            created_at: "desc",
-          },
     skip,
     take: limit,
   });
