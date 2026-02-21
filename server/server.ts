@@ -1,3 +1,4 @@
+import "dotenv/config";
 import Fastify from "fastify";
 import db_client from "./utils/client";
 import initializeFastifyConfig from "./fastify.config";

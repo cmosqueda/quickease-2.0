@@ -24,7 +24,7 @@ type CreatedPost = (Post & { toxic?: boolean }) | { toxic: boolean };
  */
 export async function get_user_posts(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   try {
     const posts = await getUserPosts(request.user.id);
@@ -46,7 +46,7 @@ export async function get_user_posts(
  */
 export async function get_recent_posts(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   try {
     const { cursor, limit } = request.query as {
@@ -91,7 +91,7 @@ export async function get_post(request: FastifyRequest, reply: FastifyReply) {
  */
 export async function create_post(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   const { body, title, attachments, tags } = request.body as {
     body: string;
@@ -109,7 +109,7 @@ export async function create_post(
       title,
       request.user.id,
       attachments,
-      tags
+      tags,
     );
 
     if ("toxic" in post && post.toxic) {
@@ -122,14 +122,14 @@ export async function create_post(
 
     reply.code(200).send(post);
   } catch (err) {
-    console.error("Error creating post:");
-    reply.code(500).send({ message: "Error posting." });
+    console.error("Error creating post:", err);
+    reply.code(500).send({ message: "Error posting.", err });
   }
 }
 
 export async function update_post(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   const { body, title, post_id, attachments } = request.body as {
     body: string;
@@ -147,7 +147,7 @@ export async function update_post(
       title,
       post_id,
       request.user.id,
-      attachments
+      attachments,
     );
     reply.code(200).send(updatedPost);
   } catch (err: any) {
@@ -166,7 +166,7 @@ export async function update_post(
  */
 export async function add_tag_on_post(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   const { tags, post_id } = request.body as {
     tags: string[];
@@ -192,7 +192,7 @@ export async function add_tag_on_post(
  */
 export async function delete_post(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   const { post_id } = request.body as { post_id: string };
   try {
@@ -217,7 +217,7 @@ export async function delete_post(
  */
 export async function toggle_post_visibility(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   const { visibility, post_id } = request.body as {
     visibility: boolean;
@@ -253,7 +253,7 @@ export async function toggle_post_visibility(
  */
 export async function search_posts(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   const { query, sort } = request.query as {
     query: string;
